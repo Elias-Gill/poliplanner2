@@ -1,0 +1,43 @@
+{
+    "lista": [
+        {"encabezado": "item", "patron": ["item", "ítem"]},
+        {"encabezado": "departamento", "patron": ["dpto", "dpto.", "departamento"]},
+        {"encabezado": "asignatura", "patron": ["asignatura", "materia", "curso"]},
+        {"encabezado": "nivel", "patron": ["nivel", "correlativas"]},
+        {"encabezado": "semestre", "patron": ["sem/grupo", "semestre", "grupo"]},
+        {"encabezado": "carrera", "patron": ["sigla carrera", "carrera", "sigla"]},
+        {"encabezado": "enfasis", "patron": ["enfasis", "énfasis", "especialidad"]},
+        {"encabezado": "plan", "patron": ["plan", "programa"]},
+        {"encabezado": "turno", "patron": ["turno", "horario"]},
+        {"encabezado": "seccion", "patron": ["sección", "seccion", "grupo"]},
+        {"encabezado": "plataforma", "patron": ["plataforma de aula virtual", "aula virtual", "plataforma"]},
+        {"encabezado": "titulo", "patron": ["tít", "título", "titulo", "tit"]},
+        {"encabezado": "apellido", "patron": ["apellido", "apellido profesor"]},
+        {"encabezado": "nombre", "patron": ["nombre", "nombre profesor"]},
+        {"encabezado": "correo", "patron": ["correo institucional", "email", "correo", "mail"]},
+
+        {"encabezado": "diaParcial1", "patron": ["día", "dia", "fecha"]},
+        {"encabezado": "horaParcial1", "patron": ["hora", "horario"]},
+        {"encabezado": "aulaParcial1", "patron": ["aula", "salón", "salon"]},
+
+        {"encabezado": "diaParcial2", "patron": ["día", "dia", "fecha"]},
+        {"encabezado": "horaParcial2", "patron": ["hora", "horario"]},
+        {"encabezado": "aulaParcial2", "patron": ["aula", "salón", "salon"]},
+
+        {"encabezado": "diaFinal1", "patron": ["día", "dia", "fecha"]},
+        {"encabezado": "horaFinal1", "patron": ["hora", "horario"]},
+        {"encabezado": "aulaFinal1", "patron": ["aula", "salón", "salon"]},
+
+        {"encabezado": "diaFinal2", "patron": ["día", "dia", "fecha"]},
+        {"encabezado": "horaFinal2", "patron": ["hora", "horario"]},
+        {"encabezado": "aulaFinal2", "patron": ["aula", "salón", "salon"]},
+
+        {"encabezado": "horaLunes", "patron": ["lunes"]},
+        {"encabezado": "horaMartes", "patron": ["martes"]},
+        {"encabezado": "horaMiercoles", "patron": ["miercoles", "miércoles"]},
+        {"encabezado": "horaJueves", "patron": ["jueves"]},
+        {"encabezado": "horaViernes", "patron": ["viernes"]},
+        {"encabezado": "horaSabado", "patron": ["sabado", "sábado"]},
+        {"encabezado": "fechasSabado", "patron": ["fechas de clases de sábados (turno noche)", "sábado noche", "sabado noche", "fechas sábado"]}
+    ]
+}
