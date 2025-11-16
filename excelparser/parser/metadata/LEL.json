@@ -1,0 +1,268 @@
+{
+  "career_code": "LEL",
+  "subjects": [
+    {
+      "name": "administracion y recursos humanos",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "algebra",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo aplicado",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo i",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo ii",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo iii",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo iv calculo vectorial",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "ciencia y tecnologia del medio ambiente",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "circuitos electricos i",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "circuitos electricos ii",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "conversion de energia electrica i",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "conversion de energia electrica ii",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "dibujo tecnico",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "diseno asistido por computadora",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "distribucion de energia electrica",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electricidad de potencia",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electricidad industrial",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica digital",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica industrial",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electrotecnia i",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electrotecnia ii",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "emprendedorismo",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica i",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica ii",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fuentes alternativas de energia",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "geometria analitica y vectores",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "instalaciones electricas i",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "instalaciones electricas ii",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "instalaciones electricas iii",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "introduccion a la automatizacion industrial",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "introduccion a la electronica",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "introduccion al control automatico industrial",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "laboratorio de automatizacion industrial",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "laboratorio de circuitos electricos",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "laboratorio de conversion de energia electrica",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "laboratorio de electrotecnia",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "mantenimiento industrial",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "mecanica de los fluidos",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "medicion de la energia electrica",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "normalizacion y calidad industrial",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "prevision y seguridad en el trabajo",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "proteccion y control de motores electricos",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas neumaticos e hidraulicos",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "termodinamica",
+      "semester": 3,
+      "credits": 0
+    }
+  ]
+}

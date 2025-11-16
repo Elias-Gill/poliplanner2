@@ -1,0 +1,394 @@
+{
+  "career_code": "IEN",
+  "subjects": [
+    {
+      "name": "administracion y recursos humanos",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "algebra lineal",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "algoritmo",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "almacenamiento de energia",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "aspectos juridicos de la energia",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo i",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo ii",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo iii",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo iv calculo vectorial",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo v",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo v variable compleja",
+      "semester": 4,
+      "credits": 4
+    }
+    ,
+    {
+      "name": "calculo vi",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo vi transformadas de laplace y fourier",
+      "semester": 5,
+      "credits": 4
+    }
+    ,
+    {
+      "name": "calor y frio industrial",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "conversion de energia electrica i",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "conversion de energia electrica ii",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "costos e ingenieria economica",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "dibujo tecnico",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "diseno asistido por computadora",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "economia de las energias renovables",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "economia y finanzas",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "eficiencia y ahorro energetico",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica instrumentacion y control",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica",
+      "semester": instrumentacion y control,
+      "credits": 4,4
+    }
+    ,
+    {
+      "name": "electrotecnia",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "emprendedorismo",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "energia y medioambiente",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "energias renovables",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica i",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica ii",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica iii",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica iv",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica v",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica vi",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica vii",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica viii",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "generacion de energia electrica",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "geometria analitica y vectores",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "gerenciamiento de proyectos energeticos",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "integracion de sistemas",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "investigacion de operaciones",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "macroeconomia y finanzas publicas",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "maquinas hidraulicas",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "maquinas termicas",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "mercado logistica y distribucion de combustibles",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "mercado y transporte de la energia electrica",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "mercado",
+      "semester": logistica y distribucion de combustibles,
+      "credits": 8,4
+    }
+    ,
+    {
+      "name": "modelizacion y analisis numerico",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "normalizacion y calidad industrial",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "planificacion energetica",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "politica energetica",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "prevision y seguridad en el trabajo",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "probabilidad y estadistica",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "programacion",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "quimica",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "refino",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas de control i",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sustentabilidad mundial y regional",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "tecnicas de operacion y mantenimiento",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "tecnologia de los materiales",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "tecnologia nuclear",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "teoria de circuitos",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "trabajo final de grado",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "transporte y distribucion de energia i",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "transporte y distribucion de energia ii",
+      "semester": 7,
+      "credits": 0
+    }
+  ]
+}

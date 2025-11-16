@@ -1,0 +1,376 @@
+{
+  "career_code": "IEL",
+  "subjects": [
+    {
+      "name": "administracion y recursos humanos",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "algebra",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "algoritmo",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "automatizacion industrial",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo i",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo ii",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo iii",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo iv calculo vectorial",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo v variable compleja",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo vi transformadas de laplace y fourier",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "circuitos electricos i",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "circuitos electricos ii",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "conversion de energia electrica i",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "conversion de energia electrica ii",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "derecho",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "dibujo tecnico",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "diseno asistido por computadora",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "distribucion de energia electrica",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "economia y finanzas",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica de potencia i",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica de potencia ii",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica digital",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica i",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica ii",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electrotecnia i",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electrotecnia ii",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "emprendedorismo",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "factibilidad de sistemas electricos",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica i",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica ii",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica iii",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica iv",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica v",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica vi",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica vii",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica viii",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "generacion de energia electrica",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "geometria analitica y vectores",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "instalacion electrica industrial",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "instalaciones electricas i",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "instalaciones electricas ii",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "instalaciones electricas iii",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "instrumentacion industrial",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "lineas de transmision",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "mantenimiento industrial",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "medicion de la energia electrica",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "normalizacion y calidad industrial",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "prevision y seguridad en el trabajo",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "probabilidad y estadistica",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "programacion",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "proteccion en sistemas electricos",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "proyecto de trabajo de grado",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "quimica",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "resistencia de materiales",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas de control i",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas de control ii",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas de potencia i",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas de potencia ii",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas digitales i",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas digitales ii",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas neumaticos industriales",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "subestaciones",
+      "semester": 9,
+      "credits": 0
+    }
+  ]
+}

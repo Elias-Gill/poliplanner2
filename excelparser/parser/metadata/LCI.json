@@ -1,0 +1,382 @@
+{
+  "career_code": "LCI",
+  "subjects": [
+    {
+      "name": "acceso y utilizacion de la informacion",
+      "semester": 6,
+      "credits": 4
+    }
+    ,
+    {
+      "name": "alfabetizacion informacional",
+      "semester": 8,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "antropologia cultural",
+      "semester": 2,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "archivologia i",
+      "semester": 6,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "archivologia ii",
+      "semester": 7,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "bibliometria",
+      "semester": 8,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "ciencias de la informacion",
+      "semester": 1,
+      "credits": 4
+    }
+    ,
+    {
+      "name": "comunicacion",
+      "semester": 1,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "comunicacion e informacion",
+      "semester": 4,
+      "credits": 4
+    }
+    ,
+    {
+      "name": "conservacion de documentos",
+      "semester": 7,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "control bibliografico",
+      "semester": 1,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "desarrollo de colecciones",
+      "semester": 4,
+      "credits": 4
+    }
+    ,
+    {
+      "name": "didactica",
+      "semester": 7,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "documentacion",
+      "semester": 3,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "electiva cultura de valores",
+      "semester": 0,
+      "credits": 5
+    }
+    ,
+    {
+      "name": "electiva direccion estrategica",
+      "semester": 0,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electiva ingles tecnico i",
+      "semester": 0,
+      "credits": 2
+    }
+    ,
+    {
+      "name": "electiva ingles tecnico ii",
+      "semester": 0,
+      "credits": 2
+    }
+    ,
+    {
+      "name": "electiva liderazgo",
+      "semester": 0,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electiva marketing",
+      "semester": 0,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "electiva matematica",
+      "semester": 0,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "electiva portugues i",
+      "semester": 0,
+      "credits": 2
+    }
+    ,
+    {
+      "name": "electiva portugues ii",
+      "semester": 0,
+      "credits": 2
+    }
+    ,
+    {
+      "name": "electiva psicologia",
+      "semester": 0,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "electiva sociologia",
+      "semester": 0,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "emprendedorismo",
+      "semester": 2,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "estadistica",
+      "semester": 4,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "extension bibliotecaria",
+      "semester": 7,
+      "credits": 4
+    }
+    ,
+    {
+      "name": "fuentes de informacion i",
+      "semester": 1,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "fuentes de informacion ii",
+      "semester": 2,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "fuentes de informacion iii",
+      "semester": 3,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "gestion de la informacion i",
+      "semester": 3,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "gestion de la informacion ii",
+      "semester": 4,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "gestion de la informacion iii",
+      "semester": 5,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "gestion de la informacion iv",
+      "semester": 6,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "gestion de proyectos",
+      "semester": 8,
+      "credits": 2
+    }
+    ,
+    {
+      "name": "historia del pensamiento filosofico y cientifico",
+      "semester": 5,
+      "credits": 4
+    }
+    ,
+    {
+      "name": "informatica documental i",
+      "semester": 2,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "informatica documental ii",
+      "semester": 3,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "informatica documental iii",
+      "semester": 4,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "informatica documental iv",
+      "semester": 5,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "informatica documental v",
+      "semester": 6,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "metodologia de la investigacion cientifica",
+      "semester": 5,
+      "credits": 4
+    }
+    ,
+    {
+      "name": "optativa actualidad profesional",
+      "semester": 0,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "optativa bibliotecas escolares y publicas",
+      "semester": 0,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "optativa bibliotecas universitarias",
+      "semester": 0,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "optativa informacion especializada",
+      "semester": 0,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "optativa literatura paraguaya",
+      "semester": 0,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "optativa politica archivistica",
+      "semester": 0,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "organizacion y representacion del conocimiento i",
+      "semester": 3,
+      "credits": 4
+    }
+    ,
+    {
+      "name": "organizacion y representacion del conocimiento ii",
+      "semester": 4,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "organizacion y representacion del conocimiento iii",
+      "semester": 5,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "organizacion y representacion del conocimiento iv",
+      "semester": 6,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "planificacion estrategica",
+      "semester": 7,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "politicas de informacion",
+      "semester": 7,
+      "credits": 4
+    }
+    ,
+    {
+      "name": "practica profesional supervisada i",
+      "semester": 0,
+      "credits": 30
+    }
+    ,
+    {
+      "name": "practica profesional supervisada ii",
+      "semester": 0,
+      "credits": 30
+    }
+    ,
+    {
+      "name": "productos de recuperacion de informacion",
+      "semester": 8,
+      "credits": 4
+    }
+    ,
+    {
+      "name": "registro del conocimiento",
+      "semester": 2,
+      "credits": 4
+    }
+    ,
+    {
+      "name": "seminario",
+      "semester": 9,
+      "credits": 5
+    }
+    ,
+    {
+      "name": "tecnicas de trabajo intelectual",
+      "semester": 1,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "tecnologia archivistica",
+      "semester": 8,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "usuarios de la informacion",
+      "semester": 5,
+      "credits": 3
+    }
+  ]
+}

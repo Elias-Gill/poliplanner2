@@ -1,0 +1,298 @@
+{
+  "career_code": "ICM",
+  "subjects": [
+    {
+      "name": "algebra",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "algoritmo",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "biomateriales",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo 1",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo 2",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo 3",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo 4",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo 5",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo 6",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "caracterizacion de materiales",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "degradacion de materiales 1",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "degradacion de materiales 2",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "derecho",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "dibujo tecnico",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "diseno asistido por computadora",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "economia y finanzas",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electiva",
+      "semester": 0,
+      "credits": 3
+    }
+    ,
+    {
+      "name": "ensayos no destructivos",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica 1",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica 2",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica 3",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica 4",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica de materiales",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica del solido",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica moderna",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "geometria analitica y vectores",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "introduccion a la ciencia de materiales",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "laboratorio de materiales 1",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "laboratorio de materiales 2",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "laboratorio de materiales 3",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "materiales avanzados",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "materiales ceramicos",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "materiales compuestos",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "materiales metalicos",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "materiales polimericos",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "mecanica",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "prevision y seguridad en el trabajo",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "probabilidad y estadistica",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "procesos 1",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "procesos 2",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "procesos 3",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "programacion",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "quimica 1",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "quimica 2",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "resistencia de materiales",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "taller de tecnologia 1",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "taller de tecnologia 2",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "termodinamica de materiales 1",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "termodinamica de materiales 2",
+      "semester": 1,
+      "credits": 0
+    }
+  ]
+}

@@ -1,0 +1,244 @@
+{
+  "career_code": "LCA",
+  "subjects": [
+    {
+      "name": "algebra",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo i",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo ii",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo iii",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo iv calculo vectorial",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo v variable compleja",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo vi transformadas de laplace y fourier",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "circulacion general de la atmosfera",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "climatologia i",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "climatologia ii",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "dinamica de la atmosfera i",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica de la atmosfera i",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica de la atmosfera ii",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica i",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica ii",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica iii",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica iv",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica v electromagnetismo",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "geometria analitica y vectores",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "instrumentos meteorologicos y metodos de observacion",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "introduccion a las ciencias atmosfericas",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "laboratorio sinoptico",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "mecanica de fluidos",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "meteorologia sinoptica i",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "meteorologia tropical",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "metodos estadisticos en ciencias atmosfericas",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "metodos numericos en ciencias de la atmosfera",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "micrometeorologia",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "optativa 1",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "optativa 2",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "optativa 3",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "optativa 4",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "optativa 5",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "optativa 6",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "probabilidad y estadistica",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "programacion",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "quimica",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "quimica de la atmosfera",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sensores remotos",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "trabajo de grado",
+      "semester": 8,
+      "credits": 0
+    }
+  ]
+}

@@ -1,0 +1,190 @@
+{
+  "career_code": "TSE",
+  "subjects": [
+    {
+      "name": "algebra",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "analisis de circuitos i",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "analisis de circuitos ii",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo i",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo ii",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo iii",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo iv variable compleja",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo v transformadas de laplace y fourier",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo vectorial i",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo vectorial ii",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "dibujo i",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "dibujo ii",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electromagnetismo",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica aplicada",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica i",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica ii",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica calor",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica electricidad",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica mecanica",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica moderna",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica ondas",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "geometria analitica y vectores",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "mecanica clasica",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "microprocesador i",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "microprocesador ii",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "programacion",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "quimica",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas digitales",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "taller i",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "taller ii",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "taller iii",
+      "semester": 6,
+      "credits": 0
+    }
+  ]
+}

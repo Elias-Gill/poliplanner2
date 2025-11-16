@@ -1,0 +1,646 @@
+{
+  "career_code": "IEK",
+  "subjects": [
+    {
+      "name": "administracion y recursos humanos",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "algebra",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "algoritmo",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "anteproyecto de trabajo de grado",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "arquitectura de microcomputadoras",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "automatizacion industrial",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "biologia i",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "biologia ii",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "bioseguridad",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo i",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo ii",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo iii",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo iv calculo vectorial",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo v variable compleja",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "calculo vi transformadas de laplace y fourier",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "circuitos electricos i",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "circuitos electricos ii",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "comunicacion oral y escrita",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "comunicacion por satelite",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "comunicaciones opticas",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "control automatico i",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "control automatico ii",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "control avanzado",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "controladores programables i",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "controladores programables ii",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "derecho",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "desarrollo del emprendedorismo",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "diagnostico por imagenes",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "dibujo tecnico",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "dibujo tecnico mecanico",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "diseno asistido por computadora",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "diseno de elementos de maquinas",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "diseno y manufactura asistido por computadora",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "economia y finanzas",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica aplicada",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica digital",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica digital i",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica digital ii",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica i",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica ii",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica iii",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica medica i",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica medica ii",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "electronica medica iii",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "elementos de maquinas",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "estadistica",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "evaluacion de proyectos",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica i",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica ii",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica iii",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica iv",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica v",
+      "semester": 4,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica vi",
+      "semester": 5,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "fisica vii",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "geometria analitica y vectores",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "idioma i",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "idioma ii",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "informatica aplicada",
+      "semester": 1,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "ingenieria de materiales",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "instalaciones electricas i",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "instalaciones electricas ii",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "instrumentacion y control industrial",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "inteligencia artificial",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "manufactura con maquinas convencionales",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "maquinas a control numerico computarizado",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "maquinas electricas",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "mecanica",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "mecanica de fluidos",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "metodologia de la investigacion",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "metodos de los elementos finitos",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "microcontroladores",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "microondas",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "modelado de sistemas fisicos",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "modulacion i",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "modulacion ii",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "neumatica e hidraulica industrial",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "optica",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "organizacion hospitalaria",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "planeamiento y control de la produccion",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "principios de electronica",
+      "semester": 3,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "principios de metrologia industrial",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "principios de sensores y actuadores",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "programacion",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "protocolos de comunicacion i",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "protocolos de comunicacion ii",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "proyecto de sistemas mecatronicos ii",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "proyecto de trabajo de grado",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "proyectos de sistemas mecatronicos i",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "proyrcto de trabajo de grado",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "quimica",
+      "semester": 2,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "quimica clinica y tecnica de laboratorio",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "redes de datos i",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "redes de datos ii",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "reologia",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "robotica",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "simulacion de sistemas dinamicos",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistema de manufactura flexible",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistema de mejoramiento ambiental",
+      "semester": 10,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas de control i",
+      "semester": 6,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas de control ii",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas de potencia i",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas de transmision y recepcion de radio",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas de transmision y recepcion de television",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas digitales i",
+      "semester": 7,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas digitales ii",
+      "semester": 8,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas informaticos para automatizacion y control industrial",
+      "semester": 9,
+      "credits": 0
+    }
+    ,
+    {
+      "name": "sistemas operativos de microcomputadoras",
+      "semester": 7,
+      "credits": 0
+    }
+  ]
+}
