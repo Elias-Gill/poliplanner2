@@ -33,6 +33,10 @@ go.work
 ehthumbs.db
 Thumbs.db
 
+poliplanner.db
+poliplanner.db-shm
+poliplanner.db-wal
+
 # Go specific
 /bin/
 /pkg/

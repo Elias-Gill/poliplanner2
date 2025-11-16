@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 )
@@ -18,9 +19,10 @@ type Config struct {
 	WriteTimeout time.Duration
 
 	// Database
-	DatabaseURL string
+	DatabaseURL   string
+	MigrationsDir string
 
-	// File paths
+	// File paths (absolute paths)
 	LayoutsDir   string
 	MetadataDir  string
 	DownloadsDir string
@@ -40,7 +42,9 @@ type Config struct {
 
 // Load loads configuration from environment variables
 func Load() *Config {
-	return &Config{
+	wd, _ := os.Getwd()
+
+	cfg := &Config{
 		// Google API
 		GoogleAPIKey: getEnv("GOOGLE_API_KEY", ""),
 
@@ -50,12 +54,13 @@ func Load() *Config {
 		WriteTimeout: getEnvAsDuration("WRITE_TIMEOUT", 10*time.Second),
 
 		// Database
-		DatabaseURL: getEnv("DATABASE_URL", ""),
+		DatabaseURL:   resolvePath(wd, "DATABASE_URL", "poliplanner.db"),
+		MigrationsDir: resolvePath(wd, "MIGRATIONS_DIR", "db/migrations"),
 
-		// File paths
-		LayoutsDir:   getEnv("LAYOUTS_DIR", "layouts"),
-		MetadataDir:  getEnv("METADATA_DIR", "metadata"),
-		DownloadsDir: getEnv("DOWNLOADS_DIR", "downloads"),
+		// File paths (resolved from working directory)
+		LayoutsDir:   resolvePath(wd, "LAYOUTS_DIR", "excelparser/layouts"),
+		MetadataDir:  resolvePath(wd, "METADATA_DIR", "excelparser/metadata"),
+		DownloadsDir: resolvePath(wd, "DOWNLOADS_DIR", "downloads"),
 
 		// Scrapper
 		ScrapperTimeout: getEnvAsDuration("SCRAPPER_TIMEOUT", 30*time.Second),
@@ -65,6 +70,8 @@ func Load() *Config {
 		EnableScrapping: getEnvAsBool("ENABLE_SCRAPPING", true),
 		EnableDownloads: getEnvAsBool("ENABLE_DOWNLOADS", true),
 	}
+
+	return cfg
 }
 
 // Validate checks if required configuration is present
@@ -72,11 +79,9 @@ func (c *Config) Validate() error {
 	if c.GoogleAPIKey == "" {
 		return fmt.Errorf("GOOGLE_API_KEY is required")
 	}
-
 	if c.DatabaseURL == "" {
 		return fmt.Errorf("DATABASE_URL is required")
 	}
-
 	return nil
 }
 
@@ -113,4 +118,17 @@ func getEnvAsDuration(key string, defaultValue time.Duration) time.Duration {
 		return value
 	}
 	return defaultValue
+}
+
+// resolvePath returns absolute path:
+// - If env var is set: use it (absolute or relative to working directory)
+// - Else: join with working directory
+func resolvePath(wd, envKey, defaultRel string) string {
+	if raw := os.Getenv(envKey); raw != "" {
+		if filepath.IsAbs(raw) {
+			return raw
+		}
+		return filepath.Join(wd, raw)
+	}
+	return filepath.Join(wd, defaultRel)
 }

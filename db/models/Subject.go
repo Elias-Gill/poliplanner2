@@ -58,4 +58,3 @@ type Subject struct {
 	CommitteeMember1   string
 	CommitteeMember2   string
 }
-

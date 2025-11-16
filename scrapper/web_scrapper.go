@@ -53,9 +53,10 @@ var httpClient = &http.Client{
 }
 
 func NewWebScrapper(googleHelper *GoogleDriveHelper) *WebScrapper {
-	base, _ := url.Parse("https://www.pol.una.py/academico/horarios-de-clases-y-examenes/")
+	uri := "https://www.pol.una.py/academico/horarios-de-clases-y-examenes/"
+	base, _ := url.Parse(uri)
 	return &WebScrapper{
-		targetURL:    "https://www.pol.una.py/academico/horarios-de-clases-y-examenes/",
+		targetURL:    uri,
 		baseURL:      base,
 		googleHelper: googleHelper,
 	}
