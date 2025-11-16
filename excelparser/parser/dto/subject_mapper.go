@@ -1,15 +1,15 @@
 package dto
 
 import (
-	"github.com/elias-gill/poliplanner2/persistence"
+	"github.com/elias-gill/poliplanner2/persistence/models"
 )
 
-func MapToSubject(dto SubjectDTO) *persistence.Subject {
+func MapToSubject(dto SubjectDTO) *models.Subject {
 	if (SubjectDTO{}) == dto {
 		return nil
 	}
 
-	return &persistence.Subject{
+	return &models.Subject{
 		// General information
 		Department:  dto.Department,
 		SubjectName: dto.SubjectName,

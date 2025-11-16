@@ -8,7 +8,7 @@ import (
 )
 
 func TestParseSheet(t *testing.T) {
-    testExcelPath := "../../testdata/excel/testExcel.xlsx"
+    testExcelPath := "../../testdata/excelparser/testExcel.xlsx"
     parser, err := NewExcelParser("../layouts")
     if err != nil {
         t.Fatalf("Failed to create parser: %v", err)

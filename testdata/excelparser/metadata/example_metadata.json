@@ -1,0 +1,90 @@
+{
+  "career_code": "IIN",
+  "subjects": [
+    {
+      "name": "algebra lineal",
+      "semester": 2,
+      "credits": 5
+    },
+    {
+      "name": "calculo i",
+      "semester": 1,
+      "credits": 6
+    },
+    {
+      "name": "calculo ii",
+      "semester": 2,
+      "credits": 6
+    },
+    {
+      "name": "fisica i",
+      "semester": 1,
+      "credits": 5
+    },
+    {
+      "name": "fisica ii",
+      "semester": 2,
+      "credits": 5
+    },
+    {
+      "name": "programacion i",
+      "semester": 1,
+      "credits": 5
+    },
+    {
+      "name": "programacion ii",
+      "semester": 2,
+      "credits": 5
+    },
+    {
+      "name": "sistemas digitales",
+      "semester": 3,
+      "credits": 4
+    },
+    {
+      "name": "estructuras de datos",
+      "semester": 3,
+      "credits": 5
+    },
+    {
+      "name": "tecnicas de organizacion y metodos",
+      "semester": 5,
+      "credits": 4
+    },
+    {
+      "name": "base de datos i",
+      "semester": 4,
+      "credits": 5
+    },
+    {
+      "name": "sistemas operativos",
+      "semester": 4,
+      "credits": 5
+    },
+    {
+      "name": "ingenieria de software",
+      "semester": 5,
+      "credits": 5
+    },
+    {
+      "name": "redes de computadoras",
+      "semester": 5,
+      "credits": 5
+    },
+    {
+      "name": "inteligencia artificial",
+      "semester": 6,
+      "credits": 5
+    },
+    {
+      "name": "sistemas distribuidos",
+      "semester": 6,
+      "credits": 5
+    },
+    {
+      "name": "proyecto de grado",
+      "semester": 7,
+      "credits": 10
+    }
+  ]
+}
