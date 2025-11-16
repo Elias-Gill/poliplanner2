@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 )
 
 const (
@@ -26,7 +27,11 @@ func TestFindLatestExcelUrlFromLocalHtml(t *testing.T) {
 	}
 
 	s := NewWebScrapper(nil)
+	start := time.Now()
 	src, err := s.FindLatestSourceFromHTML(string(html))
+	end := time.Now()
+	t.Logf("Scrapping concluded in: %dms", end.Sub(start).Milliseconds())
+
 	if err != nil {
 		t.Fatalf("find source: %v", err)
 	}

@@ -16,10 +16,10 @@ import (
 // ================================
 
 type GoogleDriveHelper struct {
-	apiKey                   string
-	folderIDPattern          *regexp.Regexp
-	spreadsheetIDPattern     *regexp.Regexp
-	httpClient               *http.Client
+	apiKey               string
+	folderIDPattern      *regexp.Regexp
+	spreadsheetIDPattern *regexp.Regexp
+	httpClient           *http.Client
 }
 
 type GoogleFile struct {
@@ -70,9 +70,9 @@ func (g *GoogleDriveHelper) ListSourcesInURL(url string) ([]*ExcelDownloadSource
 	for _, file := range files {
 		if g.isExcelFile(file.Name) {
 			downloadURL := fmt.Sprintf("https://drive.google.com/uc?export=download&id=%s", file.ID)
-			fileDate := extractDateFromFilename(file.Name)
+			fileDate, err := extractDateFromFilename(file.Name)
 
-			if fileDate.IsZero() {
+			if err != nil {
 				continue
 			}
 
@@ -104,10 +104,10 @@ func (g *GoogleDriveHelper) GetSourceFromSpreadsheetLink(url string) (*ExcelDown
 	}
 
 	downloadURL := fmt.Sprintf("https://docs.google.com/spreadsheets/d/%s/export?format=xlsx", spreadsheetID)
-	fileDate := extractDateFromFilename(metadata.Name)
+	fileDate, err := extractDateFromFilename(metadata.Name)
 
-	if fileDate.IsZero() {
-		return nil, fmt.Errorf("could not extract date from filename: %s", metadata.Name)
+	if err != nil {
+		return nil, fmt.Errorf("Could not extract date from filename: %s", metadata.Name)
 	}
 
 	return &ExcelDownloadSource{
@@ -142,7 +142,7 @@ func (g *GoogleDriveHelper) listFilesInFolder(folderID string) ([]GoogleFile, er
 		return nil, fmt.Errorf("GOOGLE_API_KEY not set")
 	}
 
-	url := fmt.Sprintf("https://www.googleapis.com/drive/v3/files?q='%s'+in+parents&key=%s", 
+	url := fmt.Sprintf("https://www.googleapis.com/drive/v3/files?q='%s'+in+parents&key=%s",
 		folderID, g.apiKey)
 
 	req, err := http.NewRequest("GET", url, nil)
@@ -174,7 +174,7 @@ func (g *GoogleDriveHelper) fetchSpreadsheetMetadata(spreadsheetID string) (*Goo
 		return nil, fmt.Errorf("GOOGLE_API_KEY not set")
 	}
 
-	url := fmt.Sprintf("https://www.googleapis.com/drive/v3/files/%s?fields=name&key=%s", 
+	url := fmt.Sprintf("https://www.googleapis.com/drive/v3/files/%s?fields=name&key=%s",
 		spreadsheetID, g.apiKey)
 
 	req, err := http.NewRequest("GET", url, nil)
