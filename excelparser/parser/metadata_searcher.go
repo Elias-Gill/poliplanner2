@@ -42,6 +42,8 @@ type SubjectMetadataLoader struct {
 // ================================
 
 func NewSubjectMetadataLoader(metadataDir string) *SubjectMetadataLoader {
+	log.Debug("Creating subject metadata loader", "metadata_dir", metadataDir)
+
 	loader := &SubjectMetadataLoader{
 		metadataDir:   metadataDir,
 		subjectsCache: make(map[string][]SubjectMetadata),
@@ -53,17 +55,21 @@ func NewSubjectMetadataLoader(metadataDir string) *SubjectMetadataLoader {
 
 func (loader *SubjectMetadataLoader) FindSubjectByName(careerCode, subjectName string) (*SubjectMetadata, error) {
 	if subjectName == "" {
-		return nil, fmt.Errorf("Error: Subject without name\n")
+		return nil, fmt.Errorf("subject name cannot be empty")
 	}
+
+	log.Debug("Searching for subject", "career", careerCode, "subject", subjectName)
 
 	// Check fast cache comparing prefixes
 	if loader.cachedName1 != "" && loader.matchesCache(subjectName, loader.cachedName1) {
 		loader.CacheHits++
+		log.Debug("Cache hit on primary cache entry", "cache_hits", loader.CacheHits)
 		return loader.cachedMetadata1, nil
 	}
 	if loader.cachedName2 != "" && loader.matchesCache(subjectName, loader.cachedName2) {
 		loader.CacheHits++
 		loader.swapCacheEntries()
+		log.Debug("Cache hit on secondary cache entry", "cache_hits", loader.CacheHits)
 		return loader.cachedMetadata2, nil
 	}
 
@@ -90,47 +96,61 @@ func (loader *SubjectMetadataLoader) FindSubjectByName(careerCode, subjectName s
 	loader.updateCache(subjectName, found)
 
 	if found == nil {
-		return nil, fmt.Errorf("Error: Cannot found subject metadata for subject %s\n", subjectName)
+		log.Warn("Subject metadata not found", "career", careerCode, "subject", subjectName)
+		return nil, fmt.Errorf("cannot find subject metadata for subject: %s", subjectName)
 	}
+
+	log.Debug("Subject found successfully",
+		"subject", found.Name,
+		"semester", found.Semester,
+		"credits", found.Credits)
 	return found, nil
 }
 
 func (loader *SubjectMetadataLoader) FindSubjectByExactName(careerCode, subjectName string) *SubjectMetadata {
+	log.Debug("Searching for subject by exact name", "career", careerCode, "subject", subjectName)
+
 	subjects := loader.GetSubjectsForCareer(careerCode)
 
 	searchName := strings.ToLower(strings.TrimSpace(subjectName))
 
 	for _, subject := range subjects {
 		if strings.ToLower(strings.TrimSpace(subject.Name)) == searchName {
+			log.Debug("Exact match found", "subject", subject.Name)
 			return &subject
 		}
 	}
 
+	log.Debug("No exact match found")
 	return nil
 }
 
 func (loader *SubjectMetadataLoader) GetSubjectsForCareer(careerCode string) []SubjectMetadata {
 	if subjects, exists := loader.subjectsCache[careerCode]; exists {
+		log.Debug("Career subjects found in cache", "career", careerCode, "subjects_count", len(subjects))
 		return subjects
 	}
 
+	log.Debug("Loading career subjects from file", "career", careerCode)
 	filePath := filepath.Join(loader.metadataDir, fmt.Sprintf("%s.json", careerCode))
 	subjects, err := loader.loadSubjectsFromFile(filePath)
 	if err != nil {
-		fmt.Printf("Warning: No metadata found for career %s: %v\n", careerCode, err)
+		log.Warn("No metadata found for career", "career", careerCode, "error", err)
 		return []SubjectMetadata{}
 	}
 
 	loader.subjectsCache[careerCode] = subjects
+	log.Debug("Career subjects loaded and cached", "career", careerCode, "subjects_count", len(subjects))
 	return subjects
 }
 
 // NOTE: Intended for debug purposes
 func (loader *SubjectMetadataLoader) GetAllCareerCodes() []string {
-	var codes []string
+	codes := make([]string, 0, len(loader.subjectsCache))
 	for code := range loader.subjectsCache {
 		codes = append(codes, code)
 	}
+	log.Debug("Retrieved all career codes", "count", len(codes))
 	return codes
 }
 
@@ -139,27 +159,42 @@ func (loader *SubjectMetadataLoader) GetAllCareerCodes() []string {
 // =====================================
 
 func (loader *SubjectMetadataLoader) preloadAllMetadata() {
+	log.Info("Preloading all metadata files", "directory", loader.metadataDir)
+
 	files, err := filepath.Glob(filepath.Join(loader.metadataDir, "*.json"))
 	if err != nil {
-		fmt.Printf("Warning: Error reading metadata directory: %v\n", err)
+		log.Warn("Error reading metadata directory", "error", err)
 		return
 	}
+
+	log.Debug("Found metadata files", "count", len(files))
+	totalLoaded := 0
 
 	for _, file := range files {
 		careerCode := strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
 
 		subjects, err := loader.loadSubjectsFromFile(file)
 		if err != nil {
-			fmt.Printf("Warning: Skipping invalid metadata file %s: %v\n", file, err)
+			log.Warn("Skipping invalid metadata file", "file", file, "error", err)
 			continue
 		}
 
 		loader.subjectsCache[careerCode] = subjects
-		fmt.Printf("Loaded %d metadata subjects for career: %s\n", len(subjects), careerCode)
+		totalLoaded += len(subjects)
+		log.Debug("Loaded metadata subjects",
+			"career", careerCode,
+			"subjects_count", len(subjects),
+			"file", file)
 	}
+
+	log.Info("Metadata preloading completed",
+		"careers_loaded", len(loader.subjectsCache),
+		"total_subjects", totalLoaded)
 }
 
 func (loader *SubjectMetadataLoader) loadSubjectsFromFile(filePath string) ([]SubjectMetadata, error) {
+	log.Debug("Loading subjects from file", "file", filePath)
+
 	data, err := os.ReadFile(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("error reading file %s: %v", filePath, err)
@@ -170,10 +205,17 @@ func (loader *SubjectMetadataLoader) loadSubjectsFromFile(filePath string) ([]Su
 		return nil, fmt.Errorf("error parsing JSON file %s: %v", filePath, err)
 	}
 
+	log.Debug("Successfully parsed career subjects",
+		"career", careerSubjects.CareerCode,
+		"career_name", careerSubjects.CareerName,
+		"subjects_count", len(careerSubjects.Subjects))
+
 	return careerSubjects.Subjects, nil
 }
 
 func (loader *SubjectMetadataLoader) searchMetadata(careerCode, normalizedName string) *SubjectMetadata {
+	log.Debug("Searching in metadata", "career", careerCode, "normalized_name", normalizedName)
+
 	subjects := loader.GetSubjectsForCareer(careerCode)
 
 	for _, subject := range subjects {
@@ -189,6 +231,7 @@ func (loader *SubjectMetadataLoader) matchesCache(current, cached string) bool {
 }
 
 func (loader *SubjectMetadataLoader) updateCache(name string, meta *SubjectMetadata) {
+	log.Debug("Updating search cache", "name", name, "found", meta != nil)
 	loader.cachedName2 = loader.cachedName1
 	loader.cachedMetadata2 = loader.cachedMetadata1
 	loader.cachedName1 = name
@@ -196,6 +239,7 @@ func (loader *SubjectMetadataLoader) updateCache(name string, meta *SubjectMetad
 }
 
 func (loader *SubjectMetadataLoader) swapCacheEntries() {
+	log.Debug("Swapping cache entries")
 	tempName := loader.cachedName1
 	tempMeta := loader.cachedMetadata1
 	loader.cachedName1 = loader.cachedName2
@@ -233,7 +277,9 @@ func (loader *SubjectMetadataLoader) normalizeName(raw string) string {
 		}
 	}
 
-	return strings.TrimSpace(sb.String())
+	result := strings.TrimSpace(sb.String())
+	log.Debug("Normalized subject name", "original", raw, "normalized", result)
+	return result
 }
 
 func (loader *SubjectMetadataLoader) removeAccent(c rune) rune {
@@ -254,9 +300,6 @@ func (loader *SubjectMetadataLoader) removeAccent(c rune) rune {
 		return 'n'
 	default:
 		if c > 127 {
-			// FUTURE: For other accented characters, use simple mapping
-			// In a more complete implementation, you could use golang.org/x/text/transform
-			// or similar for full Unicode normalization
 			return c
 		}
 		return c

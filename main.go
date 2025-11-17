@@ -6,9 +6,13 @@ import (
 )
 
 func main() {
-	config := config.Load()
+	cfg := config.Load()
+	if err := cfg.Validate(); err != nil {
+		panic(err.Error())
+	}
+
 	println("initializing db")
-	err := db.InitDB(config)
+	err := db.InitDB(cfg)
 	if err != nil {
 		panic(err.Error())
 	}

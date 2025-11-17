@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -34,6 +35,9 @@ type Config struct {
 	// Feature flags
 	EnableScrapping bool
 	EnableDownloads bool
+
+	// Logging
+	Verbose bool
 }
 
 // ================================
@@ -69,6 +73,9 @@ func Load() *Config {
 		// Feature flags
 		EnableScrapping: getEnvAsBool("ENABLE_SCRAPPING", true),
 		EnableDownloads: getEnvAsBool("ENABLE_DOWNLOADS", true),
+
+		// Logging
+		Verbose: getEnvAsBool("VERBOSE_LOGS", false),
 	}
 
 	return cfg

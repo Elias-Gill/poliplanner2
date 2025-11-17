@@ -18,6 +18,7 @@ type JsonLayoutLoader struct {
 }
 
 func NewJsonLayoutLoader(layoutsDir string) *JsonLayoutLoader {
+	log.Debug("Creating JSON layout loader", "layouts_dir", layoutsDir)
 	return &JsonLayoutLoader{
 		layoutsDir: layoutsDir,
 	}
@@ -31,6 +32,7 @@ type jsonLayoutFile struct {
 }
 
 func (l *JsonLayoutLoader) LoadJsonLayouts() ([]Layout, error) {
+	log.Debug("Loading JSON layouts", "directory", l.layoutsDir)
 	var layouts []Layout
 
 	files, err := filepath.Glob(filepath.Join(l.layoutsDir, "*.json"))
@@ -38,18 +40,25 @@ func (l *JsonLayoutLoader) LoadJsonLayouts() ([]Layout, error) {
 		return nil, fmt.Errorf("error reading layout directory: %v", err)
 	}
 
+	log.Debug("Found JSON files", "count", len(files), "files", files)
+
 	if len(files) == 0 {
 		return nil, fmt.Errorf("no JSON files found in: %s", l.layoutsDir)
 	}
 
+	loadedCount := 0
 	for _, file := range files {
 		layout, err := l.loadSingleLayout(file)
 		if err != nil {
-			fmt.Printf("Error loading layout %s: %v\n", file, err)
+			log.Warn("Error loading layout file", "file", file, "error", err)
 			continue
 		}
 		layouts = append(layouts, *layout)
+		loadedCount++
+		log.Debug("Successfully loaded layout", "file", file, "headers_count", len(layout.Headers))
 	}
+
+	log.Info("Layout loading completed", "loaded", loadedCount, "total_files", len(files))
 
 	if len(layouts) == 0 {
 		return nil, fmt.Errorf("no valid layouts could be loaded")
@@ -59,6 +68,8 @@ func (l *JsonLayoutLoader) LoadJsonLayouts() ([]Layout, error) {
 }
 
 func (l *JsonLayoutLoader) loadSingleLayout(filePath string) (*Layout, error) {
+	log.Debug("Loading single layout", "file", filePath)
+
 	data, err := os.ReadFile(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("cannot read file: %v", err)
@@ -85,6 +96,11 @@ func (l *JsonLayoutLoader) loadSingleLayout(filePath string) (*Layout, error) {
 			patterns[entry.Header] = entry.Patterns
 		}
 	}
+
+	log.Debug("Layout parsed successfully",
+		"file", filepath.Base(filePath),
+		"headers_count", len(headers),
+		"patterns_count", len(patterns))
 
 	return &Layout{
 		FileName: filepath.Base(filePath),

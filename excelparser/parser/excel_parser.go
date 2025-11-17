@@ -98,7 +98,7 @@ func buildFieldSetters() map[string]func(*dto.SubjectDTO, string) {
 
 func (ep *ExcelParser) ParseExcel(filePath string) error {
 	if ep.file != nil {
-		ep.file = nil // no Close, GC lo maneja
+		ep.file = nil // no Close, GC manages its deallocation
 	}
 	f, err := xlsx.OpenFile(filePath)
 	if err != nil {
@@ -117,7 +117,7 @@ func (ep *ExcelParser) ParseExcel(filePath string) error {
 }
 
 func (ep *ExcelParser) Close() {
-	ep.file = nil // no Close
+	ep.file = nil // mark for GC
 }
 
 func (ep *ExcelParser) NextValidSheet() bool {
