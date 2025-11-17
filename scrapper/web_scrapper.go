@@ -12,6 +12,8 @@ import (
 	"time"
 
 	"github.com/gocolly/colly/v2"
+
+	log "github.com/elias-gill/poliplanner2/logger"
 )
 
 // ================================
@@ -55,7 +57,7 @@ var httpClient = &http.Client{
 func NewWebScrapper(googleHelper *GoogleDriveHelper) *WebScrapper {
 	uri := "https://www.pol.una.py/academico/horarios-de-clases-y-examenes/"
 	base, _ := url.Parse(uri)
-	log.Info("Creating web scrapper", "target_url", uri)
+	log.Logger.Info("Creating web scrapper", "target_url", uri)
 	return &WebScrapper{
 		targetURL:    uri,
 		baseURL:      base,
@@ -64,7 +66,7 @@ func NewWebScrapper(googleHelper *GoogleDriveHelper) *WebScrapper {
 }
 
 func (ws *WebScrapper) FindLatestDownloadSource() (*ExcelDownloadSource, error) {
-	log.Info("Finding latest download source", "target_url", ws.targetURL)
+	log.Logger.Info("Finding latest download source", "target_url", ws.targetURL)
 
 	sources, err := ws.extractSourcesFromURL(ws.targetURL)
 	if err != nil {
@@ -74,10 +76,10 @@ func (ws *WebScrapper) FindLatestDownloadSource() (*ExcelDownloadSource, error) 
 		return nil, fmt.Errorf("no sources found")
 	}
 
-	log.Info("Found potential sources", "count", len(sources))
+	log.Logger.Info("Found potential sources", "count", len(sources))
 	var latestSource *ExcelDownloadSource
 	for _, source := range sources {
-		log.Debug("Evaluating source",
+		log.Logger.Debug("Evaluating source",
 			"file", source.FileName,
 			"date", source.UploadDate.Format("2006-01-02"),
 			"url", source.URL)
@@ -87,7 +89,7 @@ func (ws *WebScrapper) FindLatestDownloadSource() (*ExcelDownloadSource, error) 
 	}
 
 	if latestSource != nil {
-		log.Info("Selected latest source",
+		log.Logger.Info("Selected latest source",
 			"file", latestSource.FileName,
 			"date", latestSource.UploadDate.Format("2006-01-02"))
 	}
@@ -96,7 +98,7 @@ func (ws *WebScrapper) FindLatestDownloadSource() (*ExcelDownloadSource, error) 
 
 // For debugging/testing
 func (ws *WebScrapper) FindLatestSourceFromHTML(htmlContent string) (*ExcelDownloadSource, error) {
-	log.Debug("Finding latest source from HTML content", "content_length", len(htmlContent))
+	log.Logger.Debug("Finding latest source from HTML content", "content_length", len(htmlContent))
 
 	sources, err := ws.extractSourcesFromHTML(htmlContent)
 	if err != nil {
@@ -106,7 +108,7 @@ func (ws *WebScrapper) FindLatestSourceFromHTML(htmlContent string) (*ExcelDownl
 		return nil, fmt.Errorf("no sources found")
 	}
 
-	log.Debug("Found sources from HTML", "count", len(sources))
+	log.Logger.Debug("Found sources from HTML", "count", len(sources))
 	var latestSource *ExcelDownloadSource
 	for _, source := range sources {
 		if latestSource == nil || source.UploadDate.After(latestSource.UploadDate) {
@@ -118,38 +120,38 @@ func (ws *WebScrapper) FindLatestSourceFromHTML(htmlContent string) (*ExcelDownl
 
 // DownloadThisSource downloads the Excel file to a temporary file
 func (s *ExcelDownloadSource) DownloadThisSource() (string, error) {
-	log.Info("Downloading source", "file", s.FileName, "url", s.URL)
+	log.Logger.Info("Downloading source", "file", s.FileName, "url", s.URL)
 
 	req, _ := http.NewRequest("GET", s.URL, nil)
 	req.Header.Set("User-Agent", "poliplanner-bot/1.0")
 	resp, err := httpClient.Do(req)
 	if err != nil {
-		log.Error("HTTP request failed", "error", err, "url", s.URL)
+		log.Logger.Error("HTTP request failed", "error", err, "url", s.URL)
 		return "", err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Error("HTTP request returned non-OK status", "status_code", resp.StatusCode, "url", s.URL)
+		log.Logger.Error("HTTP request returned non-OK status", "status_code", resp.StatusCode, "url", s.URL)
 		return "", fmt.Errorf("HTTP %d", resp.StatusCode)
 	}
 
 	cleanName := strings.TrimSuffix(s.FileName, filepath.Ext(s.FileName))
 	tempFile, err := os.CreateTemp("", "horario_"+cleanName+"__*.xlsx")
 	if err != nil {
-		log.Error("Failed to create temporary file", "error", err)
+		log.Logger.Error("Failed to create temporary file", "error", err)
 		return "", err
 	}
 	defer tempFile.Close()
 
 	bytesCopied, err := io.Copy(tempFile, resp.Body)
 	if err != nil {
-		log.Error("Failed to copy response body to file", "error", err)
+		log.Logger.Error("Failed to copy response body to file", "error", err)
 		os.Remove(tempFile.Name())
 		return "", err
 	}
 
-	log.Info("Download completed successfully",
+	log.Logger.Info("Download completed successfully",
 		"file", tempFile.Name(),
 		"size_bytes", bytesCopied,
 		"original_name", s.FileName)
@@ -161,7 +163,7 @@ func (s *ExcelDownloadSource) DownloadThisSource() (string, error) {
 // =====================================
 
 func (ws *WebScrapper) extractSourcesFromURL(targetURL string) ([]*ExcelDownloadSource, error) {
-	log.Debug("Extracting sources from URL", "url", targetURL)
+	log.Logger.Debug("Extracting sources from URL", "url", targetURL)
 
 	sources := make([]*ExcelDownloadSource, 0, 20)
 	collector := colly.NewCollector(
@@ -175,31 +177,31 @@ func (ws *WebScrapper) extractSourcesFromURL(targetURL string) ([]*ExcelDownload
 	collector.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		href := e.Attr("href")
 		absoluteURL := e.Request.AbsoluteURL(href)
-		log.Debug("Found link", "href", href, "absolute_url", absoluteURL)
+		log.Logger.Debug("Found link", "href", href, "absolute_url", absoluteURL)
 		ws.processURL(absoluteURL, &sources)
 	})
 
 	collector.OnError(func(r *colly.Response, err error) {
-		log.Warn("Error scraping URL", "url", r.Request.URL, "error", err)
+		log.Logger.Warn("Error scraping URL", "url", r.Request.URL, "error", err)
 	})
 
 	collector.OnScraped(func(r *colly.Response) {
-		log.Debug("Scraping completed", "url", r.Request.URL, "sources_found", len(sources))
+		log.Logger.Debug("Scraping completed", "url", r.Request.URL, "sources_found", len(sources))
 	})
 
 	err := collector.Visit(targetURL)
 	if err != nil {
-		log.Error("Failed to visit target URL", "url", targetURL, "error", err)
+		log.Logger.Error("Failed to visit target URL", "url", targetURL, "error", err)
 		return nil, err
 	}
 	collector.Wait()
 
-	log.Info("URL scraping completed", "total_sources_found", len(sources))
+	log.Logger.Info("URL scraping completed", "total_sources_found", len(sources))
 	return sources, nil
 }
 
 func (ws *WebScrapper) extractSourcesFromHTML(htmlContent string) ([]*ExcelDownloadSource, error) {
-	log.Debug("Extracting sources from HTML", "html_length", len(htmlContent))
+	log.Logger.Debug("Extracting sources from HTML", "html_length", len(htmlContent))
 
 	sources := make([]*ExcelDownloadSource, 0, 20)
 	c := colly.NewCollector(
@@ -210,80 +212,80 @@ func (ws *WebScrapper) extractSourcesFromHTML(htmlContent string) ([]*ExcelDownl
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		href := e.Attr("href")
 		abs := ws.makeAbsoluteURL(href)
-		log.Debug("Processing HTML link", "href", href, "absolute_url", abs)
+		log.Logger.Debug("Processing HTML link", "href", href, "absolute_url", abs)
 		ws.processURL(abs, &sources)
 	})
 
 	if err := c.PostRaw(ws.targetURL, []byte(htmlContent)); err != nil {
-		log.Error("Failed to parse HTML content", "error", err)
+		log.Logger.Error("Failed to parse HTML content", "error", err)
 		return nil, fmt.Errorf("parse html: %v", err)
 	}
 
-	log.Debug("HTML parsing completed", "sources_found", len(sources))
+	log.Logger.Debug("HTML parsing completed", "sources_found", len(sources))
 	return sources, nil
 }
 
 func (ws *WebScrapper) processURL(absoluteURL string, sources *[]*ExcelDownloadSource) {
-	log.Debug("Processing URL", "url", absoluteURL)
+	log.Logger.Debug("Processing URL", "url", absoluteURL)
 
 	if ws.isDirectExcelDownloadURL(absoluteURL) {
-		log.Debug("URL matches direct Excel download pattern")
+		log.Logger.Debug("URL matches direct Excel download pattern")
 		if source := ws.extractDirectSource(absoluteURL); source != nil {
 			*sources = append(*sources, source)
-			log.Debug("Added direct download source", "file", source.FileName)
+			log.Logger.Debug("Added direct download source", "file", source.FileName)
 		}
 		return
 	}
 
 	if !strings.Contains(absoluteURL, "google.com") {
-		log.Debug("URL is not a Google service, skipping", "url", absoluteURL)
+		log.Logger.Debug("URL is not a Google service, skipping", "url", absoluteURL)
 		return
 	}
 
 	if ws.googleHelper == nil {
-		log.Debug("Google helper not available, skipping Google URL")
+		log.Logger.Debug("Google helper not available, skipping Google URL")
 		return
 	}
 
 	if ws.isGoogleDriveFolderURL(absoluteURL) {
-		log.Debug("URL is Google Drive folder", "url", absoluteURL)
+		log.Logger.Debug("URL is Google Drive folder", "url", absoluteURL)
 		if driveSources, _ := ws.googleHelper.ListSourcesInURL(absoluteURL); len(driveSources) > 0 {
 			*sources = append(*sources, driveSources...)
-			log.Debug("Added Google Drive folder sources", "count", len(driveSources))
+			log.Logger.Debug("Added Google Drive folder sources", "count", len(driveSources))
 		}
 	} else if ws.isGoogleSpreadsheetURL(absoluteURL) {
-		log.Debug("URL is Google Spreadsheet", "url", absoluteURL)
+		log.Logger.Debug("URL is Google Spreadsheet", "url", absoluteURL)
 		if source, _ := ws.googleHelper.GetSourceFromSpreadsheetLink(absoluteURL); source != nil {
 			*sources = append(*sources, source)
-			log.Debug("Added Google Spreadsheet source", "file", source.FileName)
+			log.Logger.Debug("Added Google Spreadsheet source", "file", source.FileName)
 		}
 	}
 }
 
 func (ws *WebScrapper) isDirectExcelDownloadURL(url string) bool {
 	matches := directDownloadPattern.MatchString(url)
-	log.Debug("Checking direct download pattern", "url", url, "matches", matches)
+	log.Logger.Debug("Checking direct download pattern", "url", url, "matches", matches)
 	return matches
 }
 
 func (ws *WebScrapper) isGoogleDriveFolderURL(url string) bool {
 	matches := googleDriveFolderPattern.MatchString(url)
-	log.Debug("Checking Google Drive folder pattern", "url", url, "matches", matches)
+	log.Logger.Debug("Checking Google Drive folder pattern", "url", url, "matches", matches)
 	return matches
 }
 
 func (ws *WebScrapper) isGoogleSpreadsheetURL(url string) bool {
 	matches := googleSpreadsheetPattern.MatchString(url)
-	log.Debug("Checking Google Spreadsheet pattern", "url", url, "matches", matches)
+	log.Logger.Debug("Checking Google Spreadsheet pattern", "url", url, "matches", matches)
 	return matches
 }
 
 func (ws *WebScrapper) extractDirectSource(uri string) *ExcelDownloadSource {
-	log.Debug("Extracting direct source", "url", uri)
+	log.Logger.Debug("Extracting direct source", "url", uri)
 
 	parsedURL, err := url.Parse(uri)
 	if err != nil {
-		log.Warn("Failed to parse URL", "url", uri, "error", err)
+		log.Logger.Warn("Failed to parse URL", "url", uri, "error", err)
 		return nil
 	}
 
@@ -294,8 +296,8 @@ func (ws *WebScrapper) extractDirectSource(uri string) *ExcelDownloadSource {
 
 	date, err := extractDateFromFilename(fileName)
 	if err != nil {
-		log.Debug("Could not extract date from filename", "file", fileName, "error", err)
-		// TODO: start working on login patterns
+		log.Logger.Debug("Could not extract date from filename", "file", fileName, "error", err)
+		// TODO: start working on log.Logger.n patterns
 		return nil
 	}
 
@@ -305,7 +307,7 @@ func (ws *WebScrapper) extractDirectSource(uri string) *ExcelDownloadSource {
 		UploadDate: date,
 	}
 
-	log.Debug("Direct source extracted", "file", fileName, "date", date.Format("2006-01-02"))
+	log.Logger.Debug("Direct source extracted", "file", fileName, "date", date.Format("2006-01-02"))
 	return source
 }
 
@@ -315,10 +317,10 @@ func (ws *WebScrapper) makeAbsoluteURL(href string) string {
 	}
 	relative, err := url.Parse(href)
 	if err != nil {
-		log.Debug("Failed to parse relative URL", "href", href, "error", err)
+		log.Logger.Debug("Failed to parse relative URL", "href", href, "error", err)
 		return href
 	}
 	absolute := ws.baseURL.ResolveReference(relative).String()
-	log.Debug("Converted relative to absolute URL", "relative", href, "absolute", absolute)
+	log.Logger.Debug("Converted relative to absolute URL", "relative", href, "absolute", absolute)
 	return absolute
 }

@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/elias-gill/poliplanner2/excelparser/parser/dto"
+	"github.com/elias-gill/poliplanner2/excelparser/dto"
 )
 
 func TestParseSheet(t *testing.T) {
