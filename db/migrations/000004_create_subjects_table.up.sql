@@ -51,4 +51,4 @@ CREATE TABLE subjects (
     FOREIGN KEY (career_id) REFERENCES careers(career_id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_subjects_name ON subjects(subject_name);
+CREATE INDEX idx_subjects_name_career ON subjects(subject_name, career_id);
