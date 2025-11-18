@@ -4,15 +4,18 @@ import "time"
 
 // Subject represents the final domain model (equivalent to Java's Subject)
 type Subject struct {
+	SubjectID int64
+	CareerID int64
+
 	// General info
-	Department    string
-	SubjectName   string
-	Semester      int
-	Section       string
+	Department  string
+	SubjectName string
+	Semester    int
+	Section     string
 
 	// Teacher info
 	TeacherTitle    string
-	TeacherLastName string
+	TeacherLastname string
 	TeacherName     string
 	TeacherEmail    string
 
@@ -33,13 +36,13 @@ type Subject struct {
 	SaturdayDates string
 
 	// Exams
-	Partial1Date  *time.Time
-	Partial1Time  string
-	Partial1Room  string
+	Partial1Date *time.Time
+	Partial1Time string
+	Partial1Room string
 
-	Partial2Date  *time.Time
-	Partial2Time  string
-	Partial2Room  string
+	Partial2Date *time.Time
+	Partial2Time string
+	Partial2Room string
 
 	Final1Date    *time.Time
 	Final1Time    string

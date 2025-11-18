@@ -18,7 +18,7 @@ func MapToSubject(dto SubjectDTO) *models.Subject {
 
 		// Teacher information
 		TeacherTitle:    dto.TeacherTitle,
-		TeacherLastName: dto.TeacherLastName,
+		TeacherLastname: dto.TeacherLastName,
 		TeacherName:     dto.TeacherName,
 		TeacherEmail:    dto.TeacherEmail,
 
