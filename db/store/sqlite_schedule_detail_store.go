@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/elias-gill/poliplanner2/db/models"
+	"github.com/elias-gill/poliplanner2/db/model"
 )
 
 type SqliteScheduleDetailStore struct {
@@ -23,7 +23,7 @@ func (s *SqliteScheduleDetailStore) Insert(ctx context.Context, scheduleID, subj
 	return err
 }
 
-func (s *SqliteScheduleDetailStore) GetSubjectsByScheduleID(ctx context.Context, scheduleID int64) ([]*models.Subject, error) {
+func (s *SqliteScheduleDetailStore) GetSubjectsByScheduleID(ctx context.Context, scheduleID int64) ([]*model.Subject, error) {
 	query := `
 	SELECT s.subject_id, s.career_id, s.department, s.subject_name, s.semester, s.section,
 	s.teacher_title, s.teacher_lastname, s.teacher_name, s.teacher_email,
@@ -49,9 +49,9 @@ func (s *SqliteScheduleDetailStore) GetSubjectsByScheduleID(ctx context.Context,
 	}
 	defer rows.Close()
 
-	var subjects []*models.Subject
+	var subjects []*model.Subject
 	for rows.Next() {
-		sub := &models.Subject{}
+		sub := &model.Subject{}
 		var careerID sql.NullInt64
 		var p1d, p2d, f1d, f1rd, f2d, f2rd sql.NullTime
 

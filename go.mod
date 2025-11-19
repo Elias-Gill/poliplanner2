@@ -17,6 +17,7 @@ require (
 	github.com/antchfx/xpath v1.3.3 // indirect
 	github.com/bits-and-blooms/bitset v1.22.0 // indirect
 	github.com/frankban/quicktest v1.14.6 // indirect
+	github.com/go-chi/chi/v5 v5.2.3 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/golang-migrate/migrate/v4 v4.19.0 // indirect
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect

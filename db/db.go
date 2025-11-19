@@ -45,7 +45,7 @@ func runMigrations(migrationsDir, databaseURL string) error {
 	if err != nil {
 		return fmt.Errorf("create migrate instance: %v", err)
 	}
-	log.Logger.Info("Applying database migrations...")
+	log.Logger.Info("Applying database migrations")
 
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 		return fmt.Errorf("migration failed: %v", err)

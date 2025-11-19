@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/elias-gill/poliplanner2/db/models"
+	"github.com/elias-gill/poliplanner2/db/model"
 )
 
 type SqliteCareerStore struct {
@@ -15,7 +15,7 @@ func NewSqliteCareerStore(db *sql.DB) *SqliteCareerStore {
 	return &SqliteCareerStore{db: db}
 }
 
-func (s *SqliteCareerStore) Insert(ctx context.Context, c *models.Career) error {
+func (s *SqliteCareerStore) Insert(ctx context.Context, c *model.Career) error {
 	query := `INSERT INTO careers (career_code, sheet_version_id) VALUES (?, ?)`
 	res, err := s.db.ExecContext(ctx, query, c.CareerCode, c.SheetVersionID)
 	if err != nil {
@@ -31,8 +31,8 @@ func (s *SqliteCareerStore) Delete(ctx context.Context, careerID int64) error {
 	return err
 }
 
-func (s *SqliteCareerStore) GetByID(ctx context.Context, careerID int64) (*models.Career, error) {
-	c := &models.Career{}
+func (s *SqliteCareerStore) GetByID(ctx context.Context, careerID int64) (*model.Career, error) {
+	c := &model.Career{}
 	var sheetVersionID sql.NullInt64
 
 	err := s.db.QueryRowContext(ctx, `
@@ -47,7 +47,7 @@ func (s *SqliteCareerStore) GetByID(ctx context.Context, careerID int64) (*model
 	return c, nil
 }
 
-func (s *SqliteCareerStore) GetBySheetVersion(ctx context.Context, versionID int64) ([]*models.Career, error) {
+func (s *SqliteCareerStore) GetBySheetVersion(ctx context.Context, versionID int64) ([]*model.Career, error) {
 	rows, err := s.db.QueryContext(ctx, `
 		SELECT career_id, career_code, sheet_version_id
 		FROM careers
@@ -58,9 +58,9 @@ func (s *SqliteCareerStore) GetBySheetVersion(ctx context.Context, versionID int
 	}
 	defer rows.Close()
 
-	careers := []*models.Career{}
+	careers := []*model.Career{}
 	for rows.Next() {
-		c := &models.Career{}
+		c := &model.Career{}
 		var sheetVersionID sql.NullInt64
 		if err := rows.Scan(&c.CareerID, &c.CareerCode, &sheetVersionID); err != nil {
 			return nil, err

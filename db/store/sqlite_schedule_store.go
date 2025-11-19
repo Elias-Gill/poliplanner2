@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/elias-gill/poliplanner2/db/models"
+	"github.com/elias-gill/poliplanner2/db/model"
 )
 
 type SqliteScheduleStore struct {
@@ -15,7 +15,7 @@ func NewSqliteScheduleStore(db *sql.DB) *SqliteScheduleStore {
 	return &SqliteScheduleStore{db: db}
 }
 
-func (s *SqliteScheduleStore) Insert(ctx context.Context, userID int64, sched *models.Schedule) (int64, error) {
+func (s *SqliteScheduleStore) Insert(ctx context.Context, userID int64, sched *model.Schedule) (int64, error) {
 	query := `
 	INSERT INTO schedules (user_id, schedule_description, schedule_sheet_version)
 	VALUES (?, ?, ?)
@@ -40,7 +40,7 @@ func (s *SqliteScheduleStore) Delete(ctx context.Context, scheduleID int64) erro
 	return err
 }
 
-func (s *SqliteScheduleStore) GetByUserID(ctx context.Context, userID int64) ([]*models.Schedule, error) {
+func (s *SqliteScheduleStore) GetByUserID(ctx context.Context, userID int64) ([]*model.Schedule, error) {
 	rows, err := s.db.QueryContext(ctx, `
 		SELECT schedule_id, created_at, schedule_description, schedule_sheet_version
 		FROM schedules
@@ -51,9 +51,9 @@ func (s *SqliteScheduleStore) GetByUserID(ctx context.Context, userID int64) ([]
 	}
 	defer rows.Close()
 
-	var list []*models.Schedule
+	var list []*model.Schedule
 	for rows.Next() {
-		sched := &models.Schedule{}
+		sched := &model.Schedule{}
 		err := rows.Scan(
 			&sched.ScheduleID,
 			&sched.CreatedAt,
@@ -68,8 +68,8 @@ func (s *SqliteScheduleStore) GetByUserID(ctx context.Context, userID int64) ([]
 	return list, rows.Err()
 }
 
-func (s *SqliteScheduleStore) GetByID(ctx context.Context, scheduleID int64) (*models.Schedule, error) {
-	sched := &models.Schedule{}
+func (s *SqliteScheduleStore) GetByID(ctx context.Context, scheduleID int64) (*model.Schedule, error) {
+	sched := &model.Schedule{}
 	err := s.db.QueryRowContext(ctx, `
 		SELECT schedule_id, created_at, user_id, schedule_description, schedule_sheet_version
 		FROM schedules WHERE schedule_id = ?`, scheduleID).

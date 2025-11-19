@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/elias-gill/poliplanner2/db/models"
+	"github.com/elias-gill/poliplanner2/db/model"
 )
 
 type SqliteSubjectStore struct {
@@ -15,7 +15,7 @@ func NewSqliteSubjectStore(db *sql.DB) *SqliteSubjectStore {
 	return &SqliteSubjectStore{db: db}
 }
 
-func (s *SqliteSubjectStore) Insert(ctx context.Context, sub *models.Subject) error {
+func (s *SqliteSubjectStore) Insert(ctx context.Context, sub *model.Subject) error {
 	query := `
 	INSERT INTO subjects (
 	career_id, department, subject_name, semester, section,
@@ -81,15 +81,15 @@ func (s *SqliteSubjectStore) Insert(ctx context.Context, sub *models.Subject) er
 	return nil
 }
 
-func (s *SqliteSubjectStore) GetByID(ctx context.Context, subjectID int64) (*models.Subject, error) {
+func (s *SqliteSubjectStore) GetByID(ctx context.Context, subjectID int64) (*model.Subject, error) {
 	return s.scanOne(ctx, `WHERE subject_id = ?`, subjectID)
 }
 
-func (s *SqliteSubjectStore) GetByCareerID(ctx context.Context, careerID int64) ([]*models.Subject, error) {
+func (s *SqliteSubjectStore) GetByCareerID(ctx context.Context, careerID int64) ([]*model.Subject, error) {
 	return s.scanMany(ctx, `WHERE career_id = ? ORDER BY semester, subject_name`, careerID)
 }
 
-func (s *SqliteSubjectStore) scanOne(ctx context.Context, where string, args ...any) (*models.Subject, error) {
+func (s *SqliteSubjectStore) scanOne(ctx context.Context, where string, args ...any) (*model.Subject, error) {
 	subs, err := s.scanMany(ctx, where, args...)
 	if err != nil || len(subs) == 0 {
 		return nil, sql.ErrNoRows
@@ -97,7 +97,7 @@ func (s *SqliteSubjectStore) scanOne(ctx context.Context, where string, args ...
 	return subs[0], nil
 }
 
-func (s *SqliteSubjectStore) scanMany(ctx context.Context, where string, args ...any) ([]*models.Subject, error) {
+func (s *SqliteSubjectStore) scanMany(ctx context.Context, where string, args ...any) ([]*model.Subject, error) {
 	query := `
 	SELECT subject_id, career_id, department, subject_name, semester, section,
 	teacher_title, teacher_lastname, teacher_name, teacher_email,
@@ -119,9 +119,9 @@ func (s *SqliteSubjectStore) scanMany(ctx context.Context, where string, args ..
 	}
 	defer rows.Close()
 
-	var result []*models.Subject
+	var result []*model.Subject
 	for rows.Next() {
-		sub := &models.Subject{}
+		sub := &model.Subject{}
 		var careerID sql.NullInt64
 		var partial1Date, partial2Date, final1Date, final1RevDate, final2Date, final2RevDate sql.NullTime
 

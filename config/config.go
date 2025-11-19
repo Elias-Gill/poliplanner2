@@ -1,11 +1,12 @@
 package config
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
 	"time"
+
+	log "github.com/elias-gill/poliplanner2/logger"
 )
 
 // Config holds all application configuration
@@ -47,9 +48,14 @@ type Config struct {
 func Load() *Config {
 	wd, _ := os.Getwd()
 
+	var googleAPIKey = getEnv("GOOGLE_API_KEY", "")
+	if googleAPIKey == "" {
+		log.Logger.Warn("Missing Google API Key, web scrapping is disabled")
+	}
+
 	cfg := &Config{
 		// Google API
-		GoogleAPIKey: getEnv("GOOGLE_API_KEY", ""),
+		GoogleAPIKey: googleAPIKey,
 
 		// Server
 		Port:         getEnv("PORT", "8080"),
@@ -63,7 +69,7 @@ func Load() *Config {
 		// File paths (resolved from working directory)
 		LayoutsDir:   resolvePath(wd, "LAYOUTS_DIR", "excelparser/layouts"),
 		MetadataDir:  resolvePath(wd, "METADATA_DIR", "excelparser/metadata"),
-		DownloadsDir: resolvePath(wd, "DOWNLOADS_DIR", "downloads"),
+		DownloadsDir: resolvePath(wd, "DOWNLOADS_DIR", "/tmp/poliplanner/"),
 
 		// Scrapper
 		ScrapperTimeout: getEnvAsDuration("SCRAPPER_TIMEOUT", 30*time.Second),
@@ -78,17 +84,6 @@ func Load() *Config {
 	}
 
 	return cfg
-}
-
-// Validate checks if required configuration is present
-func (c *Config) Validate() error {
-	if c.GoogleAPIKey == "" {
-		return fmt.Errorf("GOOGLE_API_KEY is required")
-	}
-	if c.DatabaseURL == "" {
-		return fmt.Errorf("DATABASE_URL is required")
-	}
-	return nil
 }
 
 // =====================================

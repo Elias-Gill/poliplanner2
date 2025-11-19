@@ -8,15 +8,16 @@ import (
 )
 
 func main() {
+	log.Logger.Info("Loading env configuraion")
 	cfg := config.Load()
-	if err := cfg.Validate(); err != nil {
-		panic(err.Error())
-	}
 
-	log.Logger.Debug("initializing db")
+	log.Logger.Debug("Initializing db")
 	err := db.InitDB(cfg)
 	if err != nil {
 		panic(err.Error())
 	}
+
+	// 
+
 	defer db.CloseDB()
 }

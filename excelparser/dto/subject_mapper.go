@@ -1,15 +1,15 @@
 package dto
 
 import (
-	"github.com/elias-gill/poliplanner2/db/models"
+	"github.com/elias-gill/poliplanner2/db/model"
 )
 
-func MapToSubject(dto SubjectDTO) *models.Subject {
+func MapToSubject(dto SubjectDTO) *model.Subject {
 	if (SubjectDTO{}) == dto {
 		return nil
 	}
 
-	return &models.Subject{
+	return &model.Subject{
 		// General information
 		Department:  dto.Department,
 		SubjectName: dto.SubjectName,

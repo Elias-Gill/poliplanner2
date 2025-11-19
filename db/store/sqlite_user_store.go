@@ -3,7 +3,7 @@ package store
 import (
 	"context"
 	"database/sql"
-	"github.com/elias-gill/poliplanner2/db/models"
+	"github.com/elias-gill/poliplanner2/db/model"
 )
 
 type SqliteUserStore struct {
@@ -14,7 +14,7 @@ func NewSqliteUserStore(db *sql.DB) *SqliteUserStore {
 	return &SqliteUserStore{db: db}
 }
 
-func (s *SqliteUserStore) Insert(ctx context.Context, u *models.User) error {
+func (s *SqliteUserStore) Insert(ctx context.Context, u *model.User) error {
 	query := `
 		INSERT INTO users (username, password, email)
 		VALUES (?, ?, ?)
@@ -36,8 +36,8 @@ func (s *SqliteUserStore) Delete(ctx context.Context, userID int64) error {
 	return err
 }
 
-func (s *SqliteUserStore) GetByID(ctx context.Context, userID int64) (*models.User, error) {
-	u := &models.User{}
+func (s *SqliteUserStore) GetByID(ctx context.Context, userID int64) (*model.User, error) {
+	u := &model.User{}
 	err := s.db.QueryRowContext(ctx, `
 		SELECT user_id, username, password, email,
 		       recovery_token_hash, recovery_token_expiration, recovery_token_used
@@ -50,8 +50,8 @@ func (s *SqliteUserStore) GetByID(ctx context.Context, userID int64) (*models.Us
 	return u, nil
 }
 
-func (s *SqliteUserStore) GetByUsername(ctx context.Context, username string) (*models.User, error) {
-	u := &models.User{}
+func (s *SqliteUserStore) GetByUsername(ctx context.Context, username string) (*model.User, error) {
+	u := &model.User{}
 	err := s.db.QueryRowContext(ctx, `
 		SELECT user_id, username, password, email,
 		       recovery_token_hash, recovery_token_expiration, recovery_token_used
@@ -64,8 +64,8 @@ func (s *SqliteUserStore) GetByUsername(ctx context.Context, username string) (*
 	return u, nil
 }
 
-func (s *SqliteUserStore) GetByEmail(ctx context.Context, email string) (*models.User, error) {
-	u := &models.User{}
+func (s *SqliteUserStore) GetByEmail(ctx context.Context, email string) (*model.User, error) {
+	u := &model.User{}
 	err := s.db.QueryRowContext(ctx, `
 		SELECT user_id, username, password, email,
 		       recovery_token_hash, recovery_token_expiration, recovery_token_used
