@@ -1,0 +1,66 @@
+{{define "content"}}
+<div class="section py-6" style="background: #f9fafb; min-height: 100vh; display: flex; align-items: center;">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-5-tablet is-4-desktop">
+        <div class="has-text-centered mb-6">
+          <h1 class="title is-3 has-text-weight-bold" style="color: #2c3e50;">Crear cuenta</h1>
+          <p class="subtitle is-6" style="color: #7a7a7a;">Registrate para empezar a usar Poliplanner</p>
+        </div>
+        <div class="card" style="border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); border: none;">
+          <div class="card-content p-6">
+            <div id="messages"></div>
+            <form id="signup-form"
+                            hx-post="/user/signup"
+                            hx-target="#messages"
+                            hx-swap="innerHTML">
+              <div class="field mb-5">
+                <p class="control has-icons-left">
+                  <input class="input is-large" type="text" name="username"
+                                        placeholder="Nombre de usuario"
+                                        required
+                                        style="border-radius: 8px; border: 1.5px solid #dbdbdb;">
+                  <span class="icon is-left" style="color: #7a7a7a;">
+                    <i class="bi bi-person"></i>
+                  </span>
+                </p>
+              </div>
+              <div class="field mb-5">
+                <p class="control has-icons-left">
+                  <input class="input is-large" type="email" name="email"
+                                        placeholder="Correo electrónico"
+                                        required
+                                        style="border-radius: 8px; border: 1.5px solid #dbdbdb;">
+                  <span class="icon is-left" style="color: #7a7a7a;">
+                    <i class="bi bi-envelope"></i>
+                  </span>
+                </p>
+              </div>
+              <div class="field mb-5">
+                <p class="control has-icons-left">
+                  <input class="input is-large" type="password" name="password"
+                                        placeholder="Contraseña (mínimo 6 caracteres)"
+                                        required
+                                        style="border-radius: 8px; border: 1.5px solid #dbdbdb;">
+                  <span class="icon is-left" style="color: #7a7a7a;">
+                    <i class="bi bi-lock"></i>
+                  </span>
+                </p>
+              </div>
+              <button class="button is-primary is-fullwidth is-large has-text-weight-semibold"
+                                type="submit"
+                                style="border-radius: 10px; font-size: 1.1rem;">
+                Crear cuenta
+              </button>
+            </form>
+            <div class="has-text-centered mt-6" style="font-size: 0.85rem; color: #7a7a7a;">
+              ¿Ya tenés cuenta?
+              <a href="/user/login" style="color: #3273dc; font-weight: 600;">Iniciar sesión</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{end}}

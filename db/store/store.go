@@ -27,9 +27,9 @@ type CareerStorer interface {
 }
 
 type SubjectStorer interface {
-	Insert(ctx context.Context, s *model.Career) error
+	Insert(ctx context.Context, s *model.Subject) error
 	GetByID(ctx context.Context, subjectID int64) (*model.Subject, error)
-	GetByCareerId(ctx context.Context, careerID int64) ([]*model.Subject, error)
+	GetByCareerID(ctx context.Context, careerID int64) ([]*model.Subject, error)
 }
 
 type ScheduleStorer interface {
@@ -41,5 +41,5 @@ type ScheduleStorer interface {
 
 type ScheduleDetailStorer interface {
 	Insert(ctx context.Context, scheduleID int64, subjectID int64) error
-	GetSubjectsByScheduleID(ctx context.Context, scheduleID int64) (error, []*model.Subject)
+	GetSubjectsByScheduleID(ctx context.Context, scheduleID int64) ([]*model.Subject, error)
 }

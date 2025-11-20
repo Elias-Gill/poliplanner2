@@ -15,20 +15,21 @@ func NewSqliteSheetVersionStore(db *sql.DB) *SqliteSheetVersionStore {
 	return &SqliteSheetVersionStore{db: db}
 }
 
-func (s *SqliteSheetVersionStore) Insert(ctx context.Context, sv *model.SheetVersion) (int64, error) {
+func (s *SqliteSheetVersionStore) Insert(ctx context.Context, sv *model.SheetVersion) error {
 	query := `
 	INSERT INTO sheet_version (file_name, url)
 	VALUES (?, ?)
 	`
 	res, err := s.db.ExecContext(ctx, query, sv.FileName, sv.URL)
 	if err != nil {
-		return 0, err
+		return err
 	}
 	id, err := res.LastInsertId()
 	if err != nil {
-		return 0, err
+		return err
 	}
-	return id, nil
+	sv.VersionID = id
+	return nil
 }
 
 func (s *SqliteSheetVersionStore) GetNewest(ctx context.Context) (*model.SheetVersion, error) {

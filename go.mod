@@ -38,8 +38,9 @@ require (
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
 	github.com/shabbyrobe/xmlwriter v0.0.0-20200208144257-9fca06d00ffa // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
-	golang.org/x/net v0.38.0 // indirect
-	golang.org/x/text v0.30.0 // indirect
+	golang.org/x/crypto v0.44.0
+	golang.org/x/net v0.46.0 // indirect
+	golang.org/x/text v0.31.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 )
