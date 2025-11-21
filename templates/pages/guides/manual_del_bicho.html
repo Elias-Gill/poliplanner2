@@ -1,0 +1,116 @@
+{{ define "custom_head" }}
+<head>
+  <title>Manual del bicho</title>
+</head>
+{{ end }}
+
+{{ define "content" }}
+<main layout:fragment="content">
+  <h1>Manual del BICHO</h1>
+  <section>
+    <h2>¡Bienvenido/a a la FPUNA!</h2>
+    <p>Nos alegra mucho que hayas llegado hasta acá para empezar esta nueva etapa en la
+      universidad. No te preocupes, estamos para acompañarte en este proceso.</p>
+  </section>
+  <section>
+    <h2>Algunas definiciones</h2>
+    <details>
+      <summary>Algunas palabras que vas a ver seguido:</summary>
+      <h3>Materias complementarias</h3>
+      <p>Son materias que podés cursar desde el primer semestre y no cuentan con
+        pre-requisitos.</p>
+      <h3>Materias optativas</h3>
+      <p>Son materias que podés cursar en cualquier semestre, no importa cuál. Eso sí, para
+        egresar vas a necesitar aprobar un mínimo de ellas. La cantidad de optativas depende de
+        cada carrera.</p>
+      <h3>Materias electivas</h3>
+      <p>Estas materias son generalmente son anuales, requieren que tengas cierta cantidad
+        de créditos aprobados y están enfocadas en áreas específicas de cada carrera.</p>
+      <h3>Correlatividad</h3>
+      <p>La mayoría de las materias requieren que antes hayas aprobado otras. A esto se le
+        llama correlatividad. Es importante que prestes atención a qué materias solo se habilitan
+        en ciertos semestres (o incluso solo una vez al año), porque si no las hacés a tiempo,
+        podés atrasarte varios semestres en tu carrera. Planificá bien para evitar sorpresas.</p>
+    </details>
+  </section>
+  <section>
+    <h2>Exámenes</h2>
+    <h3>Exámenes parciales</h3>
+    <p>Durante el semestre vas a rendir dos exámenes parciales. El promedio de estos dos es
+      el que se usa para habilitarte a rendir los exámenes finales.</p>
+    <p>
+      Para habilitar ambos exámenes finales (firma completa) se requiere un promedio de parciales de al menos 60%. En el
+      caso de contar con un promedio de parciales de entre 50% y 59%, entonces solo estas
+      habilitado a rendir el segundo exámen final (media firma).
+    </p>
+    <p>Si ese promedio no alcanza (promedio de parciales menor a 50%),
+      tenés la posibilidad de rendir el Primer Examen Final como si fuera un tercer parcial.
+      Luego se toman tus dos mejores notas de parciales y se vuelve a calcular el promedio de
+      parciales para definir si estas habilitado a rendir el segundo final.</p>
+    <h3>Promedio de parciales</h3>
+    <article>
+      <p>La fórmula para calcularlo es simple:</p>
+      <p><strong>PPs</strong> = (P1 + P2) / 2</p>
+      <p>Donde:<br>
+        PPs: Promedio de parciales<br>
+        P1: Primer Parcial<br>
+        P2: Segundo Parcial</p>
+    </article>
+    <h3>Exámenes finales</h3>
+    <p>El promedio de parciales (no confundir con el promedio ponderado, que veremos después) define qué finales podés rendir:</p>
+    <ul>
+      <li>Si tu promedio de parciales es igual o mayor al 60%, podés rendir el Primer y Segundo Examen Final.</li>
+      <li>Si tu promedio está entre 50% y 59%, solo te habilita para rendir el Segundo Examen Final.</li>
+      <li>Si tu promedio es menor al 50%, podés rendir el Primer Examen Final como recuperatorio.</li>
+    </ul>
+    <h3>Promedio ponderado y cálculo de la nota final</h3>
+    <p>Acá es importante aclarar bien la diferencia entre el promedio de parciales y el promedio ponderado, porque se suele confundir:</p>
+    <article>
+      <ul>
+        <li>El <strong>promedio de parciales</strong> es el que se usa para <i>habilitarte</i> a rendir los exámenes finales.</li>
+        <li>El <strong>promedio ponderado</strong> es el que se usa para <i>calcular tu nota final</i>, combinando tareas, actividades, parciales, etc.</li>
+      </ul>
+    </article>
+    <p>Por ejemplo: podés tener promedio suficiente para rendir el final, pero si tu promedio
+      ponderado es bajo, tu nota final también lo va a ser. No confundas uno con otro.</p>
+    <p>Si querés saber con más detalle cómo se calcula ese promedio ponderado y cómo impacta
+      en tu nota final, podés consultar este enlace: <a href="/guides/calculo_notas">Cálculo de
+        notas.</a>
+    </p>
+  </section>
+  <section>
+    <h2>Horas de extensión</h2>
+    <p>
+      Durante la carrera vas a tener que cumplir con <strong>30 horas de extensión</strong>.
+      Eso significa participar en actividades que complementen tu formación. De esas tres
+      actividades que vas a realizar, al menos una debe ser sí o sí de la línea
+      <strong>"A"</strong>.
+    </p>
+    <p>Las actividades pueden ser de distintos tipos:</p>
+    <ul>
+      <li>
+        <strong>A) Desarrollo sociocomunitario</strong>: Cursos extracurriculares, trabajos de campo, o pasantías de extensión.
+      </li>
+      <li>
+        <strong>B) Servicio técnico-profesional</strong>: Consultorías, asesorías o cualquier tipo de servicio profesional.
+      </li>
+      <li>
+        <strong>C) Producción de materiales educativos</strong>: Creación de materiales didácticos, revistas, publicaciones, o participación en cursos de invierno.
+      </li>
+      <li>
+        <strong>D) Programa educativo social, cultural y recreativo</strong>: Actividades deportivas, culturales o recreativas organizadas por la universidad.
+      </li>
+      <li>
+        <strong>E) Espacio de intercambio de saberes</strong>: Visitas técnicas, viajes de estudios, congresos, foros, seminarios, exposiciones, paneles, conferencias, entre otros.
+      </li>
+      <li>
+        <strong>F) Promoción y concienciación social</strong>: Actividades enfocadas en concienciación social o promoción de carreras.
+      </li>
+      <li>
+        <strong>G) Otras actividades</strong>: Cualquier otra actividad que la universidad declare como “de interés” y que pueda surgir durante el semestre.
+      </li>
+    </ul>
+  </section>
+  <p><a href="/guides/">Volver a Guías y Ayuda</a></p>
+</main>
+{{ end }}

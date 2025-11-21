@@ -1,0 +1,96 @@
+{{ define "custom_head" }}
+<head>
+  <title>Cálculo de Notas</title>
+</head>
+{{ end }}
+{{ define "content" }}
+<main>
+  <h1>Cálculo de Notas</h1>
+  <p>En esta guía se explica cómo se calcula la nota final según el reglamento académico.</p>
+  <section>
+    <h2>¿Cómo se calcula la Puntuación Final?</h2>
+    <p>La Puntuación Final (PF) usa el 60% del Examen Final (EF) y el 40% del Promedio Ponderado (PP).</p>
+    <p><strong>PF = 0.6 × EF + 0.4 × PP</strong></p>
+    <h3>¿Qué significa cada componente?</h3>
+    <div>
+      <p><strong>EF:</strong> Resultado del Examen Final. Debe ser al menos 50% para aprobar.</p>
+      <p><strong>PP:</strong> Promedio ponderado de parciales, trabajos y talleres. Su cálculo depende de la materia.</p>
+    </div>
+  </section>
+  <section>
+    <h2>Escala de Calificaciones</h2>
+    <p>Una vez obtenida la PF, se convierte a nota y calificación usando la siguiente escala.</p>
+    <div class="table-container">
+      <table border="1">
+        <thead>
+          <tr>
+            <th>Situación Académica</th>
+            <th>Puntuación PF</th>
+            <th>Nota</th>
+            <th>Calificación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Reprobado</td>
+            <td>0–59%</td>
+            <td>1</td>
+            <td>Insuficiente</td>
+          </tr>
+          <tr>
+            <td>Aprobado</td>
+            <td>60–70%</td>
+            <td>2</td>
+            <td>Regular</td>
+          </tr>
+          <tr>
+            <td>Aprobado</td>
+            <td>71–80%</td>
+            <td>3</td>
+            <td>Bueno</td>
+          </tr>
+          <tr>
+            <td>Aprobado</td>
+            <td>81–90%</td>
+            <td>4</td>
+            <td>Distinguido</td>
+          </tr>
+          <tr>
+            <td>Aprobado</td>
+            <td>91–100%</td>
+            <td>5</td>
+            <td>Sobresaliente</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section>
+    <h3>Consideraciones</h3>
+    <div>
+      <p>El Examen Final requiere al menos 50% para aprobar, sin importar el PP.</p>
+      <p>Si la PF tiene decimales, se redondea hacia arriba desde 0.5.</p>
+    </div>
+  </section>
+  <section>
+    <h2>Cálculo de Promedio Ponderado</h2>
+    <p>No todas las actividades tienen el mismo peso. Cada materia puede definirlos de forma distinta.</p>
+    <p>Este promedio contribuye a la nota final, pero no debe confundirse con el promedio de parciales, que se usa para otorgar la firma.</p>
+    <h3>¿Cómo se calcula?</h3>
+    <p>Se multiplica cada nota por su peso en porcentaje y se divide el total por 100.</p>
+    <div>
+      <p>Ejemplo de pesos: Trabajos Prácticos 20%, Laboratorios 30%, Parciales 50.</p>
+      <p>Ejemplo de notas: TP 80%, Lab 70%, Parciales 75.</p>
+    </div>
+    <div class="pre-container">
+      <pre>
+(80 × 20) + (70 × 30) + (75 × 50) = 1600 + 2100 + 3750 = 7450
+7450 ÷ 100 = 74.5%
+            </pre>
+    </div>
+    <p>El Promedio Ponderado sería <strong>74.5%</strong>.</p>
+    <p>Cada materia puede definir otros pesos.</p>
+  </section>
+  <p><a href="/guides/">Volver a Guías y Ayuda</a></p>
+</main>
+{{ end }}

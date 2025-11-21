@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+
+Sitemap: https://poliplanner.fly.dev/sitemap.xml

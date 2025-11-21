@@ -1,4 +1,4 @@
-package controller
+package router
 
 import (
 	"fmt"
@@ -12,11 +12,11 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func NewUsersRouter() func(r chi.Router) {
+func NewAuthRouter() func(r chi.Router) {
 	layouts := template.Must(template.ParseGlob("templates/layout/*.html"))
 
+	// NOTE: made like this so the main layout template is parsed only one time on startup
 	return func(r chi.Router) {
-
 		// Render login
 		r.Get("/login", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "text/html")
@@ -90,7 +90,7 @@ func NewUsersRouter() func(r chi.Router) {
 				return
 			}
 
-			w.Header().Set("HX-Redirect", "/user/login")
+			w.Header().Set("HX-Redirect", "/login")
 			w.WriteHeader(http.StatusOK)
 		})
 
@@ -124,6 +124,10 @@ func isAlphanumeric(str string) bool {
 }
 
 func constructError(msg string) string {
-	return `<article class="message is-danger mb-5">
-	<div class="message-body">` + msg + `</div></article>`
+	return `
+	<section role="alert" class="error">
+		<span>` + msg + `</span>
+		<button type="button" style="background-color: var(--color-error);" onclick="this.parentElement.remove()" aria-label="Cerrar alerta">×</button>
+	</section>
+	`
 }

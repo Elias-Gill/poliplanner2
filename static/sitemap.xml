@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd         http://www.google.com/schemas/sitemap-image/1.1         http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd">
+  <url>
+    <loc>https://poliplanner.fly.dev/login</loc>
+    <lastmod>2025-07-15T19:11:15+00:00</lastmod>
+    <priority>1.00</priority>
+  </url>
+  <url>
+    <loc>https://poliplanner.fly.dev/calculator</loc>
+    <lastmod>2025-07-15T19:11:15+00:00</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://poliplanner.fly.dev/guides/index</loc>
+    <lastmod>2025-07-15T19:11:15+00:00</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://poliplanner.fly.dev/register</loc>
+    <lastmod>2025-07-15T19:11:15+00:00</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://poliplanner.fly.dev/guides/calculo_notas</loc>
+    <lastmod>2025-07-15T19:11:15+00:00</lastmod>
+    <priority>0.64</priority>
+  </url>
+  <url>
+    <loc>https://poliplanner.fly.dev/guides/manual_del_bicho</loc>
+    <lastmod>2025-07-15T19:11:15+00:00</lastmod>
+    <priority>0.64</priority>
+  </url>
+  <url>
+    <loc>https://poliplanner.fly.dev/</loc>
+    <lastmod>2025-07-15T19:11:15+00:00</lastmod>
+    <priority>0.64</priority>
+    <image:image>
+      <image:loc>https://poliplanner.fly.dev/favicon.ico</image:loc>
+    </image:image>
+  </url>
+</urlset>

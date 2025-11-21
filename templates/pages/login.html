@@ -1,55 +1,189 @@
-{{define "content"}}
-<div class="section py-6">
-  <div class="container">
-    <div class="columns is-centered">
-      <div class="column is-5-tablet is-4-desktop">
-        <div class="has-text-centered mb-6">
-          <h1 class="title is-3 has-text-weight-bold" style="color: #2c3e50;">Poliplanner</h1>
-          <p class="subtitle is-6" style="color: #7a7a7a;">Iniciá sesión para armar tu horario</p>
-        </div>
-        <div class="card" style="border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); border: none;">
-          <div class="card-content p-6">
-            <div id="messages"></div>
-            <form id="login-form"
-                  hx-post="/user/login"
-                  hx-target="#messages"
-                  hx-swap="innerHTML">
-              <div class="field mb-5">
-                <p class="control has-icons-left">
-                  <input class="input is-large" type="text" name="username"
-                         placeholder="Usuario o correo" required autofocus style="border-radius: 8px; border: 1.5px solid #dbdbdb;">
-                  <span class="icon is-left" style="color: #7a7a7a;">
-                    <i class="bi bi-person"></i>
-                  </span>
-                </p>
-              </div>
-              <div class="field mb-5">
-                <p class="control has-icons-left">
-                  <input class="input is-large" type="password" name="password"
-                         placeholder="Contraseña" required style="border-radius: 8px; border: 1.5px solid #dbdbdb;">
-                  <span class="icon is-left" style="color: #7a7a7a;">
-                    <i class="bi bi-lock"></i>
-                  </span>
-                </p>
-              </div>
-              <div class="field is-flex is-justify-content-space-between mb-6" style="font-size: 0.85rem;">
-                <label class="checkbox" style="color: #4a4a4a;">
-                  <input type="checkbox" name="remember"> Recordarme
-                </label>
-                <a href="/recover" style="color: #3273dc; font-weight: 600;">¿Olvidaste la contraseña?</a>
-              </div>
-              <button class="button is-primary is-fullwidth is-large has-text-weight-semibold"
-                      type="submit" style="border-radius: 10px; font-size: 1.1rem;">
-                Iniciar sesión
-              </button>
-            </form>
-            <div class="has-text-centered mt-6" style="font-size: 0.85rem; color: #7a7a7a;">
-              ¿Primera vez? <a href="/register" style="color: #3273dc; font-weight: 600;">Crear cuenta</a>
-            </div>
+{{ define "custom_head"}}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Iniciar Sesión - PoliPlanner</title>
+{{ end }}
+
+{{ define "content"}}
+  <main>
+    <article class="login-container">
+      <img src="/static/logo.svg" alt="Logo Poliplanner" class="login-logo" />
+      <h2>Iniciar Sesión</h2>
+
+      <form
+        hx-post="/login"
+        hx-target="#messages"
+        hx-swap="innerHTML"
+        method="post"
+      >
+        <div class="form-group">
+          <label for="username">Usuario</label>
+          <div class="input-with-icon">
+            <i class="bi bi-person"></i>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              required
+              aria-describedby="username-error"
+              placeholder="Usuario o correo"
+            />
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-{{end}}
+
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <div class="input-with-icon">
+            <i class="bi bi-lock"></i>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              aria-describedby="password-error"
+              placeholder="Contraseña"
+            />
+          </div>
+        </div>
+
+        <div
+          class="form-group"
+          style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 1.5rem;"
+        >
+          <a href="/recover" style="color: #3273dc; font-weight: 600;">
+            ¿Olvidaste la contraseña?
+          </a>
+        </div>
+
+        <button
+          type="submit"
+          class="primary"
+          style="width: 100%; border-radius: 10px; font-size: 1.1rem; font-weight: 600;"
+        >
+          Iniciar sesión
+        </button>
+
+        <div id="messages" style="margin-top: 1rem;">
+          <!-- Aquí htmx mostrará mensajes de error o éxito -->
+        </div>
+      </form>
+
+      <p class="login-footer" style="margin-top: 1.5rem;">
+        ¿No tenés cuenta?
+        <a href="/register" style="color: #3273dc; font-weight: 600;">Registrate acá</a>
+      </p>
+
+      <p class="login-links" style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--color-muted);">
+        <a href="/calculator" aria-label="Calculadora" style="font-weight: 600; margin-right: 0.5rem;">Calculadora</a> |
+        <a href="/guides/index" aria-label="Guías para el estudiante" style="font-weight: 600; margin-left: 0.5rem;">Ayudas</a>
+      </p>
+    </article>
+
+    <style>
+      /* Estilos para página de login */
+      .login-container {
+        max-width: 400px;
+        margin: var(--space-xl) auto;
+        padding: var(--space-xl);
+        text-align: center;
+        background-color: color-mix(
+          in srgb,
+          var(--color-bg),
+          var(--color-secondary-bg) 20%
+        );
+        border: 1px solid var(--color-border);
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .login-logo {
+        max-width: 180px;
+        width: 100%;
+        height: auto;
+        margin: var(--space-md) auto;
+      }
+
+      @media (max-width: 768px) {
+        .login-logo {
+          max-width: 140px;
+        }
+      }
+
+      h2 {
+        font-size: var(--font-size-h2);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text);
+        margin-bottom: var(--space-md);
+      }
+
+      .form-group {
+        margin-bottom: var(--space-lg);
+        text-align: left;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text);
+        margin-bottom: var(--space-xs);
+      }
+
+      .input-with-icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .input-with-icon i {
+        position: absolute;
+        left: var(--space-sm);
+        font-size: var(--font-size-base);
+        color: var(--color-muted);
+      }
+
+      .input-with-icon input {
+        width: 100%;
+        padding: var(--space-sm) var(--space-sm) var(--space-sm)
+          calc(var(--space-xl) + 0.5rem);
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-normal);
+        border: 1px solid var(--color-border);
+        border-radius: 0.25rem;
+        background-color: color-mix(
+          in srgb,
+          var(--color-bg),
+          var(--color-secondary-bg) 10%
+        );
+        transition: border-color 0.2s ease, outline 0.2s ease;
+      }
+
+      .input-with-icon input:focus {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 1px;
+        border-color: var(--color-primary);
+      }
+
+      .login-footer {
+        margin-top: var(--space-lg);
+        font-size: var(--font-size-small);
+        color: var(--color-muted);
+      }
+
+      .login-footer a {
+        font-weight: var(--font-weight-medium);
+      }
+
+      .login-links {
+        margin-top: var(--space-sm);
+        font-size: var(--font-size-small);
+        color: var(--color-muted);
+      }
+
+      .login-links a {
+        font-weight: var(--font-weight-medium);
+        margin: 0 var(--space-xs);
+      }
+    </style>
+  </main>
+{{ end }}

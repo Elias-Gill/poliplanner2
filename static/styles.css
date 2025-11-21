@@ -1,0 +1,567 @@
+/* === Variables CSS y paleta de colores === */
+:root {
+    --color-bg: oklch(0.96 0.01 240);
+    --color-secondary-bg: oklch(0.92 0.01 240);
+    --color-text: oklch(0.15 0.02 240);
+    --color-border: oklch(0.79 0.02 240);
+
+    --color-primary: oklch(0.4 0.1 240);
+    --color-muted: oklch(0.4 0.02 240);
+    --color-success: oklch(0.55 0.12 160);
+    --color-error: oklch(0.5 0.14 20);
+    --color-warning: oklch(0.75 0.12 90);
+
+    /* Espaciado (basado en rem) */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+
+    /* Tipografía */
+    --font-base: 'Urbanist', sans-serif;
+
+    --font-size-base: 1rem;
+    --font-size-h1: 1.25rem;
+    --font-size-h2: 1.125rem;
+    --font-size-h3: 1.0625rem;
+    --font-size-h4: 0.9375rem;
+    --font-size-h5: 0.875rem;
+    --font-size-h6: 0.8125rem;
+    --font-size-small: 0.75rem;
+
+    --font-weight-light: 300;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    --line-height: 1.4;
+}
+
+/* Modo Oscuro */
+.dark-mode {
+    --color-bg: oklch(0.15 0.02 240);
+    --color-secondary-bg: oklch(0.4 0.02 240);
+    --color-text: oklch(1 0.01 240);
+    --color-muted: oklch(0.7 0.02 240);
+    --color-border: oklch(0.386 0.02 240);
+
+    --color-primary: oklch(0.4 0.1 240);
+    --color-success: oklch(0.65 0.14 160);
+    --color-error: oklch(0.6 0.16 20);
+    --color-warning: oklch(0.8 0.14 90);
+}
+
+/* === Reset básico === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+body {
+    font-family: var(--font-base);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height);
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    padding: var(--space-md);
+    display: flex;
+    flex-direction: column;
+    max-width: 1100px;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+
+html {
+    height: 100%;
+    scroll-behavior: smooth;
+}
+
+/* === Contenedor principal === */
+header,
+nav,
+footer {
+    width: 100%;
+    padding: var(--space-md);
+}
+
+header {
+    padding: var(--space-sm);
+    /* Más compacto en móvil */
+}
+
+@media (max-width: 768px) {
+    header {
+        padding: var(--space-xs);
+        /* Aún más compacto en móvil */
+    }
+}
+
+main {
+    flex: 1;
+}
+
+/* === Tipografía === */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-base);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.2;
+    color: var(--color-text);
+    margin-bottom: var(--space-sm);
+    scroll-margin-top: var(--space-xl);
+}
+
+h1 {
+    font-size: var(--font-size-h1);
+    border-bottom: 2px solid var(--color-primary);
+    padding-bottom: var(--space-xs);
+    margin: var(--space-xl) 0 var(--space-md);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+h2 {
+    font-size: var(--font-size-h2);
+    margin: var(--space-md) 0 var(--space-sm);
+}
+
+h3 {
+    font-size: var(--font-size-h3);
+    font-weight: var(--font-weight-semibold);
+    margin-top: var(--space-md);
+}
+
+h4 {
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-semibold);
+    margin-top: var(--space-md);
+}
+
+h5 {
+    font-size: var(--font-size-h5);
+    font-weight: var(--font-weight-medium);
+    margin-top: var(--space-md);
+}
+
+h6 {
+    font-size: var(--font-size-h6);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-top: var(--space-sm);
+}
+
+p {
+    margin-bottom: var(--space-md);
+}
+
+span {
+    overflow-wrap: break-word;
+}
+
+/* === Enlaces === */
+a {
+    color: color-mix(in srgb, var(--color-primary), var(--color-text) 25%);
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: color-mix(in srgb, var(--color-primary), black 15%);
+}
+
+/* === Botones === */
+button,
+[role="button"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-sm) var(--space-md);
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-family: var(--font-base);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    transition: background-color 0.2s ease;
+}
+
+button:hover,
+[role="button"]:hover {
+    background-color: color-mix(in srgb, var(--color-primary), black 15%);
+}
+
+button.secondary {
+    background-color: transparent;
+    border: 1px solid var(--color-muted);
+    color: var(--color-muted);
+}
+
+button.secondary:hover {
+    background-color: var(--color-muted);
+}
+
+button.success {
+    background-color: var(--color-success);
+}
+
+button.success:hover {
+    background-color: color-mix(in srgb, var(--color-success), black 15%);
+}
+
+button.error {
+    background-color: var(--color-error);
+}
+
+button.error:hover {
+    background-color: color-mix(in srgb, var(--color-error), black 15%);
+}
+
+button.warning {
+    background-color: var(--color-warning);
+}
+
+button.warning:hover {
+    background-color: color-mix(in srgb, var(--color-warning), black 15%);
+}
+
+/* === Formularios === */
+input,
+select,
+textarea {
+    width: 100%;
+    padding: var(--space-sm);
+    border: 1px solid var(--color-border);
+    border-radius: 0.25rem;
+    font-family: var(--font-base);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text);
+    background-color: color-mix(in srgb, var(--color-bg), var(--color-secondary-bg) 10%);
+    transition: border-color 0.2s ease, outline 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 1px;
+    border-color: var(--color-primary);
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* === Tarjetas (solo article) === */
+article {
+    background-color: color-mix(in srgb, var(--color-bg), var(--color-secondary-bg) 20%);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    padding: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+/* === Secciones (solo espaciado) === */
+section {
+    margin: var(--space-xl) 0;
+}
+
+/* === Tablas (restauradas del original) === */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: var(--space-md);
+    -webkit-overflow-scrolling: touch;
+    border-radius: 0.25rem;
+    border: 1px solid var(--color-border);
+}
+
+.table-container::-webkit-scrollbar {
+    height: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: var(--color-secondary-bg);
+    border-radius: 4px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: wrap;
+}
+
+th,
+td {
+    padding: var(--space-sm);
+    border: 1px solid var(--color-border);
+    text-align: left;
+}
+
+th {
+    background-color: color-mix(in srgb, var(--color-secondary-bg), var(--color-bg) 45%);
+    font-weight: var(--font-weight-semibold);
+}
+
+td>span {
+    white-space: nowrap;
+}
+
+/* === Navbar === */
+nav {
+    background-color: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--space-sm) var(--space-md);
+}
+
+nav ul {
+    display: flex;
+    gap: var(--space-md);
+    list-style: none;
+    align-items: center;
+    padding: 0;
+}
+
+nav a {
+    color: var(--color-text);
+    padding: var(--space-xs) 0;
+    position: relative;
+    transition: color 0.2s ease;
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+}
+
+nav a:hover {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--color-primary);
+    transition: width 0.3s ease;
+}
+
+nav a:hover::after {
+    width: 100%;
+}
+
+nav .logo {
+    margin-right: auto;
+}
+
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+        gap: var(--space-sm);
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+
+    nav ul.open {
+        max-height: 500px;
+    }
+
+    nav .logo {
+        margin-right: 0;
+    }
+
+    .burguer {
+        display: block;
+        padding: var(--space-sm);
+        cursor: pointer;
+        margin-left: auto;
+        background-color: var(--color-primary);
+        border: 1px solid var(--color-border);
+        border-radius: 0.25rem;
+    }
+
+    .burguer i {
+        transition: transform 0.3s ease;
+    }
+
+    .burguer.open i {
+        transform: rotate(90deg);
+    }
+}
+
+/* === Footer === */
+footer {
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+    padding: var(--space-lg);
+    font-size: var(--font-size-small);
+    color: var(--color-muted);
+}
+
+/* === Alertas === */
+aside,
+[role="alert"] {
+    padding: var(--space-md);
+    border-radius: 0.5rem;
+    margin: var(--space-md) 0;
+    background-color: color-mix(in srgb, var(--color-primary), transparent 90%);
+    border-left: 4px solid var(--color-primary);
+}
+
+[role="alert"].error {
+    background-color: color-mix(in srgb, var(--color-error), transparent 90%);
+    border-left: 2px solid var(--color-error);
+}
+
+[role="alert"].success {
+    background-color: color-mix(in srgb, var(--color-success), transparent 90%);
+    border-left: 4px solid var(--color-success);
+}
+
+[role="alert"].warning {
+    background-color: color-mix(in srgb, var(--color-warning), transparent 90%);
+    border-left: 4px solid var(--color-warning);
+}
+
+/* === Imágenes === */
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.25rem;
+    display: block;
+    margin: var(--space-md) auto;
+}
+
+/* === Checkboxes === */
+input[type="checkbox"] {
+    margin-right: var(--space-xs);
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+}
+
+/* === Listas === */
+section ul,
+section ol,
+article ul,
+article ol {
+    padding-left: 1.5rem;
+    margin: var(--space-md) 0;
+    line-height: 1.6;
+}
+
+section li,
+article li {
+    margin-bottom: var(--space-sm);
+}
+
+section ul,
+article ul {
+    list-style: square;
+}
+
+section ol li::before,
+article ol li::before {
+    content: counter(list-counter) '.';
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+    font-weight: var(--font-weight-semibold);
+}
+
+section ol,
+article ol {
+    counter-reset: list-counter;
+}
+
+section ol li,
+article ol li {
+    counter-increment: list-counter;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+/* === Theme Toggle === */
+#theme-toggle {
+    position: fixed;
+    bottom: var(--space-md);
+    right: var(--space-md);
+    background-color: var(--color-secondary-bg);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#theme-toggle:hover {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+/* === Código === */
+.pre-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: var(--space-md);
+    border-radius: 0.25rem;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-secondary-bg);
+}
+
+pre {
+    padding: var(--space-sm);
+    font-size: var(--font-size-small);
+    line-height: 1.4;
+    font-weight: var(--font-weight-normal);
+}
+
+/* === Utilidades === */
+[hidden] {
+    display: none !important;
+}
+
+/* Corrección para inputs de autocompletado en Firefox */
+input:-moz-autofill,
+input:-moz-autofill-preview {
+    background-color: var(--color-bg) !important;
+    color: var(--color-text) !important;
+    -moz-text-fill-color: var(--color-text) !important;
+}
+
+/* Corrección para inputs de autocompletado en WebKit (por consistencia) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+    background-color: color-mix(in srgb, var(--color-bg), var(--color-secondary-bg) 10%);
+    -webkit-text-fill-color: var(--color-text) !important;
+    box-shadow: 0 0 0px 1000px var(--color-bg) inset !important;
+}

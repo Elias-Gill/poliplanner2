@@ -9,8 +9,8 @@ import (
 	"github.com/elias-gill/poliplanner2/service"
 	"github.com/go-chi/chi/v5"
 
-	"github.com/elias-gill/poliplanner2/controller"
 	log "github.com/elias-gill/poliplanner2/logger"
+	"github.com/elias-gill/poliplanner2/router"
 )
 
 func main() {
@@ -37,14 +37,20 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(service.SessionMidleware)
 
-	r.Route("/user", controller.NewUsersRouter()).
-		Route("/schedules", controller.NewUsersRouter()).
-		Route("/excel", controller.NewUsersRouter()).
-		Route("/misc", controller.NewUsersRouter()).
-		Route("/help", controller.NewUsersRouter())
+	r.Route("/", router.NewAuthRouter())
+	r.Route("/schedules", router.NewAuthRouter())
+	r.Route("/excel", router.NewAuthRouter())
+	r.Route("/misc", router.NewMiscRouter())
+	r.Route("/guides", router.NewGuidesRouter())
+	// Static files
+	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
 	// Start Server
-	http.ListenAndServe(":3000", r)
+	log.Logger.Info("Server runnign in port :8080")
+	err = http.ListenAndServe(":8080", r)
+	if err != nil {
+		panic(err.Error())
+	}
 
 	defer db.CloseDB()
 }
