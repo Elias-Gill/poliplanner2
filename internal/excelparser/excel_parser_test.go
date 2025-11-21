@@ -4,12 +4,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/elias-gill/poliplanner2/excelparser/dto"
+	"github.com/elias-gill/poliplanner2/internal/excelparser/dto"
 )
 
 func TestParseSheet(t *testing.T) {
     testExcelPath := "../../testdata/excelparser/testExcel.xlsx"
-    parser, err := NewExcelParser("../layouts")
+    parser, err := NewExcelParser("./layouts")
     if err != nil {
         t.Fatalf("Failed to create parser: %v", err)
     }

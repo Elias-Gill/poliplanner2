@@ -5,8 +5,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/elias-gill/poliplanner2/excelparser/exceptions"
-	"github.com/elias-gill/poliplanner2/excelparser/dto"
+	"github.com/elias-gill/poliplanner2/internal/excelparser/exceptions"
+	"github.com/elias-gill/poliplanner2/internal/excelparser/dto"
 	"github.com/tealeg/xlsx/v3"
 )
 

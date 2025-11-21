@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/elias-gill/poliplanner2/db/model"
+	"github.com/elias-gill/poliplanner2/internal/db/model"
 )
 
 type SqliteScheduleDetailStore struct {

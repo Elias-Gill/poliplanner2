@@ -1,6 +1,6 @@
 package service
 
-import "github.com/elias-gill/poliplanner2/db/store"
+import "github.com/elias-gill/poliplanner2/internal/db/store"
 
 var (
 	userStorer           store.UserStorer

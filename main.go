@@ -3,21 +3,22 @@ package main
 import (
 	"net/http"
 
-	"github.com/elias-gill/poliplanner2/config"
-	"github.com/elias-gill/poliplanner2/db"
-	"github.com/elias-gill/poliplanner2/db/store"
-	"github.com/elias-gill/poliplanner2/service"
+	"github.com/elias-gill/poliplanner2/internal/config"
+	"github.com/elias-gill/poliplanner2/internal/db"
+	"github.com/elias-gill/poliplanner2/internal/db/store"
+	"github.com/elias-gill/poliplanner2/internal/service"
 	"github.com/go-chi/chi/v5"
 
-	log "github.com/elias-gill/poliplanner2/logger"
+	log "github.com/elias-gill/poliplanner2/internal/logger"
 	"github.com/elias-gill/poliplanner2/router"
 )
 
 func main() {
-	log.Logger.Info("Loading env configuraion")
 	cfg := config.Load()
+	log.InitLogger(cfg.VerboseLogs)
+	log.GetLogger().Info("Loading env configuraion")
 
-	log.Logger.Debug("Initializing db")
+	log.GetLogger().Debug("Initializing db")
 	err := db.InitDB(cfg)
 	if err != nil {
 		panic(err.Error())
@@ -43,10 +44,10 @@ func main() {
 	r.Route("/misc", router.NewMiscRouter())
 	r.Route("/guides", router.NewGuidesRouter())
 	// Static files
-	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./web/static"))))
 
 	// Start Server
-	log.Logger.Info("Server runnign in port :8080")
+	log.GetLogger().Info("Server runnign in port :8080")
 	err = http.ListenAndServe(":8080", r)
 	if err != nil {
 		panic(err.Error())

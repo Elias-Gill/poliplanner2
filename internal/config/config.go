@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	log "github.com/elias-gill/poliplanner2/logger"
+	log "github.com/elias-gill/poliplanner2/internal/logger"
 )
 
 // Config holds all application configuration
@@ -37,7 +37,7 @@ type Config struct {
 	EnableDownloads bool
 
 	// Logging
-	Verbose bool
+	VerboseLogs bool
 }
 
 // ================================
@@ -50,7 +50,7 @@ func Load() *Config {
 
 	var googleAPIKey = getEnv("GOOGLE_API_KEY", "")
 	if googleAPIKey == "" {
-		log.Logger.Warn("Missing Google API Key, web scrapping is disabled")
+		log.GetLogger().Warn("Missing Google API Key, web scrapping is disabled")
 	}
 
 	cfg := &Config{
@@ -64,11 +64,11 @@ func Load() *Config {
 
 		// Database
 		DatabaseURL:   resolvePath(wd, "DATABASE_URL", "poliplanner.db"),
-		MigrationsDir: resolvePath(wd, "MIGRATIONS_DIR", "db/migrations"),
+		MigrationsDir: "internal/db/migrations",
 
 		// File paths (resolved from working directory)
-		LayoutsDir:   resolvePath(wd, "LAYOUTS_DIR", "excelparser/layouts"),
-		MetadataDir:  resolvePath(wd, "METADATA_DIR", "excelparser/metadata"),
+		LayoutsDir:   "internal/excelparser/layouts",
+		MetadataDir:  "internal/excelparser/metadata",
 		DownloadsDir: resolvePath(wd, "DOWNLOADS_DIR", "/tmp/poliplanner/"),
 
 		// Scrapper
@@ -78,9 +78,7 @@ func Load() *Config {
 		// Feature flags
 		EnableScrapping: getEnvAsBool("ENABLE_SCRAPPING", true),
 		EnableDownloads: getEnvAsBool("ENABLE_DOWNLOADS", true),
-
-		// Logging
-		Verbose: getEnvAsBool("VERBOSE_LOGS", false),
+		VerboseLogs:     getEnvAsBool("VERBOSE_LOGS", false),
 	}
 
 	return cfg

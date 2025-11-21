@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"github.com/elias-gill/poliplanner2/db/model"
+	"github.com/elias-gill/poliplanner2/internal/db/model"
 )
 
 func MapToSubject(dto SubjectDTO) *model.Subject {

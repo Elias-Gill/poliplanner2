@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/elias-gill/poliplanner2/db/model"
+	"github.com/elias-gill/poliplanner2/internal/db/model"
 	"golang.org/x/crypto/bcrypt"
 )
 

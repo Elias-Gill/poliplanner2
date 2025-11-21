@@ -8,19 +8,19 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/elias-gill/poliplanner2/service"
+	"github.com/elias-gill/poliplanner2/internal/service"
 	"github.com/go-chi/chi/v5"
 )
 
 func NewAuthRouter() func(r chi.Router) {
-	layouts := template.Must(template.ParseGlob("templates/layout/clean_layout.html"))
+	layouts := template.Must(template.ParseGlob("web/templates/layout/clean_layout.html"))
 
 	// NOTE: made like this so the main layout template is parsed only one time on startup
 	return func(r chi.Router) {
 		// Render login
 		r.Get("/login", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "text/html")
-			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("templates/pages/login.html"))
+			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/login.html"))
 			tpl.Execute(w, nil)
 		})
 
@@ -97,7 +97,7 @@ func NewAuthRouter() func(r chi.Router) {
 		// Render signup
 		r.Get("/signup", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "text/html")
-			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("templates/pages/signup.html"))
+			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/signup.html"))
 			tpl.Execute(w, nil)
 		})
 	}
