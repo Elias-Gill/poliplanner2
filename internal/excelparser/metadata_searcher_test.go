@@ -5,12 +5,12 @@ import (
 )
 
 var (
-	metadataDir        = "../../testdata/excelparser/metadata"
-	testCareerCode     = "example_metadata"
-	testSubjectName    = "Algebra Lineal"
-	normalizedSubject  = "algebra lineal"
-	expectedSemester   = 2
-	expectedCredits    = 5
+	metadataDir       = "../../testdata/excelparser/metadata"
+	testCareerCode    = "example_metadata"
+	testSubjectName   = "Algebra Lineal"
+	normalizedSubject = "algebra lineal"
+	expectedSemester  = 2
+	expectedCredits   = 5
 )
 
 func TestMetadataLoader_LoadsCareerCodes(t *testing.T) {
@@ -69,20 +69,20 @@ func TestMetadataLoader_DashedNames_FirstPart(t *testing.T) {
 }
 
 func TestMetadataLoader_DashedNames_SecondPart(t *testing.T) {
-    loader := NewSubjectMetadataLoader(metadataDir)
+	loader := NewSubjectMetadataLoader(metadataDir)
 
-    metadata, err := loader.FindSubjectByName(testCareerCode, "Avanzado - Técnicas de Organización y metodos")
-    if err != nil {
-        t.Fatalf("Error finding subject: %v", err)
-    }
-    
-    if metadata == nil {
-        t.Fatal("Failed to find subject with dash (second part) - returned nil")
-    }
+	metadata, err := loader.FindSubjectByName(testCareerCode, "Avanzado - Técnicas de Organización y metodos")
+	if err != nil {
+		t.Fatalf("Error finding subject: %v", err)
+	}
 
-    if metadata.Name != "tecnicas de organizacion y metodos" {
-        t.Errorf("Expected 'tecnicas de organizacion y metodos' for second part, got '%s'", metadata.Name)
-    }
+	if metadata == nil {
+		t.Fatal("Failed to find subject with dash (second part) - returned nil")
+	}
+
+	if metadata.Name != "tecnicas de organizacion y metodos" {
+		t.Errorf("Expected 'tecnicas de organizacion y metodos' for second part, got '%s'", metadata.Name)
+	}
 }
 
 func TestMetadataLoader_CacheFunctionality(t *testing.T) {

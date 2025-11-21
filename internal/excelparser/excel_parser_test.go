@@ -8,38 +8,38 @@ import (
 )
 
 func TestParseSheet(t *testing.T) {
-    testExcelPath := "../../testdata/excelparser/testExcel.xlsx"
-    parser, err := NewExcelParser("./layouts")
-    if err != nil {
-        t.Fatalf("Failed to create parser: %v", err)
-    }
-    err = parser.ParseExcel(testExcelPath)
-    if err != nil {
-        t.Fatalf("Failed to parse Excel file: %v", err)
-    }
+	testExcelPath := "../../testdata/excelparser/testExcel.xlsx"
+	parser, err := NewExcelParser("./layouts")
+	if err != nil {
+		t.Fatalf("Failed to create parser: %v", err)
+	}
+	err = parser.ParseExcel(testExcelPath)
+	if err != nil {
+		t.Fatalf("Failed to parse Excel file: %v", err)
+	}
 
-    start := time.Now()
-    foundSheet := false
+	start := time.Now()
+	foundSheet := false
 	var iin *ParsingResult
-    for parser.NextValidSheet() {
-        localStart := time.Now()
-        result, err := parser.ParseCurrentSheet()
-        localEnd := time.Now()
-        t.Logf("Parsing %s, duration: %dms", result.Career, localEnd.Sub(localStart).Milliseconds())
-        if err != nil {
-            t.Fatalf("Failed to parse sheet: %v", err)
-        }
-        if result.Career == "IIN" {
-            foundSheet = true
+	for parser.NextValidSheet() {
+		localStart := time.Now()
+		result, err := parser.ParseCurrentSheet()
+		localEnd := time.Now()
+		t.Logf("Parsing %s, duration: %dms", result.Career, localEnd.Sub(localStart).Milliseconds())
+		if err != nil {
+			t.Fatalf("Failed to parse sheet: %v", err)
+		}
+		if result.Career == "IIN" {
+			foundSheet = true
 			iin = result
-        }
-    }
-    end := time.Now()
+		}
+	}
+	end := time.Now()
 	t.Logf("Total parsing duration: %dms", end.Sub(start).Milliseconds())
 
-    if !foundSheet {
-        t.Fatal("Cannot find 'IIN' sheet inside testExcel.xlsx")
-    }
+	if !foundSheet {
+		t.Fatal("Cannot find 'IIN' sheet inside testExcel.xlsx")
+	}
 	validateParsingResult(t, iin)
 }
 

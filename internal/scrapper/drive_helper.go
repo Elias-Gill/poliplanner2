@@ -95,8 +95,8 @@ func (g *GoogleDriveHelper) ListSourcesInURL(url string) ([]*ExcelDownloadSource
 		}
 	}
 
-	log.GetLogger().Info("Successfully extracted Google Drive sources", 
-		"excel_files", excelCount, 
+	log.GetLogger().Info("Successfully extracted Google Drive sources",
+		"excel_files", excelCount,
 		"total_files", len(files),
 		"folder_id", folderID)
 	return sources, nil
@@ -134,8 +134,8 @@ func (g *GoogleDriveHelper) GetSourceFromSpreadsheetLink(url string) (*ExcelDown
 		UploadDate: fileDate,
 	}
 
-	log.GetLogger().Info("Successfully created spreadsheet source", 
-		"file", source.FileName, 
+	log.GetLogger().Info("Successfully created spreadsheet source",
+		"file", source.FileName,
 		"date", source.UploadDate.Format("2006-01-02"),
 		"spreadsheet_id", spreadsheetID)
 	return source, nil
@@ -191,8 +191,8 @@ func (g *GoogleDriveHelper) listFilesInFolder(folderID string) ([]GoogleFile, er
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		log.GetLogger().Error("Google Drive API request failed", 
-			"status_code", resp.StatusCode, 
+		log.GetLogger().Error("Google Drive API request failed",
+			"status_code", resp.StatusCode,
 			"response", string(body))
 		return nil, fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(body))
 	}
@@ -231,8 +231,8 @@ func (g *GoogleDriveHelper) fetchSpreadsheetMetadata(spreadsheetID string) (*Goo
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		log.GetLogger().Error("Spreadsheet metadata request failed", 
-			"status_code", resp.StatusCode, 
+		log.GetLogger().Error("Spreadsheet metadata request failed",
+			"status_code", resp.StatusCode,
 			"response", string(body))
 		return nil, fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(body))
 	}

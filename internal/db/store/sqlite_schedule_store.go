@@ -24,7 +24,7 @@ func (s *SqliteScheduleStore) Insert(ctx context.Context, userID int64, sched *m
 		userID,
 		sched.ScheduleDescription,
 		sched.ScheduleSheetVersion,
-		)
+	)
 	if err != nil {
 		return 0, err
 	}
@@ -59,7 +59,7 @@ func (s *SqliteScheduleStore) GetByUserID(ctx context.Context, userID int64) ([]
 			&sched.CreatedAt,
 			&sched.ScheduleDescription,
 			&sched.ScheduleSheetVersion,
-			)
+		)
 		if err != nil {
 			return nil, err
 		}

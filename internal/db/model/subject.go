@@ -5,7 +5,7 @@ import "time"
 // Subject represents the final domain model (equivalent to Java's Subject)
 type Subject struct {
 	SubjectID int64
-	CareerID int64
+	CareerID  int64
 
 	// General info
 	Department  string

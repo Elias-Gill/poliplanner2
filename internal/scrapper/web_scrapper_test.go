@@ -13,11 +13,11 @@ const (
 )
 
 var (
-	testdataPath          = filepath.Join("..", "..", "testdata", "webscrapper")
-	htmlNoDrivePath       = filepath.Join(testdataPath, "page_without_drive_folders.html")
-	htmlWithDrivePath     = filepath.Join(testdataPath, "page_with_drive_folders.html")
-	expectedDirectURL     = directDownloadURL
-	expectedDriveURL      = driveDownloadURL
+	testdataPath      = filepath.Join("..", "..", "testdata", "webscrapper")
+	htmlNoDrivePath   = filepath.Join(testdataPath, "page_without_drive_folders.html")
+	htmlWithDrivePath = filepath.Join(testdataPath, "page_with_drive_folders.html")
+	expectedDirectURL = directDownloadURL
+	expectedDriveURL  = driveDownloadURL
 )
 
 func TestFindLatestExcelUrlFromLocalHtml(t *testing.T) {

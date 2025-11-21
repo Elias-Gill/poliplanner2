@@ -5,8 +5,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/elias-gill/poliplanner2/internal/excelparser/exceptions"
 	"github.com/elias-gill/poliplanner2/internal/excelparser/dto"
+	"github.com/elias-gill/poliplanner2/internal/excelparser/exceptions"
 	"github.com/tealeg/xlsx/v3"
 )
 
@@ -41,34 +41,34 @@ func NewExcelParser(layoutsDir string) (*ExcelParser, error) {
 			"item": true,
 			"ítem": true,
 		},
-		currentSheet:  -1,
-		fieldSetters:  setters,
+		currentSheet: -1,
+		fieldSetters: setters,
 	}, nil
 }
 
 func buildFieldSetters() map[string]func(*dto.SubjectDTO, string) {
 	return map[string]func(*dto.SubjectDTO, string){
-		"departamento":   func(d *dto.SubjectDTO, v string) { d.SetDepartment(v) },
-		"asignatura":     func(d *dto.SubjectDTO, v string) { d.SetSubjectName(v) },
-		"nivel":          func(d *dto.SubjectDTO, v string) { d.SetSemester(v) },
-		"semestre":       func(d *dto.SubjectDTO, v string) { d.SetSemester(v) },
-		"seccion":        func(d *dto.SubjectDTO, v string) { d.SetSection(v) },
-		"titulo":         func(d *dto.SubjectDTO, v string) { d.SetTeacherTitle(v) },
-		"apellido":       func(d *dto.SubjectDTO, v string) { d.SetTeacherLastName(v) },
-		"nombre":         func(d *dto.SubjectDTO, v string) { d.SetTeacherName(v) },
-		"correo":         func(d *dto.SubjectDTO, v string) { d.SetTeacherEmail(v) },
-		"diaParcial1":    func(d *dto.SubjectDTO, v string) { d.SetPartial1Date(v) },
-		"horaParcial1":   func(d *dto.SubjectDTO, v string) { d.SetPartial1Time(v) },
-		"aulaParcial1":   func(d *dto.SubjectDTO, v string) { d.SetPartial1Room(v) },
-		"diaParcial2":    func(d *dto.SubjectDTO, v string) { d.SetPartial2Date(v) },
-		"horaParcial2":   func(d *dto.SubjectDTO, v string) { d.SetPartial2Time(v) },
-		"aulaParcial2":   func(d *dto.SubjectDTO, v string) { d.SetPartial2Room(v) },
-		"diaFinal1":      func(d *dto.SubjectDTO, v string) { d.SetFinal1Date(v) },
-		"horaFinal1":     func(d *dto.SubjectDTO, v string) { d.SetFinal1Time(v) },
-		"aulaFinal1":     func(d *dto.SubjectDTO, v string) { d.SetFinal1Room(v) },
-		"diaFinal2":      func(d *dto.SubjectDTO, v string) { d.SetFinal2Date(v) },
-		"horaFinal2":     func(d *dto.SubjectDTO, v string) { d.SetFinal2Time(v) },
-		"aulaFinal2":     func(d *dto.SubjectDTO, v string) { d.SetFinal2Room(v) },
+		"departamento": func(d *dto.SubjectDTO, v string) { d.SetDepartment(v) },
+		"asignatura":   func(d *dto.SubjectDTO, v string) { d.SetSubjectName(v) },
+		"nivel":        func(d *dto.SubjectDTO, v string) { d.SetSemester(v) },
+		"semestre":     func(d *dto.SubjectDTO, v string) { d.SetSemester(v) },
+		"seccion":      func(d *dto.SubjectDTO, v string) { d.SetSection(v) },
+		"titulo":       func(d *dto.SubjectDTO, v string) { d.SetTeacherTitle(v) },
+		"apellido":     func(d *dto.SubjectDTO, v string) { d.SetTeacherLastName(v) },
+		"nombre":       func(d *dto.SubjectDTO, v string) { d.SetTeacherName(v) },
+		"correo":       func(d *dto.SubjectDTO, v string) { d.SetTeacherEmail(v) },
+		"diaParcial1":  func(d *dto.SubjectDTO, v string) { d.SetPartial1Date(v) },
+		"horaParcial1": func(d *dto.SubjectDTO, v string) { d.SetPartial1Time(v) },
+		"aulaParcial1": func(d *dto.SubjectDTO, v string) { d.SetPartial1Room(v) },
+		"diaParcial2":  func(d *dto.SubjectDTO, v string) { d.SetPartial2Date(v) },
+		"horaParcial2": func(d *dto.SubjectDTO, v string) { d.SetPartial2Time(v) },
+		"aulaParcial2": func(d *dto.SubjectDTO, v string) { d.SetPartial2Room(v) },
+		"diaFinal1":    func(d *dto.SubjectDTO, v string) { d.SetFinal1Date(v) },
+		"horaFinal1":   func(d *dto.SubjectDTO, v string) { d.SetFinal1Time(v) },
+		"aulaFinal1":   func(d *dto.SubjectDTO, v string) { d.SetFinal1Room(v) },
+		"diaFinal2":    func(d *dto.SubjectDTO, v string) { d.SetFinal2Date(v) },
+		"horaFinal2":   func(d *dto.SubjectDTO, v string) { d.SetFinal2Time(v) },
+		"aulaFinal2":   func(d *dto.SubjectDTO, v string) { d.SetFinal2Room(v) },
 		"revisionDia": func(d *dto.SubjectDTO, v string) {
 			d.SetFinal1RevDate(v)
 			d.SetFinal2RevDate(v)
