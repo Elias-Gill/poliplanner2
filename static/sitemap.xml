@@ -6,17 +6,17 @@
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>https://poliplanner.fly.dev/calculator</loc>
+      <loc>https://poliplanner.fly.dev/misc/calculator</loc>
     <lastmod>2025-07-15T19:11:15+00:00</lastmod>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://poliplanner.fly.dev/guides/index</loc>
+    <loc>https://poliplanner.fly.dev/guides/</loc>
     <lastmod>2025-07-15T19:11:15+00:00</lastmod>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://poliplanner.fly.dev/register</loc>
+    <loc>https://poliplanner.fly.dev/signup</loc>
     <lastmod>2025-07-15T19:11:15+00:00</lastmod>
     <priority>0.80</priority>
   </url>

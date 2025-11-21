@@ -8,7 +8,7 @@ import (
 )
 
 func NewGuidesRouter() func(r chi.Router) {
-	layouts := template.Must(template.ParseGlob("templates/layout/*.html"))
+	layouts := template.Must(template.ParseGlob("templates/layout/base_layout.html"))
 
 	// NOTE: made like this so the main layout template is parsed only one time on startup
 	return func(r chi.Router) {

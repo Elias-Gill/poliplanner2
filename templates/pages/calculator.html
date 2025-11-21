@@ -1,4 +1,10 @@
-{{define "content"}}
+{{ define "custom_head" }}
+<head>
+  <title>Calculadora - PoliPlanner</title>
+</head>
+{{ end }}
+
+{{ define "content" }}
 <h1 class="title is-3">Calculadora de Notas</h1>
 <section class="box mb-5">
   <h3 class="title is-4">A) Ya tengo mi promedio ponderado</h3>
@@ -140,4 +146,4 @@
       calcularTabla(ponderado);
   };
 </script>
-{{end}}
+{{ end }}

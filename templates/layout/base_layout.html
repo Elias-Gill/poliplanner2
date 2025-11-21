@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -48,39 +48,51 @@
     </style>
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <script>
-      // Inicializa tema guardado en localStorage
-      const savedTheme = localStorage.getItem("theme");
-      if (savedTheme === "dark") {
-        document.documentElement.setAttribute("data-theme", "dark");
-      }
+    (function() {
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.documentElement.classList.add('dark-mode');
+        }
+    })();
     </script>
     {{ template "custom_head" .}}
   </head>
 
   <body>
-    <header role="banner">
-      <nav role="navigation" aria-label="Principal" class="container">
-        <ul>
-          <li>
-            <a href="/" class="contrast">
-              <span class="icon">
-                <i class="bi bi-calendar3"></i>
-              </span>
-              Poliplanner
-            </a>
-          </li>
-          <li>
-            <a href="/schedules">Nuevo horario</a>
-          </li>
-          <li>
-            <a href="/misc/calculator">Calculadora</a>
-          </li>
-          <li>
-            <a href="/help">Guías</a>
-          </li>
-        </ul>
-      </nav>
-    </header>
+        <header role="banner">
+            <nav role="navigation" aria-label="Principal" class="container">
+                <ul>
+                    <li>
+                        <a href="/" class="contrast">
+                            <span class="icon">
+                                <i class="bi bi-calendar3"></i>
+                            </span>
+                            Poliplanner
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/schedules">Nuevo horario</a>
+                    </li>
+                    <li class="right-menu-start">
+                        <a href="/misc/calculator" class="contrast">
+                            <span class="icon">
+                                <i class="bi bi-calculator"></i>
+                            </span>
+                            Calculadora
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/guides" class="contrast">
+                            <span class="icon">
+                                <i class="bi bi-journal-text"></i>
+                            </span>
+                            Guías
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
 
     <main class="container">
       {{template "content" .}}
@@ -107,7 +119,8 @@
   <button id="theme-toggle" aria-label="Cambiar modo" title="Cambiar modo">
     <i class="bi bi-moon"></i>
   </button>
-  <script th:inline="javascript">
+
+  <script>
     document.addEventListener('DOMContentLoaded', () => {
         // ---- DARK MODE TOGGLE ----
         const themeToggle = document.getElementById('theme-toggle');

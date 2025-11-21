@@ -1,66 +1,46 @@
+{{define "custom_head"}}
+{{end}}
 {{define "content"}}
-<div class="section py-6" style="background: #f9fafb; min-height: 100vh; display: flex; align-items: center;">
-  <div class="container">
-    <div class="columns is-centered">
-      <div class="column is-5-tablet is-4-desktop">
-        <div class="has-text-centered mb-6">
-          <h1 class="title is-3 has-text-weight-bold" style="color: #2c3e50;">Crear cuenta</h1>
-          <p class="subtitle is-6" style="color: #7a7a7a;">Registrate para empezar a usar Poliplanner</p>
-        </div>
-        <div class="card" style="border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); border: none;">
-          <div class="card-content p-6">
-            <div id="messages"></div>
-            <form id="signup-form"
-                            hx-post="/signup"
-                            hx-target="#messages"
-                            hx-swap="innerHTML">
-              <div class="field mb-5">
-                <p class="control has-icons-left">
-                  <input class="input is-large" type="text" name="username"
-                                        placeholder="Nombre de usuario"
-                                        required
-                                        style="border-radius: 8px; border: 1.5px solid #dbdbdb;">
-                  <span class="icon is-left" style="color: #7a7a7a;">
-                    <i class="bi bi-person"></i>
-                  </span>
-                </p>
-              </div>
-              <div class="field mb-5">
-                <p class="control has-icons-left">
-                  <input class="input is-large" type="email" name="email"
-                                        placeholder="Correo electrónico"
-                                        required
-                                        style="border-radius: 8px; border: 1.5px solid #dbdbdb;">
-                  <span class="icon is-left" style="color: #7a7a7a;">
-                    <i class="bi bi-envelope"></i>
-                  </span>
-                </p>
-              </div>
-              <div class="field mb-5">
-                <p class="control has-icons-left">
-                  <input class="input is-large" type="password" name="password"
-                                        placeholder="Contraseña (mínimo 6 caracteres)"
-                                        required
-                                        style="border-radius: 8px; border: 1.5px solid #dbdbdb;">
-                  <span class="icon is-left" style="color: #7a7a7a;">
-                    <i class="bi bi-lock"></i>
-                  </span>
-                </p>
-              </div>
-              <button class="button is-primary is-fullwidth is-large has-text-weight-semibold"
-                                type="submit"
-                                style="border-radius: 10px; font-size: 1.1rem;">
-                Crear cuenta
-              </button>
-            </form>
-            <div class="has-text-centered mt-6" style="font-size: 0.85rem; color: #7a7a7a;">
-              ¿Ya tenés cuenta?
-              <a href="/login" style="color: #3273dc; font-weight: 600;">Iniciar sesión</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+<main>
+  <h2>Crear cuenta</h2>
+  <section>
+    <form id="signup-form" 
+          hx-post="/signup" 
+          hx-target="#messages" 
+          hx-swap="innerHTML" 
+          method="post">
+      <section>
+        <label>
+          Nombre de usuario:
+          <input type="text" name="username" placeholder="Nombre de usuario" required autofocus>
+        </label>
+      </section>
+      <section>
+        <label>
+          Correo electrónico:
+          <input type="email" name="email" placeholder="Correo electrónico" required>
+        </label>
+      </section>
+      <section>
+        <label>
+          Contraseña (mínimo 6 caracteres):
+          <input type="password" name="password" placeholder="Contraseña" required>
+        </label>
+      </section>
+      <button type="submit">Crear cuenta</button>
+    </form>
+    <div id="messages"></div>
+    <p>
+      ¿Ya tenés cuenta? <a href="/login">Iniciar sesión</a>
+    </p>
+  </section>
+  <section>
+    <h2>Consideraciones</h2>
+    <ul>
+      <li>Los nombres de usuario <strong>solo se permiten letras minúsculas, números, guion (-) y guion bajo (_)</strong>.</li>
+      <li>Las contraseñas deben tener al menos 6 caracteres.</li>
+      <li>Te recomendamos elegir un nombre de usuario fácil de recordar y usar contraseñas seguras y únicas. Almacenamos las contraseñas de forma encriptada y aplicamos todas las medidas de seguridad necesarias, pero usar una contraseña exclusiva ayuda a proteger mejor tu cuenta y tu información personal.</li>
+    </ul>
+  </section>
+</main>
 {{end}}
