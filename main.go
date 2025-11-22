@@ -36,10 +36,10 @@ func main() {
 
 	// Configure http server
 	r := chi.NewRouter()
-	r.Use(service.SessionMidleware)
+	r.Use(service.SessionMiddleware)
 
 	r.Route("/", router.NewAuthRouter())
-	r.Route("/schedules", router.NewAuthRouter())
+	r.Route("/schedule", router.NewAuthRouter())
 	r.Route("/excel", router.NewAuthRouter())
 	r.Route("/misc", router.NewMiscRouter())
 	r.Route("/guides", router.NewGuidesRouter())

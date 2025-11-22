@@ -11,7 +11,7 @@
       <h2>Iniciar Sesión</h2>
 
       <form
-        hx-post="/login"
+        hx-post="/login?redirect={{ .Redirect }}"
         hx-target="#messages"
         hx-swap="innerHTML"
         method="post"

@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/elias-gill/poliplanner2/internal/logger"
 	"github.com/elias-gill/poliplanner2/internal/service"
 	"github.com/go-chi/chi/v5"
 )
@@ -19,21 +20,29 @@ func NewAuthRouter() func(r chi.Router) {
 	return func(r chi.Router) {
 		// Render login
 		r.Get("/login", func(w http.ResponseWriter, r *http.Request) {
+			// Set redirection parameter if a redirection path is present
+			data := map[string]any{
+				"Redirect": r.URL.Query().Get("redirect"),
+			}
+
 			w.Header().Set("Content-Type", "text/html")
 			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/login.html"))
-			tpl.Execute(w, nil)
+			tpl.Execute(w, data)
 		})
 
 		// Handle login POST
 		r.Post("/login", func(w http.ResponseWriter, r *http.Request) {
+			logger.GetLogger().Debug("Redirecting from login", "path", r.RequestURI)
+
+			// TODO: Make an error page for this
 			if err := r.ParseForm(); err != nil {
 				http.Error(w, "Invalid form data", http.StatusBadRequest)
 				return
 			}
 
+			// Authentication
 			username := r.FormValue("username")
 			password := r.FormValue("password")
-
 			user, err := service.AuthenticateUser(username, password)
 			if err != nil {
 				w.Header().Set("Content-Type", "text/html")
@@ -41,9 +50,9 @@ func NewAuthRouter() func(r chi.Router) {
 				return
 			}
 
+			// Create a session cookie
 			sessionID := service.CreateSession(user.UserID)
-
-			cookie := &http.Cookie{
+			http.SetCookie(w, &http.Cookie{
 				Name:     "session_id",
 				Value:    sessionID,
 				Path:     "/",
@@ -51,10 +60,17 @@ func NewAuthRouter() func(r chi.Router) {
 				Secure:   true,
 				SameSite: http.SameSiteLaxMode,
 				Expires:  time.Now().Add(30 * time.Minute),
-			}
-			http.SetCookie(w, cookie)
+			})
 
-			w.Header().Set("HX-Redirect", "/dashboard")
+			// Redirect if a redirection path is present
+			redirectTo := r.URL.Query().Get("redirect")
+			if len(redirectTo) == 0 {
+				redirectTo = "/dashboard"
+			}
+
+			logger.GetLogger().Debug("Redirecting from login", "path", redirectTo)
+
+			w.Header().Set("HX-Redirect", redirectTo)
 			w.WriteHeader(http.StatusOK)
 		})
 
