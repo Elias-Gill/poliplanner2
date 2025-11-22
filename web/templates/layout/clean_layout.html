@@ -3,7 +3,6 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Poliplanner</title>
         <link rel="stylesheet" href="/static/styles.css" />
         <link
             rel="stylesheet"
@@ -56,12 +55,16 @@
             }
         })();
         </script>
-        {{ template "custom_head" .}}
+        {{ block "custom_head" .}}
+        <!-- default title -->
+        <title>Poliplanner</title>
+        {{ end }}
     </head>
 
     <body>
         <main class="container">
-            {{template "content" .}}
+            {{ block "content" .}}
+            {{ end }}
         </main>
 
         <button

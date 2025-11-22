@@ -47,7 +47,10 @@ func CreateSession(userID int64) string {
 
 // HTTP middleware setting the user id on the request context
 func SessionMiddleware(next http.Handler) http.Handler {
-	protected := []string{"/schedule"}
+	protected := []string{
+		"/schedule",
+		"/user",
+	}
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		routePath := r.URL.Path
