@@ -23,7 +23,7 @@ var (
 func TestFindLatestExcelUrlFromLocalHtml(t *testing.T) {
 	html, err := os.ReadFile(htmlNoDrivePath)
 	if err != nil {
-		t.Fatalf("read html: %v", err)
+		t.Fatalf("read html: %+v", err)
 	}
 
 	s := NewWebScrapper(nil)
@@ -33,7 +33,7 @@ func TestFindLatestExcelUrlFromLocalHtml(t *testing.T) {
 	t.Logf("Scrapping concluded in: %dms", end.Sub(start).Milliseconds())
 
 	if err != nil {
-		t.Fatalf("find source: %v", err)
+		t.Fatalf("find source: %+v", err)
 	}
 	if src.URL != expectedDirectURL {
 		t.Errorf("url mismatch\nwant: %s\ngot:  %s", expectedDirectURL, src.URL)
@@ -47,14 +47,14 @@ func TestFindLatestExcelUrlWithDriveFolders(t *testing.T) {
 
 	html, err := os.ReadFile(htmlWithDrivePath)
 	if err != nil {
-		t.Fatalf("read html: %v", err)
+		t.Fatalf("read html: %+v", err)
 	}
 
 	helper := NewGoogleDriveHelper()
 	s := NewWebScrapper(helper)
 	src, err := s.FindLatestSourceFromHTML(string(html))
 	if err != nil {
-		t.Fatalf("find source: %v", err)
+		t.Fatalf("find source: %+v", err)
 	}
 	if src.URL != expectedDriveURL {
 		t.Errorf("url mismatch\nwant: %s\ngot:  %s", expectedDriveURL, src.URL)

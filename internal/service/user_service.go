@@ -2,38 +2,44 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func AuthenticateUser(username string, rawPassword string) (*model.User, error) {
+var (
+	CannotFindUserError = errors.New("Cannot find user")
+	BadCredentialsError = errors.New("Bad credentials")
+)
+
+func AuthenticateUser(ctx context.Context, username string, rawPassword string) (*model.User, error) {
 	// Search first by username. If not found then search by email
-	user, err := userStorer.GetByUsername(context.TODO(), username)
+	user, err := userStorer.GetByUsername(ctx, username)
 	if err != nil {
-		user, err = userStorer.GetByEmail(context.TODO(), username)
+		user, err = userStorer.GetByEmail(ctx, username)
 		if err != nil {
-			return nil, fmt.Errorf("Cannot find user")
+			return nil, CannotFindUserError
 		}
 	}
 
 	// Verify credentials
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(rawPassword))
 	if err != nil {
-		return nil, fmt.Errorf("Incorrect password")
+		return nil, BadCredentialsError
 	}
 
 	return user, nil
 }
 
-func CreateUser(username string, email string, rawPassword string) error {
+func CreateUser(ctx context.Context, username string, email string, rawPassword string) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(rawPassword), bcrypt.DefaultCost)
 	if err != nil {
-		panic(err)
+		panic(fmt.Sprintf("Cannot encrypt passwords: %+v", err))
 	}
 
-	return userStorer.Insert(context.TODO(), &model.User{
+	return userStorer.Insert(ctx, &model.User{
 		Username: username,
 		Password: string(hashedPassword),
 		Email:    email,

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/mail"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/logger"
@@ -18,6 +19,11 @@ func NewAuthRouter() func(r chi.Router) {
 
 	// NOTE: made like this so the main layout template is parsed only one time on startup
 	return func(r chi.Router) {
+		// Redirect to the dashboard.
+		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, "/dashboard", http.StatusFound)
+		})
+
 		// Render login
 		r.Get("/login", func(w http.ResponseWriter, r *http.Request) {
 			// Set redirection parameter if a redirection path is present
@@ -34,7 +40,6 @@ func NewAuthRouter() func(r chi.Router) {
 		r.Post("/login", func(w http.ResponseWriter, r *http.Request) {
 			logger.GetLogger().Debug("Redirecting from login", "path", r.RequestURI)
 
-			// TODO: Make an error page for this
 			if err := r.ParseForm(); err != nil {
 				http.Error(w, "Invalid form data", http.StatusBadRequest)
 				return
@@ -43,10 +48,10 @@ func NewAuthRouter() func(r chi.Router) {
 			// Authentication
 			username := r.FormValue("username")
 			password := r.FormValue("password")
-			user, err := service.AuthenticateUser(username, password)
+			user, err := service.AuthenticateUser(r.Context(), username, password)
 			if err != nil {
 				w.Header().Set("Content-Type", "text/html")
-				w.Write([]byte(constructError("Usuario o contraseña incorrectos")))
+				w.Write([]byte(constructHtmlError("Usuario o contraseña incorrectos")))
 				return
 			}
 
@@ -86,23 +91,23 @@ func NewAuthRouter() func(r chi.Router) {
 			rawPassword := r.FormValue("password")
 
 			if err := validateUsername(username); err != nil {
-				w.Write([]byte(constructError(err.Error())))
+				w.Write([]byte(constructHtmlError(err.Error())))
 				return
 			}
 
 			if !isValidEmail(email) {
-				w.Write([]byte(constructError("Invalid email provided")))
+				w.Write([]byte(constructHtmlError("Invalid email provided")))
 				return
 			}
 
 			if len(rawPassword) < 6 {
-				w.Write([]byte(constructError("Password must have at least 6 characters")))
+				w.Write([]byte(constructHtmlError("Password must have at least 6 characters")))
 				return
 			}
 
-			err := service.CreateUser(username, email, rawPassword)
+			err := service.CreateUser(r.Context(), strings.ToLower(username), email, rawPassword)
 			if err != nil {
-				w.Write([]byte(constructError(err.Error())))
+				w.Write([]byte(constructHtmlError(err.Error())))
 				return
 			}
 
@@ -121,10 +126,10 @@ func NewAuthRouter() func(r chi.Router) {
 
 func validateUsername(username string) error {
 	if len(username) < 3 {
-		return fmt.Errorf("Username must have at least 3 characters")
+		return fmt.Errorf("El nombre de usuario debe tener al menos 3 caracteres")
 	}
 	if !isAlphanumeric(username) {
-		return fmt.Errorf("Username must only contain letters, numbers and _")
+		return fmt.Errorf("El nombre de usuario solo puede contener letras, numeros y _")
 	}
 	return nil
 }
@@ -139,7 +144,7 @@ func isAlphanumeric(str string) bool {
 	return re.MatchString(str)
 }
 
-func constructError(msg string) string {
+func constructHtmlError(msg string) string {
 	return `
 	<section role="alert" class="error">
 		<span>` + msg + `</span>

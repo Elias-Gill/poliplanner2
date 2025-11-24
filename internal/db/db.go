@@ -21,7 +21,7 @@ func InitDB(cfg *config.Config) error {
 	// Open database file connection
 	db, err := sql.Open("sqlite3", cfg.DatabaseURL)
 	if err != nil {
-		return fmt.Errorf("open db: %v", err)
+		return fmt.Errorf("error opening db: %w", err)
 	}
 	log.GetLogger().Debug("Database connection established successfully")
 
@@ -43,7 +43,7 @@ func runMigrations(migrationsDir, databaseURL string) error {
 	log.GetLogger().Debug("Creating migration instance", "source", "file://"+migrationsDir)
 	m, err := migrate.New("file://"+migrationsDir, databaseURL)
 	if err != nil {
-		return fmt.Errorf("create migrate instance: %v", err)
+		return fmt.Errorf("error creating 'migrate' instance: %v", err)
 	}
 	log.GetLogger().Info("Applying database migrations")
 
@@ -52,7 +52,7 @@ func runMigrations(migrationsDir, databaseURL string) error {
 	}
 
 	if err == migrate.ErrNoChange {
-		log.GetLogger().Info("Migrations: No changes needed - database is up to date")
+		log.GetLogger().Info("No migrations applied - database is up to date")
 	} else {
 		log.GetLogger().Info("Migrations applied successfully")
 	}

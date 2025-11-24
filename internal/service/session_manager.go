@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -23,7 +24,7 @@ func newSessionID() string {
 	b := make([]byte, 32) // 256-bit random session ID
 	_, err := rand.Read(b)
 	if err != nil {
-		panic("Cannot generate secure session IDs")
+		panic(fmt.Sprintf("Cannot generate secure session IDs: %+v", err))
 	}
 	return base64.RawURLEncoding.EncodeToString(b)
 }
@@ -48,6 +49,7 @@ func CreateSession(userID int64) string {
 // HTTP middleware setting the user id on the request context
 func SessionMiddleware(next http.Handler) http.Handler {
 	protected := []string{
+		"/dashboard",
 		"/schedule",
 		"/user",
 	}
@@ -73,13 +75,14 @@ func SessionMiddleware(next http.Handler) http.Handler {
 		cookie, err := r.Cookie("session_id")
 		if err != nil {
 			target := url.QueryEscape(r.URL.RequestURI())
-			http.Redirect(w, r, "/login?redirect="+target, http.StatusTemporaryRedirect)
+			http.Redirect(w, r, "/login?redirect="+target, http.StatusFound)
 			return
 		}
+
 		session, ok := getSession(cookie.Value)
 		if !ok {
 			target := url.QueryEscape(r.URL.RequestURI())
-			http.Redirect(w, r, "/login?redirect="+target, http.StatusTemporaryRedirect)
+			http.Redirect(w, r, "/login?redirect="+target, http.StatusFound)
 			return
 		}
 

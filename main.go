@@ -21,10 +21,11 @@ func main() {
 	log.GetLogger().Debug("Initializing db")
 	err := db.InitDB(cfg)
 	if err != nil {
-		panic(err.Error())
+		panic(err)
 	}
-	conn := db.GetConnection()
+	defer db.CloseDB()
 
+	conn := db.GetConnection()
 	service.InitializeServices(
 		store.NewSqliteUserStore(conn),
 		store.NewSqliteSheetVersionStore(conn),
@@ -39,6 +40,7 @@ func main() {
 	r.Use(service.SessionMiddleware)
 
 	r.Route("/", router.NewAuthRouter())
+	r.Route("/dashboard", router.NewDashboardRouter())
 	r.Route("/schedule", router.NewAuthRouter())
 	r.Route("/excel", router.NewAuthRouter())
 	r.Route("/misc", router.NewMiscRouter())
@@ -50,8 +52,6 @@ func main() {
 	log.GetLogger().Info("Server runnign in port :8080")
 	err = http.ListenAndServe(":8080", r)
 	if err != nil {
-		panic(err.Error())
+		panic(err)
 	}
-
-	defer db.CloseDB()
 }

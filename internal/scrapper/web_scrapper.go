@@ -58,7 +58,7 @@ func NewWebScrapper(googleHelper *GoogleDriveHelper) *WebScrapper {
 	uri := "https://www.pol.una.py/academico/horarios-de-clases-y-examenes/"
 	base, err := url.Parse(uri)
 	if err != nil {
-		panic(err.Error())
+		panic(fmt.Sprintf("Cannot parse uri: %s\n%+v", uri, err))
 	}
 	log.GetLogger().Debug("Creating web scrapper", "target_url", uri)
 
@@ -78,7 +78,7 @@ func (ws *WebScrapper) FindLatestDownloadSource() (*ExcelDownloadSource, error) 
 
 	sources, err := ws.extractSourcesFromURL(ws.targetURL)
 	if err != nil {
-		return nil, fmt.Errorf("error scraping URL: %v", err)
+		return nil, fmt.Errorf("error scraping URL: %w", err)
 	}
 	if len(sources) == 0 {
 		return nil, fmt.Errorf("no sources found")
@@ -309,7 +309,6 @@ func (ws *WebScrapper) extractDirectSource(uri string) *ExcelDownloadSource {
 	date, err := extractDateFromFilename(fileName)
 	if err != nil {
 		log.GetLogger().Debug("Could not extract date from filename", "file", fileName, "error", err)
-		// TODO: start working on log.Logger.n patterns
 		return nil
 	}
 

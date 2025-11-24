@@ -1,7 +1,9 @@
 package scrapper
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -68,7 +70,7 @@ func (g *GoogleDriveHelper) ListSourcesInURL(url string) ([]*ExcelDownloadSource
 	log.GetLogger().Debug("Extracted folder ID", "folder_id", folderID)
 	files, err := g.listFilesInFolder(folderID)
 	if err != nil {
-		return nil, fmt.Errorf("error listing files in folder: %v", err)
+		return nil, fmt.Errorf("error listing files in folder: %w", err)
 	}
 
 	log.GetLogger().Debug("Retrieved files from folder", "total_files", len(files))
@@ -81,7 +83,7 @@ func (g *GoogleDriveHelper) ListSourcesInURL(url string) ([]*ExcelDownloadSource
 			fileDate, err := extractDateFromFilename(file.Name)
 
 			if err != nil {
-				log.GetLogger().Debug("Skipping file - cannot extract date", "file", file.Name, "error", err)
+				log.GetLogger().Warn("Skipping file", "file", file.Name, "error", err)
 				continue
 			}
 
@@ -113,7 +115,7 @@ func (g *GoogleDriveHelper) GetSourceFromSpreadsheetLink(url string) (*ExcelDown
 	log.GetLogger().Debug("Extracted spreadsheet ID", "spreadsheet_id", spreadsheetID)
 	metadata, err := g.fetchSpreadsheetMetadata(spreadsheetID)
 	if err != nil {
-		return nil, fmt.Errorf("error fetching spreadsheet metadata: %v", err)
+		return nil, fmt.Errorf("error fetching spreadsheet metadata: %w", err)
 	}
 
 	log.GetLogger().Debug("Retrieved spreadsheet metadata", "name", metadata.Name)
@@ -176,16 +178,20 @@ func (g *GoogleDriveHelper) listFilesInFolder(folderID string) ([]GoogleFile, er
 		folderID, g.apiKey)
 
 	log.GetLogger().Debug("Making Google Drive API request", "folder_id", folderID, "url", url)
-	req, err := http.NewRequest("GET", url, nil)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second) // an eternity
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		log.GetLogger().Error("Error creating Google Drive API request", "error", err)
-		return nil, fmt.Errorf("error creating request: %v", err)
+		return nil, fmt.Errorf("error creating Google Drive request: %w", err)
 	}
 
 	resp, err := g.httpClient.Do(req)
 	if err != nil {
-		log.GetLogger().Error("Error making Google Drive API request", "error", err)
-		return nil, fmt.Errorf("error making request: %v", err)
+		if errors.Is(err, context.DeadlineExceeded) || errors.Is(err, context.Canceled) {
+			return nil, fmt.Errorf("request canceled or timed out: %w", err)
+		}
+		return nil, fmt.Errorf("error execution Google Drive request: %w", err)
 	}
 	defer resp.Body.Close()
 
@@ -212,20 +218,27 @@ func (g *GoogleDriveHelper) fetchSpreadsheetMetadata(spreadsheetID string) (*Goo
 		return nil, fmt.Errorf("GOOGLE_API_KEY not set")
 	}
 
-	url := fmt.Sprintf("https://www.googleapis.com/drive/v3/files/%s?fields=name&key=%s",
-		spreadsheetID, g.apiKey)
+	url := fmt.Sprintf(
+		"https://www.googleapis.com/drive/v3/files/%s?fields=name&key=%s",
+		spreadsheetID, g.apiKey,
+	)
 
 	log.GetLogger().Debug("Fetching spreadsheet metadata", "spreadsheet_id", spreadsheetID)
-	req, err := http.NewRequest("GET", url, nil)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		log.GetLogger().Error("Error creating spreadsheet metadata request", "error", err)
-		return nil, fmt.Errorf("error creating request: %v", err)
+		return nil, fmt.Errorf("error creating metadata request: %w", err)
 	}
 
 	resp, err := g.httpClient.Do(req)
 	if err != nil {
-		log.GetLogger().Error("Error making spreadsheet metadata request", "error", err)
-		return nil, fmt.Errorf("error making request: %v", err)
+		if errors.Is(err, context.DeadlineExceeded) || errors.Is(err, context.Canceled) {
+			return nil, fmt.Errorf("metadata request canceled or timed out: %w", err)
+		}
+		return nil, fmt.Errorf("error executing metadata request: %w", err)
 	}
 	defer resp.Body.Close()
 
@@ -233,14 +246,14 @@ func (g *GoogleDriveHelper) fetchSpreadsheetMetadata(spreadsheetID string) (*Goo
 		body, _ := io.ReadAll(resp.Body)
 		log.GetLogger().Error("Spreadsheet metadata request failed",
 			"status_code", resp.StatusCode,
-			"response", string(body))
+			"response", string(body),
+		)
 		return nil, fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(body))
 	}
 
 	var file GoogleFile
 	if err := json.NewDecoder(resp.Body).Decode(&file); err != nil {
-		log.GetLogger().Error("Error decoding spreadsheet metadata response", "error", err)
-		return nil, fmt.Errorf("error decoding JSON response: %v", err)
+		return nil, fmt.Errorf("error decoding metadata response: %w", err)
 	}
 
 	log.GetLogger().Debug("Successfully retrieved spreadsheet metadata", "name", file.Name)
