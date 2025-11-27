@@ -19,3 +19,10 @@ func NewMiscRouter() func(r chi.Router) {
 		})
 	}
 }
+
+func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
+	layouts := template.Must(template.ParseGlob("web/templates/layout/base_layout.html"))
+	w.Header().Set("Content-Type", "text/html")
+	tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/404.html"))
+	tpl.Execute(w, nil)
+}

@@ -47,6 +47,7 @@ func main() {
 	r.Route("/guides", router.NewGuidesRouter())
 	// Static files
 	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./web/static"))))
+	r.NotFound(router.NotFoundHandler)
 
 	// Start Server
 	log.GetLogger().Info("Server runnign in port :8080")
