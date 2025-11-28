@@ -11,20 +11,20 @@ import (
 
 	"github.com/elias-gill/poliplanner2/internal/logger"
 	"github.com/elias-gill/poliplanner2/internal/service"
+	"github.com/elias-gill/poliplanner2/web"
 	"github.com/go-chi/chi/v5"
 )
 
 func NewAuthRouter() func(r chi.Router) {
-	layouts := template.Must(template.ParseGlob("web/templates/layout/clean_layout.html"))
+	layouts := web.CleanLayout
 
-	// NOTE: made like this so the main layout template is parsed only one time on startup
 	return func(r chi.Router) {
 		// Redirect to the dashboard.
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/dashboard", http.StatusFound)
 		})
 
-		// Render login
+		// --- Handle LOGIN ---
 		r.Get("/login", func(w http.ResponseWriter, r *http.Request) {
 			// Set redirection parameter if a redirection path is present
 			data := map[string]any{
@@ -36,7 +36,6 @@ func NewAuthRouter() func(r chi.Router) {
 			tpl.Execute(w, data)
 		})
 
-		// Handle login POST
 		r.Post("/login", func(w http.ResponseWriter, r *http.Request) {
 			logger.GetLogger().Debug("Redirecting from login", "path", r.RequestURI)
 
@@ -51,7 +50,7 @@ func NewAuthRouter() func(r chi.Router) {
 			user, err := service.AuthenticateUser(r.Context(), username, password)
 			if err != nil {
 				w.Header().Set("Content-Type", "text/html")
-				w.Write([]byte(constructHtmlError("Usuario o contraseña incorrectos")))
+				w.Write([]byte(newErrorFragment("Usuario o contraseña incorrectos")))
 				return
 			}
 
@@ -76,10 +75,15 @@ func NewAuthRouter() func(r chi.Router) {
 			logger.GetLogger().Debug("Redirecting from login", "path", redirectTo)
 
 			w.Header().Set("HX-Redirect", redirectTo)
-			w.WriteHeader(http.StatusOK)
 		})
 
-		// Handle signup POST
+		// --- Handle SIGNUP ---
+		r.Get("/signup", func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "text/html")
+			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/signup.html"))
+			tpl.Execute(w, nil)
+		})
+
 		r.Post("/signup", func(w http.ResponseWriter, r *http.Request) {
 			if err := r.ParseForm(); err != nil {
 				http.Error(w, "Invalid form data", http.StatusBadRequest)
@@ -91,35 +95,28 @@ func NewAuthRouter() func(r chi.Router) {
 			rawPassword := r.FormValue("password")
 
 			if err := validateUsername(username); err != nil {
-				w.Write([]byte(constructHtmlError(err.Error())))
+				w.Write([]byte(newErrorFragment(err.Error())))
 				return
 			}
 
 			if !isValidEmail(email) {
-				w.Write([]byte(constructHtmlError("Invalid email provided")))
+				w.Write([]byte(newErrorFragment("Invalid email provided")))
 				return
 			}
 
 			if len(rawPassword) < 6 {
-				w.Write([]byte(constructHtmlError("Password must have at least 6 characters")))
+				w.Write([]byte(newErrorFragment("Password must have at least 6 characters")))
 				return
 			}
 
 			err := service.CreateUser(r.Context(), strings.ToLower(username), email, rawPassword)
 			if err != nil {
-				w.Write([]byte(constructHtmlError(err.Error())))
+				w.Write([]byte(newErrorFragment(err.Error())))
 				return
 			}
 
 			w.Header().Set("HX-Redirect", "/login")
 			w.WriteHeader(http.StatusOK)
-		})
-
-		// Render signup
-		r.Get("/signup", func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Content-Type", "text/html")
-			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/signup.html"))
-			tpl.Execute(w, nil)
 		})
 	}
 }
@@ -144,7 +141,7 @@ func isAlphanumeric(str string) bool {
 	return re.MatchString(str)
 }
 
-func constructHtmlError(msg string) string {
+func newErrorFragment(msg string) string {
 	return `
 	<section role="alert" class="error">
 		<span>` + msg + `</span>

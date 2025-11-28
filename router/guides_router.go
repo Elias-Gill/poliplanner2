@@ -4,13 +4,13 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/elias-gill/poliplanner2/web"
 	"github.com/go-chi/chi/v5"
 )
 
 func NewGuidesRouter() func(r chi.Router) {
-	layouts := template.Must(template.ParseGlob("web/templates/layout/base_layout.html"))
+	layouts := web.BaseLayout
 
-	// NOTE: made like this so the main layout template is parsed only one time on startup
 	return func(r chi.Router) {
 		// Render login
 		r.Get("/calculo_notas", func(w http.ResponseWriter, r *http.Request) {

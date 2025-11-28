@@ -41,17 +41,18 @@ func main() {
 
 	r.Route("/", router.NewAuthRouter())
 	r.Route("/dashboard", router.NewDashboardRouter())
-	r.Route("/schedule", router.NewAuthRouter())
+	r.Route("/schedule", router.NewSchedulesRouter())
 	r.Route("/excel", router.NewAuthRouter())
 	r.Route("/misc", router.NewMiscRouter())
 	r.Route("/guides", router.NewGuidesRouter())
 	// Static files
 	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./web/static"))))
+	// 404 - Not found
 	r.NotFound(router.NotFoundHandler)
 
 	// Start Server
-	log.GetLogger().Info("Server runnign in port :8080")
-	err = http.ListenAndServe(":8080", r)
+	log.GetLogger().Info("Server is running", "addr", cfg.ServerAddr)
+	err = http.ListenAndServe(cfg.ServerAddr, r)
 	if err != nil {
 		panic(err)
 	}

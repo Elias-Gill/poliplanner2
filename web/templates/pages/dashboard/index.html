@@ -1,0 +1,121 @@
+{{ define "content" }}
+<main>
+
+    <div class="header-selector">
+        <h1>Mis horarios</h1>
+
+        {{ if .Schedules }}
+        <div class="form-container">
+            <form id="scheduleForm" action="/" method="get">
+                <select id="scheduleSelector" name="id" onchange="this.form.submit()">
+                    <option value="" disabled selected>Selecciona un horario</option>
+                    {{ range .Schedules }}
+                    <option value="{{ .ID }}"
+                        {{ if and $.SelectedSchedule (eq $.SelectedSchedule.ID .ID) }}selected{{ end }}>
+                        {{ .Description }}
+                    </option>
+                    {{ end }}
+                </select>
+            </form>
+
+            {{ if .SelectedSchedule }}
+            <form id="deleteScheduleForm"
+                action="/schedule/{{ .SelectedSchedule.ID }}/delete"
+                method="post"
+                onsubmit="return confirm('¿Estás seguro que quieres eliminar este horario?');">
+                <button type="submit" class="error">
+                    🗑
+                </button>
+            </form>
+            {{ end }}
+
+            <a href="/schedule/{{ if .SelectedSchedule }}{{ .SelectedSchedule.ID }}{{ end }}/calendar"
+                class="calendar-button">
+                📅 Calendario
+            </a>
+        </div>
+        {{ end }}
+    </div>
+
+    {{ if .Error }}
+    <div class="alert alert-error">{{ .Error }}</div>
+    {{ end }}
+
+    {{ if .Success }}
+    <div class="alert alert-success">{{ .Success }}</div>
+    {{ end }}
+
+    {{ if .HasNewExcel }}
+    <div class="alert alert-warning">{{ .HasNewExcel }}</div>
+    {{ end }}
+
+    {{ if .Warning }}
+    <div class="alert alert-warning">{{ .Warning }}</div>
+    {{ end }}
+
+    {{ if not .Schedules }}
+    No tienes horarios registrados.
+    {{ end }}
+
+    <section>
+        {{ if .SelectedSchedule }}
+        <div
+            id="schedule-detail"
+            hx-get="/schedule/{{ .SelectedSchedule.ID }}/detail"
+            hx-trigger="load"
+        ></div>
+        {{ end }}
+
+        <div id="bottom"></div>
+    </section>
+
+    <style>
+    .header-selector {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-xl);
+        padding: var(--space-md);
+        background-color: color-mix(in srgb, var(--color-bg), var(--color-secondary-bg) 20%);
+        flex-wrap: wrap;
+    }
+
+    .form-container {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+    }
+
+    #scheduleSelector {
+        width: 250px;
+        padding: var(--space-sm);
+        font-size: var(--font-size-base);
+        border: 1px solid var(--color-border);
+        border-radius: 0.25rem;
+    }
+
+    .calendar-button {
+        padding: 0.4rem 0.6rem;
+        border-radius: 0.3rem;
+        text-decoration: none;
+        border: 1px solid var(--color-border);
+    }
+
+    @media (max-width: 768px) {
+        .header-selector {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--space-md);
+        }
+        .form-container {
+            width: 100%;
+            gap: var(--space-sm);
+        }
+        #scheduleSelector {
+            width: 100%;
+        }
+    }
+    </style>
+
+</main>
+{{ end }}

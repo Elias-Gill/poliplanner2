@@ -15,7 +15,7 @@ type Config struct {
 	GoogleAPIKey string
 
 	// Server
-	Port         string
+	ServerAddr   string
 	ReadTimeout  time.Duration
 	WriteTimeout time.Duration
 
@@ -58,7 +58,7 @@ func Load() *Config {
 		GoogleAPIKey: googleAPIKey,
 
 		// Server
-		Port:         getEnv("PORT", "8080"),
+		ServerAddr:   getEnv("SERVER_ADDR", ":8080"),
 		ReadTimeout:  getEnvAsDuration("READ_TIMEOUT", 10*time.Second),
 		WriteTimeout: getEnvAsDuration("WRITE_TIMEOUT", 10*time.Second),
 

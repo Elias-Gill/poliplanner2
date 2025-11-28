@@ -17,6 +17,11 @@ func FindUserSchedules(ctx context.Context, userID int64) ([]*model.Schedule, er
 	return schedules, err
 }
 
-func FindScheduleDetail(scheduleID int64) []model.Subject {
-	return nil
+func FindScheduleDetail(ctx context.Context, scheduleID int64) ([]*model.Subject, error) {
+	subjects, err := scheduleDetailStorer.GetSubjectsByScheduleID(ctx, scheduleID)
+	if err != nil {
+		return nil, fmt.Errorf("error searching schedules: %w", err)
+	}
+
+	return subjects, nil
 }
