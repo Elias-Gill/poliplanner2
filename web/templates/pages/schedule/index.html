@@ -1,66 +1,75 @@
 {{define "content"}}
 <main>
-    {{if .Error}}
-    <div class="alert alert-error">
-        {{.Error}}
-    </div>
-    {{end}}
-
-    <h2>Crea un nuevo horario</h2>
-
-    <section>
-        <form hx-post="/schedule/create" hx-target="#main" hx-swap="innerHTML">
-            <section>
-                <label for="description">
-                    <h3>Descripción</h3>
-                </label>
-                <input type="text"
+  {{if .Error}}
+  <div class="alert alert-error">
+    {{.Error}}
+  </div>
+  {{end}}
+  <h2>Crea un nuevo horario</h2>
+  <section>
+    <form hx-post="/schedule/create" id="mainForm">
+      <!-- Primera sección: Descripción y Carrera -->
+      <section id="formSection1">
+        <label for="description">
+          <h3>Descripción</h3>
+        </label>
+        <input type="text"
                        id="description"
                        name="description"
                        placeholder="Ej: Horario primer semestre 2025"
                        required>
+        <label for="careerId">
+          <h3>Carrera</h3>
+        </label>
+        <select id="careerId" name="careerId" 
+                        hx-get="/schedule/create/details" 
+                        hx-target="#subjectsSelectorSection"
+                        hx-trigger="change"
+                        hx-include="#description"
+                        required>
+          <option disabled selected value="">Selecciona una carrera</option>
+          {{range .Careers}}
+          <option value="{{.CareerID}}">{{.CareerCode}}</option>
+          {{end}}
+        </select>
+      </section>
 
-                <label for="careerId">
-                    <h3>Carrera</h3>
-                </label>
-                <select id="careerId" name="careerId" required>
-                    <option disabled selected value="">Selecciona una carrera</option>
-                    {{range .Careers}}
-                    <option value="{{.ID}}">{{.Name}}</option>
-                    {{end}}
-                </select>
-            </section>
+      <!-- Información de Excel -->
+      <article>
+        <label>Versión de Excel</label>
+        <div>
+          <span>
+            <strong>Archivo:</strong>
+            {{.SheetVersion.FileName}}
+          </span>
+          <br>
+          <span>
+            <strong>Procesado el:</strong>
+            {{if .SheetVersion.ParsedAt}}
+            {{.SheetVersion.ParsedAt}}
+            {{else}}
+            Fecha no disponible
+            {{end}}
+          </span>
+          <br>
+          <span>
+            <strong>Descarga:</strong>
+            <a href="{{.SheetVersion.URL}}" target="_blank" rel="noopener">
+              {{.SheetVersion.URL}}
+            </a>
+          </span>
+        </div>
+      </article>
 
-            <article>
-                <label>Versión de Excel</label>
-                <div>
-                    <span>
-                        <strong>Archivo:</strong>
-                        {{.SheetVersion.FileName}}
-                    </span>
-                    <br>
-                    <span>
-                        <strong>Procesado el:</strong>
-                        {{if .SheetVersion.ParsedAt}}
-                            {{.SheetVersion.ParsedAt}}
-                        {{else}}
-                            Fecha no disponible
-                        {{end}}
-                    </span>
-                    <br>
-                    <span>
-                        <strong>Descarga:</strong>
-                        <a href="{{.SheetVersion.URL}}" target="_blank" rel="noopener">
-                            {{.SheetVersion.URL}}
-                        </a>
-                    </span>
-                </div>
-            </article>
+      <!-- Sección dinámica para selección de materias -->
+      <div id="subjectsSelectorSection">
+        <!-- Aquí se cargará el selector de materias via HTMX -->
+      </div>
 
-            <footer style="margin-top: var(--space-xl)">
-                <button type="submit">Continuar</button>
-            </footer>
-        </form>
-    </section>
+      <footer style="margin-top: var(--space-xl)">
+        <button type="submit">Crear Horario</button>
+      </footer>
+    </form>
+  </section>
 </main>
 {{end}}

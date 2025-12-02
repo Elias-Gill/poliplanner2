@@ -53,7 +53,6 @@ func (s *SqliteScheduleDetailStore) GetSubjectsByScheduleID(ctx context.Context,
 	for rows.Next() {
 		sub := &model.Subject{}
 		var careerID sql.NullInt64
-		var p1d, p2d, f1d, f1rd, f2d, f2rd sql.NullTime
 
 		err := rows.Scan(
 			&sub.SubjectID, &careerID, &sub.Department, &sub.SubjectName, &sub.Semester, &sub.Section,
@@ -64,12 +63,12 @@ func (s *SqliteScheduleDetailStore) GetSubjectsByScheduleID(ctx context.Context,
 			&sub.Thursday, &sub.ThursdayRoom,
 			&sub.Friday, &sub.FridayRoom,
 			&sub.Saturday, &sub.SaturdayDates,
-			&p1d, &sub.Partial1Time, &sub.Partial1Room,
-			&p2d, &sub.Partial2Time, &sub.Partial2Room,
-			&f1d, &sub.Final1Time, &sub.Final1Room,
-			&f1rd, &sub.Final1RevTime,
-			&f2d, &sub.Final2Time, &sub.Final2Room,
-			&f2rd, &sub.Final2RevTime,
+			&sub.Partial1Date, &sub.Partial1Time, &sub.Partial1Room,
+			&sub.Partial2Date, &sub.Partial2Time, &sub.Partial2Room,
+			&sub.Final1Date, &sub.Final1Time, &sub.Final1Room,
+			&sub.Final1RevDate, &sub.Final1RevTime,
+			&sub.Final2Date, &sub.Final2Time, &sub.Final2Room,
+			&sub.Final2RevDate, &sub.Final2RevTime,
 			&sub.CommitteePresident, &sub.CommitteeMember1, &sub.CommitteeMember2,
 		)
 		if err != nil {
@@ -78,24 +77,6 @@ func (s *SqliteScheduleDetailStore) GetSubjectsByScheduleID(ctx context.Context,
 
 		if careerID.Valid {
 			sub.CareerID = careerID.Int64
-		}
-		if p1d.Valid {
-			sub.Partial1Date = &p1d.Time
-		}
-		if p2d.Valid {
-			sub.Partial2Date = &p2d.Time
-		}
-		if f1d.Valid {
-			sub.Final1Date = &f1d.Time
-		}
-		if f1rd.Valid {
-			sub.Final1RevDate = &f1rd.Time
-		}
-		if f2d.Valid {
-			sub.Final2Date = &f2d.Time
-		}
-		if f2rd.Valid {
-			sub.Final2RevDate = &f2rd.Time
 		}
 
 		subjects = append(subjects, sub)

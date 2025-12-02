@@ -36,26 +36,6 @@ func (s *SqliteSubjectStore) Insert(ctx context.Context, sub *model.Subject) err
 	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 
-	var p1d, p2d, f1d, f1rd, f2d, f2rd sql.NullTime
-	if sub.Partial1Date != nil {
-		p1d = sql.NullTime{Time: *sub.Partial1Date, Valid: true}
-	}
-	if sub.Partial2Date != nil {
-		p2d = sql.NullTime{Time: *sub.Partial2Date, Valid: true}
-	}
-	if sub.Final1Date != nil {
-		f1d = sql.NullTime{Time: *sub.Final1Date, Valid: true}
-	}
-	if sub.Final1RevDate != nil {
-		f1rd = sql.NullTime{Time: *sub.Final1RevDate, Valid: true}
-	}
-	if sub.Final2Date != nil {
-		f2d = sql.NullTime{Time: *sub.Final2Date, Valid: true}
-	}
-	if sub.Final2RevDate != nil {
-		f2rd = sql.NullTime{Time: *sub.Final2RevDate, Valid: true}
-	}
-
 	res, err := s.db.ExecContext(ctx, query,
 		sub.CareerID, sub.Department, sub.SubjectName, sub.Semester, sub.Section,
 		sub.TeacherTitle, sub.TeacherLastname, sub.TeacherName, sub.TeacherEmail,
@@ -65,12 +45,12 @@ func (s *SqliteSubjectStore) Insert(ctx context.Context, sub *model.Subject) err
 		sub.Thursday, sub.ThursdayRoom,
 		sub.Friday, sub.FridayRoom,
 		sub.Saturday, sub.SaturdayDates,
-		p1d, sub.Partial1Time, sub.Partial1Room,
-		p2d, sub.Partial2Time, sub.Partial2Room,
-		f1d, sub.Final1Time, sub.Final1Room,
-		f1rd, sub.Final1RevTime,
-		f2d, sub.Final2Time, sub.Final2Room,
-		f2rd, sub.Final2RevTime,
+		sub.Partial1Date, sub.Partial1Time, sub.Partial1Room,
+		sub.Partial2Date, sub.Partial2Time, sub.Partial2Room,
+		sub.Final1Date, sub.Final1Time, sub.Final1Room,
+		sub.Final1RevDate, sub.Final1RevTime,
+		sub.Final2Date, sub.Final2Time, sub.Final2Room,
+		sub.Final2RevDate, sub.Final2RevTime,
 		sub.CommitteePresident, sub.CommitteeMember1, sub.CommitteeMember2,
 	)
 	if err != nil {
@@ -123,7 +103,6 @@ func (s *SqliteSubjectStore) scanMany(ctx context.Context, where string, args ..
 	for rows.Next() {
 		sub := &model.Subject{}
 		var careerID sql.NullInt64
-		var partial1Date, partial2Date, final1Date, final1RevDate, final2Date, final2RevDate sql.NullTime
 
 		err := rows.Scan(
 			&sub.SubjectID, &careerID, &sub.Department, &sub.SubjectName, &sub.Semester, &sub.Section,
@@ -134,12 +113,12 @@ func (s *SqliteSubjectStore) scanMany(ctx context.Context, where string, args ..
 			&sub.Thursday, &sub.ThursdayRoom,
 			&sub.Friday, &sub.FridayRoom,
 			&sub.Saturday, &sub.SaturdayDates,
-			&partial1Date, &sub.Partial1Time, &sub.Partial1Room,
-			&partial2Date, &sub.Partial2Time, &sub.Partial2Room,
-			&final1Date, &sub.Final1Time, &sub.Final1Room,
-			&final1RevDate, &sub.Final1RevTime,
-			&final2Date, &sub.Final2Time, &sub.Final2Room,
-			&final2RevDate, &sub.Final2RevTime,
+			&sub.Partial1Date, &sub.Partial1Time, &sub.Partial1Room,
+			&sub.Partial2Date, &sub.Partial2Time, &sub.Partial2Room,
+			&sub.Final1Date, &sub.Final1Time, &sub.Final1Room,
+			&sub.Final1RevDate, &sub.Final1RevTime,
+			&sub.Final2Date, &sub.Final2Time, &sub.Final2Room,
+			&sub.Final2RevDate, &sub.Final2RevTime,
 			&sub.CommitteePresident, &sub.CommitteeMember1, &sub.CommitteeMember2,
 		)
 		if err != nil {
@@ -148,24 +127,6 @@ func (s *SqliteSubjectStore) scanMany(ctx context.Context, where string, args ..
 
 		if careerID.Valid {
 			sub.CareerID = careerID.Int64
-		}
-		if partial1Date.Valid {
-			sub.Partial1Date = &partial1Date.Time
-		}
-		if partial2Date.Valid {
-			sub.Partial2Date = &partial2Date.Time
-		}
-		if final1Date.Valid {
-			sub.Final1Date = &final1Date.Time
-		}
-		if final1RevDate.Valid {
-			sub.Final1RevDate = &final1RevDate.Time
-		}
-		if final2Date.Valid {
-			sub.Final2Date = &final2Date.Time
-		}
-		if final2RevDate.Valid {
-			sub.Final2RevDate = &final2RevDate.Time
 		}
 
 		result = append(result, sub)
