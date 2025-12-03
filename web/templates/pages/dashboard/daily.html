@@ -1,0 +1,88 @@
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Asignatura</th>
+        <th>Lunes</th>
+        <th>Martes</th>
+        <th>Miércoles</th>
+        <th>Jueves</th>
+        <th>Viernes</th>
+        <th>Sábado</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{ range .Subjects }}
+      <tr>
+        <td>{{ .SubjectName }}</td>
+        <!-- Lunes -->
+        {{ if and .Monday.Valid (ne .Monday.String "") }}
+        <td>
+          <span>{{ .Monday.String }}</span><br>
+          {{ if and .MondayRoom.Valid (ne .MondayRoom.String "") }}
+          <span>Aula: {{ .MondayRoom.String }}</span>
+          {{ end }}
+        </td>
+        {{ else }}
+        <td></td>
+        {{ end }}
+        <!-- Martes -->
+        {{ if and .Tuesday.Valid (ne .Tuesday.String "") }}
+        <td>
+          <span>{{ .Tuesday.String }}</span><br>
+          {{ if and .TuesdayRoom.Valid (ne .TuesdayRoom.String "") }}
+          <span>Aula: {{ .TuesdayRoom.String }}</span>
+          {{ end }}
+        </td>
+        {{ else }}
+        <td></td>
+        {{ end }}
+        <!-- Miércoles -->
+        {{ if and .Wednesday.Valid (ne .Wednesday.String "") }}
+        <td>
+          <span>{{ .Wednesday.String }}</span><br>
+          {{ if and .WednesdayRoom.Valid (ne .WednesdayRoom.String "") }}
+          <span>Aula: {{ .WednesdayRoom.String }}</span>
+          {{ end }}
+        </td>
+        {{ else }}
+        <td></td>
+        {{ end }}
+        <!-- Jueves -->
+        {{ if and .Thursday.Valid (ne .Thursday.String "") }}
+        <td>
+          <span>{{ .Thursday.String }}</span><br>
+          {{ if and .ThursdayRoom.Valid (ne .ThursdayRoom.String "") }}
+          <span>Aula: {{ .ThursdayRoom.String }}</span>
+          {{ end }}
+        </td>
+        {{ else }}
+        <td></td>
+        {{ end }}
+        <!-- Viernes -->
+        {{ if and .Friday.Valid (ne .Friday.String "") }}
+        <td>
+          <span>{{ .Friday.String }}</span><br>
+          {{ if and .FridayRoom.Valid (ne .FridayRoom.String "") }}
+          <span>Aula: {{ .FridayRoom.String }}</span>
+          {{ end }}
+        </td>
+        {{ else }}
+        <td></td>
+        {{ end }}
+        <!-- Sábado -->
+        {{ if and .Saturday.Valid (ne .Saturday.String "") }}
+        <td>
+          <span>{{ .Saturday.String }}</span><br>
+          {{ if and .SaturdayDates.Valid (ne .SaturdayDates.String "") }}
+          <span>Fechas: {{ .SaturdayDates.String }}</span>
+          {{ end }}
+        </td>
+        {{ else }}
+        <td></td>
+        {{ end }}
+      </tr>
+      {{ end }}
+    </tbody>
+  </table>
+</div>

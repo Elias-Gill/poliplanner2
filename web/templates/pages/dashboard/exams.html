@@ -1,0 +1,108 @@
+<div class="exam-list">
+  {{ if .Subjects }}
+  <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+    <!-- Primer Parcial -->
+    <div class="exam-section" style="flex: 1 1 45%;">
+      <h3>Parcial I</h3>
+      {{ range .Subjects }}
+      {{ if .Partial1Date.Valid }}
+      <article class="exam-item">
+        <span class="exam-name">{{ .SubjectName }}</span>
+        <span class="badge-container">
+          <span class="date-badge">{{ .Partial1Date.Time.Format "02/01" }}</span>
+          {{ if .Partial1Time.Valid }}
+          <span class="time-badge">{{ .Partial1Time.String }}</span>
+          {{ else }}
+          <span class="time-badge">Hora pendiente</span>
+          {{ end }}
+        </span>
+        {{ if .Partial1Room.Valid }}
+        <div class="exam-aula">Aula: {{ .Partial1Room.String }}</div>
+        {{ end }}
+      </article>
+      {{ end }}
+      {{ end }}
+    </div>
+
+    <!-- Segundo Parcial -->
+    <div class="exam-section" style="flex: 1 1 45%;">
+      <h3>Parcial II</h3>
+      {{ range .Subjects }}
+      {{ if .Partial2Date.Valid }}
+      <article class="exam-item">
+        <span class="exam-name">{{ .SubjectName }}</span>
+        <span class="badge-container">
+          <span class="date-badge">{{ .Partial2Date.Time.Format "02/01" }}</span>
+          {{ if .Partial2Time.Valid }}
+          <span class="time-badge">{{ .Partial2Time.String }}</span>
+          {{ else }}
+          <span class="time-badge">Hora pendiente</span>
+          {{ end }}
+        </span>
+        {{ if .Partial2Room.Valid }}
+        <div class="exam-aula">Aula: {{ .Partial2Room.String }}</div>
+        {{ end }}
+      </article>
+      {{ end }}
+      {{ end }}
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 2rem;">
+    <!-- Primer Final -->
+    <div class="exam-section" style="flex: 1 1 45%;">
+      <h3>Final I</h3>
+      {{ range .Subjects }}
+      {{ if .Final1Date.Valid }}
+      <article class="exam-item">
+        <span class="exam-name">{{ .SubjectName }}</span>
+        <span class="badge-container">
+          <span class="date-badge">{{ .Final1Date.Time.Format "02/01" }}</span>
+          {{ if .Final1Time.Valid }}
+          <span class="time-badge">{{ .Final1Time.String }}</span>
+          {{ else }}
+          <span class="time-badge">Hora pendiente</span>
+          {{ end }}
+        </span>
+        {{ if .Final1Room.Valid }}
+        <div class="exam-aula">Aula: {{ .Final1Room.String }}</div>
+        {{ end }}
+      </article>
+      {{ end }}
+      {{ end }}
+    </div>
+
+    <!-- Segundo Final -->
+    <div class="exam-section" style="flex: 1 1 45%;">
+      <h3>Final II</h3>
+      {{ range .Subjects }}
+      {{ if .Final2Date.Valid }}
+      <article class="exam-item">
+        <span class="exam-name">{{ .SubjectName }}</span>
+        <span class="badge-container">
+          <span class="date-badge">{{ .Final2Date.Time.Format "02/01" }}</span>
+          {{ if .Final2Time.Valid }}
+          <span class="time-badge">{{ .Final2Time.String }}</span>
+          {{ else }}
+          <span class="time-badge">Hora pendiente</span>
+          {{ end }}
+        </span>
+        {{ if .Final2Room.Valid }}
+        <div class="exam-aula">Aula: {{ .Final2Room.String }}</div>
+        {{ end }}
+      </article>
+      {{ end }}
+      {{ end }}
+    </div>
+  </div>
+
+  {{ else }}
+  <div class="no-exams">
+    No hay exámenes programados
+  </div>
+  {{ end }}
+
+  <a href="/dashboard/{{ .SelectedScheduleID }}/calendar" class="calendar-button" style="margin-left: 1rem;">
+    📅 Calendario
+  </a>
+</div>

@@ -9,6 +9,8 @@ import (
 	"net/url"
 	"strings"
 	"sync"
+
+	"github.com/elias-gill/poliplanner2/internal/logger"
 )
 
 var (
@@ -71,22 +73,37 @@ func SessionMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
+		target := "/login?redirect=" + url.QueryEscape(r.URL.RequestURI())
+
 		// Validate session. If invalid, redirects to the login page.
 		cookie, err := r.Cookie("session_id")
 		if err != nil {
-			target := url.QueryEscape(r.URL.RequestURI())
-			http.Redirect(w, r, "/login?redirect="+target, http.StatusFound)
+			logger.GetLogger().Debug("Session middleware redirection", "cause", "cookie not present")
+			if isHtmx(r) {
+				w.Header().Add("HX-redirect", target)
+			} else {
+				http.Redirect(w, r, target, http.StatusFound)
+			}
 			return
 		}
 
 		session, ok := getSession(cookie.Value)
 		if !ok {
-			target := url.QueryEscape(r.URL.RequestURI())
-			http.Redirect(w, r, "/login?redirect="+target, http.StatusFound)
+			logger.GetLogger().Debug("Session middleware redirection", "cause", "session expired or invalid token")
+			if isHtmx(r) {
+				w.Header().Add("HX-redirect", target)
+			} else {
+				http.Redirect(w, r, target, http.StatusFound)
+			}
 			return
 		}
 
+		logger.GetLogger().Debug("User already authenticated")
 		ctx := context.WithValue(r.Context(), "userID", session.UserID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func isHtmx(r *http.Request) bool {
+	return r.Header.Get("HX-Request") == "true"
 }

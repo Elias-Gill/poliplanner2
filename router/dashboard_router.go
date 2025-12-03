@@ -7,12 +7,15 @@ import (
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
+	"github.com/elias-gill/poliplanner2/internal/logger"
 	"github.com/elias-gill/poliplanner2/internal/service"
 	"github.com/elias-gill/poliplanner2/web"
 	"github.com/go-chi/chi/v5"
 
 	"net/http"
 )
+
+const latest_selection_cookie = "latestScheduleSelection"
 
 func NewDashboardRouter() func(r chi.Router) {
 	layouts := web.BaseLayout
@@ -30,31 +33,41 @@ func NewDashboardRouter() func(r chi.Router) {
 				return
 			}
 
+			var latestSelection int64 = -1
+			if len(schedules) != 0 {
+				latestSelection = schedules[0].ID
+			}
+
+			if cookie, err := r.Cookie(latest_selection_cookie); err == nil {
+				if parsedValue, err := strconv.ParseInt(cookie.Value, 10, 64); err == nil {
+					latestSelection = parsedValue
+				}
+			}
+
 			data := struct {
 				Schedules          []*model.Schedule
 				SelectedScheduleID int64
-				Error              string
-				Success            string
-				Warning            string
-				HasNewExcel        string
 			}{
-				Schedules: schedules,
-				// TODO: traer el dato de una cookie
-				SelectedScheduleID: 1,
+				Schedules:          schedules,
+				SelectedScheduleID: latestSelection,
 			}
 
 			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/dashboard/index.html"))
 			tpl.Execute(w, data)
 		})
 
-		r.Get("/{id}/details", func(w http.ResponseWriter, r *http.Request) {
-			rawId := chi.URLParam(r, "id")
-			if rawId == "" {
+		r.Get("/view", func(w http.ResponseWriter, r *http.Request) {
+			rawId := r.URL.Query().Get("id")
+			mode := r.URL.Query().Get("mode")
+			if rawId == "" || mode == "" {
+				println("id o mode vacios")
 				w.Header().Add("HX-Redirect", "/404")
 				return
 			}
+
 			id, err := strconv.ParseInt(rawId, 10, 64)
 			if err != nil {
+				println("parseo de numero incorrecto")
 				w.Header().Add("HX-Redirect", "/404")
 				return
 			}
@@ -64,11 +77,13 @@ func NewDashboardRouter() func(r chi.Router) {
 
 			subjects, err := service.FindScheduleDetail(ctx, id)
 			if err != nil {
+				println("error al buscar schedule")
 				w.Header().Add("HX-Redirect", "/500")
 				http.Redirect(w, r, "/500", 500)
 				return
 			}
 			if subjects == nil {
+				println("subjects vacio")
 				w.Header().Add("HX-Redirect", "/404")
 				return
 			}
@@ -79,8 +94,23 @@ func NewDashboardRouter() func(r chi.Router) {
 				Subjects: subjects,
 			}
 
-			tpl := template.Must(template.ParseFiles("web/templates/pages/dashboard/details.html"))
-			tpl.Execute(w, data)
+			var tpl *template.Template
+			switch mode {
+			case "calendar":
+				tpl = template.Must(template.ParseFiles("web/templates/pages/dashboard/calendar.html"))
+			case "exams":
+				tpl = template.Must(template.ParseFiles("web/templates/pages/dashboard/exams.html"))
+			case "extra":
+				tpl = template.Must(template.ParseFiles("web/templates/pages/dashboard/extra.html"))
+			default:
+				tpl = template.Must(template.ParseFiles("web/templates/pages/dashboard/daily.html"))
+			}
+
+			err = tpl.Execute(w, data)
+			if err != nil {
+				logger.GetLogger().Debug("error rendering template", "error", err)
+				http.Error(w, "Error rendering template", 500)
+			}
 		})
 	}
 }

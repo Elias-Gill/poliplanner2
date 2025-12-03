@@ -3,72 +3,108 @@
   <div class="header-selector">
     <h1>Mis horarios</h1>
     {{ if .Schedules }}
-    <div class="form-container">
-      <form id="scheduleForm" action="/" method="get">
-        <select id="scheduleSelector" name="id" onchange="this.form.submit()">
-          <option value="" disabled {{ if not .SelectedScheduleID }}selected{{ end }}>
-            Selecciona un horario
-          </option>
-          {{ range .Schedules }}
-          <option value="{{ .ID }}" {{ if eq .ID $.SelectedScheduleID }}selected{{ end }}>
-            {{ .Description }}
-          </option>
-          {{ end }}
-        </select>
-      </form>
-      {{ if .SelectedScheduleID }}
-      <form id="deleteScheduleForm"
-            action="/schedule/{{ .SelectedScheduleID }}/delete"
-            method="post"
-            onsubmit="return confirm('¿Estás seguro que quieres eliminar este horario?');"
-            style="margin-left: 1rem;">
-        <button type="submit" class="error" title="Eliminar horario">🗑</button>
-      </form>
-      {{ end }}
+    <div class="form-container" style="gap: 1rem;">
+      <select id="viewModeSelector"
+        name="mode"
+        hx-get="/dashboard/view"
+        hx-swap="innerHTML swap:.22s settle:.2s"
+        hx-target="#schedule-detail"
+        hx-include="#scheduleSelector"
+        hx-trigger="change, load"
+        style="width: 150px; padding: var(--space-sm); font-size: var(--font-size-base); border: 1px solid var(--color-border); border-radius: .25rem;">
+        <option value="daily" selected>Vista diaria</option>
+        <option value="calendar">Calendario</option>
+        <option value="exams">Exámenes</option>
+        <option value="extra">Detalles</option>
+      </select>
+      <select id="scheduleSelector"
+                name="id"
+                hx-get="/dashboard/view"
+                hx-swap="innerHTML swap:.22s settle:.2s"
+                hx-target="#schedule-detail"
+                hx-include="#viewModeSelector"
+                hx-trigger="change, load"
+                style="width: 250px; padding: var(--space-sm); font-size: var(--font-size-base); border: 1px solid var(--color-border); border-radius: .25rem;">
+        <option value="" disabled {{ if or (not .SelectedScheduleID) (eq .SelectedScheduleID -1) }}selected{{ end }}>Selecciona un horario</option>
+        {{ range .Schedules }}
+        <option value="{{ .ID }}" {{ if and $.SelectedScheduleID (eq .ID $.SelectedScheduleID) }}selected{{ end }}>
+          {{ .Description }}
+        </option>
+        {{ end }}
+      </select>
     </div>
     {{ else }}
     <p>No tienes horarios registrados.</p>
     {{ end }}
-    <button>
+    <button style="margin-left: 1rem;">
       <a href="/schedule/create" style="color: white; text-decoration: none;">Crear</a>
     </button>
   </div>
-  {{ if .Error }}    
-  <div class="alert alert-error" role="alert">{{ .Error }}</div>
-  {{ end }}
-  {{ if .Success }}  
-  <div class="alert alert-success" role="alert">{{ .Success }}</div>
-  {{ end }}
-  {{ if .Warning }}  
-  <div class="alert alert-warning" role="alert">{{ .Warning }}</div>
-  {{ end }}
-  {{ if .HasNewExcel }} 
-  <div class="alert alert-warning" role="alert">{{ .HasNewExcel }}</div>
-  {{ end }}
   <section>
-    {{ if .SelectedScheduleID }}
-    <a href="/dashboard/{{ .SelectedScheduleID }}/calendar" class="calendar-button" style="margin-left: 1rem;">
-      📅 Calendario
-    </a>
-    <div id="schedule-detail"
-         hx-get="/dashboard/{{ .SelectedScheduleID }}/details"
-         hx-trigger="load">
-    </div>
-    {{ end }}
+    <div id="schedule-detail"></div>
     <div id="bottom"></div>
   </section>
   <style>
-    .header-selector{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-xl);padding:var(--space-md);flex-wrap:wrap}
-    .form-container{display:flex;align-items:center;gap:var(--space-md)}
-    #scheduleSelector{width:250px;padding:var(--space-sm);font-size:var(--font-size-base);border:1px
-        solid var(--color-border);border-radius:.25rem} .calendar-button{padding:.4rem
-        .6rem;border-radius:.3rem;text-decoration:none;border:1px solid
-            var(--color-border);color:inherit}
-    .error{background:#dc3545;color:#fff;border:none;padding:.3rem
-        .6rem;border-radius:.25rem;cursor:pointer;font-size:1.1rem;line-height:1}
-    @media(max-width:768px){
-        .header-selector{flex-direction:column;align-items:flex-start;gap:var(--space-md)}
-        .form-container{width:100%;gap:var(--space-sm)} #scheduleSelector{width:100%} }
+    .header-selector {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-xl);
+      padding: var(--space-md);
+      flex-wrap: wrap;
+    }
+    .form-container {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+    #scheduleSelector, #viewModeSelector {
+      padding: var(--space-sm);
+      font-size: var(--font-size-base);
+      border: 1px solid var(--color-border);
+      border-radius: .25rem;
+    }
+    .calendar-button {
+      padding: .4rem .6rem;
+      border-radius: .3rem;
+      text-decoration: none;
+      border: 1px solid var(--color-border);
+      color: inherit;
+    }
+    .error {
+      background: #dc3545;
+      color: #fff;
+      border: none;
+      padding: .3rem .6rem;
+      border-radius: .25rem;
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+    @media(max-width:768px) {
+      .header-selector {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-md);
+      }
+      .form-container {
+        width: 100%;
+        gap: var(--space-sm);
+      }
+      #scheduleSelector, #viewModeSelector {
+        width: 100%;
+      }
+    }
+
+    #schedule-detail.htmx-swapping {
+      opacity: 0;
+      transition: all .22s ease-out;
+    }
+
+    #schedule-detail.htmx-settling {
+      opacity: 1;
+      transition: all .24s ease-in;
+    }
   </style>
 </main>
 {{ end }}

@@ -1,0 +1,26 @@
+{{ if .Subjects }}
+<h2>Información sobre la materia</h2>
+<section>
+  <div class="grid-2">
+    {{ range .Subjects }}
+    <article>
+      <h3>{{ .SubjectName }}</h3>
+      <p>
+        {{- if ne .TeacherName "" }}
+        <span style="font-weight: var(--font-weight-semibold);">Profesor:</span>
+        <span>{{ .TeacherTitle }} {{ .TeacherLastname }}, {{ .TeacherName }}</span><br>
+        {{- end }}
+        {{- if ne .TeacherEmail "" }}
+        <span style="font-weight: var(--font-weight-semibold);">Email:</span>
+        <span>{{ .TeacherEmail }}</span><br>
+        {{- end }}
+        {{- if ne .Section "" }}
+        <span style="font-weight: var(--font-weight-semibold);">Sección:</span>
+        <span>{{ .Section }}</span>
+        {{- end }}
+      </p>
+    </article>
+    {{ end }}
+  </div>
+</section>
+{{ end }}

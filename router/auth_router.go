@@ -37,8 +37,6 @@ func NewAuthRouter() func(r chi.Router) {
 		})
 
 		r.Post("/login", func(w http.ResponseWriter, r *http.Request) {
-			logger.GetLogger().Debug("Redirecting from login", "path", r.RequestURI)
-
 			if err := r.ParseForm(); err != nil {
 				http.Error(w, "Invalid form data", http.StatusBadRequest)
 				return
