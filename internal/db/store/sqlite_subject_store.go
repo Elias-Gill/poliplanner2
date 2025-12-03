@@ -57,7 +57,7 @@ func (s *SqliteSubjectStore) Insert(ctx context.Context, sub *model.Subject) err
 		return err
 	}
 	id, _ := res.LastInsertId()
-	sub.SubjectID = id
+	sub.ID = id
 	return nil
 }
 
@@ -105,7 +105,7 @@ func (s *SqliteSubjectStore) scanMany(ctx context.Context, where string, args ..
 		var careerID sql.NullInt64
 
 		err := rows.Scan(
-			&sub.SubjectID, &careerID, &sub.Department, &sub.SubjectName, &sub.Semester, &sub.Section,
+			&sub.ID, &careerID, &sub.Department, &sub.SubjectName, &sub.Semester, &sub.Section,
 			&sub.TeacherTitle, &sub.TeacherLastname, &sub.TeacherName, &sub.TeacherEmail,
 			&sub.Monday, &sub.MondayRoom,
 			&sub.Tuesday, &sub.TuesdayRoom,

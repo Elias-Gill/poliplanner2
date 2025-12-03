@@ -3,6 +3,7 @@ package router
 import (
 	"context"
 	"html/template"
+	"strconv"
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
@@ -10,18 +11,8 @@ import (
 	"github.com/elias-gill/poliplanner2/web"
 	"github.com/go-chi/chi/v5"
 
-	// "html/template"
 	"net/http"
 )
-
-type DashboardData struct {
-	Schedules        []*model.Schedule
-	SelectedSchedule *model.Schedule
-	Error            string
-	Success          string
-	Warning          string
-	HasNewExcel      string
-}
 
 func NewDashboardRouter() func(r chi.Router) {
 	layouts := web.BaseLayout
@@ -34,20 +25,62 @@ func NewDashboardRouter() func(r chi.Router) {
 
 			schedules, err := service.FindUserSchedules(ctx, extractUserID(r))
 			if err != nil {
-				// TODO: Print error page
-				w.Write([]byte("<h1>Aca paso algo muy feo</h1>"))
+				w.Header().Add("HX-Redirect", "/500")
+				http.Redirect(w, r, "/500", 500)
 				return
 			}
 
-			if len(schedules) == 0 {
-				tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/dashboard/index.html"))
-				tpl.Execute(w, DashboardData{
-					Schedules: schedules,
-				})
+			data := struct {
+				Schedules          []*model.Schedule
+				SelectedScheduleID int64
+				Error              string
+				Success            string
+				Warning            string
+				HasNewExcel        string
+			}{
+				Schedules: schedules,
+				// TODO: traer el dato de una cookie
+				SelectedScheduleID: 1,
+			}
+
+			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/dashboard/index.html"))
+			tpl.Execute(w, data)
+		})
+
+		r.Get("/{id}/details", func(w http.ResponseWriter, r *http.Request) {
+			rawId := chi.URLParam(r, "id")
+			if rawId == "" {
+				w.Header().Add("HX-Redirect", "/404")
+				return
+			}
+			id, err := strconv.ParseInt(rawId, 10, 64)
+			if err != nil {
+				w.Header().Add("HX-Redirect", "/404")
 				return
 			}
 
-			// TODO: imprimir el dashboard normal
+			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*200)
+			defer cancel()
+
+			subjects, err := service.FindScheduleDetail(ctx, id)
+			if err != nil {
+				w.Header().Add("HX-Redirect", "/500")
+				http.Redirect(w, r, "/500", 500)
+				return
+			}
+			if subjects == nil {
+				w.Header().Add("HX-Redirect", "/404")
+				return
+			}
+
+			data := struct {
+				Subjects []*model.Subject
+			}{
+				Subjects: subjects,
+			}
+
+			tpl := template.Must(template.ParseFiles("web/templates/pages/dashboard/details.html"))
+			tpl.Execute(w, data)
 		})
 	}
 }

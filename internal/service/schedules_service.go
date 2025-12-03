@@ -25,3 +25,24 @@ func FindScheduleDetail(ctx context.Context, scheduleID int64) ([]*model.Subject
 
 	return subjects, nil
 }
+
+// FIX: make transactions and more secure inserts
+func CreateSchedule(ctx context.Context, userID int64, sheetVersionId int64, description string, subjects []int64) error {
+	scheId, err := scheduleStorer.Insert(ctx, &model.Schedule{
+		UserID:               userID,
+		SheetVersion: sheetVersionId,
+		Description:  description,
+	})
+	if err != nil {
+		return fmt.Errorf("error creating schedule: %w", err)
+	}
+
+	for _, id := range subjects {
+		err := scheduleDetailStorer.Insert(ctx, scheId, id)
+		if err != nil {
+			return fmt.Errorf("error inserting schedule detail: %w", err)
+		}
+	}
+
+	return nil
+}

@@ -22,7 +22,7 @@ func (s *SqliteCareerStore) Insert(ctx context.Context, c *model.Career) error {
 		return err
 	}
 	id, _ := res.LastInsertId()
-	c.CareerID = id
+	c.ID = id
 	return nil
 }
 
@@ -38,7 +38,7 @@ func (s *SqliteCareerStore) GetByID(ctx context.Context, careerID int64) (*model
 	err := s.db.QueryRowContext(ctx, `
 		SELECT career_id, career_code, sheet_version_id
 		FROM careers WHERE career_id = ?`, careerID).
-		Scan(&c.CareerID, &c.CareerCode, &sheetVersionID)
+		Scan(&c.ID, &c.CareerCode, &sheetVersionID)
 
 	if err != nil {
 		return nil, err
@@ -62,7 +62,7 @@ func (s *SqliteCareerStore) GetBySheetVersion(ctx context.Context, versionID int
 	for rows.Next() {
 		c := &model.Career{}
 		var sheetVersionID sql.NullInt64
-		if err := rows.Scan(&c.CareerID, &c.CareerCode, &sheetVersionID); err != nil {
+		if err := rows.Scan(&c.ID, &c.CareerCode, &sheetVersionID); err != nil {
 			return nil, err
 		}
 		c.SheetVersionID = sheetVersionID

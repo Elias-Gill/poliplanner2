@@ -27,7 +27,7 @@ func (s *SqliteUserStore) Insert(ctx context.Context, u *model.User) error {
 	if err != nil {
 		return err
 	}
-	u.UserID = id
+	u.ID = id
 	return nil
 }
 
@@ -42,7 +42,7 @@ func (s *SqliteUserStore) GetByID(ctx context.Context, userID int64) (*model.Use
 		SELECT user_id, username, password, email,
 		       recovery_token_hash, recovery_token_expiration, recovery_token_used
 		FROM users WHERE user_id = ?`, userID).
-		Scan(&u.UserID, &u.Username, &u.Password, &u.Email,
+		Scan(&u.ID, &u.Username, &u.Password, &u.Email,
 			&u.RecoveryTokenHash, &u.RecoveryTokenExpiration, &u.RecoveryTokenUsed)
 	if err != nil {
 		return nil, err
@@ -56,7 +56,7 @@ func (s *SqliteUserStore) GetByUsername(ctx context.Context, username string) (*
 		SELECT user_id, username, password, email,
 		       recovery_token_hash, recovery_token_expiration, recovery_token_used
 		FROM users WHERE username = ?`, username).
-		Scan(&u.UserID, &u.Username, &u.Password, &u.Email,
+		Scan(&u.ID, &u.Username, &u.Password, &u.Email,
 			&u.RecoveryTokenHash, &u.RecoveryTokenExpiration, &u.RecoveryTokenUsed)
 	if err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func (s *SqliteUserStore) GetByEmail(ctx context.Context, email string) (*model.
 		SELECT user_id, username, password, email,
 		       recovery_token_hash, recovery_token_expiration, recovery_token_used
 		FROM users WHERE email = ?`, email).
-		Scan(&u.UserID, &u.Username, &u.Password, &u.Email,
+		Scan(&u.ID, &u.Username, &u.Password, &u.Email,
 			&u.RecoveryTokenHash, &u.RecoveryTokenExpiration, &u.RecoveryTokenUsed)
 	if err != nil {
 		return nil, err

@@ -28,7 +28,7 @@ func (s *SqliteSheetVersionStore) Insert(ctx context.Context, sv *model.SheetVer
 	if err != nil {
 		return err
 	}
-	sv.VersionID = id
+	sv.ID = id
 	return nil
 }
 
@@ -39,7 +39,7 @@ func (s *SqliteSheetVersionStore) GetNewest(ctx context.Context) (*model.SheetVe
 		FROM sheet_version
 		ORDER BY parsed_at DESC
 		LIMIT 1
-		`).Scan(&sv.VersionID, &sv.FileName, &sv.URL, &sv.ParsedAt)
+		`).Scan(&sv.ID, &sv.FileName, &sv.URL, &sv.ParsedAt)
 
 	if err != nil {
 		return nil, err

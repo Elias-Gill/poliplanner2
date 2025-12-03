@@ -15,15 +15,15 @@ func NewSqliteScheduleStore(db *sql.DB) *SqliteScheduleStore {
 	return &SqliteScheduleStore{db: db}
 }
 
-func (s *SqliteScheduleStore) Insert(ctx context.Context, userID int64, sched *model.Schedule) (int64, error) {
+func (s *SqliteScheduleStore) Insert(ctx context.Context, sched *model.Schedule) (int64, error) {
 	query := `
 	INSERT INTO schedules (user_id, schedule_description, schedule_sheet_version)
 	VALUES (?, ?, ?)
 	`
 	res, err := s.db.ExecContext(ctx, query,
-		userID,
-		sched.ScheduleDescription,
-		sched.ScheduleSheetVersion,
+		sched.UserID,
+		sched.Description,
+		sched.SheetVersion,
 	)
 	if err != nil {
 		return 0, err
@@ -55,10 +55,10 @@ func (s *SqliteScheduleStore) GetByUserID(ctx context.Context, userID int64) ([]
 	for rows.Next() {
 		sched := &model.Schedule{}
 		err := rows.Scan(
-			&sched.ScheduleID,
+			&sched.ID,
 			&sched.CreatedAt,
-			&sched.ScheduleDescription,
-			&sched.ScheduleSheetVersion,
+			&sched.Description,
+			&sched.SheetVersion,
 		)
 		if err != nil {
 			return nil, err
@@ -73,7 +73,7 @@ func (s *SqliteScheduleStore) GetByID(ctx context.Context, scheduleID int64) (*m
 	err := s.db.QueryRowContext(ctx, `
 		SELECT schedule_id, created_at, user_id, schedule_description, schedule_sheet_version
 		FROM schedules WHERE schedule_id = ?`, scheduleID).
-		Scan(&sched.ScheduleID, &sched.CreatedAt, &sched.UserID, &sched.ScheduleDescription, &sched.ScheduleSheetVersion)
+		Scan(&sched.ID, &sched.CreatedAt, &sched.UserID, &sched.Description, &sched.SheetVersion)
 	if err != nil {
 		return nil, err
 	}

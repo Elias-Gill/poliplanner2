@@ -55,7 +55,7 @@ func (s *SqliteScheduleDetailStore) GetSubjectsByScheduleID(ctx context.Context,
 		var careerID sql.NullInt64
 
 		err := rows.Scan(
-			&sub.SubjectID, &careerID, &sub.Department, &sub.SubjectName, &sub.Semester, &sub.Section,
+			&sub.ID, &careerID, &sub.Department, &sub.SubjectName, &sub.Semester, &sub.Section,
 			&sub.TeacherTitle, &sub.TeacherLastname, &sub.TeacherName, &sub.TeacherEmail,
 			&sub.Monday, &sub.MondayRoom,
 			&sub.Tuesday, &sub.TuesdayRoom,

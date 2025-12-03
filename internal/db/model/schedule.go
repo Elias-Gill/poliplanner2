@@ -5,9 +5,9 @@ import (
 )
 
 type Schedule struct {
-	ScheduleID           int64
-	CreatedAt            time.Time
-	UserID               int64
-	ScheduleDescription  string
-	ScheduleSheetVersion int64
+	ID           int64
+	CreatedAt    time.Time
+	UserID       int64
+	Description  string
+	SheetVersion int64
 }

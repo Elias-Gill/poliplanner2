@@ -2,7 +2,6 @@ package router
 
 import (
 	"context"
-	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -14,12 +13,6 @@ import (
 	"github.com/elias-gill/poliplanner2/web"
 	"github.com/go-chi/chi/v5"
 )
-
-type ScheduleCreatePageData struct {
-	Error        string
-	Careers      []*model.Career
-	SheetVersion *model.SheetVersion
-}
 
 func NewSchedulesRouter() func(r chi.Router) {
 	layouts := web.BaseLayout
@@ -36,17 +29,24 @@ func NewSchedulesRouter() func(r chi.Router) {
 				http.Redirect(w, r, "/500", 500)
 			}
 
-			careers, err := service.FindCareersBySheetVersion(ctx, latestExcel.VersionID)
+			careers, err := service.FindCareersBySheetVersion(ctx, latestExcel.ID)
 			if err != nil {
 				logger.GetLogger().Error("Error finding careers", "error", err)
 				http.Redirect(w, r, "/500", 500)
 			}
 
-			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/schedule/index.html"))
-			tpl.Execute(w, &ScheduleCreatePageData{
+			// Template data
+			data := &struct {
+				Error        string
+				Careers      []*model.Career
+				SheetVersion *model.SheetVersion
+			}{
 				Careers:      careers,
 				SheetVersion: latestExcel,
-			})
+			}
+
+			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/schedule/index.html"))
+			tpl.Execute(w, data)
 		})
 
 		r.Get("/create/details", func(w http.ResponseWriter, r *http.Request) {
@@ -54,19 +54,16 @@ func NewSchedulesRouter() func(r chi.Router) {
 			defer cancel()
 
 			rawId := r.URL.Query().Get("careerId")
-			// TODO: que hacer
-			// if careerID == "" {
-			// 	http.Error(w, "careerId is required", http.StatusBadRequest)
-			// 	return
-			// }
+			if rawId == "" {
+				http.Error(w, "CareerID is required", http.StatusBadRequest)
+				return
+			}
 
 			careerId, err := strconv.ParseInt(rawId, 10, 64)
-			// TODO: agregar mensaje de error para el id invalido
-			// if err != nil {
-			// 	logger.GetLogger().Error("Error finding subjects", "error", err, "careerID", rawId)
-			// 	http.Redirect(w, r, "/500", 500)
-			// 	return
-			// }
+			if err != nil {
+				http.Error(w, "Invalid careerID", http.StatusBadRequest)
+				return
+			}
 
 			subjects, err := service.FindSubjectsByCareerID(ctx, careerId)
 			if err != nil {
@@ -75,29 +72,57 @@ func NewSchedulesRouter() func(r chi.Router) {
 				return
 			}
 
-			// Preparar datos para el template
+			// Template data
 			data := struct{ Subjects []*model.Subject }{
 				Subjects: subjects,
 			}
 
 			tpl := template.Must(template.ParseFiles("web/templates/pages/schedule/details.html"))
-			if err := tpl.Execute(w, data); err != nil {
-				logger.GetLogger().Error("Error executing template", "error", err)
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-			}
+			tpl.Execute(w, data)
 		})
 
-		// TODO: continuar
 		r.Post("/create", func(w http.ResponseWriter, r *http.Request) {
 			r.ParseForm()
 
-			fmt.Println("---- NUEVO HORARIO ----")
-			fmt.Println("description =", r.Form.Get("description"))
-			fmt.Println("careerId    =", r.Form.Get("careerId"))
-			fmt.Println("subjectIds  =", r.Form["subjectIds"]) // slice
+			description := r.Form.Get("description")
+			rawSheetVersionID := r.Form.Get("sheetVersionID")
+			rawSubjectIDs := r.Form["subjectIds"]
+
+			if description == "" {
+				w.Header().Set("HX-Redirect", "/500")
+				return
+			}
+
+			sheetVersionID, err := strconv.ParseInt(rawSheetVersionID, 10, 64)
+			if err != nil {
+				w.Header().Set("HX-Redirect", "/500")
+				return
+			}
+
+			subjectIDs := make([]int64, 0, len(rawSubjectIDs))
+			for _, sID := range rawSubjectIDs {
+				id, err := strconv.ParseInt(sID, 10, 64)
+				if err != nil {
+					w.Header().Set("HX-Redirect", "/500")
+					return
+				}
+				subjectIDs = append(subjectIDs, id)
+			}
+
+			// extract user from session
+			userID := extractUserID(r)
+
+			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*200)
+			defer cancel()
+
+			err = service.CreateSchedule(ctx, userID, sheetVersionID, description, subjectIDs)
+			if err != nil {
+				logger.GetLogger().Error("cannot create schedule", "error", err)
+				w.Header().Set("HX-Redirect", "/500")
+				return
+			}
 
 			w.Header().Set("HX-Redirect", "/dashboard")
-			w.WriteHeader(http.StatusNoContent)
 		})
 	}
 }

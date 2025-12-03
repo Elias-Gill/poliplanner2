@@ -33,7 +33,7 @@ type SubjectStorer interface {
 }
 
 type ScheduleStorer interface {
-	Insert(ctx context.Context, userID int64, s *model.Schedule) (int64, error)
+	Insert(ctx context.Context, s *model.Schedule) (int64, error)
 	Delete(ctx context.Context, scheduleID int64) error
 	GetByUserID(ctx context.Context, userID int64) ([]*model.Schedule, error)
 	GetByID(ctx context.Context, scheduleID int64) (*model.Schedule, error)

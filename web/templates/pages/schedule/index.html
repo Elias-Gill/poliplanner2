@@ -29,11 +29,10 @@
                         required>
           <option disabled selected value="">Selecciona una carrera</option>
           {{range .Careers}}
-          <option value="{{.CareerID}}">{{.CareerCode}}</option>
+          <option value="{{.ID}}">{{.CareerCode}}</option>
           {{end}}
         </select>
       </section>
-
       <!-- Información de Excel -->
       <article>
         <label>Versión de Excel</label>
@@ -59,16 +58,12 @@
             </a>
           </span>
         </div>
+        <input type="hidden" name="sheetVersionID" value="{{.SheetVersion.ID}}">
       </article>
-
       <!-- Sección dinámica para selección de materias -->
       <div id="subjectsSelectorSection">
         <!-- Aquí se cargará el selector de materias via HTMX -->
       </div>
-
-      <footer style="margin-top: var(--space-xl)">
-        <button type="submit">Crear Horario</button>
-      </footer>
     </form>
   </section>
 </main>

@@ -55,7 +55,7 @@ func NewAuthRouter() func(r chi.Router) {
 			}
 
 			// Create a session cookie
-			sessionID := service.CreateSession(user.UserID)
+			sessionID := service.CreateSession(user.ID)
 			http.SetCookie(w, &http.Cookie{
 				Name:     "session_id",
 				Value:    sessionID,

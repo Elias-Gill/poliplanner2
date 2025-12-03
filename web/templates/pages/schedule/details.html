@@ -26,129 +26,131 @@
       <ul id="selectedSubjectsList" style="list-style:none; padding:0;"></ul>
     </section>
   </section>
-</div>
-{{if .Subjects}}
-<script>
-  {
-    const subjectsRaw = [
-      {{range .Subjects}}
-      {
-        id: "{{.SubjectID}}",
-        subjectName: "{{.SubjectName | js}}",
-        section: "{{if .Section}}{{.Section | js}}{{end}}",
-        professorTitle: "{{if .TeacherTitle}}{{.TeacherTitle | js}}{{end}}",
-        professorFirstName: "{{if .TeacherName}}{{.TeacherName | js}}{{end}}",
-        professorLastname: "{{if .TeacherLastname}}{{.TeacherLastname | js}}{{end}}",
-        semester: {{.Semester}},
-        courseName: "{{.SubjectName | js}}"
-      },
-      {{end}}
-    ];
+  <section>
+    <button type="submit">Crear Horario</button>
+  </section>
+  {{if .Subjects}}
+  <script>
+    {
+      const subjectsRaw = [
+        {{range .Subjects}}
+        {
+          id: "{{.ID}}",
+          subjectName: "{{.SubjectName | js}}",
+          section: "{{if .Section}}{{.Section | js}}{{end}}",
+          professorTitle: "{{if .TeacherTitle}}{{.TeacherTitle | js}}{{end}}",
+          professorFirstName: "{{if .TeacherName}}{{.TeacherName | js}}{{end}}",
+          professorLastname: "{{if .TeacherLastname}}{{.TeacherLastname | js}}{{end}}",
+          semester: {{.Semester}},
+          courseName: "{{.SubjectName | js}}"
+        },
+        {{end}}
+      ];
 
-      const subjectsContainer = document.getElementById('subjectsContainer');
-      const selectedSubjectsPreview = document.getElementById('selectedSubjectsPreview');
-      const selectedSubjectsList = document.getElementById('selectedSubjectsList');
+        const subjectsContainer = document.getElementById('subjectsContainer');
+        const selectedSubjectsPreview = document.getElementById('selectedSubjectsPreview');
+        const selectedSubjectsList = document.getElementById('selectedSubjectsList');
 
-      const selectedIds = new Set();
+        const selectedIds = new Set();
 
-      function renderSubjects() {
-        subjectsContainer.innerHTML = '';
+        function renderSubjects() {
+          subjectsContainer.innerHTML = '';
 
-        subjectsRaw.forEach(sub => {
-          const div = document.createElement('div');
-          div.style.padding = '0.5rem 0';
-          div.style.borderBottom = '1px solid #eee';
+          subjectsRaw.forEach(sub => {
+            const div = document.createElement('div');
+            div.style.padding = '0.5rem 0';
+            div.style.borderBottom = '1px solid #eee';
 
-          const professorName = `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`.trim();
+            const professorName = `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`.trim();
 
-          const checkbox = document.createElement('input');
-          checkbox.type = 'checkbox';
-          checkbox.name = 'subjectIds';
-          checkbox.id = 'subject-' + sub.id;
-          checkbox.value = sub.id;
-          checkbox.checked = selectedIds.has(sub.id);
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = 'subjectIds';
+            checkbox.id = 'subject-' + sub.id;
+            checkbox.value = sub.id;
+            checkbox.checked = selectedIds.has(sub.id);
 
-          checkbox.addEventListener('change', () => {
-            if (checkbox.checked) selectedIds.add(sub.id);
-            else selectedIds.delete(sub.id);
-            renderSelectedSubjects();
+            checkbox.addEventListener('change', () => {
+              if (checkbox.checked) selectedIds.add(sub.id);
+              else selectedIds.delete(sub.id);
+              renderSelectedSubjects();
+            });
+
+            const label = document.createElement('label');
+            label.style.display = 'block';
+            label.style.cursor = 'pointer';
+            label.appendChild(checkbox);
+
+            const info = document.createElement('span');
+            info.innerHTML =
+              ` <strong>${sub.subjectName}</strong> (Semestre ${sub.semester})<br>` +
+              `Sección ${sub.section}<br>` +
+              `<small>${professorName || "Sin profesor asignado"}</small>`;
+
+            label.appendChild(info);
+
+            div.appendChild(label);
+            subjectsContainer.appendChild(div);
           });
-
-          const label = document.createElement('label');
-          label.style.display = 'block';
-          label.style.cursor = 'pointer';
-          label.appendChild(checkbox);
-
-          const info = document.createElement('span');
-          info.innerHTML =
-            ` <strong>${sub.subjectName}</strong> (Semestre ${sub.semester})<br>` +
-            `Sección ${sub.section}<br>` +
-            `<small>${professorName || "Sin profesor asignado"}</small>`;
-
-          label.appendChild(info);
-
-          div.appendChild(label);
-          subjectsContainer.appendChild(div);
-        });
-      }
-
-      function renderSelectedSubjects() {
-        selectedSubjectsList.innerHTML = '';
-
-        if (selectedIds.size === 0) {
-          selectedSubjectsPreview.style.display = 'none';
-          return;
         }
 
-        selectedSubjectsPreview.style.display = 'block';
+        function renderSelectedSubjects() {
+          selectedSubjectsList.innerHTML = '';
 
-        selectedIds.forEach(id => {
-          const sub = subjectsRaw.find(s => s.id === id);
-          if (!sub) return;
+          if (selectedIds.size === 0) {
+            selectedSubjectsPreview.style.display = 'none';
+            return;
+          }
 
-          const li = document.createElement('li');
-          li.style.display = 'flex';
-          li.style.justifyContent = 'space-between';
-          li.style.alignItems = 'center';
-          li.style.padding = '0.5rem';
-          li.style.marginBottom = '0.5rem';
-          li.style.backgroundColor = '#f8f9fa';
-          li.style.borderRadius = '0.25rem';
+          selectedSubjectsPreview.style.display = 'block';
 
-          const professorName = `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`.trim();
+          selectedIds.forEach(id => {
+            const sub = subjectsRaw.find(s => s.id === id);
+            if (!sub) return;
 
-          const info = document.createElement('div');
-          info.innerHTML =
-            `<strong>${sub.subjectName}</strong> – Sección ${sub.section}<br>` +
-            `<small>${professorName || "Sin profesor asignado"}</small>`;
+            const li = document.createElement('li');
+            li.style.display = 'flex';
+            li.style.justifyContent = 'space-between';
+            li.style.alignItems = 'center';
+            li.style.padding = '0.5rem';
+            li.style.marginBottom = '0.5rem';
+            li.style.backgroundColor = '#f8f9fa';
+            li.style.borderRadius = '0.25rem';
 
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.textContent = 'X';
-          btn.title = 'Quitar materia';
-          btn.style.backgroundColor = '#dc3545';
-          btn.style.color = 'white';
-          btn.style.border = 'none';
-          btn.style.padding = '0.25rem 0.5rem';
-          btn.style.fontSize = '0.875rem';
-          btn.style.borderRadius = '0.25rem';
-          btn.style.cursor = 'pointer';
+            const professorName = `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`.trim();
 
-          btn.addEventListener('click', () => {
-            selectedIds.delete(id);
-            const cb = document.getElementById('subject-' + id);
-            if (cb) cb.checked = false;
-            renderSelectedSubjects();
+            const info = document.createElement('div');
+            info.innerHTML =
+              `<strong>${sub.subjectName}</strong> – Sección ${sub.section}<br>` +
+              `<small>${professorName || "Sin profesor asignado"}</small>`;
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = 'X';
+            btn.title = 'Quitar materia';
+            btn.style.backgroundColor = '#dc3545';
+            btn.style.color = 'white';
+            btn.style.border = 'none';
+            btn.style.padding = '0.25rem 0.5rem';
+            btn.style.fontSize = '0.875rem';
+            btn.style.borderRadius = '0.25rem';
+            btn.style.cursor = 'pointer';
+
+            btn.addEventListener('click', () => {
+              selectedIds.delete(id);
+              const cb = document.getElementById('subject-' + id);
+              if (cb) cb.checked = false;
+              renderSelectedSubjects();
+            });
+
+            li.appendChild(info);
+            li.appendChild(btn);
+            selectedSubjectsList.appendChild(li);
           });
+        }
 
-          li.appendChild(info);
-          li.appendChild(btn);
-          selectedSubjectsList.appendChild(li);
-        });
+        renderSubjects();
+        renderSelectedSubjects();
       }
-
-      renderSubjects();
-      renderSelectedSubjects();
-    }
-</script>
-{{end}}
+  </script>
+  {{end}}
