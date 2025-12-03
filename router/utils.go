@@ -2,6 +2,12 @@ package router
 
 import "net/http"
 
+// This function should never fail or panic if the session middleware is functioning correctly.
+// If a protected endpoint is reached without a userID set in the request context,
+// the application is in an invalid state and something unexpected has occurred.
+//
+// If this is the case, then probably the endpoint has not been added to the "protected
+// endpoints" array list in the middleware configuration.
 func extractUserID(r *http.Request) int64 {
 	switch id := r.Context().Value("userID").(type) {
 	case int64:
