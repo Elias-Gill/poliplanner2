@@ -1,8 +1,13 @@
 package service
 
-import "github.com/elias-gill/poliplanner2/internal/db/store"
+import (
+	"database/sql"
+
+	"github.com/elias-gill/poliplanner2/internal/db/store"
+)
 
 var (
+	db                   *sql.DB
 	userStorer           store.UserStorer
 	sheetVersionStorer   store.SheetVersionStorer
 	careerStorer         store.CareerStorer
@@ -12,17 +17,19 @@ var (
 )
 
 func InitializeServices(
-	_userStorer store.UserStorer,
-	_sheetVersionStorer store.SheetVersionStorer,
-	_careerStorer store.CareerStorer,
-	_subjectStorer store.SubjectStorer,
-	_scheduleStorer store.ScheduleStorer,
-	_scheduleDetailStorer store.ScheduleDetailStorer,
+	conn *sql.DB,
+	userStore store.UserStorer,
+	sheetVersionStore store.SheetVersionStorer,
+	careerStore store.CareerStorer,
+	subjectStore store.SubjectStorer,
+	scheduleStore store.ScheduleStorer,
+	scheduleDetailStore store.ScheduleDetailStorer,
 ) {
-	userStorer = _userStorer
-	sheetVersionStorer = _sheetVersionStorer
-	careerStorer = _careerStorer
-	subjectStorer = _subjectStorer
-	scheduleStorer = _scheduleStorer
-	scheduleDetailStorer = _scheduleDetailStorer
+	db = conn
+	userStorer = userStore
+	sheetVersionStorer = sheetVersionStore
+	careerStorer = careerStore
+	subjectStorer = subjectStore
+	scheduleStorer = scheduleStore
+	scheduleDetailStorer = scheduleDetailStore
 }

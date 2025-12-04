@@ -2,25 +2,23 @@ package store
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
 )
 
 type SqliteScheduleStore struct {
-	db *sql.DB
 }
 
-func NewSqliteScheduleStore(db *sql.DB) *SqliteScheduleStore {
-	return &SqliteScheduleStore{db: db}
+func NewSqliteScheduleStore() *SqliteScheduleStore {
+	return &SqliteScheduleStore{}
 }
 
-func (s *SqliteScheduleStore) Insert(ctx context.Context, sched *model.Schedule) (int64, error) {
+func (s SqliteScheduleStore) Insert(ctx context.Context, exec Executor, sched *model.Schedule) (int64, error) {
 	query := `
 	INSERT INTO schedules (user_id, schedule_description, schedule_sheet_version)
 	VALUES (?, ?, ?)
 	`
-	res, err := s.db.ExecContext(ctx, query,
+	res, err := exec.ExecContext(ctx, query,
 		sched.UserID,
 		sched.Description,
 		sched.SheetVersion,
@@ -35,13 +33,13 @@ func (s *SqliteScheduleStore) Insert(ctx context.Context, sched *model.Schedule)
 	return id, nil
 }
 
-func (s *SqliteScheduleStore) Delete(ctx context.Context, scheduleID int64) error {
-	_, err := s.db.ExecContext(ctx, `DELETE FROM schedules WHERE schedule_id = ?`, scheduleID)
+func (s SqliteScheduleStore) Delete(ctx context.Context, exec Executor, scheduleID int64) error {
+	_, err := exec.ExecContext(ctx, `DELETE FROM schedules WHERE schedule_id = ?`, scheduleID)
 	return err
 }
 
-func (s *SqliteScheduleStore) GetByUserID(ctx context.Context, userID int64) ([]*model.Schedule, error) {
-	rows, err := s.db.QueryContext(ctx, `
+func (s SqliteScheduleStore) GetByUserID(ctx context.Context, exec Executor, userID int64) ([]*model.Schedule, error) {
+	rows, err := exec.QueryContext(ctx, `
 		SELECT schedule_id, created_at, schedule_description, schedule_sheet_version
 		FROM schedules
 		WHERE user_id = ?
@@ -68,9 +66,9 @@ func (s *SqliteScheduleStore) GetByUserID(ctx context.Context, userID int64) ([]
 	return list, rows.Err()
 }
 
-func (s *SqliteScheduleStore) GetByID(ctx context.Context, scheduleID int64) (*model.Schedule, error) {
+func (s SqliteScheduleStore) GetByID(ctx context.Context, exec Executor, scheduleID int64) (*model.Schedule, error) {
 	sched := &model.Schedule{}
-	err := s.db.QueryRowContext(ctx, `
+	err := exec.QueryRowContext(ctx, `
 		SELECT schedule_id, created_at, user_id, schedule_description, schedule_sheet_version
 		FROM schedules WHERE schedule_id = ?`, scheduleID).
 		Scan(&sched.ID, &sched.CreatedAt, &sched.UserID, &sched.Description, &sched.SheetVersion)

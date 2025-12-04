@@ -25,14 +25,14 @@ func main() {
 	}
 	defer db.CloseDB()
 
-	conn := db.GetConnection()
 	service.InitializeServices(
-		store.NewSqliteUserStore(conn),
-		store.NewSqliteSheetVersionStore(conn),
-		store.NewSqliteCareerStore(conn),
-		store.NewSqliteSubjectStore(conn),
-		store.NewSqliteScheduleStore(conn),
-		store.NewSqliteScheduleDetailStore(conn),
+		db.GetConnection(),
+		store.NewSqliteUserStore(),
+		store.NewSqliteSheetVersionStore(),
+		store.NewSqliteCareerStore(),
+		store.NewSqliteSubjectStore(),
+		store.NewSqliteScheduleStore(),
+		store.NewSqliteScheduleDetailStore(),
 	)
 
 	// Configure http server

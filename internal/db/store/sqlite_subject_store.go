@@ -8,14 +8,13 @@ import (
 )
 
 type SqliteSubjectStore struct {
-	db *sql.DB
 }
 
-func NewSqliteSubjectStore(db *sql.DB) *SqliteSubjectStore {
-	return &SqliteSubjectStore{db: db}
+func NewSqliteSubjectStore() *SqliteSubjectStore {
+	return &SqliteSubjectStore{}
 }
 
-func (s *SqliteSubjectStore) Insert(ctx context.Context, sub *model.Subject) error {
+func (s SqliteSubjectStore) Insert(ctx context.Context, exec Executor, sub *model.Subject) error {
 	query := `
 	INSERT INTO subjects (
 	career_id, department, subject_name, semester, section,
@@ -36,7 +35,7 @@ func (s *SqliteSubjectStore) Insert(ctx context.Context, sub *model.Subject) err
 	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 
-	res, err := s.db.ExecContext(ctx, query,
+	res, err := exec.ExecContext(ctx, query,
 		sub.CareerID, sub.Department, sub.SubjectName, sub.Semester, sub.Section,
 		sub.TeacherTitle, sub.TeacherLastname, sub.TeacherName, sub.TeacherEmail,
 		sub.Monday, sub.MondayRoom,
@@ -61,23 +60,23 @@ func (s *SqliteSubjectStore) Insert(ctx context.Context, sub *model.Subject) err
 	return nil
 }
 
-func (s *SqliteSubjectStore) GetByID(ctx context.Context, subjectID int64) (*model.Subject, error) {
-	return s.scanOne(ctx, `WHERE subject_id = ?`, subjectID)
+func (s SqliteSubjectStore) GetByID(ctx context.Context, exec Executor, subjectID int64) (*model.Subject, error) {
+	return s.scanOne(ctx, exec, `WHERE subject_id = ?`, subjectID)
 }
 
-func (s *SqliteSubjectStore) GetByCareerID(ctx context.Context, careerID int64) ([]*model.Subject, error) {
-	return s.scanMany(ctx, `WHERE career_id = ? ORDER BY semester, subject_name`, careerID)
+func (s SqliteSubjectStore) GetByCareerID(ctx context.Context, exec Executor, careerID int64) ([]*model.Subject, error) {
+	return s.scanMany(ctx, exec, `WHERE career_id = ? ORDER BY semester, subject_name`, careerID)
 }
 
-func (s *SqliteSubjectStore) scanOne(ctx context.Context, where string, args ...any) (*model.Subject, error) {
-	subs, err := s.scanMany(ctx, where, args...)
+func (s SqliteSubjectStore) scanOne(ctx context.Context, exec Executor, where string, args ...any) (*model.Subject, error) {
+	subs, err := s.scanMany(ctx, exec, where, args...)
 	if err != nil || len(subs) == 0 {
 		return nil, sql.ErrNoRows
 	}
 	return subs[0], nil
 }
 
-func (s *SqliteSubjectStore) scanMany(ctx context.Context, where string, args ...any) ([]*model.Subject, error) {
+func (s SqliteSubjectStore) scanMany(ctx context.Context, exec Executor, where string, args ...any) ([]*model.Subject, error) {
 	query := `
 	SELECT subject_id, career_id, department, subject_name, semester, section,
 	teacher_title, teacher_lastname, teacher_name, teacher_email,
@@ -93,7 +92,7 @@ func (s *SqliteSubjectStore) scanMany(ctx context.Context, where string, args ..
 	committee_chair, committee_member1, committee_member2
 	FROM subjects ` + where
 
-	rows, err := s.db.QueryContext(ctx, query, args...)
+	rows, err := exec.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}

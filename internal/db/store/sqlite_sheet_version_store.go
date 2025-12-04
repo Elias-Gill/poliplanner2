@@ -2,25 +2,23 @@ package store
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
 )
 
 type SqliteSheetVersionStore struct {
-	db *sql.DB
 }
 
-func NewSqliteSheetVersionStore(db *sql.DB) *SqliteSheetVersionStore {
-	return &SqliteSheetVersionStore{db: db}
+func NewSqliteSheetVersionStore() *SqliteSheetVersionStore {
+	return &SqliteSheetVersionStore{}
 }
 
-func (s *SqliteSheetVersionStore) Insert(ctx context.Context, sv *model.SheetVersion) error {
+func (s SqliteSheetVersionStore) Insert(ctx context.Context, exec Executor, sv *model.SheetVersion) error {
 	query := `
 	INSERT INTO sheet_version (file_name, url)
 	VALUES (?, ?)
 	`
-	res, err := s.db.ExecContext(ctx, query, sv.FileName, sv.URL)
+	res, err := exec.ExecContext(ctx, query, sv.FileName, sv.URL)
 	if err != nil {
 		return err
 	}
@@ -32,9 +30,9 @@ func (s *SqliteSheetVersionStore) Insert(ctx context.Context, sv *model.SheetVer
 	return nil
 }
 
-func (s *SqliteSheetVersionStore) GetNewest(ctx context.Context) (*model.SheetVersion, error) {
+func (s SqliteSheetVersionStore) GetNewest(ctx context.Context, exec Executor) (*model.SheetVersion, error) {
 	sv := &model.SheetVersion{}
-	err := s.db.QueryRowContext(ctx, `
+	err := exec.QueryRowContext(ctx, `
 		SELECT version_id, file_name, url, parsed_at
 		FROM sheet_version
 		ORDER BY parsed_at DESC

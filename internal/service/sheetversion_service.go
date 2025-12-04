@@ -8,7 +8,7 @@ import (
 )
 
 func FindLatestSheetVersion(ctx context.Context) (*model.SheetVersion, error) {
-	version, err := sheetVersionStorer.GetNewest(ctx)
+	version, err := sheetVersionStorer.GetNewest(ctx, db)
 	if err != nil {
 		return nil, fmt.Errorf("error searching latest schedule: %w", err)
 	}

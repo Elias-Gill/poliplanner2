@@ -8,22 +8,21 @@ import (
 )
 
 type SqliteScheduleDetailStore struct {
-	db *sql.DB
 }
 
-func NewSqliteScheduleDetailStore(db *sql.DB) *SqliteScheduleDetailStore {
-	return &SqliteScheduleDetailStore{db: db}
+func NewSqliteScheduleDetailStore() *SqliteScheduleDetailStore {
+	return &SqliteScheduleDetailStore{}
 }
 
-func (s *SqliteScheduleDetailStore) Insert(ctx context.Context, scheduleID, subjectID int64) error {
-	_, err := s.db.ExecContext(ctx,
+func (s *SqliteScheduleDetailStore) Insert(ctx context.Context, exec Executor, scheduleID, subjectID int64) error {
+	_, err := exec.ExecContext(ctx,
 		`INSERT OR IGNORE INTO schedule_subjects (schedule_id, subject_id) VALUES (?, ?)`,
 		scheduleID, subjectID,
 	)
 	return err
 }
 
-func (s *SqliteScheduleDetailStore) GetSubjectsByScheduleID(ctx context.Context, scheduleID int64) ([]*model.Subject, error) {
+func (s SqliteScheduleDetailStore) GetSubjectsByScheduleID(ctx context.Context, exec Executor, scheduleID int64) ([]*model.Subject, error) {
 	query := `
 	SELECT s.subject_id, s.career_id, s.department, s.subject_name, s.semester, s.section,
 	s.teacher_title, s.teacher_lastname, s.teacher_name, s.teacher_email,
@@ -43,7 +42,7 @@ func (s *SqliteScheduleDetailStore) GetSubjectsByScheduleID(ctx context.Context,
 	ORDER BY s.semester, s.subject_name
 	`
 
-	rows, err := s.db.QueryContext(ctx, query, scheduleID)
+	rows, err := exec.QueryContext(ctx, query, scheduleID)
 	if err != nil {
 		return nil, err
 	}

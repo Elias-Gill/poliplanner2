@@ -8,7 +8,7 @@ import (
 )
 
 func FindSubjectsByCareerID(ctx context.Context, careerID int64) ([]*model.Subject, error) {
-	subjects, err := subjectStorer.GetByCareerID(ctx, careerID)
+	subjects, err := subjectStorer.GetByCareerID(ctx, db, careerID)
 
 	if err != nil {
 		return nil, fmt.Errorf("error searching subjects: %w", err)

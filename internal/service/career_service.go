@@ -7,5 +7,5 @@ import (
 )
 
 func FindCareersBySheetVersion(ctx context.Context, versionID int64) ([]*model.Career, error) {
-	return careerStorer.GetBySheetVersion(ctx, versionID)
+	return careerStorer.GetBySheetVersion(ctx, db, versionID)
 }

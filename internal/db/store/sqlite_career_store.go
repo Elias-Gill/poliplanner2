@@ -8,16 +8,15 @@ import (
 )
 
 type SqliteCareerStore struct {
-	db *sql.DB
 }
 
-func NewSqliteCareerStore(db *sql.DB) *SqliteCareerStore {
-	return &SqliteCareerStore{db: db}
+func NewSqliteCareerStore() *SqliteCareerStore {
+	return &SqliteCareerStore{}
 }
 
-func (s *SqliteCareerStore) Insert(ctx context.Context, c *model.Career) error {
+func (s SqliteCareerStore) Insert(ctx context.Context,exec Executor, c *model.Career) error {
 	query := `INSERT INTO careers (career_code, sheet_version_id) VALUES (?, ?)`
-	res, err := s.db.ExecContext(ctx, query, c.CareerCode, c.SheetVersionID)
+	res, err := exec.ExecContext(ctx, query, c.CareerCode, c.SheetVersionID)
 	if err != nil {
 		return err
 	}
@@ -26,16 +25,16 @@ func (s *SqliteCareerStore) Insert(ctx context.Context, c *model.Career) error {
 	return nil
 }
 
-func (s *SqliteCareerStore) Delete(ctx context.Context, careerID int64) error {
-	_, err := s.db.ExecContext(ctx, `DELETE FROM careers WHERE career_id = ?`, careerID)
+func (s SqliteCareerStore) Delete(ctx context.Context, exec Executor, careerID int64) error {
+	_, err := exec.ExecContext(ctx, `DELETE FROM careers WHERE career_id = ?`, careerID)
 	return err
 }
 
-func (s *SqliteCareerStore) GetByID(ctx context.Context, careerID int64) (*model.Career, error) {
+func (s SqliteCareerStore) GetByID(ctx context.Context, exec Executor, careerID int64) (*model.Career, error) {
 	c := &model.Career{}
 	var sheetVersionID sql.NullInt64
 
-	err := s.db.QueryRowContext(ctx, `
+	err := exec.QueryRowContext(ctx, `
 		SELECT career_id, career_code, sheet_version_id
 		FROM careers WHERE career_id = ?`, careerID).
 		Scan(&c.ID, &c.CareerCode, &sheetVersionID)
@@ -47,8 +46,8 @@ func (s *SqliteCareerStore) GetByID(ctx context.Context, careerID int64) (*model
 	return c, nil
 }
 
-func (s *SqliteCareerStore) GetBySheetVersion(ctx context.Context, versionID int64) ([]*model.Career, error) {
-	rows, err := s.db.QueryContext(ctx, `
+func (s SqliteCareerStore) GetBySheetVersion(ctx context.Context, exec Executor,versionID int64) ([]*model.Career, error) {
+	rows, err := exec.QueryContext(ctx, `
 		SELECT career_id, career_code, sheet_version_id
 		FROM careers
 		WHERE sheet_version_id = ?
