@@ -25,13 +25,13 @@ func NewSchedulesRouter() func(r chi.Router) {
 
 			latestExcel, err := service.FindLatestSheetVersion(ctx)
 			if err != nil {
-				logger.GetLogger().Error("Error finding latest excel version", "error", err)
+				logger.Error("Error finding latest excel version", "error", err)
 				http.Redirect(w, r, "/500", 500)
 			}
 
 			careers, err := service.FindCareersBySheetVersion(ctx, latestExcel.ID)
 			if err != nil {
-				logger.GetLogger().Error("Error finding careers", "error", err)
+				logger.Error("Error finding careers", "error", err)
 				http.Redirect(w, r, "/500", 500)
 			}
 
@@ -67,7 +67,7 @@ func NewSchedulesRouter() func(r chi.Router) {
 
 			subjects, err := service.FindSubjectsByCareerID(ctx, careerId)
 			if err != nil {
-				logger.GetLogger().Error("Error finding subjects", "error", err, "careerID", rawId)
+				logger.Error("Error finding subjects", "error", err, "careerID", rawId)
 				http.Redirect(w, r, "/500", 500)
 				return
 			}
@@ -117,7 +117,7 @@ func NewSchedulesRouter() func(r chi.Router) {
 
 			err = service.CreateSchedule(ctx, userID, sheetVersionID, description, subjectIDs)
 			if err != nil {
-				logger.GetLogger().Error("cannot create schedule", "error", err)
+				logger.Error("cannot create schedule", "error", err)
 				w.Header().Set("HX-Redirect", "/500")
 				return
 			}

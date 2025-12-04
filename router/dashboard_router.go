@@ -29,7 +29,7 @@ func NewDashboardRouter() func(r chi.Router) {
 			userID := extractUserID(r)
 			schedules, err := service.FindUserSchedules(ctx, userID)
 			if err != nil {
-				logger.GetLogger().Error("error finding user schedules", "user", userID, "error", err)
+				logger.Error("error finding user schedules", "user", userID, "error", err)
 				w.Header().Add("HX-Redirect", "/500")
 				http.Redirect(w, r, "/500", 500)
 				return
@@ -62,14 +62,14 @@ func NewDashboardRouter() func(r chi.Router) {
 			rawId := r.URL.Query().Get("id")
 			mode := r.URL.Query().Get("mode")
 			if rawId == "" || mode == "" {
-				logger.GetLogger().Debug("empty id or mode")
+				logger.Debug("empty id or mode")
 				w.Header().Add("HX-Redirect", "/404")
 				return
 			}
 
 			id, err := strconv.ParseInt(rawId, 10, 64)
 			if err != nil {
-				logger.GetLogger().Error("error finding schedule subjects", "schedule", id, "error", err)
+				logger.Error("error finding schedule subjects", "schedule", id, "error", err)
 				w.Header().Add("HX-Redirect", "/404")
 				return
 			}
@@ -79,7 +79,7 @@ func NewDashboardRouter() func(r chi.Router) {
 
 			subjects, err := service.FindScheduleDetail(ctx, id)
 			if err != nil {
-				logger.GetLogger().Error("error finding schedule subjects", "schedule", id, "error", err)
+				logger.Error("error finding schedule subjects", "schedule", id, "error", err)
 				w.Header().Add("HX-Redirect", "/500")
 				http.Redirect(w, r, "/500", 500)
 				return
@@ -107,7 +107,7 @@ func NewDashboardRouter() func(r chi.Router) {
 
 			err = tpl.Execute(w, data)
 			if err != nil {
-				logger.GetLogger().Debug("error rendering template", "error", err)
+				logger.Debug("error rendering template", "error", err)
 			}
 		})
 	}

@@ -70,7 +70,7 @@ func NewAuthRouter() func(r chi.Router) {
 				redirectTo = "/dashboard"
 			}
 
-			logger.GetLogger().Debug("Redirecting from login", "path", redirectTo)
+			logger.Debug("Redirecting from login", "path", redirectTo)
 
 			w.Header().Set("HX-Redirect", redirectTo)
 		})

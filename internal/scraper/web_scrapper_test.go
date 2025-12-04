@@ -1,4 +1,4 @@
-package scrapper
+package scraper
 
 import (
 	"os"
@@ -43,6 +43,7 @@ func TestFindLatestExcelUrlFromLocalHtml(t *testing.T) {
 func TestFindLatestExcelUrlWithDriveFolders(t *testing.T) {
 	if os.Getenv("GOOGLE_API_KEY") == "" {
 		t.Skip("GOOGLE_API_KEY not set")
+		return
 	}
 
 	html, err := os.ReadFile(htmlWithDrivePath)

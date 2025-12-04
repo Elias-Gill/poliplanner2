@@ -78,7 +78,7 @@ func SessionMiddleware(next http.Handler) http.Handler {
 		// Validate session. If invalid, redirects to the login page.
 		cookie, err := r.Cookie("session_id")
 		if err != nil {
-			logger.GetLogger().Debug("Session middleware redirection", "cause", "cookie not present")
+			logger.Debug("Session middleware redirection", "cause", "cookie not present")
 			if isHtmx(r) {
 				w.Header().Add("HX-redirect", target)
 			} else {
@@ -89,7 +89,7 @@ func SessionMiddleware(next http.Handler) http.Handler {
 
 		session, ok := getSession(cookie.Value)
 		if !ok {
-			logger.GetLogger().Debug("Session middleware redirection", "cause", "session expired or invalid token")
+			logger.Debug("Session middleware redirection", "cause", "session expired or invalid token")
 			if isHtmx(r) {
 				w.Header().Add("HX-redirect", target)
 			} else {
@@ -98,7 +98,7 @@ func SessionMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		logger.GetLogger().Debug("User already authenticated")
+		logger.Debug("User already authenticated")
 		ctx := context.WithValue(r.Context(), "userID", session.UserID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

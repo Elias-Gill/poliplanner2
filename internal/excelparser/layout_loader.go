@@ -20,7 +20,7 @@ type JsonLayoutLoader struct {
 }
 
 func NewJsonLayoutLoader(layoutsDir string) *JsonLayoutLoader {
-	log.GetLogger().Debug("Creating JSON layout loader", "layouts_dir", layoutsDir)
+	log.Debug("Creating JSON layout loader", "layouts_dir", layoutsDir)
 	return &JsonLayoutLoader{
 		layoutsDir: layoutsDir,
 	}
@@ -34,7 +34,7 @@ type jsonLayoutFile struct {
 }
 
 func (l *JsonLayoutLoader) LoadJsonLayouts() ([]Layout, error) {
-	log.GetLogger().Debug("Loading JSON layouts", "directory", l.layoutsDir)
+	log.Debug("Loading JSON layouts", "directory", l.layoutsDir)
 	var layouts []Layout
 
 	files, err := filepath.Glob(filepath.Join(l.layoutsDir, "*.json"))
@@ -42,7 +42,7 @@ func (l *JsonLayoutLoader) LoadJsonLayouts() ([]Layout, error) {
 		return nil, fmt.Errorf("error reading layout directory: %v", err)
 	}
 
-	log.GetLogger().Debug("Found JSON files", "count", len(files), "files", files)
+	log.Debug("Found JSON files", "count", len(files), "files", files)
 
 	if len(files) == 0 {
 		return nil, fmt.Errorf("no JSON files found in: %s", l.layoutsDir)
@@ -52,15 +52,15 @@ func (l *JsonLayoutLoader) LoadJsonLayouts() ([]Layout, error) {
 	for _, file := range files {
 		layout, err := l.loadSingleLayout(file)
 		if err != nil {
-			log.GetLogger().Warn("Error loading layout file", "file", file, "error", err)
+			log.Warn("Error loading layout file", "file", file, "error", err)
 			continue
 		}
 		layouts = append(layouts, *layout)
 		loadedCount++
-		log.GetLogger().Debug("Successfully loaded layout", "file", file, "headers_count", len(layout.Headers))
+		log.Debug("Successfully loaded layout", "file", file, "headers_count", len(layout.Headers))
 	}
 
-	log.GetLogger().Info("Layout loading completed", "loaded", loadedCount, "total_files", len(files))
+	log.Info("Layout loading completed", "loaded", loadedCount, "total_files", len(files))
 
 	if len(layouts) == 0 {
 		return nil, fmt.Errorf("no valid layouts could be loaded")
@@ -70,7 +70,7 @@ func (l *JsonLayoutLoader) LoadJsonLayouts() ([]Layout, error) {
 }
 
 func (l *JsonLayoutLoader) loadSingleLayout(filePath string) (*Layout, error) {
-	log.GetLogger().Debug("Loading single layout", "file", filePath)
+	log.Debug("Loading single layout", "file", filePath)
 
 	data, err := os.ReadFile(filePath)
 	if err != nil {
@@ -99,7 +99,7 @@ func (l *JsonLayoutLoader) loadSingleLayout(filePath string) (*Layout, error) {
 		}
 	}
 
-	log.GetLogger().Debug("Layout parsed successfully",
+	log.Debug("Layout parsed successfully",
 		"file", filepath.Base(filePath),
 		"headers_count", len(headers),
 		"patterns_count", len(patterns))

@@ -50,7 +50,7 @@ func Load() *Config {
 
 	var googleAPIKey = getEnv("GOOGLE_API_KEY", "")
 	if googleAPIKey == "" {
-		log.GetLogger().Warn("Missing Google API Key, web scrapping is disabled")
+		log.Warn("Missing Google API Key, web scrapping is disabled")
 	}
 
 	cfg := &Config{

@@ -16,9 +16,9 @@ import (
 func main() {
 	cfg := config.Load()
 	log.InitLogger(cfg.VerboseLogs)
-	log.GetLogger().Info("Loading env configuraion")
+	log.Info("Loading env configuraion")
 
-	log.GetLogger().Debug("Initializing db")
+	log.Debug("Initializing db")
 	err := db.InitDB(cfg)
 	if err != nil {
 		panic(err)
@@ -51,7 +51,7 @@ func main() {
 	r.NotFound(router.NotFoundHandler)
 
 	// Start Server
-	log.GetLogger().Info("Server is running", "addr", cfg.ServerAddr)
+	log.Info("Server is running", "addr", cfg.ServerAddr)
 	err = http.ListenAndServe(cfg.ServerAddr, r)
 	if err != nil {
 		panic(err)
