@@ -182,10 +182,26 @@
     calendar.render();
   }
 
-  document.body.addEventListener('htmx:afterSwap', function(evt) {
-    if (evt.detail.target.id === 'schedule-detail') {
-      initCalendar();
+  function waitForFullCalendar(callback, maxRetries = 20, interval = 100) {
+  let tries = 0;
+  const timer = setInterval(() => {
+    if (typeof FullCalendar !== 'undefined') {
+      clearInterval(timer);
+      callback();
+    } else {
+      tries++;
+      if (tries >= maxRetries) {
+        clearInterval(timer);
+        console.error('FullCalendar no se cargó a tiempo');
+      }
     }
+  }, interval);
+  }
+
+  document.body.addEventListener('htmx:afterSwap', function(evt) {
+  if (evt.detail.target.id === 'schedule-detail') {
+    waitForFullCalendar(initCalendar);
+  }
   });
 </script>
 <style>
