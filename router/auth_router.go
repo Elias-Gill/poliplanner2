@@ -59,7 +59,7 @@ func NewAuthRouter() func(r chi.Router) {
 				Value:    sessionID,
 				Path:     "/",
 				HttpOnly: true,
-				Secure:   true,
+				Secure:   false, // FIX: make false on dev mode
 				SameSite: http.SameSiteLaxMode,
 				Expires:  time.Now().Add(30 * time.Minute),
 			})

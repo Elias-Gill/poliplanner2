@@ -99,6 +99,7 @@ footer {
 
 main {
     flex: 1;
+    padding: var(--space-sm);
 }
 
 /* === Tipografía === */
