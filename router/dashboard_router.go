@@ -99,12 +99,10 @@ func NewDashboardRouter() func(r chi.Router) {
 			switch mode {
 			case "calendar":
 				tpl = template.Must(template.ParseFiles("web/templates/pages/dashboard/calendar.html"))
-			case "exams":
-				tpl = template.Must(template.ParseFiles("web/templates/pages/dashboard/exams.html"))
 			case "extra":
 				tpl = template.Must(template.ParseFiles("web/templates/pages/dashboard/extra.html"))
 			default:
-				tpl = template.Must(template.ParseFiles("web/templates/pages/dashboard/daily.html"))
+				tpl = template.Must(template.ParseFiles("web/templates/pages/dashboard/overview.html"))
 			}
 
 			err = tpl.Execute(w, data)
