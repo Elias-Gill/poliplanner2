@@ -1,30 +1,30 @@
 <div class="schedule-container">
   <div class="subjects-list-column">
-    <div class="filters" style="margin-bottom: 1rem;">
+    <div style="margin-bottom: 1rem;">
       <label for="semesterFilter">Filtrar por semestre:</label>
-      <select id="semesterFilter" aria-label="Filtrar por semestre">
+      <select id="semesterFilter">
         <option value="all" selected>Todos los semestres</option>
       </select>
     </div>
-    <div class="buscador" style="margin-bottom: 1rem;">
+    <div style="margin-bottom: 1rem;">
       <label for="subjectSearch">Buscar por materia, profesor y/o sección:</label>
-      <input type="text" id="subjectSearch" placeholder="Ej. Física, 2, Juan ..." aria-label="Buscar materias">
+      <input type="text" id="subjectSearch" placeholder="Ej. Física, 2, Juan ...">
     </div>
     {{if .Subjects}}
-    <div class="form-list" id="subjectsContainer" style="max-height: 60vh; overflow-y: auto; border: 1px solid #ccc; border-radius: 0.5rem; background: #fff; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+    <div id="subjectsContainer"
+      style="max-height: 60vh; overflow-y: auto; border: 1px solid #ccc; border-radius: .5rem; background: #fff; padding: 1rem;">
     </div>
     {{else}}
-    <div class="no-results" style="text-align: center; padding: 2rem; background: #f8f9fa; border-radius: 0.5rem;">
+    <div style="text-align: center; padding: 2rem; background: #f8f9fa; border-radius: .5rem;">
       <p>No se encontraron materias para esta carrera.</p>
       <p><small>Selecciona otra carrera o verifica la versión del Excel.</small></p>
     </div>
     {{end}}
   </div>
-  <section id="selectedSubjectsPreview" style="flex:1; padding:1rem; background:#fff; border:1px solid #ccc; border-radius:0.5rem; box-shadow:0 2px 6px rgba(0,0,0,0.1); min-height:200px; display:none;">
+  <section id="selectedSubjectsPreview"
+    style="flex:1; padding:1rem; background:#fff; border:1px solid #ccc; border-radius:.5rem; min-height:200px; display:none;">
     <h3>Materias seleccionadas</h3>
-    <section>
-      <ul id="selectedSubjectsList" style="list-style:none; padding:0;"></ul>
-    </section>
+    <ul id="selectedSubjectsList" style="list-style:none; padding:0;"></ul>
   </section>
   <section>
     <button type="submit">Crear Horario</button>
@@ -42,115 +42,159 @@
           professorFirstName: "{{if .TeacherName}}{{.TeacherName | js}}{{end}}",
           professorLastname: "{{if .TeacherLastname}}{{.TeacherLastname | js}}{{end}}",
           semester: {{.Semester}},
-          courseName: "{{.SubjectName | js}}"
         },
         {{end}}
       ];
 
-        const subjectsContainer = document.getElementById('subjectsContainer');
-        const selectedSubjectsPreview = document.getElementById('selectedSubjectsPreview');
-        const selectedSubjectsList = document.getElementById('selectedSubjectsList');
+      subjectsRaw.sort((a, b) => a.semester - b.semester);
 
-        const selectedIds = new Set();
+      const subjectsContainer = document.getElementById('subjectsContainer');
+      const selectedSubjectsPreview = document.getElementById('selectedSubjectsPreview');
+      const selectedSubjectsList = document.getElementById('selectedSubjectsList');
+      const searchInput = document.getElementById('subjectSearch');
+      const semesterFilter = document.getElementById('semesterFilter');
 
-        function renderSubjects() {
-          subjectsContainer.innerHTML = '';
+      const selectedIds = new Set();
 
-          subjectsRaw.forEach(sub => {
-            const div = document.createElement('div');
-            div.style.padding = '0.5rem 0';
-            div.style.borderBottom = '1px solid #eee';
+      const uniqueSemesters = [...new Set(subjectsRaw.map(s => s.semester))].sort((a, b) => a - b);
+      uniqueSemesters.forEach(sem => {
+        const opt = document.createElement('option');
+        opt.value = sem;
+        opt.textContent = "Semestre " + sem;
+        semesterFilter.appendChild(opt);
+      });
 
-            const professorName = `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`.trim();
+    function matchesFilters(sub) {
+      const sem = semesterFilter.value;
+      if (sem !== "all" && Number(sem) !== sub.semester) return false;
 
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.name = 'subjectIds';
-            checkbox.id = 'subject-' + sub.id;
-            checkbox.value = sub.id;
-            checkbox.checked = selectedIds.has(sub.id);
+      const raw = searchInput.value.trim().toLowerCase();
+      if (!raw) return true;
 
-            checkbox.addEventListener('change', () => {
-              if (checkbox.checked) selectedIds.add(sub.id);
-              else selectedIds.delete(sub.id);
-              renderSelectedSubjects();
-            });
+      const professorName = (
+    `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`
+      ).trim().toLowerCase();
 
-            const label = document.createElement('label');
-            label.style.display = 'block';
-            label.style.cursor = 'pointer';
-            label.appendChild(checkbox);
+      const subject = (sub.subjectName || '').toLowerCase();
+      const section = (sub.section || '').toLowerCase();
 
-            const info = document.createElement('span');
-            info.innerHTML =
-              ` <strong>${sub.subjectName}</strong> (Semestre ${sub.semester})<br>` +
-              `Sección ${sub.section}<br>` +
-              `<small>${professorName || "Sin profesor asignado"}</small>`;
+      const terms = raw.split(',').map(t => t.trim()).filter(Boolean);
 
-            label.appendChild(info);
-
-            div.appendChild(label);
-            subjectsContainer.appendChild(div);
-          });
-        }
-
-        function renderSelectedSubjects() {
-          selectedSubjectsList.innerHTML = '';
-
-          if (selectedIds.size === 0) {
-            selectedSubjectsPreview.style.display = 'none';
-            return;
-          }
-
-          selectedSubjectsPreview.style.display = 'block';
-
-          selectedIds.forEach(id => {
-            const sub = subjectsRaw.find(s => s.id === id);
-            if (!sub) return;
-
-            const li = document.createElement('li');
-            li.style.display = 'flex';
-            li.style.justifyContent = 'space-between';
-            li.style.alignItems = 'center';
-            li.style.padding = '0.5rem';
-            li.style.marginBottom = '0.5rem';
-            li.style.backgroundColor = '#f8f9fa';
-            li.style.borderRadius = '0.25rem';
-
-            const professorName = `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`.trim();
-
-            const info = document.createElement('div');
-            info.innerHTML =
-              `<strong>${sub.subjectName}</strong> – Sección ${sub.section}<br>` +
-              `<small>${professorName || "Sin profesor asignado"}</small>`;
-
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.textContent = 'X';
-            btn.title = 'Quitar materia';
-            btn.style.backgroundColor = '#dc3545';
-            btn.style.color = 'white';
-            btn.style.border = 'none';
-            btn.style.padding = '0.25rem 0.5rem';
-            btn.style.fontSize = '0.875rem';
-            btn.style.borderRadius = '0.25rem';
-            btn.style.cursor = 'pointer';
-
-            btn.addEventListener('click', () => {
-              selectedIds.delete(id);
-              const cb = document.getElementById('subject-' + id);
-              if (cb) cb.checked = false;
-              renderSelectedSubjects();
-            });
-
-            li.appendChild(info);
-            li.appendChild(btn);
-            selectedSubjectsList.appendChild(li);
-          });
-        }
-
-        renderSubjects();
-        renderSelectedSubjects();
+      for (const term of terms) {
+    const ok =
+      subject.includes(term) ||
+      professorName.includes(term) ||
+      section.includes(term);
+    if (!ok) return false;
       }
+
+      return true;
+    }
+
+      function renderSubjects() {
+        subjectsContainer.innerHTML = '';
+
+        const filtered = subjectsRaw.filter(matchesFilters);
+
+        filtered.forEach(sub => {
+          const div = document.createElement('div');
+          div.style.padding = '.5rem 0';
+          div.style.borderBottom = '1px solid #eee';
+
+          const professorName =
+            `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`.trim();
+
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.name = 'subjectIds';
+          checkbox.id = 'subject-' + sub.id;
+          checkbox.value = sub.id;
+          checkbox.checked = selectedIds.has(sub.id);
+
+          checkbox.addEventListener('change', () => {
+            if (checkbox.checked) selectedIds.add(sub.id);
+            else selectedIds.delete(sub.id);
+            renderSelectedSubjects();
+          });
+
+          const label = document.createElement('label');
+          label.style.display = 'block';
+          label.style.cursor = 'pointer';
+          label.appendChild(checkbox);
+
+          const info = document.createElement('span');
+          info.innerHTML =
+            ` <strong>${sub.subjectName}</strong> (Semestre ${sub.semester})<br>` +
+            `Sección ${sub.section}<br>` +
+            `<small>${professorName || "Sin profesor asignado"}</small>`;
+
+          label.appendChild(info);
+          div.appendChild(label);
+          subjectsContainer.appendChild(div);
+        });
+      }
+
+      function renderSelectedSubjects() {
+        selectedSubjectsList.innerHTML = '';
+
+        if (selectedIds.size === 0) {
+          selectedSubjectsPreview.style.display = 'none';
+          return;
+        }
+
+        selectedSubjectsPreview.style.display = 'block';
+
+        selectedIds.forEach(id => {
+          const sub = subjectsRaw.find(s => s.id === id);
+          if (!sub) return;
+
+          const li = document.createElement('li');
+          li.style.display = 'flex';
+          li.style.justifyContent = 'space-between';
+          li.style.alignItems = 'center';
+          li.style.padding = '.5rem';
+          li.style.marginBottom = '.5rem';
+          li.style.backgroundColor = '#f8f9fa';
+          li.style.borderRadius = '.25rem';
+
+          const professorName =
+            `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`.trim();
+
+          const info = document.createElement('div');
+          info.innerHTML =
+            `<strong>${sub.subjectName}</strong> – Sección ${sub.section}<br>` +
+            `<small>${professorName || "Sin profesor asignado"}</small>`;
+
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.textContent = 'X';
+          btn.title = 'Quitar materia';
+          btn.style.backgroundColor = '#dc3545';
+          btn.style.color = 'white';
+          btn.style.border = 'none';
+          btn.style.padding = '0.25rem 0.5rem';
+          btn.style.borderRadius = '.25rem';
+          btn.style.cursor = 'pointer';
+
+          btn.addEventListener('click', () => {
+            selectedIds.delete(id);
+            const cb = document.getElementById('subject-' + id);
+            if (cb) cb.checked = false;
+            renderSelectedSubjects();
+          });
+
+          li.appendChild(info);
+          li.appendChild(btn);
+          selectedSubjectsList.appendChild(li);
+        });
+      }
+
+      searchInput.addEventListener('input', renderSubjects);
+      semesterFilter.addEventListener('change', renderSubjects);
+
+      renderSubjects();
+      renderSelectedSubjects();
+    }
   </script>
   {{end}}
+</div>

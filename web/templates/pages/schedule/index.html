@@ -24,6 +24,7 @@
         <select id="careerId" name="careerId" 
                         hx-get="/schedule/create/details" 
                         hx-target="#subjectsSelectorSection"
+                        hx-swap="innerHTML swap:.2s settle:.2s"
                         hx-trigger="change"
                         hx-include="#description"
                         required>
@@ -66,5 +67,16 @@
       </div>
     </form>
   </section>
+  <style>
+    #subjectsSelectorSection.htmx-swapping {
+        opacity: 0;
+        transition: all .2s ease-out;
+    }
+
+    #subjectsSelectorSection.htmx-settling {
+        opacity: 1;
+        transition: all .2s ease-in;
+    }
+  </style>
 </main>
 {{end}}
