@@ -28,14 +28,15 @@ type ParsingResult struct {
 	Subjects []dto.SubjectDTO
 }
 
-func NewExcelParser(layoutsDir string) (*ExcelParser, error) {
+func NewExcelParser(layoutsDir string, file string) (*ExcelParser, error) {
 	loader := NewJsonLayoutLoader(layoutsDir)
 	layouts, err := loader.LoadJsonLayouts()
 	if err != nil {
 		return nil, exceptions.NewExcelParserConfigurationException("Failed to load layouts", err)
 	}
 	setters := buildFieldSetters()
-	return &ExcelParser{
+
+	p := &ExcelParser{
 		layouts: layouts,
 		headerKeywords: map[string]bool{
 			"item": true,
@@ -43,7 +44,10 @@ func NewExcelParser(layoutsDir string) (*ExcelParser, error) {
 		},
 		currentSheet: -1,
 		fieldSetters: setters,
-	}, nil
+	}
+
+	// FIX: error handling
+	return p, p.prepareParser(file)
 }
 
 func buildFieldSetters() map[string]func(*dto.SubjectDTO, string) {
@@ -96,7 +100,7 @@ func buildFieldSetters() map[string]func(*dto.SubjectDTO, string) {
 	}
 }
 
-func (ep *ExcelParser) ParseExcel(filePath string) error {
+func (ep *ExcelParser) prepareParser(filePath string) error {
 	if ep.file != nil {
 		ep.file = nil // no Close, GC manages its deallocation
 	}

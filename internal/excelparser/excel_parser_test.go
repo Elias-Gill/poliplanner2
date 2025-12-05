@@ -9,13 +9,9 @@ import (
 
 func TestParseSheet(t *testing.T) {
 	testExcelPath := "../../testdata/excelparser/testExcel.xlsx"
-	parser, err := NewExcelParser("./layouts")
+	parser, err := NewExcelParser("./layouts", testExcelPath)
 	if err != nil {
-		t.Fatalf("Failed to create parser: %v", err)
-	}
-	err = parser.ParseExcel(testExcelPath)
-	if err != nil {
-		t.Fatalf("Failed to parse Excel file: %v", err)
+		t.Fatalf("Failed to initialize parser: %v", err)
 	}
 
 	start := time.Now()

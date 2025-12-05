@@ -7,9 +7,11 @@
     <link rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
     />
-    <link rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700&display=swap"
-    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
     <script src="/static/htmx.min.js"></script>
     <style>
       .theme-toggle-btn {
@@ -55,10 +57,10 @@
   </head>
   <body>
     <header role="banner">
-      <nav role="navigation" aria-label="Principal" class="container">
+      <nav role="navigation" aria-label="Principal">
         <ul>
           <li>
-            <a href="/" class="contrast">
+            <a href="/" class="contrast" style="font-weight: var(--font-weight-bold);">
               <span class="icon">
                 <i class="bi bi-calendar3"></i>
               </span>
@@ -87,10 +89,10 @@
         </button>
       </nav>
     </header>
-    <main class="container">
-      {{ block "content" . }}
-      {{ end }}
-    </main>
+    <!-- content goes here -->
+    {{ block "content" . }}
+    {{ end }}
+    <!----------------------->
     <button
       id="theme-toggle"
       class="theme-toggle-btn"
@@ -101,7 +103,7 @@
       <i class="bi bi-moon"></i>
     </button>
     <footer>
-      <div class="container">
+      <div>
         © 2025 <strong>Armador de Horarios</strong> —
         Desarrollado por <span>Elias Gill</span> |
         <a href="https://github.com/elias-gill">Github</a>
