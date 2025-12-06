@@ -7,45 +7,15 @@
     <link rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
     />
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-
     <script src="/static/htmx.min.js"></script>
-    <style>
-      .theme-toggle-btn {
-        position: fixed;
-        bottom: 1.5rem;
-        right: 1.5rem;
-        z-index: 30;
-        width: 42px;
-        height: 42px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        background: var(--background);
-        border: none;
-        cursor: pointer;
-      }
-
-      @media (max-width: 768px) {
-        .theme-toggle-btn {
-          bottom: 1rem;
-          right: 1rem;
-          width: 40px;
-          height: 40px;
-        }
-      }
-    </style>
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <script>
       (function() {
         const saved = localStorage.getItem('theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
         if (saved === 'dark' || (!saved && prefersDark)) {
           document.documentElement.classList.add('dark-mode');
         }
@@ -58,41 +28,45 @@
   <body>
     <header role="banner">
       <nav role="navigation" aria-label="Principal">
-        <ul>
-          <li>
-            <a href="/" class="contrast" style="font-weight: var(--font-weight-bold);">
-              <span class="icon">
-                <i class="bi bi-calendar3"></i>
-              </span>
-              Poliplanner
+        <div class="nav-top">
+          <a href="/" class="contrast logo" style="font-weight: var(--font-weight-bold);">
+            <span class="icon"><i class="bi bi-calendar3"></i></span>
+            Poliplanner
+          </a>
+        </div>
+        <ul class="nav-links">
+          <li class="right-menu-item">
+            <a href="/misc/calculator">
+              <span class="icon"><i class="bi bi-calculator"></i></span> Calculadora
             </a>
           </li>
-          <li class="right-menu-start">
-            <a href="/misc/calculator" class="contrast">
-              <span class="icon">
-                <i class="bi bi-calculator"></i>
-              </span>
-              Calculadora
-            </a>
-          </li>
-          <li>
-            <a href="/guides" class="contrast">
-              <span class="icon">
-                <i class="bi bi-journal-text"></i>
-              </span>
-              Guías
+          <li class="right-menu-item">
+            <a href="/guides">
+              <span class="icon"><i class="bi bi-journal-text"></i></span> Guías
             </a>
           </li>
         </ul>
-        <button class="burguer" aria-label="Menú" hidden>
+        <button class="burguer" aria-label="Menú">
           <i class="bi bi-list"></i>
         </button>
       </nav>
     </header>
-    <!-- content goes here -->
+    <!-- modal mobile -->
+    <div id="mobile-menu-modal">
+      <button id="mobile-menu-close">
+        <i class="bi bi-x"></i>
+      </button>
+      <div id="mobile-menu-content">
+        <a href="/misc/calculator">
+          <i class="bi bi-calculator"></i> Calculadora
+        </a>
+        <a href="/guides">
+          <i class="bi bi-journal-text"></i> Guías
+        </a>
+      </div>
+    </div>
     {{ block "content" . }}
     {{ end }}
-    <!----------------------->
     <button
       id="theme-toggle"
       class="theme-toggle-btn"
@@ -104,33 +78,33 @@
     </button>
     <footer>
       <div>
-        © 2025 <strong>Armador de Horarios</strong> —
-        Desarrollado por <span>Elias Gill</span> |
-        <a href="https://github.com/elias-gill">Github</a>
+        © 2025 <strong>PoliPlanner2 (Web)</strong> —
+        Desarrollado por <a href="https://github.com/elias-gill">Elias Gill</a>
       </div>
     </footer>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        const toggle = document.querySelector('.burguer');
-        const menu = document.querySelector('nav ul');
+        const burger = document.querySelector('.burguer');
+        const modal = document.getElementById('mobile-menu-modal');
+        const closeBtn = document.getElementById('mobile-menu-close');
 
-        if (toggle) {
-          toggle.addEventListener('click', () => {
-            menu.classList.toggle('open');
-            toggle.classList.toggle('open');
+        if (burger) {
+          burger.addEventListener('click', () => {
+            modal.classList.add('open');
           });
-
-          window.addEventListener('resize', () => {
-            toggle.hidden = window.innerWidth > 768;
-
-            if (window.innerWidth > 768) {
-              menu.classList.remove('open');
-              toggle.classList.remove('open');
-            }
-          });
-
-          window.dispatchEvent(new Event('resize'));
         }
+
+        if (closeBtn) {
+          closeBtn.addEventListener('click', () => {
+            modal.classList.remove('open');
+          });
+        }
+
+        window.addEventListener('resize', () => {
+          if (window.innerWidth > 768 && modal.classList.contains('open')) {
+            modal.classList.remove('open');
+          }
+        });
 
         const themeToggle = document.getElementById('theme-toggle');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -146,7 +120,6 @@
           themeToggle.addEventListener('click', () => {
             const isDark = document.documentElement.classList.toggle('dark-mode');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
-
             themeToggle.innerHTML = isDark
               ? '<i class="bi bi-sun"></i>'
               : '<i class="bi bi-moon"></i>';
