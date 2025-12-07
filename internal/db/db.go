@@ -15,7 +15,9 @@ import (
 
 var dbConnection *sql.DB
 
-func InitDB(cfg *config.Config) error {
+func InitDB() error {
+	cfg := config.Get()
+
 	log.Info("Initializing database connection", "url", cfg.DatabaseURL)
 
 	// Open database file connection

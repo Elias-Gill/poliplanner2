@@ -17,7 +17,7 @@ func TestParseSheet(t *testing.T) {
 	start := time.Now()
 	foundSheet := false
 	var iin *ParsingResult
-	for parser.NextValidSheet() {
+	for parser.NextSheet() {
 		localStart := time.Now()
 		result, err := parser.ParseCurrentSheet()
 		localEnd := time.Now()

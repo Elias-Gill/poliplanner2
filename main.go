@@ -14,12 +14,14 @@ import (
 )
 
 func main() {
-	cfg := config.Load()
-	log.InitLogger(cfg.VerboseLogs)
+	config.MustLoad()
+	cfg := config.Get()
+
+	log.InitLogger(config.Get().VerboseLogs)
 	log.Info("Loading env configuraion")
 
 	log.Debug("Initializing db")
-	err := db.InitDB(cfg)
+	err := db.InitDB()
 	if err != nil {
 		panic(err)
 	}

@@ -291,7 +291,7 @@ section {
 }
 
 .table-container::-webkit-scrollbar-thumb {
-    background: var(--color-secondary-bg);
+    background: var(--color-border);
     border-radius: 4px;
 }
 

@@ -40,20 +40,34 @@ type Config struct {
 	VerboseLogs bool
 }
 
+var cfg *Config = nil
+
 // ================================
 // ======== Public API ============
 // ================================
 
-// Load loads configuration from environment variables
-func Load() *Config {
+func Get() *Config {
+	if cfg == nil {
+		MustLoad()
+	}
+
+	return cfg
+}
+
+func SetCustom(c *Config) {
+	cfg = c
+}
+
+// MustLoad loads configuration from environment variables
+func MustLoad() {
 	wd, _ := os.Getwd()
 
-	var googleAPIKey = getEnv("GOOGLE_API_KEY", "")
+	googleAPIKey := getEnv("GOOGLE_API_KEY", "")
 	if googleAPIKey == "" {
 		log.Warn("Missing Google API Key, web scrapping is disabled")
 	}
 
-	cfg := &Config{
+	cfg = &Config{
 		// Google API
 		GoogleAPIKey: googleAPIKey,
 
@@ -80,8 +94,6 @@ func Load() *Config {
 		EnableDownloads: getEnvAsBool("ENABLE_DOWNLOADS", true),
 		VerboseLogs:     getEnvAsBool("VERBOSE_LOGS", false),
 	}
-
-	return cfg
 }
 
 // =====================================

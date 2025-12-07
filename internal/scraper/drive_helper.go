@@ -39,8 +39,7 @@ type GoogleFilesResponse struct {
 // ======== Public API ============
 // ================================
 
-func NewGoogleDriveHelper() *GoogleDriveHelper {
-	apiKey := os.Getenv("GOOGLE_API_KEY")
+func NewGoogleDriveHelper(apiKey string) *GoogleDriveHelper {
 	if apiKey == "" {
 		log.Warn("GOOGLE_API_KEY environment variable not set")
 		return nil

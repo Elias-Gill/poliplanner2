@@ -124,11 +124,12 @@ func (ep *ExcelParser) Close() {
 	ep.file = nil // mark for GC
 }
 
-func (ep *ExcelParser) NextValidSheet() bool {
+func (ep *ExcelParser) NextSheet() bool {
 	ep.currentSheet++
 	for ep.currentSheet < len(ep.sheets) {
 		name := ep.sheets[ep.currentSheet]
 		lower := strings.ToLower(name)
+		// Ignore this garbage
 		if strings.Contains(lower, "odigos") ||
 			strings.Contains(lower, "asignaturas") ||
 			strings.Contains(lower, "homologadas") ||

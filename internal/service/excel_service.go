@@ -1,36 +1,48 @@
 package service
 
 import (
-	"github.com/elias-gill/poliplanner2/internal/db/model"
+	"context"
+
+	"github.com/elias-gill/poliplanner2/internal/config"
 	parser "github.com/elias-gill/poliplanner2/internal/excelparser"
 	mapper "github.com/elias-gill/poliplanner2/internal/excelparser/dto"
 	"github.com/elias-gill/poliplanner2/internal/scraper"
 )
 
-func newVersion() {
-	drive := scraper.NewGoogleDriveHelper()
-	scraper := scraper.NewWebScrapper(drive)
+func SearchNewestExcel(ctx context.Context) {
+	key := config.Get().GoogleAPIKey
+	scraper := scraper.NewWebScraper(scraper.NewGoogleDriveHelper(key))
 
-	source, err := scraper.FindLatestDownloadSource()
+	newestSource, err := scraper.FindLatestDownloadSource()
 	if err != nil {
-		return
-	}
-
-	var latestVersion model.SheetVersion
-
-	if source.UploadDate.Before(latestVersion.ParsedAt) {
+		// TODO: mostrar un mensaje de respuesta
 		return
 	}
 
 	// FIX: error handling
-	file, _ := source.DownloadThisSource()
+	latestVersion, err := FindLatestSheetVersion(ctx)
+	if newestSource.UploadDate.Before(latestVersion.ParsedAt) {
+		// TODO: mensaje de que ya es la version mas nueva
+		return
+	}
+
+	// FIX: error handling
+	file, _ := newestSource.DownloadThisSource()
 
 	// FIX: layouts dir and error handling
-	p, _ := parser.NewExcelParser("layouts", file)
+	p, _ := parser.NewExcelParser(config.Get().LayoutsDir, file)
 
 	// TODO: aca deberia de comenzar una transaccion
+	tx, err := db.BeginTx(ctx, nil)
+	defer func() {
+		// FIX: error handling
+		if err != nil {
+			tx.Rollback()
+		}
+	}()
 
-	for p.NextValidSheet() {
+	metadata := parser.NewSubjectMetadataLoader(config.Get().MetadataDir)
+	for p.NextSheet() {
 		// FIX: error handling
 		result, _ := p.ParseCurrentSheet()
 
@@ -38,9 +50,13 @@ func newVersion() {
 
 		for _, sub := range result.Subjects {
 			mapper.MapToSubject(sub)
+			// TODO: buscar la metadata del subject para completar semestre
+			metadata.FindSubjectByName(result.Career, sub.SubjectName)
 			// TODO: crear cada subject con la info de la carrera creada
 		}
 	}
 
 	// TODO: finalizar transaccion y retornar algo que diga que si hay version nueva o algo asi
+	// FIX: error hanlding
+	tx.Commit()
 }

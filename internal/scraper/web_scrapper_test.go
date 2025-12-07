@@ -26,7 +26,7 @@ func TestFindLatestExcelUrlFromLocalHtml(t *testing.T) {
 		t.Fatalf("read html: %+v", err)
 	}
 
-	s := NewWebScrapper(nil)
+	s := NewWebScraper(nil)
 	start := time.Now()
 	src, err := s.FindLatestSourceFromHTML(string(html))
 	end := time.Now()
@@ -52,7 +52,7 @@ func TestFindLatestExcelUrlWithDriveFolders(t *testing.T) {
 	}
 
 	helper := NewGoogleDriveHelper()
-	s := NewWebScrapper(helper)
+	s := NewWebScraper(helper)
 	src, err := s.FindLatestSourceFromHTML(string(html))
 	if err != nil {
 		t.Fatalf("find source: %+v", err)
