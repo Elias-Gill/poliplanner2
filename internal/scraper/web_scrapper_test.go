@@ -41,7 +41,8 @@ func TestFindLatestExcelUrlFromLocalHtml(t *testing.T) {
 }
 
 func TestFindLatestExcelUrlWithDriveFolders(t *testing.T) {
-	if os.Getenv("GOOGLE_API_KEY") == "" {
+	apiKey := os.Getenv("GOOGLE_API_KEY")
+	if apiKey == "" {
 		t.Skip("GOOGLE_API_KEY not set")
 		return
 	}
@@ -51,7 +52,7 @@ func TestFindLatestExcelUrlWithDriveFolders(t *testing.T) {
 		t.Fatalf("read html: %+v", err)
 	}
 
-	helper := NewGoogleDriveHelper()
+	helper := NewGoogleDriveHelper(apiKey)
 	s := NewWebScraper(helper)
 	src, err := s.FindLatestSourceFromHTML(string(html))
 	if err != nil {

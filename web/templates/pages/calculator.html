@@ -3,58 +3,55 @@
   <title>Calculadora - PoliPlanner</title>
 </head>
 {{ end }}
-
 {{ define "content" }}
 <main>
-  <h1 class="title is-3">Calculadora de Notas</h1>
-  <section class="box mb-5">
-    <h3 class="title is-4">A) Ya tengo mi promedio ponderado</h3>
-    <p class="mb-3">
+  <h1>Calculadora de Notas</h1>
+  <article>
+    <h2>A) Ya tengo mi promedio ponderado</h2>
+    <p>
       Ingresa tu promedio ponderado (0–100) y obtén los puntajes mínimos del examen final para cada nota 2–5.
     </p>
     <form id="formPonderado" onsubmit="return false;">
-      <div class="field">
-        <label class="label" for="inputPonderado">Promedio ponderado (0–100)</label>
-        <div class="control">
-          <input class="input" type="number" id="inputPonderado" min="0" max="100" step="1">
-        </div>
+      <div class="form-group">
+        <label for="inputPonderado">Promedio ponderado (0–100)</label>
+        <input type="number" id="inputPonderado" min="0" max="100" step="1" />
       </div>
-      <button id="btnPonderado" type="button" class="button is-link">Calcular</button>
+      <button id="btnPonderado" type="button">Calcular</button>
     </form>
-  </section>
-  <section class="box mb-5">
-    <h3 class="title is-4">B) Calcular promedio ponderado y examen</h3>
-    <p class="mb-3">
+  </article>
+  <article>
+    <h2>B) Calcular promedio ponderado y examen</h2>
+    <p>
       Introduce tus promedios y pesos (que sumen 100) para calcular tu promedio ponderado y los puntajes del examen.
     </p>
     <form id="formComponentes" onsubmit="return false;">
-      <div class="columns is-multiline">
-        <div class="column is-4">
-          <label class="label" for="pesoParciales">Peso Parciales (%)</label>
-          <input class="input" type="number" id="pesoParciales" min="0" max="100" value="0">
-          <label class="label mt-3" for="promParciales">Promedio Parciales (0–100)</label>
-          <input class="input" type="number" id="promParciales" min="0" max="100" value="0">
+      <div class="flex-row">
+        <div class="form-group">
+          <label for="pesoParciales">Peso Parciales (%)</label>
+          <input type="number" id="pesoParciales" min="0" max="100" value="0" />
+          <label for="promParciales">Promedio Parciales (0–100)</label>
+          <input type="number" id="promParciales" min="0" max="100" value="0" />
         </div>
-        <div class="column is-4">
-          <label class="label" for="pesoTareas">Peso Tareas (%)</label>
-          <input class="input" type="number" id="pesoTareas" min="0" max="100" value="0">
-          <label class="label mt-3" for="promTareas">Promedio Tareas (0–100)</label>
-          <input class="input" type="number" id="promTareas" min="0" max="100" value="0">
+        <div class="form-group">
+          <label for="pesoTareas">Peso Tareas (%)</label>
+          <input type="number" id="pesoTareas" min="0" max="100" value="0" />
+          <label for="promTareas">Promedio Tareas (0–100)</label>
+          <input type="number" id="promTareas" min="0" max="100" value="0" />
         </div>
-        <div class="column is-4">
-          <label class="label" for="pesoLab">Peso Laboratorios (%)</label>
-          <input class="input" type="number" id="pesoLab" min="0" max="100" value="0">
-          <label class="label mt-3" for="promLab">Promedio Lab. (0–100)</label>
-          <input class="input" type="number" id="promLab" min="0" max="100" value="0">
+        <div class="form-group">
+          <label for="pesoLab">Peso Laboratorios (%)</label>
+          <input type="number" id="pesoLab" min="0" max="100" value="0" />
+          <label for="promLab">Promedio Lab. (0–100)</label>
+          <input type="number" id="promLab" min="0" max="100" value="0" />
         </div>
       </div>
-      <button id="btnComponentes" type="button" class="button is-link mt-2">Calcular</button>
+      <button id="btnComponentes" type="button">Calcular</button>
     </form>
-  </section>
-  <section id="resultados" class="box">
-    <h3 class="title is-4">Puntajes mínimos requeridos</h3>
+  </article>
+  <article id="resultados">
+    <h2>Puntajes mínimos requeridos</h2>
     <div class="table-container">
-      <table class="table is-fullwidth is-striped is-hoverable">
+      <table>
         <thead>
           <tr>
             <th>Nota final</th>
@@ -64,10 +61,10 @@
         <tbody id="resultadoTabla"></tbody>
       </table>
     </div>
-  </section>
-  <section class="mt-5">
+  </article>
+  <section>
     Si quieres saber cómo se calculan las notas puedes visitar la guía de 
-    <a class="has-text-link" href="/guides/calculo_notas">Cálculo de Notas</a>.
+    <a href="/guides/calculo_notas">Cálculo de Notas</a>.
   </section>
   <script>
     const MIN_EXAM = 50;
@@ -104,15 +101,14 @@
         for (let n = 5; n >= 2; n--) {
             const req = calcularExamenNecesario(ponderado, n);
             tbody.insertAdjacentHTML('beforeend', `
-    <tr>
-    <td>${n}</td>
-    <td>${req}</td>
-    </tr>
-    `);
+              <tr>
+                <td>${n}</td>
+                <td>${req}</td>
+              </tr>
+            `);
         }
 
-        document.getElementById('resultados')
-            .scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('resultados').scrollIntoView({ behavior: 'smooth' });
     }
 
     document.getElementById('btnPonderado').onclick = () => {
@@ -147,5 +143,114 @@
         calcularTabla(ponderado);
     };
   </script>
+  <style>
+    main {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 1rem;
+    }
+
+    h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    }
+
+    article {
+    margin-bottom: 2rem;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 8px rgb(0 0 0 / 0.1);
+    }
+
+    article h2 {
+    margin-bottom: 1rem;
+    font-weight: 600;
+    border-bottom: 2px solid var(--color-primary);
+    padding-bottom: 0.25rem;
+    }
+
+    p {
+    margin-bottom: 1rem;
+    color: var(--color-muted);
+    font-size: 0.95rem;
+    }
+
+    .form-group {
+    margin-bottom: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    }
+
+    .form-group label {
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+    }
+
+    .form-group input[type="number"] {
+    padding: 0.5rem 0.7rem;
+    font-size: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.3rem;
+    transition: border-color 0.2s ease;
+    }
+
+    .form-group input[type="number"]:focus {
+    border-color: var(--color-primary);
+    outline: none;
+    }
+
+    .flex-row {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    }
+
+    .flex-row .form-group {
+    flex: 1 1 30%;
+    min-width: 150px;
+    }
+
+    button {
+    width: 100%;
+    padding: 0.7rem;
+    font-weight: 600;
+    font-size: 1.05rem;
+    border-radius: 0.35rem;
+    margin-top: 0.5rem;
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+    background-color: color-mix(in srgb, var(--color-primary), black 25%);
+    }
+
+    .table-container {
+    margin-top: 1rem;
+    overflow-x: auto;
+    }
+
+    section {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+    margin-top: 1.5rem;
+    }
+
+    section a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 600;
+    }
+
+    section a:hover {
+    text-decoration: underline;
+    }
+  </style>
 </main>
 {{ end }}

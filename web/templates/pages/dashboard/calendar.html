@@ -182,26 +182,10 @@
     calendar.render();
   }
 
-  function waitForFullCalendar(callback, maxRetries = 20, interval = 100) {
-  let tries = 0;
-  const timer = setInterval(() => {
-    if (typeof FullCalendar !== 'undefined') {
-      clearInterval(timer);
-      callback();
-    } else {
-      tries++;
-      if (tries >= maxRetries) {
-        clearInterval(timer);
-        console.error('FullCalendar no se cargó a tiempo');
-      }
-    }
-  }, interval);
-  }
-
   document.body.addEventListener('htmx:afterSwap', function(evt) {
-  if (evt.detail.target.id === 'schedule-detail') {
-    waitForFullCalendar(initCalendar);
-  }
+    if (evt.detail.target.id === 'schedule-detail') {
+      initCalendar();
+    }
   });
 </script>
 <style>
@@ -269,4 +253,25 @@
     .hidden {
       display: none;
     }
+
+  table th a {
+      all: unset;
+      cursor: pointer; /* si quieres que siga pareciendo clickeable */
+      color: inherit;  /* hereda el color del padre */
+      text-decoration: none; /* quita subrayado */
+  }
+  table th a:hover {
+  all: unset;  /* evita cualquier cambio en hover */
+  color: inherit;
+  text-decoration: none;
+  }
+
+  :root {
+      --fc-today-bg-color: #ffeb3b;
+  }
+
+  .fc-daygrid-day-number {
+      text-decoration: none;
+      color: var(--color-fg);
+  }
 </style>

@@ -160,13 +160,16 @@ span {
 
 /* === Enlaces === */
 a {
-    color: color-mix(in srgb, var(--color-primary), var(--color-text) 25%);
-    text-decoration: underline;
+    /* color: color-mix(in srgb, var(--color-primary), var(--color-text) 25%); */
+    /* text-decoration: underline; */
     transition: color 0.2s ease;
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: var(--font-weight-semibold);
 }
 
 a:hover {
-    color: color-mix(in srgb, var(--color-primary), black 15%);
+    text-decoration: underline;
 }
 
 /* === Botones === */
@@ -240,7 +243,6 @@ textarea {
     color: var(--color-text);
     background-color: color-mix(in srgb, var(--color-bg), var(--color-secondary-bg) 10%);
     transition: border-color 0.2s ease, outline 0.2s ease;
-    margin-bottom: var(--space-sm);
 }
 
 input:focus,
@@ -309,8 +311,14 @@ td {
 }
 
 th {
-    background-color: color-mix(in srgb, var(--color-secondary-bg), var(--color-bg) 45%);
-    font-weight: var(--font-weight-semibold);
+    background-color: var(--color-primary);
+    font-weight: var(--font-weight-bold);
+    color: white;
+    border: 1px solid black;
+}
+
+th * {
+    color: white;
 }
 
 td>span {
@@ -359,6 +367,7 @@ nav a {
     position: relative;
     transition: color 0.2s ease;
     text-decoration: none;
+    font-weight: var(--font-weight-medium);
 }
 
 nav a:hover {

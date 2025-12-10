@@ -3,15 +3,14 @@
   <div class="header-selector">
     <h1>Mis horarios</h1>
     {{ if .Schedules }}
-    <div class="form-container" style="gap: 1rem;">
+    <div class="form-container">
       <select id="viewModeSelector"
         name="mode"
         hx-get="/dashboard/view"
         hx-swap="innerHTML swap:.22s settle:.2s"
         hx-target="#schedule-detail"
         hx-include="#scheduleSelector"
-        hx-trigger="change, load"
-        style="width: 150px; padding: var(--space-sm); font-size: var(--font-size-base); border: 1px solid var(--color-border); border-radius: .25rem;">
+        hx-trigger="change, load">
         <option value="overview" selected>Vista Rapida</option>
         <option value="calendar">Calendario</option>
         <option value="extra">Secciones</option>
@@ -22,8 +21,7 @@
                 hx-swap="innerHTML swap:.22s settle:.2s"
                 hx-target="#schedule-detail"
                 hx-include="#viewModeSelector"
-                hx-trigger="change, load"
-                style="width: 250px; padding: var(--space-sm); font-size: var(--font-size-base); border: 1px solid var(--color-border); border-radius: .25rem;">
+                hx-trigger="change, load">
         <option value="" disabled {{ if or (not .SelectedScheduleID) (eq .SelectedScheduleID -1) }}selected{{ end }}>Selecciona un horario</option>
         {{ range .Schedules }}
         <option value="{{ .ID }}" {{ if and $.SelectedScheduleID (eq .ID $.SelectedScheduleID) }}selected{{ end }}>
@@ -48,8 +46,6 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: var(--space-xl);
-      margin-top: var(--space-xl);
       flex-wrap: wrap;
     }
     .form-container {
@@ -58,8 +54,6 @@
       gap: var(--space-md);
     }
     #scheduleSelector, #viewModeSelector {
-      padding: var(--space-sm);
-      font-size: var(--font-size-base);
       border: 1px solid var(--color-border);
       border-radius: .25rem;
     }
@@ -77,8 +71,6 @@
       padding: .3rem .6rem;
       border-radius: .25rem;
       cursor: pointer;
-      font-size: 1.1rem;
-      line-height: 1;
     }
     @media(max-width:768px) {
       .header-selector {

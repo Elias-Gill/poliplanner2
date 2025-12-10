@@ -95,13 +95,13 @@
       {{ range .Subjects }}
       {{ if .Partial1Date.Valid }}
       <article class="exam-item">
-        <span class="exam-name">{{ .SubjectName }}</span>
+        <span class="exam-name"><i>{{ .SubjectName }}</i></span>
         <span class="badge-container">
           <span class="date-badge">{{ .Partial1Date.Time.Format "02/01" }}</span>
           {{ if .Partial1Time.Valid }}
-          <span class="time-badge">{{ .Partial1Time.String }}</span>
+          <span class="date-badge">{{ .Partial1Time.String }}</span>
           {{ else }}
-          <span class="time-badge">Hora pendiente</span>
+          <span class="date-badge">Hora pendiente</span>
           {{ end }}
         </span>
         {{ if .Partial1Room.Valid }}
@@ -117,13 +117,13 @@
       {{ range .Subjects }}
       {{ if .Partial2Date.Valid }}
       <article class="exam-item">
-        <span class="exam-name">{{ .SubjectName }}</span>
+        <span class="exam-name"><i>{{ .SubjectName }}</i></span>
         <span class="badge-container">
           <span class="date-badge">{{ .Partial2Date.Time.Format "02/01" }}</span>
           {{ if .Partial2Time.Valid }}
-          <span class="time-badge">{{ .Partial2Time.String }}</span>
+          <span class="date-badge">{{ .Partial2Time.String }}</span>
           {{ else }}
-          <span class="time-badge">Hora pendiente</span>
+          <span class="date-badge">Hora pendiente</span>
           {{ end }}
         </span>
         {{ if .Partial2Room.Valid }}
@@ -141,13 +141,13 @@
       {{ range .Subjects }}
       {{ if .Final1Date.Valid }}
       <article class="exam-item">
-        <span class="exam-name">{{ .SubjectName }}</span>
+        <span class="exam-name"><i>{{ .SubjectName }}</i></span>
         <span class="badge-container">
           <span class="date-badge">{{ .Final1Date.Time.Format "02/01" }}</span>
           {{ if .Final1Time.Valid }}
-          <span class="time-badge">{{ .Final1Time.String }}</span>
+          <span class="date-badge">{{ .Final1Time.String }}</span>
           {{ else }}
-          <span class="time-badge">Hora pendiente</span>
+          <span class="date-badge">Hora pendiente</span>
           {{ end }}
         </span>
         {{ if .Final1Room.Valid }}
@@ -163,13 +163,13 @@
       {{ range .Subjects }}
       {{ if .Final2Date.Valid }}
       <article class="exam-item">
-        <span class="exam-name">{{ .SubjectName }}</span>
+        <span class="exam-name"><i>{{ .SubjectName }}</i></span>
         <span class="badge-container">
           <span class="date-badge">{{ .Final2Date.Time.Format "02/01" }}</span>
           {{ if .Final2Time.Valid }}
-          <span class="time-badge">{{ .Final2Time.String }}</span>
+          <span class="date-badge">{{ .Final2Time.String }}</span>
           {{ else }}
-          <span class="time-badge">Hora pendiente</span>
+          <span class="date-badge">Hora pendiente</span>
           {{ end }}
         </span>
         {{ if .Final2Room.Valid }}
@@ -185,4 +185,18 @@
     No hay exámenes programados
   </div>
   {{ end }}
+  <style>
+    .date-badge {
+    font-size: 0.85rem;
+    padding: 0.2em 0.6em;
+    border-radius: 8%;
+    margin-right: 0.25em;
+        border: 1px solid var(--color-text);
+    }
+    .badge-container {
+    display: inline-block;
+    float: right;
+    white-space: nowrap;
+    }
+  </style>
 </div>
