@@ -62,3 +62,42 @@ func CreateSchedule(ctx context.Context, userID int64, sheetVersionId int64, des
 
 	return nil
 }
+
+func DeleteSchedule(ctx context.Context, userID int64, scheduleID int64) error {
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("cannot start transaction over schedule table: %w", err)
+	}
+
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		}
+	}()
+
+	// User ownership validation
+	schedule, err := scheduleStorer.GetByID(ctx, tx, scheduleID)
+	if err != nil {
+		return fmt.Errorf("schedule not found: %w", err)
+	}
+	if schedule.UserID != userID {
+		return fmt.Errorf("unauthorized")
+	}
+
+	err = scheduleStorer.Delete(ctx, tx, scheduleID)
+	if err != nil {
+		return fmt.Errorf("error deleting schedule details: %w", err)
+	}
+
+	err = scheduleStorer.Delete(ctx, tx, scheduleID)
+	if err != nil {
+		return fmt.Errorf("error deleting schedule: %w", err)
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return fmt.Errorf("cannot commit schedule deletion: %w", err)
+	}
+
+	return nil
+}

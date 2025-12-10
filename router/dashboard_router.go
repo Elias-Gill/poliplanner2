@@ -90,9 +90,11 @@ func NewDashboardRouter() func(r chi.Router) {
 			}
 
 			data := struct {
-				Subjects []*model.Subject
+				SelectedScheduleID int64
+				Subjects           []*model.Subject
 			}{
-				Subjects: subjects,
+				SelectedScheduleID: id,
+				Subjects:           subjects,
 			}
 
 			var tpl *template.Template

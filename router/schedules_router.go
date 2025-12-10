@@ -81,6 +81,35 @@ func NewSchedulesRouter() func(r chi.Router) {
 			tpl.Execute(w, data)
 		})
 
+		r.Delete("/{id}", func(w http.ResponseWriter, r *http.Request) {
+			idParam := chi.URLParam(r, "id")
+			if idParam == "" {
+				w.Header().Set("HX-Redirect", "/500")
+				return
+			}
+
+			scheduleID, err := strconv.ParseInt(idParam, 10, 64)
+			if err != nil {
+				w.Header().Set("HX-Redirect", "/500")
+				return
+			}
+
+			userID := extractUserID(r)
+
+			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*200)
+			defer cancel()
+
+			err = service.DeleteSchedule(ctx, userID, scheduleID)
+			if err != nil {
+				logger.Error("cannot delete schedule", "error", err)
+				w.Header().Set("HX-Redirect", "/500")
+				return
+			}
+
+			// Just redirect to the dashboard so we dont have to handle anything else here
+			w.Header().Set("HX-Redirect", "/dashboard")
+		})
+
 		r.Post("/create", func(w http.ResponseWriter, r *http.Request) {
 			r.ParseForm()
 

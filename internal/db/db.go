@@ -33,6 +33,12 @@ func InitDB() error {
 	}
 	log.Debug("WAL mode enabled successfully")
 
+	log.Debug("Enabling foreign keys support for SQLite")
+	if _, err := db.Exec("PRAGMA foreign_keys=ON;"); err != nil {
+		return fmt.Errorf("enable foreign keys: %v", err)
+	}
+	log.Debug("Foreign keys enabled successfully")
+
 	dbConnection = db
 
 	migrateURL := "sqlite3://file:" + cfg.DatabaseURL + "?cache=shared&mode=rwc"

@@ -180,6 +180,10 @@
       {{ end }}
     </div>
   </div>
+  <form hx-delete="/schedule/{{.SelectedScheduleID}}">
+    <small>Quieres eliminar este horario ?</small>
+    <button style="margin-left: 4px;" type="submit" class="error"><small>Eliminar</small></button>
+  </form>
   {{ else }}
   <div class="no-exams">
     No hay exámenes programados

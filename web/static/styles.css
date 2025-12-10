@@ -178,7 +178,7 @@ button,
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: var(--space-sm) var(--space-md);
+    padding: var(--space-md);
     background-color: var(--color-primary);
     color: white;
     border: none;
