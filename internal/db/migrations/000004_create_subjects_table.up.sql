@@ -48,7 +48,7 @@ CREATE TABLE subjects (
     committee_member1 TEXT,
     committee_member2 TEXT,
 
-    FOREIGN KEY (career_id) REFERENCES careers(career_id) ON DELETE SET NULL
+    FOREIGN KEY (career_id) REFERENCES careers(career_id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_subjects_name_career ON subjects(subject_name, career_id);

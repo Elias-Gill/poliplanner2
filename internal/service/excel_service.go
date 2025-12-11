@@ -2,61 +2,113 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/elias-gill/poliplanner2/internal/config"
+	"github.com/elias-gill/poliplanner2/internal/db/model"
 	parser "github.com/elias-gill/poliplanner2/internal/excelparser"
 	mapper "github.com/elias-gill/poliplanner2/internal/excelparser/dto"
+	"github.com/elias-gill/poliplanner2/internal/logger"
 	"github.com/elias-gill/poliplanner2/internal/scraper"
 )
 
-func SearchNewestExcel(ctx context.Context) {
+func SearchNewestExcel(ctx context.Context) error {
 	key := config.Get().GoogleAPIKey
 	scraper := scraper.NewWebScraper(scraper.NewGoogleDriveHelper(key))
 
 	newestSource, err := scraper.FindLatestDownloadSource()
 	if err != nil {
-		// TODO: mostrar un mensaje de respuesta
-		return
+		logger.Info("scraper failed to retrieve latest source", "error", err)
+		return fmt.Errorf("error searching for excel versions: %w", err)
 	}
 
-	// FIX: error handling
 	latestVersion, err := FindLatestSheetVersion(ctx)
-	if newestSource.UploadDate.Before(latestVersion.ParsedAt) {
-		// TODO: mensaje de que ya es la version mas nueva
-		return
+	if err != nil {
+		logger.Info("cannot retrieve latest version from database", "error", err)
+		return fmt.Errorf("error searching for excel versions: %w", err)
 	}
 
-	// FIX: error handling
-	file, _ := newestSource.DownloadThisSource()
+	if newestSource.UploadDate.Before(latestVersion.ParsedAt) {
+		logger.Info("excel is already the latest version",
+			"fpuna", newestSource.UploadDate,
+			"database", latestVersion.ParsedAt)
+		return nil
+	}
 
-	// FIX: layouts dir and error handling
-	p, _ := parser.NewExcelParser(config.Get().LayoutsDir, file)
+	file, err := newestSource.DownloadThisSource()
+	if err != nil {
+		logger.Info("failed to download source", "source", newestSource.URL, "error", err)
+		return fmt.Errorf("error downloading latest excel: %w", err)
+	}
 
-	// TODO: aca deberia de comenzar una transaccion
+	parserExcel, err := parser.NewExcelParser(config.Get().LayoutsDir, file)
+	if err != nil {
+		return fmt.Errorf("error creating excel parser: %w", err)
+	}
+
 	tx, err := db.BeginTx(ctx, nil)
-	defer func() {
-		// FIX: error handling
-		if err != nil {
-			tx.Rollback()
+	if err != nil {
+		return fmt.Errorf("error starting transaction: %w", err)
+	}
+
+	rollback := func(e error) error {
+		rbErr := tx.Rollback()
+		if rbErr != nil {
+			logger.Error("rollback failed", "error", rbErr)
 		}
-	}()
+		return e
+	}
+
+	version := &model.SheetVersion{
+		FileName: newestSource.FileName,
+		URL:      newestSource.URL,
+	}
+
+	if err := sheetVersionStorer.Insert(ctx, tx, version); err != nil {
+		logger.Error("error persisting excel version", "error", err)
+		return rollback(err)
+	}
 
 	metadata := parser.NewSubjectMetadataLoader(config.Get().MetadataDir)
-	for p.NextSheet() {
-		// FIX: error handling
-		result, _ := p.ParseCurrentSheet()
 
-		// TODO: crear la carrera con la info de result
+	for parserExcel.NextSheet() {
+		result, perr := parserExcel.ParseCurrentSheet()
+		if perr != nil {
+			logger.Error("error parsing sheet", "error", perr)
+			return rollback(perr)
+		}
+
+		career := &model.Career{
+			CareerCode:     result.Career,
+			SheetVersionID: version.ID,
+		}
+
+		if err := careerStorer.Insert(ctx, tx, career); err != nil {
+			logger.Error("error persisting career", "error", err)
+			return rollback(err)
+		}
 
 		for _, sub := range result.Subjects {
-			mapper.MapToSubject(sub)
-			// TODO: buscar la metadata del subject para completar semestre
-			metadata.FindSubjectByName(result.Career, sub.SubjectName)
-			// TODO: crear cada subject con la info de la carrera creada
+			subject := mapper.MapToSubject(sub)
+
+			if subject.Semester == 0 {
+				meta, merr := metadata.FindSubjectByName(result.Career, sub.SubjectName)
+				if merr == nil {
+					subject.Semester = meta.Semester
+				}
+			}
+
+			if err := subjectStorer.Insert(ctx, tx, subject); err != nil {
+				logger.Error("error persisting subject", "error", err)
+				return rollback(err)
+			}
 		}
 	}
 
-	// TODO: finalizar transaccion y retornar algo que diga que si hay version nueva o algo asi
-	// FIX: error hanlding
-	tx.Commit()
+	if err := tx.Commit(); err != nil {
+		logger.Error("error committing transaction", "error", err)
+		return rollback(err)
+	}
+
+	return nil
 }
