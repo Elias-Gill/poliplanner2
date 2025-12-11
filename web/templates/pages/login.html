@@ -6,7 +6,7 @@
 
 {{ define "content"}}
   <main>
-    <article class="login-container">
+    <div class="login-container">
       <img src="/static/logo.svg" alt="Logo Poliplanner" class="login-logo" />
       <h2>Iniciar Sesión</h2>
 
@@ -58,7 +58,7 @@
         <button
           type="submit"
           class="primary"
-          style="width: 100%; border-radius: 10px; font-size: 1.1rem; font-weight: 600;"
+          style="width: 100%; font-size: 1.1rem; font-weight: 600;"
         >
           Iniciar sesión
         </button>
@@ -77,12 +77,12 @@
         <a href="/misc/calculator" aria-label="Calculadora" style="font-weight: 600; margin-right: 0.5rem;">Calculadora</a> |
         <a href="/guides/" aria-label="Guías para el estudiante" style="font-weight: 600; margin-left: 0.5rem;">Guías</a>
       </p>
-    </article>
+    </div>
 
     <style>
       /* Estilos para página de login */
       .login-container {
-        max-width: 400px;
+        max-width: 350px;
         margin: var(--space-xl) auto;
         text-align: center;
         border: none;
@@ -149,7 +149,7 @@
         font-size: var(--font-size-base);
         font-weight: var(--font-weight-normal);
         border: 1px solid var(--color-border);
-        border-radius: 0.25rem;
+        border-radius: var(--border-radius);
         background-color: color-mix(
           in srgb,
           var(--color-bg),

@@ -5,78 +5,148 @@
     {{.Error}}
   </div>
   {{end}}
-  <h2>Crea un nuevo horario</h2>
+  <h1>Crea un nuevo horario</h1>
   <section>
     <form hx-post="/schedule/create" id="mainForm">
+      <!-- Indicador de Excel -->
+      <section>
+        <small>Excel parseado: <i>{{.SheetVersion.ParsedAt}}</strong></i>
+        <button type="button" class="excel-info-btn" onclick="openExcelModal()">Ver detalles</button>
+      </section>
       <!-- Primera sección: Descripción y Carrera -->
       <section id="formSection1">
         <label for="description">
           <h3>Descripción</h3>
         </label>
         <input type="text"
-                       id="description"
-                       name="description"
-                       placeholder="Ej: Horario primer semestre 2025"
-                       required>
+               id="description"
+               name="description"
+               placeholder="Ej: Horario primer semestre 2025"
+               required>
         <label for="careerId">
           <h3>Carrera</h3>
         </label>
-        <select id="careerId" name="careerId" 
-                        hx-get="/schedule/create/details" 
-                        hx-target="#subjectsSelectorSection"
-                        hx-swap="innerHTML swap:.2s settle:.2s"
-                        hx-trigger="change"
-                        hx-include="#description"
-                        required>
+        <select id="careerId" name="careerId"
+                hx-get="/schedule/create/details"
+                hx-target="#subjectsSelectorSection"
+                hx-swap="innerHTML swap:.2s settle:.2s"
+                hx-trigger="change"
+                hx-include="#description"
+                required>
           <option disabled selected value="">Selecciona una carrera</option>
           {{range .Careers}}
           <option value="{{.ID}}">{{.CareerCode}}</option>
           {{end}}
         </select>
       </section>
-      <!-- Información de Excel -->
-      <article>
-        <label>Versión de Excel</label>
-        <div>
-          <span>
-            <strong>Archivo:</strong>
-            {{.SheetVersion.FileName}}
-          </span>
-          <br>
-          <span>
-            <strong>Procesado el:</strong>
-            {{if .SheetVersion.ParsedAt}}
-            {{.SheetVersion.ParsedAt}}
-            {{else}}
-            Fecha no disponible
-            {{end}}
-          </span>
-          <br>
-          <span>
-            <strong>Descarga:</strong>
-            <a href="{{.SheetVersion.URL}}" target="_blank" rel="noopener">
-              {{.SheetVersion.URL}}
-            </a>
-          </span>
-        </div>
-        <input type="hidden" name="sheetVersionID" value="{{.SheetVersion.ID}}">
-      </article>
-      <!-- Sección dinámica para selección de materias -->
+      <input type="hidden" name="sheetVersionID" value="{{.SheetVersion.ID}}">
+      <!-- Sección dinámica de materias -->
       <div id="subjectsSelectorSection">
-        <!-- Aquí se cargará el selector de materias via HTMX -->
+        <!-- HTMX inserts here -->
       </div>
     </form>
   </section>
+  <!-- Modal -->
+  <div id="excelModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+      <button class="modal-close-btn" onclick="closeExcelModal()">×</button>
+      <h3>Detalles del Excel</h3>
+      <p>
+        <strong>Archivo:</strong> <i>{{.SheetVersion.FileName}}</i>
+      </p>
+      <p>
+        <strong>Procesado el:</strong>
+        {{if .SheetVersion.ParsedAt}}
+        <i>{{.SheetVersion.ParsedAt}}</i>
+        {{else}}
+        <i>Fecha no disponible</i>
+        {{end}}
+      </p>
+      <p>
+        <strong>Descarga:</strong>
+        <a href="{{.SheetVersion.URL}}" target="_blank" rel="noopener">
+          <i>{{.SheetVersion.URL}}</i>
+        </a>
+      </p>
+    </div>
+  </div>
   <style>
+    /* HTMX transition */
     #subjectsSelectorSection.htmx-swapping {
-        opacity: 0;
-        transition: all .2s ease-out;
+      opacity: 0;
+      transition: all .2s ease-out;
+    }
+    #subjectsSelectorSection.htmx-settling {
+      opacity: 1;
+      transition: all .2s ease-in;
     }
 
-    #subjectsSelectorSection.htmx-settling {
-        opacity: 1;
-        transition: all .2s ease-in;
+    .excel-info-btn {
+      padding: .35rem .75rem;
+        margin-left: 8px;
+      cursor: pointer;
+      font-size: .85rem;
+      font-weight: 600;
+    }
+
+    .excel-info-btn:hover {
+      background: color-mix(in srgb, var(--color-primary), black 20%);
+    }
+
+    /* Modal overlay */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgb(0 0 0 / 0.45);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s ease-out;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Modal content */
+    .modal-content {
+      background: var(--color-bg);
+      padding: 1.5rem;
+      width: min(90%, 420px);
+      border-radius: var(--border-radius);
+      box-shadow: 0 8px 24px rgb(0 0 0 / 0.15);
+      animation: modalFadeIn .25s ease;
+      position: relative;
+    }
+
+    @keyframes modalFadeIn {
+      from { transform: scale(.95); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: .4rem;
+      right: .4rem;
+      border: none;
+      padding: .35rem .75rem;
     }
   </style>
+  <script>
+    function openExcelModal() {
+      document.getElementById('excelModal').classList.add('show');
+      document.getElementById('excelModal').style.display = 'flex';
+    }
+
+    function closeExcelModal() {
+      const modal = document.getElementById('excelModal');
+      modal.classList.remove('show');
+      setTimeout(() => modal.style.display = 'none', 200);
+    }
+  </script>
 </main>
 {{end}}

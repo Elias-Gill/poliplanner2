@@ -1,30 +1,92 @@
+<style id="styles">
+  .mb-1rem {
+    margin-bottom: 1rem;
+  }
+
+  .subjects-container-box {
+    max-height: 60vh;
+    overflow-y: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    background: var(--color-bg);
+    padding: 1rem;
+  }
+
+  .no-subjects-box {
+    text-align: center;
+    padding: 2rem;
+    background: var(--color-bg);
+    border-radius: var(--border-radius);
+  }
+
+  #selectedSubjectsPreview {
+    flex: 1;
+    padding: 1rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    min-height: 200px;
+    display: none;
+  }
+
+  #selectedSubjectsList {
+    list-style: none;
+    padding: 0;
+  }
+
+  .subject-item {
+    padding: .5rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .subject-label {
+    display: block;
+    cursor: pointer;
+  }
+
+  .selected-li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .5rem;
+    margin-bottom: .5rem;
+    background: var(--color-bg);
+    border-radius: var(--border-radius);
+  }
+
+  .remove-subject-btn {
+    background: var(--color-bg);
+    color: white;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+  }
+</style>
 <div class="schedule-container">
   <div class="subjects-list-column">
-    <div style="margin-bottom: 1rem;">
+    <div class="mb-1rem">
       <label for="semesterFilter">Filtrar por semestre:</label>
       <select id="semesterFilter">
         <option value="all" selected>Todos los semestres</option>
       </select>
     </div>
-    <div style="margin-bottom: 1rem;">
+    <div class="mb-1rem">
       <label for="subjectSearch">Buscar por materia, profesor y/o sección:</label>
       <input type="text" id="subjectSearch" placeholder="Ej. Física, 2, Juan ...">
     </div>
     {{if .Subjects}}
-    <div id="subjectsContainer"
-      style="max-height: 60vh; overflow-y: auto; border: 1px solid #ccc; border-radius: .5rem; background: #fff; padding: 1rem;">
-    </div>
+    <div id="subjectsContainer" class="subjects-container-box"></div>
     {{else}}
-    <div style="text-align: center; padding: 2rem; background: #f8f9fa; border-radius: .5rem;">
+    <div class="no-subjects-box">
       <p>No se encontraron materias para esta carrera.</p>
       <p><small>Selecciona otra carrera o verifica la versión del Excel.</small></p>
     </div>
     {{end}}
   </div>
-  <section id="selectedSubjectsPreview"
-    style="flex:1; padding:1rem; background:#fff; border:1px solid #ccc; border-radius:.5rem; min-height:200px; display:none;">
+  <section id="selectedSubjectsPreview">
     <h3>Materias seleccionadas</h3>
-    <ul id="selectedSubjectsList" style="list-style:none; padding:0;"></ul>
+    <ul id="selectedSubjectsList"></ul>
   </section>
   <section>
     <button type="submit">Crear Horario</button>
@@ -64,32 +126,33 @@
         semesterFilter.appendChild(opt);
       });
 
-    function matchesFilters(sub) {
-      const sem = semesterFilter.value;
-      if (sem !== "all" && Number(sem) !== sub.semester) return false;
+      function matchesFilters(sub) {
+        const sem = semesterFilter.value;
+        if (sem !== "all" && Number(sem) !== sub.semester) return false;
 
-      const raw = searchInput.value.trim().toLowerCase();
-      if (!raw) return true;
+        const raw = searchInput.value.trim().toLowerCase();
+        if (!raw) return true;
 
-      const professorName = (
-    `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`
-      ).trim().toLowerCase();
+        const professorName =
+          `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`
+          .trim()
+          .toLowerCase();
 
-      const subject = (sub.subjectName || '').toLowerCase();
-      const section = (sub.section || '').toLowerCase();
+        const subject = (sub.subjectName || '').toLowerCase();
+        const section = (sub.section || '').toLowerCase();
 
-      const terms = raw.split(',').map(t => t.trim()).filter(Boolean);
+        const terms = raw.split(',').map(t => t.trim()).filter(Boolean);
 
-      for (const term of terms) {
-    const ok =
-      subject.includes(term) ||
-      professorName.includes(term) ||
-      section.includes(term);
-    if (!ok) return false;
+        for (const term of terms) {
+          const ok =
+            subject.includes(term) ||
+            professorName.includes(term) ||
+            section.includes(term);
+          if (!ok) return false;
+        }
+
+        return true;
       }
-
-      return true;
-    }
 
       function renderSubjects() {
         subjectsContainer.innerHTML = '';
@@ -98,8 +161,7 @@
 
         filtered.forEach(sub => {
           const div = document.createElement('div');
-          div.style.padding = '.5rem 0';
-          div.style.borderBottom = '1px solid #eee';
+          div.className = 'subject-item';
 
           const professorName =
             `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`.trim();
@@ -118,8 +180,7 @@
           });
 
           const label = document.createElement('label');
-          label.style.display = 'block';
-          label.style.cursor = 'pointer';
+          label.className = 'subject-label';
           label.appendChild(checkbox);
 
           const info = document.createElement('span');
@@ -149,13 +210,7 @@
           if (!sub) return;
 
           const li = document.createElement('li');
-          li.style.display = 'flex';
-          li.style.justifyContent = 'space-between';
-          li.style.alignItems = 'center';
-          li.style.padding = '.5rem';
-          li.style.marginBottom = '.5rem';
-          li.style.backgroundColor = '#f8f9fa';
-          li.style.borderRadius = '.25rem';
+          li.className = 'selected-li';
 
           const professorName =
             `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`.trim();
@@ -169,12 +224,7 @@
           btn.type = 'button';
           btn.textContent = 'X';
           btn.title = 'Quitar materia';
-          btn.style.backgroundColor = '#dc3545';
-          btn.style.color = 'white';
-          btn.style.border = 'none';
-          btn.style.padding = '0.25rem 0.5rem';
-          btn.style.borderRadius = '.25rem';
-          btn.style.cursor = 'pointer';
+          btn.className = 'remove-subject-btn';
 
           btn.addEventListener('click', () => {
             selectedIds.delete(id);
