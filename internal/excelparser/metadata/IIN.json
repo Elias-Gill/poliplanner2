@@ -1,328 +1,275 @@
 {
-  "career_code": "IIN",
-  "subjects": [
-    {
-      "name": "algebra lineal",
-      "semester": 2,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "algoritmos y estructuras de datos i",
-      "semester": 1,
-      "credits": 9
-    }
-    ,
-    {
-      "name": "algoritmos y estructuras de datos ii",
-      "semester": 2,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "algoritmos y estructuras de datos iii",
-      "semester": 3,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "bases de datos i",
-      "semester": 6,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "bases de datos ii",
-      "semester": 8,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "calculo i",
-      "semester": 2,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "calculo ii",
-      "semester": 3,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "calculo iii",
-      "semester": 4,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "contabilidad",
-      "semester": 3,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "diseno de compiladores",
-      "semester": 10,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "economia y finanzas",
-      "semester": 4,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "electiva 1",
-      "semester": 7,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "electiva 2",
-      "semester": 8,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "electiva 3",
-      "semester": 8,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "electiva 4",
-      "semester": 9,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "electiva 5",
-      "semester": 9,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "electiva 6",
-      "semester": 10,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "electiva 7",
-      "semester": 10,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "emprendedorismo",
-      "semester": 1,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "estructura de los lenguajes",
-      "semester": 6,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "expresion oral y escrita",
-      "semester": 1,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "fisica 1",
-      "semester": 3,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "fisica 2",
-      "semester": 4,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "fisica 3",
-      "semester": 5,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "fisica 4",
-      "semester": 6,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "fundamentos de matematica",
-      "semester": 1,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "gestion de centro de computos",
-      "semester": 9,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "ingenieria de software i",
-      "semester": 6,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "ingenieria de software ii",
-      "semester": 7,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "ingenieria de software iii",
-      "semester": 8,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "ingles",
-      "semester": 2,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "investigacion de operaciones i",
-      "semester": 5,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "investigacion de operaciones ii",
-      "semester": 7,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "lenguajes de programacion i",
-      "semester": 2,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "lenguajes de programacion ii",
-      "semester": 3,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "lenguajes de programacion iii",
-      "semester": 5,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "logica para ciencias de la computacion",
-      "semester": 3,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "matematica aplicada",
-      "semester": 7,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "matematica discreta",
-      "semester": 1,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "metodos numericos",
-      "semester": 6,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "optativa 1",
-      "semester": 7,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "optativa 2",
-      "semester": 8,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "optativa 3",
-      "semester": 9,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "organizacion y arquitectura de computadoras i",
-      "semester": 1,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "organizacion y arquitectura de computadoras ii",
-      "semester": 2,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "probabilidades y estadistica",
-      "semester": 4,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "proyecto final de tesis",
-      "semester": 9,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "proyecto final de tesis",
-      "semester": 10,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "redes de computadoras i",
-      "semester": 4,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "redes de computadoras ii",
-      "semester": 5,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "sistemas distribuidos",
-      "semester": 5,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "sistemas operativos",
-      "semester": 4,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "tecnicas de organizacion y metodos",
-      "semester": 5,
-      "credits": 4
-    }
-  ]
+    "career_code": "IIN",
+    "subjects": [
+        {
+            "name": "algebra lineal",
+            "semester": 2,
+            "credits": 7
+        },
+        {
+            "name": "algoritmos y estructuras de datos i",
+            "semester": 1,
+            "credits": 9
+        },
+        {
+            "name": "algoritmos y estructuras de datos ii",
+            "semester": 2,
+            "credits": 7
+        },
+        {
+            "name": "algoritmos y estructuras de datos iii",
+            "semester": 3,
+            "credits": 7
+        },
+        {
+            "name": "bases de datos i",
+            "semester": 6,
+            "credits": 7
+        },
+        {
+            "name": "bases de datos ii",
+            "semester": 8,
+            "credits": 7
+        },
+        {
+            "name": "calculo i",
+            "semester": 2,
+            "credits": 7
+        },
+        {
+            "name": "calculo ii",
+            "semester": 3,
+            "credits": 7
+        },
+        {
+            "name": "calculo iii",
+            "semester": 4,
+            "credits": 7
+        },
+        {
+            "name": "contabilidad",
+            "semester": 3,
+            "credits": 4
+        },
+        {
+            "name": "diseno de compiladores",
+            "semester": 10,
+            "credits": 7
+        },
+        {
+            "name": "economia y finanzas",
+            "semester": 4,
+            "credits": 4
+        },
+        {
+            "name": "electiva 1",
+            "semester": 7,
+            "credits": 7
+        },
+        {
+            "name": "electiva 2",
+            "semester": 8,
+            "credits": 7
+        },
+        {
+            "name": "electiva 3",
+            "semester": 8,
+            "credits": 7
+        },
+        {
+            "name": "electiva 4",
+            "semester": 9,
+            "credits": 7
+        },
+        {
+            "name": "electiva 5",
+            "semester": 9,
+            "credits": 7
+        },
+        {
+            "name": "electiva 6",
+            "semester": 10,
+            "credits": 7
+        },
+        {
+            "name": "electiva 7",
+            "semester": 10,
+            "credits": 7
+        },
+        {
+            "name": "emprendedorismo",
+            "semester": 1,
+            "credits": 4
+        },
+        {
+            "name": "estructura de los lenguajes",
+            "semester": 6,
+            "credits": 7
+        },
+        {
+            "name": "expresion oral y escrita",
+            "semester": 1,
+            "credits": 4
+        },
+        {
+            "name": "fisica 1",
+            "semester": 3,
+            "credits": 7
+        },
+        {
+            "name": "fisica 2",
+            "semester": 4,
+            "credits": 7
+        },
+        {
+            "name": "fisica 3",
+            "semester": 5,
+            "credits": 7
+        },
+        {
+            "name": "fisica 4",
+            "semester": 6,
+            "credits": 5
+        },
+        {
+            "name": "fundamentos de matematica",
+            "semester": 1,
+            "credits": 7
+        },
+        {
+            "name": "gestion de centro de computos",
+            "semester": 9,
+            "credits": 7
+        },
+        {
+            "name": "ingenieria de software i",
+            "semester": 6,
+            "credits": 7
+        },
+        {
+            "name": "ingenieria de software ii",
+            "semester": 7,
+            "credits": 7
+        },
+        {
+            "name": "ingenieria de software iii",
+            "semester": 8,
+            "credits": 7
+        },
+        {
+            "name": "ingles",
+            "semester": 2,
+            "credits": 4
+        },
+        {
+            "name": "investigacion de operaciones i",
+            "semester": 5,
+            "credits": 7
+        },
+        {
+            "name": "investigacion de operaciones ii",
+            "semester": 7,
+            "credits": 7
+        },
+        {
+            "name": "lenguajes de programacion i",
+            "semester": 2,
+            "credits": 7
+        },
+        {
+            "name": "lenguajes de programacion ii",
+            "semester": 3,
+            "credits": 7
+        },
+        {
+            "name": "lenguajes de programacion iii",
+            "semester": 5,
+            "credits": 7
+        },
+        {
+            "name": "logica para ciencias de la computacion",
+            "semester": 3,
+            "credits": 7
+        },
+        {
+            "name": "matematica aplicada",
+            "semester": 7,
+            "credits": 7
+        },
+        {
+            "name": "matematica discreta",
+            "semester": 1,
+            "credits": 7
+        },
+        {
+            "name": "metodos numericos",
+            "semester": 6,
+            "credits": 7
+        },
+        {
+            "name": "optativa 1",
+            "semester": 7,
+            "credits": 4
+        },
+        {
+            "name": "optativa 2",
+            "semester": 8,
+            "credits": 4
+        },
+        {
+            "name": "optativa 3",
+            "semester": 9,
+            "credits": 4
+        },
+        {
+            "name": "organizacion y arquitectura de computadoras i",
+            "semester": 1,
+            "credits": 7
+        },
+        {
+            "name": "organizacion y arquitectura de computadoras ii",
+            "semester": 2,
+            "credits": 7
+        },
+        {
+            "name": "probabilidades y estadistica",
+            "semester": 4,
+            "credits": 7
+        },
+        {
+            "name": "proyecto final de tesis",
+            "semester": 9,
+            "credits": 0
+        },
+        {
+            "name": "proyecto final de tesis",
+            "semester": 10,
+            "credits": 0
+        },
+        {
+            "name": "redes de computadoras i",
+            "semester": 4,
+            "credits": 7
+        },
+        {
+            "name": "redes de computadoras ii",
+            "semester": 5,
+            "credits": 7
+        },
+        {
+            "name": "sistemas distribuidos",
+            "semester": 5,
+            "credits": 7
+        },
+        {
+            "name": "sistemas operativos",
+            "semester": 4,
+            "credits": 7
+        },
+        {
+            "name": "tecnicas de organizacion y metodos",
+            "semester": 5,
+            "credits": 4
+        }
+    ]
 }

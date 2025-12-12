@@ -1,268 +1,225 @@
 {
-  "career_code": "LCIK",
-  "subjects": [
-    {
-      "name": "administracion i",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "administracion ii",
-      "semester": 2,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "administracion iii",
-      "semester": 3,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "administracion iv",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "administracion v",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "algoritmica i",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "algoritmica ii",
-      "semester": 2,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "auditoria y control de calidad",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "base de datos i",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "base de datos ii",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "bases de datos iii",
-      "semester": 6,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "compiladores y lenguajes de bajo nivel",
-      "semester": 6,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "electiva i",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "electiva i",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "electiva ii",
-      "semester": 6,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "electiva iii",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "electiva iv",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "estadistica y probabilidades",
-      "semester": 3,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "estructura de datos",
-      "semester": 3,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "estructura de los lenguajes",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "fisica",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "informatica i",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "informatica ii",
-      "semester": 2,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "ingenieria de software i",
-      "semester": 6,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "ingenieria de software ii",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "ingenieria de software iii",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "ingles tecnico",
-      "semester": 2,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "investigacion operativa i",
-      "semester": 6,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "investigacion operativa ii",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "matematica i",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "matematica ii",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "matematica iii",
-      "semester": 2,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "matematica iv",
-      "semester": 3,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "matematica v",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "matematica vi",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "metodologia de la investigacion",
-      "semester": 6,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "paradigmas de la programacion",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "programacion de aplicaciones en redes",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "proyecto i",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "proyecto ii",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "redes i",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "redes ii",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "simulacion",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "sistemas operativos",
-      "semester": 3,
-      "credits": 0
-    }
-  ]
+    "career_code": "LCIK",
+    "subjects": [
+        {
+            "name": "administracion i",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "administracion ii",
+            "semester": 2,
+            "credits": 0
+        },
+        {
+            "name": "administracion iii",
+            "semester": 3,
+            "credits": 0
+        },
+        {
+            "name": "administracion iv",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "administracion v",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "algoritmica i",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "algoritmica ii",
+            "semester": 2,
+            "credits": 0
+        },
+        {
+            "name": "auditoria y control de calidad",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "base de datos i",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "base de datos ii",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "bases de datos iii",
+            "semester": 6,
+            "credits": 0
+        },
+        {
+            "name": "compiladores y lenguajes de bajo nivel",
+            "semester": 6,
+            "credits": 0
+        },
+        {
+            "name": "electiva i",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "electiva i",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "electiva ii",
+            "semester": 6,
+            "credits": 0
+        },
+        {
+            "name": "electiva iii",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "electiva iv",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "estadistica y probabilidades",
+            "semester": 3,
+            "credits": 0
+        },
+        {
+            "name": "estructura de datos",
+            "semester": 3,
+            "credits": 0
+        },
+        {
+            "name": "estructura de los lenguajes",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "fisica",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "informatica i",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "informatica ii",
+            "semester": 2,
+            "credits": 0
+        },
+        {
+            "name": "ingenieria de software i",
+            "semester": 6,
+            "credits": 0
+        },
+        {
+            "name": "ingenieria de software ii",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "ingenieria de software iii",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "ingles tecnico",
+            "semester": 2,
+            "credits": 0
+        },
+        {
+            "name": "investigacion operativa i",
+            "semester": 6,
+            "credits": 0
+        },
+        {
+            "name": "investigacion operativa ii",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "matematica i",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "matematica ii",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "matematica iii",
+            "semester": 2,
+            "credits": 0
+        },
+        {
+            "name": "matematica iv",
+            "semester": 3,
+            "credits": 0
+        },
+        {
+            "name": "matematica v",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "matematica vi",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "metodologia de la investigacion",
+            "semester": 6,
+            "credits": 0
+        },
+        {
+            "name": "paradigmas de la programacion",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "programacion de aplicaciones en redes",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "proyecto i",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "proyecto ii",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "redes i",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "redes ii",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "simulacion",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "sistemas operativos",
+            "semester": 3,
+            "credits": 0
+        }
+    ]
 }

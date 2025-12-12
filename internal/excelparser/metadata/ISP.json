@@ -1,382 +1,320 @@
 {
-  "career_code": "ISP",
-  "subjects": [
-    {
-      "name": "administracion de empresas",
-      "semester": 2,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "algebra",
-      "semester": 2,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "algebra lineal",
-      "semester": 2,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "analisis gerencial de costos",
-      "semester": 3,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "analisis multivariado",
-      "semester": 5,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "calculo i",
-      "semester": 2,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "calculo ii",
-      "semester": 3,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "calculo iii",
-      "semester": 4,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "contabilidad",
-      "semester": 2,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "control de gestion",
-      "semester": 7,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "desarrollo gerencial",
-      "semester": 5,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "dibujo tecnico",
-      "semester": 0,
-      "credits": 3
-    }
-    ,
-    {
-      "name": "economia i",
-      "semester": 4,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "economia ii",
-      "semester": 5,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "electiva i",
-      "semester": 1,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "electiva ii",
-      "semester": 1,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "electiva iii",
-      "semester": 1,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "electiva iv",
-      "semester": 1,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "electiva ix",
-      "semester": 9,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "electiva v",
-      "semester": 5,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "electiva vi",
-      "semester": 6,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "electiva vii",
-      "semester": 7,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "electiva viii",
-      "semester": 8,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "emprendedorismo",
-      "semester": 1,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "estadistica i",
-      "semester": 2,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "estadistica ii",
-      "semester": 3,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "estadistica iii",
-      "semester": 4,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "expresion oral y escrita",
-      "semester": 1,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "fisica experimental",
-      "semester": 4,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "fisica i",
-      "semester": 2,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "fisica ii",
-      "semester": 3,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "fisica iv",
-      "semester": 5,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "fuente de datos",
-      "semester": 6,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "geometria analitica",
-      "semester": 1,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "gestion ambiental",
-      "semester": 8,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "gestion de calidad",
-      "semester": 7,
-      "credits": 3
-    }
-    ,
-    {
-      "name": "gestion de personas",
-      "semester": 4,
-      "credits": 3
-    }
-    ,
-    {
-      "name": "gestion de personas",
-      "semester": 4,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "informatica i",
-      "semester": 2,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "informatica ii",
-      "semester": 3,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "informatica iii",
-      "semester": 4,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "informatica iv",
-      "semester": 5,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "informatica v",
-      "semester": 6,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "ingenieria economica",
-      "semester": 6,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "investigacion de mercado",
-      "semester": 7,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "investigacion de operaciones i",
-      "semester": 3,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "investigacion de operaciones ii",
-      "semester": 4,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "investigacion de operaciones iii",
-      "semester": 6,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "investigacion de operaciones iv",
-      "semester": 6,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "legislacion",
-      "semester": 8,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "logistica",
-      "semester": 7,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "matematica discreta",
-      "semester": 1,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "mecanica de fluidos",
-      "semester": 6,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "metodologia de la investigacion",
-      "semester": 4,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "metodos numericos",
-      "semester": 5,
-      "credits": 7
-    }
-    ,
-    {
-      "name": "modelos matematicos",
-      "semester": 6,
-      "credits": 8
-    }
-    ,
-    {
-      "name": "organizacion de la produccion",
-      "semester": 5,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "organizacion sistemas y metodos",
-      "semester": 3,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "organizacion",
-      "semester": sistemas y metodos,
-      "credits": 0,3
-    }
-    ,
-    {
-      "name": "planificacion estrategica",
-      "semester": 6,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "planificacion y control de la produccion",
-      "semester": 6,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "proyectos",
-      "semester": 7,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "quimica",
-      "semester": 1,
-      "credits": 5
-    }
-  ]
+    "career_code": "ISP",
+    "subjects": [
+        {
+            "name": "administracion de empresas",
+            "semester": 2,
+            "credits": 5
+        },
+        {
+            "name": "algebra",
+            "semester": 2,
+            "credits": 4
+        },
+        {
+            "name": "algebra lineal",
+            "semester": 2,
+            "credits": 7
+        },
+        {
+            "name": "analisis gerencial de costos",
+            "semester": 3,
+            "credits": 6
+        },
+        {
+            "name": "analisis multivariado",
+            "semester": 5,
+            "credits": 5
+        },
+        {
+            "name": "calculo i",
+            "semester": 2,
+            "credits": 6
+        },
+        {
+            "name": "calculo ii",
+            "semester": 3,
+            "credits": 6
+        },
+        {
+            "name": "calculo iii",
+            "semester": 4,
+            "credits": 7
+        },
+        {
+            "name": "contabilidad",
+            "semester": 2,
+            "credits": 5
+        },
+        {
+            "name": "control de gestion",
+            "semester": 7,
+            "credits": 5
+        },
+        {
+            "name": "desarrollo gerencial",
+            "semester": 5,
+            "credits": 6
+        },
+        {
+            "name": "dibujo tecnico",
+            "semester": 0,
+            "credits": 3
+        },
+        {
+            "name": "economia i",
+            "semester": 4,
+            "credits": 5
+        },
+        {
+            "name": "economia ii",
+            "semester": 5,
+            "credits": 5
+        },
+        {
+            "name": "electiva i",
+            "semester": 1,
+            "credits": 5
+        },
+        {
+            "name": "electiva ii",
+            "semester": 1,
+            "credits": 5
+        },
+        {
+            "name": "electiva iii",
+            "semester": 1,
+            "credits": 5
+        },
+        {
+            "name": "electiva iv",
+            "semester": 1,
+            "credits": 5
+        },
+        {
+            "name": "electiva ix",
+            "semester": 9,
+            "credits": 5
+        },
+        {
+            "name": "electiva v",
+            "semester": 5,
+            "credits": 5
+        },
+        {
+            "name": "electiva vi",
+            "semester": 6,
+            "credits": 5
+        },
+        {
+            "name": "electiva vii",
+            "semester": 7,
+            "credits": 5
+        },
+        {
+            "name": "electiva viii",
+            "semester": 8,
+            "credits": 5
+        },
+        {
+            "name": "emprendedorismo",
+            "semester": 1,
+            "credits": 5
+        },
+        {
+            "name": "estadistica i",
+            "semester": 2,
+            "credits": 6
+        },
+        {
+            "name": "estadistica ii",
+            "semester": 3,
+            "credits": 6
+        },
+        {
+            "name": "estadistica iii",
+            "semester": 4,
+            "credits": 6
+        },
+        {
+            "name": "expresion oral y escrita",
+            "semester": 1,
+            "credits": 5
+        },
+        {
+            "name": "fisica experimental",
+            "semester": 4,
+            "credits": 6
+        },
+        {
+            "name": "fisica i",
+            "semester": 2,
+            "credits": 5
+        },
+        {
+            "name": "fisica ii",
+            "semester": 3,
+            "credits": 6
+        },
+        {
+            "name": "fisica iv",
+            "semester": 5,
+            "credits": 7
+        },
+        {
+            "name": "fuente de datos",
+            "semester": 6,
+            "credits": 5
+        },
+        {
+            "name": "geometria analitica",
+            "semester": 1,
+            "credits": 5
+        },
+        {
+            "name": "gestion ambiental",
+            "semester": 8,
+            "credits": 5
+        },
+        {
+            "name": "gestion de calidad",
+            "semester": 7,
+            "credits": 3
+        },
+        {
+            "name": "gestion de personas",
+            "semester": 4,
+            "credits": 3
+        },
+        {
+            "name": "gestion de personas",
+            "semester": 4,
+            "credits": 5
+        },
+        {
+            "name": "informatica i",
+            "semester": 2,
+            "credits": 5
+        },
+        {
+            "name": "informatica ii",
+            "semester": 3,
+            "credits": 5
+        },
+        {
+            "name": "informatica iii",
+            "semester": 4,
+            "credits": 5
+        },
+        {
+            "name": "informatica iv",
+            "semester": 5,
+            "credits": 5
+        },
+        {
+            "name": "informatica v",
+            "semester": 6,
+            "credits": 5
+        },
+        {
+            "name": "ingenieria economica",
+            "semester": 6,
+            "credits": 6
+        },
+        {
+            "name": "investigacion de mercado",
+            "semester": 7,
+            "credits": 6
+        },
+        {
+            "name": "investigacion de operaciones i",
+            "semester": 3,
+            "credits": 7
+        },
+        {
+            "name": "investigacion de operaciones ii",
+            "semester": 4,
+            "credits": 4
+        },
+        {
+            "name": "investigacion de operaciones iii",
+            "semester": 6,
+            "credits": 7
+        },
+        {
+            "name": "investigacion de operaciones iv",
+            "semester": 6,
+            "credits": 6
+        },
+        {
+            "name": "legislacion",
+            "semester": 8,
+            "credits": 5
+        },
+        {
+            "name": "logistica",
+            "semester": 7,
+            "credits": 5
+        },
+        {
+            "name": "matematica discreta",
+            "semester": 1,
+            "credits": 6
+        },
+        {
+            "name": "mecanica de fluidos",
+            "semester": 6,
+            "credits": 6
+        },
+        {
+            "name": "metodologia de la investigacion",
+            "semester": 4,
+            "credits": 5
+        },
+        {
+            "name": "metodos numericos",
+            "semester": 5,
+            "credits": 7
+        },
+        {
+            "name": "modelos matematicos",
+            "semester": 6,
+            "credits": 8
+        },
+        {
+            "name": "organizacion de la produccion",
+            "semester": 5,
+            "credits": 5
+        },
+        {
+            "name": "organizacion sistemas y metodos",
+            "semester": 3,
+            "credits": 6
+        },
+        {
+            "name": "organizacion, sistemas y metodos",
+            "semester": 3,
+            "credits": 6
+        },
+        {
+            "name": "planificacion estrategica",
+            "semester": 6,
+            "credits": 5
+        },
+        {
+            "name": "planificacion y control de la produccion",
+            "semester": 6,
+            "credits": 5
+        },
+        {
+            "name": "proyectos",
+            "semester": 7,
+            "credits": 6
+        },
+        {
+            "name": "quimica",
+            "semester": 1,
+            "credits": 5
+        }
+    ]
 }

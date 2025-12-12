@@ -11,7 +11,7 @@ CREATE TABLE subjects (
     teacher_name TEXT,
     teacher_email TEXT,
 
-    -- Weekly schedule
+-- Weekly schedule
     monday TEXT,
     monday_classroom TEXT,
     tuesday TEXT,
@@ -25,7 +25,7 @@ CREATE TABLE subjects (
     saturday TEXT,
     saturday_night_dates TEXT,
 
-    -- Exams
+-- Exams
     partial1_date DATE,
     partial1_time TEXT,
     partial1_classroom TEXT,
@@ -43,7 +43,7 @@ CREATE TABLE subjects (
     final2_review_date DATE,
     final2_review_time TEXT,
 
-    -- Committee
+-- Committee
     committee_chair TEXT,
     committee_member1 TEXT,
     committee_member2 TEXT,
@@ -52,3 +52,4 @@ CREATE TABLE subjects (
 );
 
 CREATE INDEX idx_subjects_name_career ON subjects(subject_name, career_id);
+

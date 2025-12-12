@@ -4,38 +4,40 @@ import (
 	"net/http"
 	"strings"
 
-	// "github.com/elias-gill/poliplanner2/web"
+	"github.com/elias-gill/poliplanner2/internal/config"
+	"github.com/elias-gill/poliplanner2/internal/service"
 	"github.com/go-chi/chi/v5"
 )
 
-func NewExcelRouter(clave string) func(r chi.Router) {
-	// layouts := web.CleanLayout
+func NewExcelRouter() func(r chi.Router) {
+	key := config.Get().UPDATE_KEY
 
-	// FIX: hacer mas robusto
-	// private final String expectedKey = System.getenv("UPDATE_KEY");
-	//
 	return func(r chi.Router) {
-		// Este endpoint al recibir una request, tratara de scrapear la web de la
-		// universidad en busca de nuevos horarios. Require del header: "Authorization: Bearer <key>"
 		r.Post("/", func(w http.ResponseWriter, r *http.Request) {
 			header := r.Header.Get("Authorization")
-			if !isValidRequest(header, clave) {
-				http.Error(w, "Invalid credentials", http.StatusForbidden)
+			if !isValidRequest(header, key) {
+				http.Error(w, "invalid credentials", http.StatusForbidden)
+				return
 			}
 
+			err := service.SearchNewestExcel(r.Context())
+			if err != nil {
+				http.Error(w, "Cannot parse excel: "+err.Error(), http.StatusForbidden)
+				return
+			}
+
+			w.WriteHeader(http.StatusOK)
 		})
 	}
 }
 
-// FIX: revisar
-func isValidRequest(authHeader string, expectedKey string) bool {
-	if len(authHeader) == 0 {
+func isValidRequest(authHeader, expectedKey string) bool {
+	if authHeader == "" {
 		return false
 	}
 
-	if strings.Trim(authHeader, "\n \t") != ("Bearer " + expectedKey) {
-		return false
-	}
+	authHeader = strings.TrimSpace(authHeader)
+	expected := "Bearer " + expectedKey
 
-	return true
+	return authHeader == expected
 }

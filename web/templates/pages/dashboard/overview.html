@@ -15,70 +15,70 @@
       {{ range .Subjects }}
       <tr>
         <td>{{ .SubjectName }}</td>
-        <!-- Lunes -->
+        {{/* Lunes */}}
         {{ if and .Monday.Valid (ne .Monday.String "") }}
         <td>
-          <span><small>{{ .Monday.String }}</span></small><br>
+          <span><small>{{ .Monday.String }}</small></span><br>
           {{ if and .MondayRoom.Valid (ne .MondayRoom.String "") }}
-          <span><small>Aula: {{ .MondayRoom.String }}</span></small>
+          <span><small>Aula: {{ .MondayRoom.String }}</small></span>
           {{ end }}
         </td>
-        {{ else }}
+        {{ else }} 
         <td></td>
         {{ end }}
-        <!-- Martes -->
+        {{/* Martes */}}
         {{ if and .Tuesday.Valid (ne .Tuesday.String "") }}
         <td>
-          <span><small>{{ .Tuesday.String }}</span></small><br>
+          <span><small>{{ .Tuesday.String }}</small></span><br>
           {{ if and .TuesdayRoom.Valid (ne .TuesdayRoom.String "") }}
-          <span><small>Aula: {{ .TuesdayRoom.String }}</span></small>
+          <span><small>Aula: {{ .TuesdayRoom.String }}</small></span>
           {{ end }}
         </td>
-        {{ else }}
+        {{ else }} 
         <td></td>
         {{ end }}
-        <!-- Miércoles -->
+        {{/* Miércoles */}}
         {{ if and .Wednesday.Valid (ne .Wednesday.String "") }}
         <td>
-          <span><small>{{ .Wednesday.String }}</span></small><br>
+          <span><small>{{ .Wednesday.String }}</small></span><br>
           {{ if and .WednesdayRoom.Valid (ne .WednesdayRoom.String "") }}
-          <span><small>Aula: {{ .WednesdayRoom.String }}</span></small>
+          <span><small>Aula: {{ .WednesdayRoom.String }}</small></span>
           {{ end }}
         </td>
-        {{ else }}
+        {{ else }} 
         <td></td>
         {{ end }}
-        <!-- Jueves -->
+        {{/* Jueves */}}
         {{ if and .Thursday.Valid (ne .Thursday.String "") }}
         <td>
-          <span><small>{{ .Thursday.String }}</span></small><br>
+          <span><small>{{ .Thursday.String }}</small></span><br>
           {{ if and .ThursdayRoom.Valid (ne .ThursdayRoom.String "") }}
-          <span><small>Aula: {{ .ThursdayRoom.String }}</span></small>
+          <span><small>Aula: {{ .ThursdayRoom.String }}</small></span>
           {{ end }}
         </td>
-        {{ else }}
+        {{ else }} 
         <td></td>
         {{ end }}
-        <!-- Viernes -->
+        {{/* Viernes */}}
         {{ if and .Friday.Valid (ne .Friday.String "") }}
         <td>
-          <span><small>{{ .Friday.String }}</span></small><br>
+          <span><small>{{ .Friday.String }}</small></span><br>
           {{ if and .FridayRoom.Valid (ne .FridayRoom.String "") }}
-          <span><small>Aula: {{ .FridayRoom.String }}</span></small>
+          <span><small>Aula: {{ .FridayRoom.String }}</small></span>
           {{ end }}
         </td>
-        {{ else }}
+        {{ else }} 
         <td></td>
         {{ end }}
-        <!-- Sábado -->
+        {{/* Sábado */}}
         {{ if and .Saturday.Valid (ne .Saturday.String "") }}
         <td>
-          <span><small>{{ .Saturday.String }}</span></small><br>
+          <span><small>{{ .Saturday.String }}</small></span><br>
           {{ if and .SaturdayDates.Valid (ne .SaturdayDates.String "") }}
-          <span><small>Fechas: {{ .SaturdayDates.String }}</span></small>
+          <span><small>Fechas: {{ .SaturdayDates.String }}</small></span>
           {{ end }}
         </td>
-        {{ else }}
+        {{ else }} 
         <td></td>
         {{ end }}
       </tr>
@@ -88,9 +88,8 @@
 </div>
 <div class="exam-list">
   {{ if .Subjects }}
-  <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-    <!-- Primer Parcial -->
-    <div class="exam-section" style="flex: 1 1 45%;">
+  <div class="exam-flex">
+    <div class="exam-section">
       <h3>Parcial I</h3>
       {{ range .Subjects }}
       {{ if .Partial1Date.Valid }}
@@ -105,14 +104,13 @@
           {{ end }}
         </span>
         {{ if .Partial1Room.Valid }}
-        <div class="exam-aula">Aula: {{ .Partial1Room.String }}</div>
+        <div><small>Aula: {{ .Partial1Room.String }}</small></div>
         {{ end }}
       </article>
       {{ end }}
       {{ end }}
     </div>
-    <!-- Segundo Parcial -->
-    <div class="exam-section" style="flex: 1 1 45%;">
+    <div class="exam-section">
       <h3>Parcial II</h3>
       {{ range .Subjects }}
       {{ if .Partial2Date.Valid }}
@@ -127,16 +125,15 @@
           {{ end }}
         </span>
         {{ if .Partial2Room.Valid }}
-        <div class="exam-aula">Aula: {{ .Partial2Room.String }}</div>
+        <div><small>Aula: {{ .Partial2Room.String }}</small></div>
         {{ end }}
       </article>
       {{ end }}
       {{ end }}
     </div>
   </div>
-  <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-    <!-- Primer Final -->
-    <div class="exam-section" style="flex: 1 1 45%;">
+  <div class="exam-flex">
+    <div class="exam-section">
       <h3>Final I</h3>
       {{ range .Subjects }}
       {{ if .Final1Date.Valid }}
@@ -151,14 +148,13 @@
           {{ end }}
         </span>
         {{ if .Final1Room.Valid }}
-        <div class="exam-aula">Aula: {{ .Final1Room.String }}</div>
+        <div><small>Aula: {{ .Final1Room.String }}</small></div>
         {{ end }}
       </article>
       {{ end }}
       {{ end }}
     </div>
-    <!-- Segundo Final -->
-    <div class="exam-section" style="flex: 1 1 45%;">
+    <div class="exam-section">
       <h3>Final II</h3>
       {{ range .Subjects }}
       {{ if .Final2Date.Valid }}
@@ -173,7 +169,7 @@
           {{ end }}
         </span>
         {{ if .Final2Room.Valid }}
-        <div class="exam-aula">Aula: {{ .Final2Room.String }}</div>
+        <div><small>Aula: {{ .Final2Room.String }}</small></div>
         {{ end }}
       </article>
       {{ end }}
@@ -182,25 +178,48 @@
   </div>
   <form hx-delete="/schedule/{{.SelectedScheduleID}}">
     <small>Quieres eliminar este horario ?</small>
-    <button style="margin-left: 4px;" type="submit" class="error"><small>Eliminar</small></button>
+    <button class="btn-delete error" type="submit"><small>Eliminar</small></button>
   </form>
   {{ else }}
-  <div class="no-exams">
-    No hay exámenes programados
-  </div>
+  <div class="no-exams">No hay exámenes programados</div>
   {{ end }}
   <style>
-    .date-badge {
-    font-size: 0.85rem;
-    padding: 0.2em 0.6em;
-    border-radius: var(--border-radius);
-    margin-right: 0.25em;
-        border: 1px solid var(--color-text);
+    .exam-flex {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
+
+    .exam-section {
+      flex: 1 1 45%;
+    }
+
+    .btn-delete {
+      margin-left: 4px;
+    }
+
+    .date-badge {
+      font-size: 0.85rem;
+      padding: 0.2em 0.6em;
+      border-radius: var(--border-radius);
+      margin-right: 0.25em;
+      border: 1px solid var(--color-text);
+    }
+
     .badge-container {
-    display: inline-block;
-    float: right;
-    white-space: nowrap;
+      display: inline-block;
+      float: right;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 600px) {
+        .exam-flex {
+            flex-direction: column;
+            gap: 0;
+        }
+        .exam-section {
+            flex: 1 1 100%;
+        }
     }
   </style>
 </div>

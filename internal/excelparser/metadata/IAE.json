@@ -1,388 +1,325 @@
 {
-  "career_code": "IAE",
-  "subjects": [
-    {
-      "name": "aerodinamica i",
-      "semester": 6,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "aerodinamica ii",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "aeronautica general",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "algebra",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "algebra lineal",
-      "semester": 2,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "algoritmo",
-      "semester": 2,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "calculo i",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "calculo ii",
-      "semester": 2,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "calculo iii",
-      "semester": 3,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "calculo iv calculo vectorial",
-      "semester": 3,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "calculo v variable compleja",
-      "semester": 4,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "calculo v variable compleja",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "calculo vi transformadas de laplace y fourier",
-      "semester": 5,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "calculo vi transformadas de laplace y fourier",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "caracterizacion de materiales",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "ciencia y tecnologia del medio ambiente",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "circuitos electricos i",
-      "semester": 3,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "circuitos electricos ii",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "construccion aeronautica y mecanica",
-      "semester": 9,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "dibujo tecnico mecanico",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "diseno y manufactura asistido por computadora",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "economia y finanzas",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "electronica aplicada",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "elementos de maquinas",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "estructura aeronautica i",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "estructura aeronautica ii",
-      "semester": 6,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "estructura aeronautica iii",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "estructura aeronautica iv",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "fisica i",
-      "semester": 2,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "fisica ii",
-      "semester": 2,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "fisica iii",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "fisica iv",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "geometria analitica y vectores",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "gestion de aeropuerto y vuelo",
-      "semester": 10,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "gestion de mantenimiento y reparacion i",
-      "semester": 9,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "gestion de mantenimiento y reparacion ii",
-      "semester": 10,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "ingles i",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "ingles ii",
-      "semester": 2,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "ingles iii",
-      "semester": 3,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "ingles iv",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "ingles v",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "ingles vi",
-      "semester": 6,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "introduccion a la ciencia de materiales",
-      "semester": 3,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "maquinas electricas",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "mecanica clasica",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "mecanica de fluidos i",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "mecanica de fluidos ii",
-      "semester": 6,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "mecanica de materiales",
-      "semester": 3,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "motores i",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "motores ii",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "navegacion y control",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "plan de negocios",
-      "semester": 9,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "planeamiento y control de la produccion",
-      "semester": 10,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "prevision y seguridad en el trabajo",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "principios de electronica",
-      "semester": 3,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "principios de metrologia industrial",
-      "semester": 2,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "probabilidad y estadistica",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "programacion",
-      "semester": 3,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "quimica",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "resistencia de materiales",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "sistemas de control i",
-      "semester": 6,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "sistemas de control ii",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "termodinamica de materiales i",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "termodinamica de materiales ii",
-      "semester": 6,
-      "credits": 0
-    }
-  ]
+    "career_code": "IAE",
+    "subjects": [
+        {
+            "name": "aerodinamica i",
+            "semester": 6,
+            "credits": 0
+        },
+        {
+            "name": "aerodinamica ii",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "aeronautica general",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "algebra",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "algebra lineal",
+            "semester": 2,
+            "credits": 0
+        },
+        {
+            "name": "algoritmo",
+            "semester": 2,
+            "credits": 0
+        },
+        {
+            "name": "calculo i",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "calculo ii",
+            "semester": 2,
+            "credits": 0
+        },
+        {
+            "name": "calculo iii",
+            "semester": 3,
+            "credits": 0
+        },
+        {
+            "name": "calculo iv calculo vectorial",
+            "semester": 3,
+            "credits": 0
+        },
+        {
+            "name": "calculo v variable compleja",
+            "semester": 4,
+            "credits": 4
+        },
+        {
+            "name": "calculo v variable compleja",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "calculo vi transformadas de laplace y fourier",
+            "semester": 5,
+            "credits": 4
+        },
+        {
+            "name": "calculo vi transformadas de laplace y fourier",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "caracterizacion de materiales",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "ciencia y tecnologia del medio ambiente",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "circuitos electricos i",
+            "semester": 3,
+            "credits": 0
+        },
+        {
+            "name": "circuitos electricos ii",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "construccion aeronautica y mecanica",
+            "semester": 9,
+            "credits": 0
+        },
+        {
+            "name": "dibujo tecnico mecanico",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "diseno y manufactura asistido por computadora",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "economia y finanzas",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "electronica aplicada",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "elementos de maquinas",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "estructura aeronautica i",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "estructura aeronautica ii",
+            "semester": 6,
+            "credits": 0
+        },
+        {
+            "name": "estructura aeronautica iii",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "estructura aeronautica iv",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "fisica i",
+            "semester": 2,
+            "credits": 0
+        },
+        {
+            "name": "fisica ii",
+            "semester": 2,
+            "credits": 0
+        },
+        {
+            "name": "fisica iii",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "fisica iv",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "geometria analitica y vectores",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "gestion de aeropuerto y vuelo",
+            "semester": 10,
+            "credits": 0
+        },
+        {
+            "name": "gestion de mantenimiento y reparacion i",
+            "semester": 9,
+            "credits": 0
+        },
+        {
+            "name": "gestion de mantenimiento y reparacion ii",
+            "semester": 10,
+            "credits": 0
+        },
+        {
+            "name": "ingles i",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "ingles ii",
+            "semester": 2,
+            "credits": 0
+        },
+        {
+            "name": "ingles iii",
+            "semester": 3,
+            "credits": 0
+        },
+        {
+            "name": "ingles iv",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "ingles v",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "ingles vi",
+            "semester": 6,
+            "credits": 0
+        },
+        {
+            "name": "introduccion a la ciencia de materiales",
+            "semester": 3,
+            "credits": 0
+        },
+        {
+            "name": "maquinas electricas",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "mecanica clasica",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "mecanica de fluidos i",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "mecanica de fluidos ii",
+            "semester": 6,
+            "credits": 0
+        },
+        {
+            "name": "mecanica de materiales",
+            "semester": 3,
+            "credits": 0
+        },
+        {
+            "name": "motores i",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "motores ii",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "navegacion y control",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "plan de negocios",
+            "semester": 9,
+            "credits": 0
+        },
+        {
+            "name": "planeamiento y control de la produccion",
+            "semester": 10,
+            "credits": 0
+        },
+        {
+            "name": "prevision y seguridad en el trabajo",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "principios de electronica",
+            "semester": 3,
+            "credits": 0
+        },
+        {
+            "name": "principios de metrologia industrial",
+            "semester": 2,
+            "credits": 0
+        },
+        {
+            "name": "probabilidad y estadistica",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "programacion",
+            "semester": 3,
+            "credits": 0
+        },
+        {
+            "name": "quimica",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "resistencia de materiales",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "sistemas de control i",
+            "semester": 6,
+            "credits": 0
+        },
+        {
+            "name": "sistemas de control ii",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "termodinamica de materiales i",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "termodinamica de materiales ii",
+            "semester": 6,
+            "credits": 0
+        }
+    ]
 }

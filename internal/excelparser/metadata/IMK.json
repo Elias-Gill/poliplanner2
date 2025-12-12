@@ -1,412 +1,345 @@
 {
-  "career_code": "IMK",
-  "subjects": [
-    {
-      "name": "administracion i",
-      "semester": 7,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "administracion ii",
-      "semester": 8,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "algebra",
-      "semester": 1,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "calculo i",
-      "semester": 1,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "calculo ii",
-      "semester": 2,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "comportamiento organizacional",
-      "semester": 3,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "comportamiento y gestion de clientes",
-      "semester": 9,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "conducta del consumidor",
-      "semester": 7,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "contabilidad",
-      "semester": 2,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "costos y presupuestos",
-      "semester": 4,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "cultura de valores",
-      "semester": 1,
-      "credits": 3
-    }
-    ,
-    {
-      "name": "derecho",
-      "semester": 9,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "desarrollo del pensamiento",
-      "semester": 4,
-      "credits": 3
-    }
-    ,
-    {
-      "name": "diseno e implementacion del plan de marketing",
-      "semester": 9,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "diseno grafico i",
-      "semester": 6,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "diseno grafico ii",
-      "semester": 7,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "ebusiness",
-      "semester": 10,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "ecologia y desarrollo sustentable",
-      "semester": 3,
-      "credits": 3
-    }
-    ,
-    {
-      "name": "electiva i",
-      "semester": 8,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "electiva ii",
-      "semester": 8,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "electiva iii",
-      "semester": 9,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "electiva iv",
-      "semester": 10,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "electiva v",
-      "semester": 10,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "emprendedorismo",
-      "semester": 5,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "estadistica i",
-      "semester": 2,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "estadistica ii",
-      "semester": 3,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "estados financieros",
-      "semester": 4,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "estrategia de precios",
-      "semester": 8,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "finanzas",
-      "semester": 4,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "fisica i",
-      "semester": 2,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "fisica ii",
-      "semester": 3,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "formacion integral",
-      "semester": 2,
-      "credits": 3
-    }
-    ,
-    {
-      "name": "geometria analitica y vectores",
-      "semester": 1,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "gerencia de producto",
-      "semester": 7,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "gerencia de ventas",
-      "semester": 4,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "gestion de agencias y plan de medios",
-      "semester": 10,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "gestion de distribucion y logistica",
-      "semester": 8,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "gestion de marketing",
-      "semester": 3,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "gestion estrategica de las comunicaciones",
-      "semester": 7,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "informatica i",
-      "semester": 1,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "informatica ii",
-      "semester": 4,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "ingles i",
-      "semester": 1,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "ingles ii",
-      "semester": 2,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "ingles iii",
-      "semester": 3,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "ingles iv",
-      "semester": 4,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "ingles v",
-      "semester": 5,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "ingles vi",
-      "semester": 6,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "investigacion de mercado",
-      "semester": 5,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "liderazgo",
-      "semester": 2,
-      "credits": 3
-    }
-    ,
-    {
-      "name": "macroeconomia",
-      "semester": 5,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "marketing directo",
-      "semester": 8,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "marketing en el sector publico",
-      "semester": 6,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "marketing estrategico",
-      "semester": 5,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "marketing internacional",
-      "semester": 5,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "marketing por internet",
-      "semester": 9,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "matematica financiera",
-      "semester": 3,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "microeconomia",
-      "semester": 7,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "negociacion internacional",
-      "semester": 10,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "pasantias i",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "pasantias ii",
-      "semester": 9,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "politica de empresa",
-      "semester": 6,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "politica economica",
-      "semester": 5,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "psicologia publicitaria",
-      "semester": 6,
-      "credits": 5
-    }
-    ,
-    {
-      "name": "sociologia de la empresa",
-      "semester": 1,
-      "credits": 4
-    }
-    ,
-    {
-      "name": "taller de tesis",
-      "semester": 10,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "taller publicitario i",
-      "semester": 6,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "taller publicitario ii",
-      "semester": 7,
-      "credits": 6
-    }
-    ,
-    {
-      "name": "trabajo en equipo",
-      "semester": 6,
-      "credits": 3
-    }
-  ]
+    "career_code": "IMK",
+    "subjects": [
+        {
+            "name": "administracion i",
+            "semester": 7,
+            "credits": 5
+        },
+        {
+            "name": "administracion ii",
+            "semester": 8,
+            "credits": 5
+        },
+        {
+            "name": "algebra",
+            "semester": 1,
+            "credits": 6
+        },
+        {
+            "name": "calculo i",
+            "semester": 1,
+            "credits": 6
+        },
+        {
+            "name": "calculo ii",
+            "semester": 2,
+            "credits": 6
+        },
+        {
+            "name": "comportamiento organizacional",
+            "semester": 3,
+            "credits": 5
+        },
+        {
+            "name": "comportamiento y gestion de clientes",
+            "semester": 9,
+            "credits": 5
+        },
+        {
+            "name": "conducta del consumidor",
+            "semester": 7,
+            "credits": 5
+        },
+        {
+            "name": "contabilidad",
+            "semester": 2,
+            "credits": 5
+        },
+        {
+            "name": "costos y presupuestos",
+            "semester": 4,
+            "credits": 5
+        },
+        {
+            "name": "cultura de valores",
+            "semester": 1,
+            "credits": 3
+        },
+        {
+            "name": "derecho",
+            "semester": 9,
+            "credits": 5
+        },
+        {
+            "name": "desarrollo del pensamiento",
+            "semester": 4,
+            "credits": 3
+        },
+        {
+            "name": "diseno e implementacion del plan de marketing",
+            "semester": 9,
+            "credits": 6
+        },
+        {
+            "name": "diseno grafico i",
+            "semester": 6,
+            "credits": 6
+        },
+        {
+            "name": "diseno grafico ii",
+            "semester": 7,
+            "credits": 6
+        },
+        {
+            "name": "ebusiness",
+            "semester": 10,
+            "credits": 5
+        },
+        {
+            "name": "ecologia y desarrollo sustentable",
+            "semester": 3,
+            "credits": 3
+        },
+        {
+            "name": "electiva i",
+            "semester": 8,
+            "credits": 4
+        },
+        {
+            "name": "electiva ii",
+            "semester": 8,
+            "credits": 4
+        },
+        {
+            "name": "electiva iii",
+            "semester": 9,
+            "credits": 4
+        },
+        {
+            "name": "electiva iv",
+            "semester": 10,
+            "credits": 4
+        },
+        {
+            "name": "electiva v",
+            "semester": 10,
+            "credits": 4
+        },
+        {
+            "name": "emprendedorismo",
+            "semester": 5,
+            "credits": 4
+        },
+        {
+            "name": "estadistica i",
+            "semester": 2,
+            "credits": 5
+        },
+        {
+            "name": "estadistica ii",
+            "semester": 3,
+            "credits": 5
+        },
+        {
+            "name": "estados financieros",
+            "semester": 4,
+            "credits": 6
+        },
+        {
+            "name": "estrategia de precios",
+            "semester": 8,
+            "credits": 5
+        },
+        {
+            "name": "finanzas",
+            "semester": 4,
+            "credits": 6
+        },
+        {
+            "name": "fisica i",
+            "semester": 2,
+            "credits": 6
+        },
+        {
+            "name": "fisica ii",
+            "semester": 3,
+            "credits": 6
+        },
+        {
+            "name": "formacion integral",
+            "semester": 2,
+            "credits": 3
+        },
+        {
+            "name": "geometria analitica y vectores",
+            "semester": 1,
+            "credits": 6
+        },
+        {
+            "name": "gerencia de producto",
+            "semester": 7,
+            "credits": 5
+        },
+        {
+            "name": "gerencia de ventas",
+            "semester": 4,
+            "credits": 5
+        },
+        {
+            "name": "gestion de agencias y plan de medios",
+            "semester": 10,
+            "credits": 5
+        },
+        {
+            "name": "gestion de distribucion y logistica",
+            "semester": 8,
+            "credits": 5
+        },
+        {
+            "name": "gestion de marketing",
+            "semester": 3,
+            "credits": 5
+        },
+        {
+            "name": "gestion estrategica de las comunicaciones",
+            "semester": 7,
+            "credits": 5
+        },
+        {
+            "name": "informatica i",
+            "semester": 1,
+            "credits": 4
+        },
+        {
+            "name": "informatica ii",
+            "semester": 4,
+            "credits": 5
+        },
+        {
+            "name": "ingles i",
+            "semester": 1,
+            "credits": 4
+        },
+        {
+            "name": "ingles ii",
+            "semester": 2,
+            "credits": 4
+        },
+        {
+            "name": "ingles iii",
+            "semester": 3,
+            "credits": 4
+        },
+        {
+            "name": "ingles iv",
+            "semester": 4,
+            "credits": 4
+        },
+        {
+            "name": "ingles v",
+            "semester": 5,
+            "credits": 4
+        },
+        {
+            "name": "ingles vi",
+            "semester": 6,
+            "credits": 4
+        },
+        {
+            "name": "investigacion de mercado",
+            "semester": 5,
+            "credits": 5
+        },
+        {
+            "name": "liderazgo",
+            "semester": 2,
+            "credits": 3
+        },
+        {
+            "name": "macroeconomia",
+            "semester": 5,
+            "credits": 6
+        },
+        {
+            "name": "marketing directo",
+            "semester": 8,
+            "credits": 5
+        },
+        {
+            "name": "marketing en el sector publico",
+            "semester": 6,
+            "credits": 5
+        },
+        {
+            "name": "marketing estrategico",
+            "semester": 5,
+            "credits": 5
+        },
+        {
+            "name": "marketing internacional",
+            "semester": 5,
+            "credits": 5
+        },
+        {
+            "name": "marketing por internet",
+            "semester": 9,
+            "credits": 5
+        },
+        {
+            "name": "matematica financiera",
+            "semester": 3,
+            "credits": 6
+        },
+        {
+            "name": "microeconomia",
+            "semester": 7,
+            "credits": 6
+        },
+        {
+            "name": "negociacion internacional",
+            "semester": 10,
+            "credits": 5
+        },
+        {
+            "name": "pasantias i",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "pasantias ii",
+            "semester": 9,
+            "credits": 0
+        },
+        {
+            "name": "politica de empresa",
+            "semester": 6,
+            "credits": 5
+        },
+        {
+            "name": "politica economica",
+            "semester": 5,
+            "credits": 5
+        },
+        {
+            "name": "psicologia publicitaria",
+            "semester": 6,
+            "credits": 5
+        },
+        {
+            "name": "sociologia de la empresa",
+            "semester": 1,
+            "credits": 4
+        },
+        {
+            "name": "taller de tesis",
+            "semester": 10,
+            "credits": 6
+        },
+        {
+            "name": "taller publicitario i",
+            "semester": 6,
+            "credits": 6
+        },
+        {
+            "name": "taller publicitario ii",
+            "semester": 7,
+            "credits": 6
+        },
+        {
+            "name": "trabajo en equipo",
+            "semester": 6,
+            "credits": 3
+        }
+    ]
 }

@@ -55,12 +55,25 @@
   }
 
   .remove-subject-btn {
-    background: var(--color-bg);
+    background: var(--color-error);
     color: white;
     border: none;
     padding: 0.25rem 0.5rem;
     border-radius: var(--border-radius);
     cursor: pointer;
+    font-size: 0.8rem;
+  }
+
+  .create-schedule-btn {
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    font-weight: bold;
+  }
+
+  .create-schedule-btn:disabled {
+    background: var(--color-border);
+    cursor: not-allowed;
   }
 </style>
 <div class="schedule-container">
@@ -89,162 +102,220 @@
     <ul id="selectedSubjectsList"></ul>
   </section>
   <section>
-    <button type="submit">Crear Horario</button>
+    <button type="button" id="createScheduleBtn" class="create-schedule-btn" disabled>
+      Crear Horario
+    </button>
   </section>
-  {{if .Subjects}}
-  <script>
-    {
-      const subjectsRaw = [
-        {{range .Subjects}}
-        {
-          id: "{{.ID}}",
-          subjectName: "{{.SubjectName | js}}",
-          section: "{{if .Section}}{{.Section | js}}{{end}}",
-          professorTitle: "{{if .TeacherTitle}}{{.TeacherTitle | js}}{{end}}",
-          professorFirstName: "{{if .TeacherName}}{{.TeacherName | js}}{{end}}",
-          professorLastname: "{{if .TeacherLastname}}{{.TeacherLastname | js}}{{end}}",
-          semester: {{.Semester}},
-        },
-        {{end}}
-      ];
+</div>
+{{if .Subjects}}
+<script>
+  {
+    const subjectsRaw = [
+      {{range .Subjects}}
+      {
+        id: "{{.ID}}",
+        subjectName: "{{.SubjectName | js}}",
+        section: "{{if .Section}}{{.Section | js}}{{end}}",
+        professorTitle: "{{if .TeacherTitle}}{{.TeacherTitle | js}}{{end}}",
+        professorFirstName: "{{if .TeacherName}}{{.TeacherName | js}}{{end}}",
+        professorLastname: "{{if .TeacherLastname}}{{.TeacherLastname | js}}{{end}}",
+        semester: {{.Semester}},
+      },
+      {{end}}
+    ];
 
-      subjectsRaw.sort((a, b) => a.semester - b.semester);
+    subjectsRaw.sort((a, b) => a.semester - b.semester);
 
-      const subjectsContainer = document.getElementById('subjectsContainer');
-      const selectedSubjectsPreview = document.getElementById('selectedSubjectsPreview');
-      const selectedSubjectsList = document.getElementById('selectedSubjectsList');
-      const searchInput = document.getElementById('subjectSearch');
-      const semesterFilter = document.getElementById('semesterFilter');
+    const subjectsContainer = document.getElementById('subjectsContainer');
+    const selectedSubjectsPreview = document.getElementById('selectedSubjectsPreview');
+    const selectedSubjectsList = document.getElementById('selectedSubjectsList');
+    const searchInput = document.getElementById('subjectSearch');
+    const semesterFilter = document.getElementById('semesterFilter');
+    const createScheduleBtn = document.getElementById('createScheduleBtn');
 
-      const selectedIds = new Set();
+    const selectedIds = new Set();
 
-      const uniqueSemesters = [...new Set(subjectsRaw.map(s => s.semester))].sort((a, b) => a - b);
-      uniqueSemesters.forEach(sem => {
-        const opt = document.createElement('option');
-        opt.value = sem;
-        opt.textContent = "Semestre " + sem;
-        semesterFilter.appendChild(opt);
-      });
+    const uniqueSemesters = [...new Set(subjectsRaw.map(s => s.semester))].sort((a, b) => a - b);
+    uniqueSemesters.forEach(sem => {
+      const opt = document.createElement('option');
+      opt.value = sem;
+      opt.textContent = "Semestre " + sem;
+      semesterFilter.appendChild(opt);
+    });
 
-      function matchesFilters(sub) {
-        const sem = semesterFilter.value;
-        if (sem !== "all" && Number(sem) !== sub.semester) return false;
+    function matchesFilters(sub) {
+      const sem = semesterFilter.value;
+      if (sem !== "all" && Number(sem) !== sub.semester) return false;
 
-        const raw = searchInput.value.trim().toLowerCase();
-        if (!raw) return true;
+      const raw = searchInput.value.trim().toLowerCase();
+      if (!raw) return true;
+
+      const professorName =
+        `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`
+        .trim()
+        .toLowerCase();
+
+      const subject = (sub.subjectName || '').toLowerCase();
+      const section = (sub.section || '').toLowerCase();
+
+      const terms = raw.split(',').map(t => t.trim()).filter(Boolean);
+
+      for (const term of terms) {
+        const ok =
+          subject.includes(term) ||
+          professorName.includes(term) ||
+          section.includes(term);
+        if (!ok) return false;
+      }
+
+      return true;
+    }
+
+    function renderSubjects() {
+      subjectsContainer.innerHTML = '';
+
+      const filtered = subjectsRaw.filter(matchesFilters);
+
+      filtered.forEach(sub => {
+        const div = document.createElement('div');
+        div.className = 'subject-item';
 
         const professorName =
-          `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`
-          .trim()
-          .toLowerCase();
+          `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`.trim();
 
-        const subject = (sub.subjectName || '').toLowerCase();
-        const section = (sub.section || '').toLowerCase();
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.name = 'subjectIds';
+        checkbox.id = 'subject-' + sub.id;
+        checkbox.value = sub.id;
+        checkbox.checked = selectedIds.has(sub.id);
+        checkbox.dataset.subjectId = sub.id;
 
-        const terms = raw.split(',').map(t => t.trim()).filter(Boolean);
-
-        for (const term of terms) {
-          const ok =
-            subject.includes(term) ||
-            professorName.includes(term) ||
-            section.includes(term);
-          if (!ok) return false;
-        }
-
-        return true;
-      }
-
-      function renderSubjects() {
-        subjectsContainer.innerHTML = '';
-
-        const filtered = subjectsRaw.filter(matchesFilters);
-
-        filtered.forEach(sub => {
-          const div = document.createElement('div');
-          div.className = 'subject-item';
-
-          const professorName =
-            `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`.trim();
-
-          const checkbox = document.createElement('input');
-          checkbox.type = 'checkbox';
-          checkbox.name = 'subjectIds';
-          checkbox.id = 'subject-' + sub.id;
-          checkbox.value = sub.id;
-          checkbox.checked = selectedIds.has(sub.id);
-
-          checkbox.addEventListener('change', () => {
-            if (checkbox.checked) selectedIds.add(sub.id);
-            else selectedIds.delete(sub.id);
-            renderSelectedSubjects();
-          });
-
-          const label = document.createElement('label');
-          label.className = 'subject-label';
-          label.appendChild(checkbox);
-
-          const info = document.createElement('span');
-          info.innerHTML =
-            ` <strong>${sub.subjectName}</strong> (Semestre ${sub.semester})<br>` +
-            `Sección ${sub.section}<br>` +
-            `<small>${professorName || "Sin profesor asignado"}</small>`;
-
-          label.appendChild(info);
-          div.appendChild(label);
-          subjectsContainer.appendChild(div);
+        checkbox.addEventListener('change', () => {
+          if (checkbox.checked) selectedIds.add(sub.id);
+          else selectedIds.delete(sub.id);
+          updateCreateButton();
+          renderSelectedSubjects();
         });
-      }
 
-      function renderSelectedSubjects() {
-        selectedSubjectsList.innerHTML = '';
+        const label = document.createElement('label');
+        label.className = 'subject-label';
+        label.htmlFor = 'subject-' + sub.id;
 
-        if (selectedIds.size === 0) {
-          selectedSubjectsPreview.style.display = 'none';
-          return;
-        }
+        const info = document.createElement('span');
+        info.innerHTML =
+          ` <strong>${sub.subjectName}</strong> (Semestre ${sub.semester})<br>` +
+          `Sección ${sub.section}<br>` +
+          `<small>${professorName || "Sin profesor asignado"}</small>`;
 
-        selectedSubjectsPreview.style.display = 'block';
-
-        selectedIds.forEach(id => {
-          const sub = subjectsRaw.find(s => s.id === id);
-          if (!sub) return;
-
-          const li = document.createElement('li');
-          li.className = 'selected-li';
-
-          const professorName =
-            `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`.trim();
-
-          const info = document.createElement('div');
-          info.innerHTML =
-            `<strong>${sub.subjectName}</strong> – Sección ${sub.section}<br>` +
-            `<small>${professorName || "Sin profesor asignado"}</small>`;
-
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.textContent = 'X';
-          btn.title = 'Quitar materia';
-          btn.className = 'remove-subject-btn';
-
-          btn.addEventListener('click', () => {
-            selectedIds.delete(id);
-            const cb = document.getElementById('subject-' + id);
-            if (cb) cb.checked = false;
-            renderSelectedSubjects();
-          });
-
-          li.appendChild(info);
-          li.appendChild(btn);
-          selectedSubjectsList.appendChild(li);
-        });
-      }
-
-      searchInput.addEventListener('input', renderSubjects);
-      semesterFilter.addEventListener('change', renderSubjects);
-
-      renderSubjects();
-      renderSelectedSubjects();
+        label.appendChild(checkbox);
+        label.appendChild(info);
+        div.appendChild(label);
+        subjectsContainer.appendChild(div);
+      });
     }
-  </script>
-  {{end}}
-</div>
+
+    function renderSelectedSubjects() {
+      selectedSubjectsList.innerHTML = '';
+
+      if (selectedIds.size === 0) {
+        selectedSubjectsPreview.style.display = 'none';
+        return;
+      }
+
+      selectedSubjectsPreview.style.display = 'block';
+
+      selectedIds.forEach(id => {
+        const sub = subjectsRaw.find(s => s.id === id);
+        if (!sub) return;
+
+        const li = document.createElement('li');
+        li.className = 'selected-li';
+
+        const professorName =
+          `${sub.professorTitle || ''} ${sub.professorFirstName || ''} ${sub.professorLastname || ''}`.trim();
+
+        const info = document.createElement('div');
+        info.innerHTML =
+          `<strong>${sub.subjectName}</strong> – Sección ${sub.section}<br>` +
+          `<small>${professorName || "Sin profesor asignado"}</small>`;
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = '×';
+        btn.title = 'Quitar materia';
+        btn.className = 'remove-subject-btn';
+
+        btn.addEventListener('click', () => {
+          selectedIds.delete(id);
+          const cb = document.getElementById('subject-' + id);
+          if (cb) cb.checked = false;
+          updateCreateButton();
+          renderSelectedSubjects();
+        });
+
+        li.appendChild(info);
+        li.appendChild(btn);
+        selectedSubjectsList.appendChild(li);
+      });
+    }
+
+    function updateCreateButton() {
+      const count = selectedIds.size;
+      createScheduleBtn.disabled = count === 0;
+      createScheduleBtn.textContent = count === 0
+        ? 'Crear Horario'
+        : `Crear Horario (${count} materia${count !== 1 ? 's' : ''})`;
+    }
+
+    // Función para enviar el formulario
+    function submitSchedule() {
+      if (selectedIds.size === 0) {
+        alert('Por favor selecciona al menos una materia');
+        return;
+      }
+
+      // Obtener el formulario principal
+      const mainForm = document.getElementById('mainForm');
+      if (!mainForm) {
+        console.error('No se encontró el formulario principal');
+        return;
+      }
+
+      // Limpiar inputs anteriores de subjectIds
+      document.querySelectorAll('#mainForm input[name="subjectIds"]').forEach(el => el.remove());
+
+      // Agregar nuevos inputs ocultos con los IDs seleccionados
+      selectedIds.forEach(id => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'subjectIds';
+        input.value = id;
+        mainForm.appendChild(input);
+      });
+
+      // Verificar que todo está listo (debug)
+      console.log('Enviando con IDs:', Array.from(selectedIds));
+
+      // Deshabilitar botón para evitar doble envío
+      createScheduleBtn.disabled = true;
+      createScheduleBtn.textContent = 'Procesando...';
+
+      // Enviar el formulario usando HTMX
+      htmx.trigger(mainForm, 'submit');
+    }
+
+    // Asignar evento al botón
+    createScheduleBtn.addEventListener('click', submitSchedule);
+
+    // Event listeners para filtros
+    searchInput.addEventListener('input', renderSubjects);
+    semesterFilter.addEventListener('change', renderSubjects);
+
+    // Inicializar
+    renderSubjects();
+    renderSelectedSubjects();
+    updateCreateButton();
+  }
+</script>
+{{end}}

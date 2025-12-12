@@ -28,7 +28,7 @@ type CareerStorer interface {
 }
 
 type SubjectStorer interface {
-	Insert(ctx context.Context, exec Executor, s *model.Subject) error
+	Insert(ctx context.Context, exec Executor, careerID int64, s *model.Subject) error
 	GetByID(ctx context.Context, exec Executor, subjectID int64) (*model.Subject, error)
 	GetByCareerID(ctx context.Context, exec Executor, careerID int64) ([]*model.Subject, error)
 }
@@ -46,7 +46,7 @@ type ScheduleDetailStorer interface {
 }
 
 // Executor abstracts over sql.DB and sql.Tx, allowing them to be used interchangeably.
-// This design lets the service layer manage transaction boundaries explicitly, 
+// This design lets the service layer manage transaction boundaries explicitly,
 // since it has the knowledge of which operations must be grouped within a transaction.
 type Executor interface {
 	QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error)

@@ -98,7 +98,7 @@ func SearchNewestExcel(ctx context.Context) error {
 				}
 			}
 
-			if err := subjectStorer.Insert(ctx, tx, subject); err != nil {
+			if err := subjectStorer.Insert(ctx, tx, career.ID, subject); err != nil {
 				logger.Error("error persisting subject", "error", err)
 				return rollback(err)
 			}

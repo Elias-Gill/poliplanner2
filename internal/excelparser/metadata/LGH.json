@@ -1,310 +1,260 @@
 {
-  "career_code": "LGH",
-  "subjects": [
-    {
-      "name": "alimentos y bebidas i",
-      "semester": 3,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "alimentos y bebidas ii",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "alimentos y bebidas iii",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "alimentos y bebidas iv",
-      "semester": 6,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "alimentos y bebidas v",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "alimentos y bebidas vi",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "computacion",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "contabilidad i",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "contabilidad ii",
-      "semester": 2,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "desarrollo del emprendedorismo",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "direccion estrategica",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "ecologia i",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "ecologia ii",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "economia i",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "economia ii",
-      "semester": 2,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "enologia",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "estadistica",
-      "semester": 2,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "expresion oral y escrita",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "gastronomia i",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "gastronomia ii",
-      "semester": 6,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "gastronomia iii",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "gastronomia iv",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "geografia turistica del mundo",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "geografia turistica latinoamericana",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "gestion de recursos humanos",
-      "semester": 3,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "gestion y auditoria",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "hotel i",
-      "semester": 3,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "hotel ii",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "hotel iii",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "hotel iv",
-      "semester": 6,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "hotel v",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "hotel vi",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "leyes",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "marketing",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "matematicas financieras",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "metodologia de estudio",
-      "semester": 2,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "metodologia de la investigacion",
-      "semester": 3,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "mixologia",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "nutricion",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "organizacion de banquetes y recepciones",
-      "semester": 8,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "plan de negocios",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "quimica de los alimentos",
-      "semester": 6,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "sanidad alimentaria",
-      "semester": 3,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "sicologia",
-      "semester": 1,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "sociologia",
-      "semester": 2,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "sociologia paraguaya",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "transporte",
-      "semester": 4,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "turismo i",
-      "semester": 5,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "turismo ii",
-      "semester": 6,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "turismo iii",
-      "semester": 7,
-      "credits": 0
-    }
-    ,
-    {
-      "name": "turismo iv",
-      "semester": 8,
-      "credits": 0
-    }
-  ]
+    "career_code": "LGH",
+    "subjects": [
+        {
+            "name": "alimentos y bebidas i",
+            "semester": 3,
+            "credits": 0
+        },
+        {
+            "name": "alimentos y bebidas ii",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "alimentos y bebidas iii",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "alimentos y bebidas iv",
+            "semester": 6,
+            "credits": 0
+        },
+        {
+            "name": "alimentos y bebidas v",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "alimentos y bebidas vi",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "computacion",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "contabilidad i",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "contabilidad ii",
+            "semester": 2,
+            "credits": 0
+        },
+        {
+            "name": "desarrollo del emprendedorismo",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "direccion estrategica",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "ecologia i",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "ecologia ii",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "economia i",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "economia ii",
+            "semester": 2,
+            "credits": 0
+        },
+        {
+            "name": "enologia",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "estadistica",
+            "semester": 2,
+            "credits": 0
+        },
+        {
+            "name": "expresion oral y escrita",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "gastronomia i",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "gastronomia ii",
+            "semester": 6,
+            "credits": 0
+        },
+        {
+            "name": "gastronomia iii",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "gastronomia iv",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "geografia turistica del mundo",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "geografia turistica latinoamericana",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "gestion de recursos humanos",
+            "semester": 3,
+            "credits": 0
+        },
+        {
+            "name": "gestion y auditoria",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "hotel i",
+            "semester": 3,
+            "credits": 0
+        },
+        {
+            "name": "hotel ii",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "hotel iii",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "hotel iv",
+            "semester": 6,
+            "credits": 0
+        },
+        {
+            "name": "hotel v",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "hotel vi",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "leyes",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "marketing",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "matematicas financieras",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "metodologia de estudio",
+            "semester": 2,
+            "credits": 0
+        },
+        {
+            "name": "metodologia de la investigacion",
+            "semester": 3,
+            "credits": 0
+        },
+        {
+            "name": "mixologia",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "nutricion",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "organizacion de banquetes y recepciones",
+            "semester": 8,
+            "credits": 0
+        },
+        {
+            "name": "plan de negocios",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "quimica de los alimentos",
+            "semester": 6,
+            "credits": 0
+        },
+        {
+            "name": "sanidad alimentaria",
+            "semester": 3,
+            "credits": 0
+        },
+        {
+            "name": "sicologia",
+            "semester": 1,
+            "credits": 0
+        },
+        {
+            "name": "sociologia",
+            "semester": 2,
+            "credits": 0
+        },
+        {
+            "name": "sociologia paraguaya",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "transporte",
+            "semester": 4,
+            "credits": 0
+        },
+        {
+            "name": "turismo i",
+            "semester": 5,
+            "credits": 0
+        },
+        {
+            "name": "turismo ii",
+            "semester": 6,
+            "credits": 0
+        },
+        {
+            "name": "turismo iii",
+            "semester": 7,
+            "credits": 0
+        },
+        {
+            "name": "turismo iv",
+            "semester": 8,
+            "credits": 0
+        }
+    ]
 }

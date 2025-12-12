@@ -14,6 +14,9 @@ type Config struct {
 	// Google API
 	GoogleAPIKey string
 
+	// Especial Credentials
+	UPDATE_KEY string
+
 	// Server
 	ServerAddr   string
 	ReadTimeout  time.Duration
@@ -67,9 +70,18 @@ func MustLoad() {
 		log.Warn("Missing Google API Key, web scrapping is disabled")
 	}
 
+	updateKey := getEnv("UPDATE_KEY", "")
+	if googleAPIKey == "" {
+		log.Error("Missing update key")
+		os.Exit(1)
+	}
+
 	cfg = &Config{
 		// Google API
 		GoogleAPIKey: googleAPIKey,
+
+		// Credentials
+		UPDATE_KEY: updateKey,
 
 		// Server
 		ServerAddr:   getEnv("SERVER_ADDR", ":8080"),

@@ -14,7 +14,7 @@ func NewSqliteSubjectStore() *SqliteSubjectStore {
 	return &SqliteSubjectStore{}
 }
 
-func (s SqliteSubjectStore) Insert(ctx context.Context, exec Executor, sub *model.Subject) error {
+func (s SqliteSubjectStore) Insert(ctx context.Context, exec Executor, careerID int64, sub *model.Subject) error {
 	query := `
 	INSERT INTO subjects (
 	career_id, department, subject_name, semester, section,
@@ -32,11 +32,12 @@ func (s SqliteSubjectStore) Insert(ctx context.Context, exec Executor, sub *mode
 	final2_date, final2_time, final2_classroom,
 	final2_review_date, final2_review_time,
 	committee_chair, committee_member1, committee_member2
-	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
+	?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 
 	res, err := exec.ExecContext(ctx, query,
-		sub.CareerID, sub.Department, sub.SubjectName, sub.Semester, sub.Section,
+		careerID, sub.Department, sub.SubjectName, sub.Semester, sub.Section,
 		sub.TeacherTitle, sub.TeacherLastname, sub.TeacherName, sub.TeacherEmail,
 		sub.Monday, sub.MondayRoom,
 		sub.Tuesday, sub.TuesdayRoom,
@@ -52,6 +53,7 @@ func (s SqliteSubjectStore) Insert(ctx context.Context, exec Executor, sub *mode
 		sub.Final2RevDate, sub.Final2RevTime,
 		sub.CommitteePresident, sub.CommitteeMember1, sub.CommitteeMember2,
 	)
+
 	if err != nil {
 		return err
 	}

@@ -44,7 +44,7 @@ func main() {
 	r.Route("/", router.NewAuthRouter())
 	r.Route("/dashboard", router.NewDashboardRouter())
 	r.Route("/schedule", router.NewSchedulesRouter())
-	r.Route("/excel", router.NewAuthRouter())
+	r.Route("/excel", router.NewExcelRouter())
 	r.Route("/misc", router.NewMiscRouter())
 	r.Route("/guides", router.NewGuidesRouter())
 	// Static files

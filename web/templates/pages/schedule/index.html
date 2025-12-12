@@ -73,67 +73,67 @@
   <style>
     /* HTMX transition */
     #subjectsSelectorSection.htmx-swapping {
-      opacity: 0;
-      transition: all .2s ease-out;
+        opacity: 0;
+        transition: all .2s ease-out;
     }
     #subjectsSelectorSection.htmx-settling {
-      opacity: 1;
-      transition: all .2s ease-in;
+        opacity: 1;
+        transition: all .2s ease-in;
     }
 
     .excel-info-btn {
-      padding: .35rem .75rem;
+        padding: .35rem .75rem;
         margin-left: 8px;
-      cursor: pointer;
-      font-size: .85rem;
-      font-weight: 600;
+        cursor: pointer;
+        font-size: .85rem;
+        font-weight: 600;
     }
 
     .excel-info-btn:hover {
-      background: color-mix(in srgb, var(--color-primary), black 20%);
+        background: color-mix(in srgb, var(--color-primary), black 20%);
     }
 
     /* Modal overlay */
     .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgb(0 0 0 / 0.45);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 2000;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .25s ease-out;
+        position: fixed;
+        inset: 0;
+        background: rgb(0 0 0 / 0.45);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .25s ease-out;
     }
 
     .modal-overlay.show {
-      opacity: 1;
-      pointer-events: auto;
+        opacity: 1;
+        pointer-events: auto;
     }
 
     /* Modal content */
     .modal-content {
-      background: var(--color-bg);
-      padding: 1.5rem;
-      width: min(90%, 420px);
-      border-radius: var(--border-radius);
-      box-shadow: 0 8px 24px rgb(0 0 0 / 0.15);
-      animation: modalFadeIn .25s ease;
-      position: relative;
+        background: var(--color-bg);
+        padding: 1.5rem;
+        width: min(90%, 420px);
+        border-radius: var(--border-radius);
+        box-shadow: 0 8px 24px rgb(0 0 0 / 0.15);
+        animation: modalFadeIn .25s ease;
+        position: relative;
     }
 
     @keyframes modalFadeIn {
-      from { transform: scale(.95); opacity: 0; }
-      to   { transform: scale(1); opacity: 1; }
+    from { transform: scale(.95); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
     }
 
     .modal-close-btn {
-      position: absolute;
-      top: .4rem;
-      right: .4rem;
-      border: none;
-      padding: .35rem .75rem;
+        position: absolute;
+        top: .4rem;
+        right: .4rem;
+        border: none;
+        padding: .35rem .75rem;
     }
   </style>
   <script>
