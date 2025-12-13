@@ -2,17 +2,29 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
+	"github.com/elias-gill/poliplanner2/internal/db/store"
 )
 
-func FindSubjectsByCareerID(ctx context.Context, careerID int64) ([]*model.Subject, error) {
-	subjects, err := subjectStorer.GetByCareerID(ctx, db, careerID)
+type SubjectService struct {
+	db           *sql.DB
+	subjectStore store.SubjectStorer
+}
 
+func NewSubjectService(db *sql.DB, subjectStore store.SubjectStorer) *SubjectService {
+	return &SubjectService{
+		db:           db,
+		subjectStore: subjectStore,
+	}
+}
+
+func (s *SubjectService) FindSubjectsByCareerID(ctx context.Context, careerID int64) ([]*model.Subject, error) {
+	subjects, err := s.subjectStore.GetByCareerID(ctx, s.db, careerID)
 	if err != nil {
 		return nil, fmt.Errorf("error searching subjects: %w", err)
 	}
-
-	return subjects, err
+	return subjects, nil
 }

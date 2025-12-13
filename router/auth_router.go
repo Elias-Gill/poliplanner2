@@ -9,13 +9,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/elias-gill/poliplanner2/internal/auth"
 	"github.com/elias-gill/poliplanner2/internal/logger"
 	"github.com/elias-gill/poliplanner2/internal/service"
 	"github.com/elias-gill/poliplanner2/web"
 	"github.com/go-chi/chi/v5"
 )
 
-func NewAuthRouter() func(r chi.Router) {
+func NewAuthRouter(service *service.UserService) func(r chi.Router) {
 	layouts := web.CleanLayout
 
 	return func(r chi.Router) {
@@ -53,7 +54,7 @@ func NewAuthRouter() func(r chi.Router) {
 			}
 
 			// Create a session cookie
-			sessionID := service.CreateSession(user.ID)
+			sessionID := auth.CreateSession(user.ID)
 			http.SetCookie(w, &http.Cookie{
 				Name:     "session_id",
 				Value:    sessionID,

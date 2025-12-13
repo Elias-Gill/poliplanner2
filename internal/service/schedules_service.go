@@ -2,14 +2,37 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
+	"github.com/elias-gill/poliplanner2/internal/db/store"
 )
 
-func FindUserSchedules(ctx context.Context, userID int64) ([]*model.Schedule, error) {
-	schedules, err := scheduleStorer.GetByUserID(ctx, db, userID)
+type ScheduleService struct {
+	db                   *sql.DB
+	scheduleStorer       store.ScheduleStorer
+	scheduleDetailStorer store.ScheduleDetailStorer
+}
 
+func NewScheduleService(
+	db *sql.DB,
+	scheduleStorer store.ScheduleStorer,
+	scheduleDetailStorer store.ScheduleDetailStorer,
+) *ScheduleService {
+	return &ScheduleService{
+		db:                   db,
+		scheduleStorer:       scheduleStorer,
+		scheduleDetailStorer: scheduleDetailStorer,
+	}
+}
+
+func (s *ScheduleService) FindUserSchedules(
+	ctx context.Context,
+	userID int64,
+) ([]*model.Schedule, error) {
+
+	schedules, err := s.scheduleStorer.GetByUserID(ctx, s.db, userID)
 	if err != nil {
 		return nil, fmt.Errorf("error searching schedules: %w", err)
 	}
@@ -17,8 +40,12 @@ func FindUserSchedules(ctx context.Context, userID int64) ([]*model.Schedule, er
 	return schedules, err
 }
 
-func FindScheduleDetail(ctx context.Context, scheduleID int64) ([]*model.Subject, error) {
-	subjects, err := scheduleDetailStorer.GetSubjectsByScheduleID(ctx, db, scheduleID)
+func (s *ScheduleService) FindScheduleDetail(
+	ctx context.Context,
+	scheduleID int64,
+) ([]*model.Subject, error) {
+
+	subjects, err := s.scheduleDetailStorer.GetSubjectsByScheduleID(ctx, s.db, scheduleID)
 	if err != nil {
 		return nil, fmt.Errorf("error searching schedules: %w", err)
 	}
@@ -26,8 +53,15 @@ func FindScheduleDetail(ctx context.Context, scheduleID int64) ([]*model.Subject
 	return subjects, nil
 }
 
-func CreateSchedule(ctx context.Context, userID int64, sheetVersionId int64, description string, subjects []int64) error {
-	tx, err := db.BeginTx(ctx, nil)
+func (s *ScheduleService) CreateSchedule(
+	ctx context.Context,
+	userID int64,
+	sheetVersionId int64,
+	description string,
+	subjects []int64,
+) error {
+
+	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("cannot start transaction over schedule table: %w", err)
 	}
@@ -39,7 +73,7 @@ func CreateSchedule(ctx context.Context, userID int64, sheetVersionId int64, des
 		}
 	}()
 
-	scheId, err := scheduleStorer.Insert(ctx, tx, &model.Schedule{
+	scheId, err := s.scheduleStorer.Insert(ctx, tx, &model.Schedule{
 		UserID:       userID,
 		SheetVersion: sheetVersionId,
 		Description:  description,
@@ -49,7 +83,7 @@ func CreateSchedule(ctx context.Context, userID int64, sheetVersionId int64, des
 	}
 
 	for _, id := range subjects {
-		err := scheduleDetailStorer.Insert(ctx, tx, scheId, id)
+		err := s.scheduleDetailStorer.Insert(ctx, tx, scheId, id)
 		if err != nil {
 			return fmt.Errorf("error inserting schedule detail: %w", err)
 		}
@@ -63,8 +97,13 @@ func CreateSchedule(ctx context.Context, userID int64, sheetVersionId int64, des
 	return nil
 }
 
-func DeleteSchedule(ctx context.Context, userID int64, scheduleID int64) error {
-	tx, err := db.BeginTx(ctx, nil)
+func (s *ScheduleService) DeleteSchedule(
+	ctx context.Context,
+	userID int64,
+	scheduleID int64,
+) error {
+
+	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("cannot start transaction over schedule table: %w", err)
 	}
@@ -76,7 +115,7 @@ func DeleteSchedule(ctx context.Context, userID int64, scheduleID int64) error {
 	}()
 
 	// User ownership validation
-	schedule, err := scheduleStorer.GetByID(ctx, tx, scheduleID)
+	schedule, err := s.scheduleStorer.GetByID(ctx, tx, scheduleID)
 	if err != nil {
 		return fmt.Errorf("schedule not found: %w", err)
 	}
@@ -84,12 +123,12 @@ func DeleteSchedule(ctx context.Context, userID int64, scheduleID int64) error {
 		return fmt.Errorf("unauthorized")
 	}
 
-	err = scheduleStorer.Delete(ctx, tx, scheduleID)
+	err = s.scheduleStorer.Delete(ctx, tx, scheduleID)
 	if err != nil {
 		return fmt.Errorf("error deleting schedule details: %w", err)
 	}
 
-	err = scheduleStorer.Delete(ctx, tx, scheduleID)
+	err = s.scheduleStorer.Delete(ctx, tx, scheduleID)
 	if err != nil {
 		return fmt.Errorf("error deleting schedule: %w", err)
 	}

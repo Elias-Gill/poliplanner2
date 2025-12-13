@@ -2,17 +2,40 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/db/model"
+	"github.com/elias-gill/poliplanner2/internal/db/store"
 	parser "github.com/elias-gill/poliplanner2/internal/excelparser"
 	mapper "github.com/elias-gill/poliplanner2/internal/excelparser/dto"
 	"github.com/elias-gill/poliplanner2/internal/logger"
 	"github.com/elias-gill/poliplanner2/internal/scraper"
 )
 
-func SearchNewestExcel(ctx context.Context) error {
+type ExcelService struct {
+	db                 *sql.DB
+	sheetVersionStorer store.SheetVersionStorer
+	careerStorer       store.CareerStorer
+	subjectStorer      store.SubjectStorer
+}
+
+func NewExcelService(
+	db *sql.DB,
+	sheetVersionStorer store.SheetVersionStorer,
+	careerStorer store.CareerStorer,
+	subjectStorer store.SubjectStorer,
+) *ExcelService {
+	return &ExcelService{
+		db:                 db,
+		sheetVersionStorer: sheetVersionStorer,
+		careerStorer:       careerStorer,
+		subjectStorer:      subjectStorer,
+	}
+}
+
+func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 	key := config.Get().GoogleAPIKey
 	scraper := scraper.NewWebScraper(scraper.NewGoogleDriveHelper(key))
 
@@ -22,7 +45,7 @@ func SearchNewestExcel(ctx context.Context) error {
 		return fmt.Errorf("error searching for excel versions: %w", err)
 	}
 
-	latestVersion, err := FindLatestSheetVersion(ctx)
+	latestVersion, err := s.sheetVersionStorer.GetNewest(ctx, s.db)
 	if err != nil {
 		logger.Info("cannot retrieve latest version from database", "error", err)
 		return fmt.Errorf("error searching for excel versions: %w", err)
@@ -46,7 +69,7 @@ func SearchNewestExcel(ctx context.Context) error {
 		return fmt.Errorf("error creating excel parser: %w", err)
 	}
 
-	tx, err := db.BeginTx(ctx, nil)
+	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("error starting transaction: %w", err)
 	}
@@ -64,7 +87,7 @@ func SearchNewestExcel(ctx context.Context) error {
 		URL:      newestSource.URL,
 	}
 
-	if err := sheetVersionStorer.Insert(ctx, tx, version); err != nil {
+	if err := s.sheetVersionStorer.Insert(ctx, tx, version); err != nil {
 		logger.Error("error persisting excel version", "error", err)
 		return rollback(err)
 	}
@@ -83,7 +106,7 @@ func SearchNewestExcel(ctx context.Context) error {
 			SheetVersionID: version.ID,
 		}
 
-		if err := careerStorer.Insert(ctx, tx, career); err != nil {
+		if err := s.careerStorer.Insert(ctx, tx, career); err != nil {
 			logger.Error("error persisting career", "error", err)
 			return rollback(err)
 		}
@@ -98,7 +121,7 @@ func SearchNewestExcel(ctx context.Context) error {
 				}
 			}
 
-			if err := subjectStorer.Insert(ctx, tx, career.ID, subject); err != nil {
+			if err := s.subjectStorer.Insert(ctx, tx, career.ID, subject); err != nil {
 				logger.Error("error persisting subject", "error", err)
 				return rollback(err)
 			}

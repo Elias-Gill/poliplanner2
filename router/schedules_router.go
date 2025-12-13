@@ -14,7 +14,12 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func NewSchedulesRouter() func(r chi.Router) {
+func NewSchedulesRouter(
+	subjectService *service.SubjectService,
+	scheduleService *service.ScheduleService,
+	sheetVersionService *service.SheetVersionService,
+	careerService *service.CareerService,
+) func(r chi.Router) {
 	layouts := web.BaseLayout
 
 	return func(r chi.Router) {
@@ -23,13 +28,13 @@ func NewSchedulesRouter() func(r chi.Router) {
 			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*400)
 			defer cancel()
 
-			latestExcel, err := service.FindLatestSheetVersion(ctx)
+			latestExcel, err := sheetVersionService.FindLatestSheetVersion(ctx)
 			if err != nil {
 				logger.Error("Error finding latest excel version", "error", err)
 				http.Redirect(w, r, "/500", 500)
 			}
 
-			careers, err := service.FindCareersBySheetVersion(ctx, latestExcel.ID)
+			careers, err := careerService.FindCareersBySheetVersion(ctx, latestExcel.ID)
 			if err != nil {
 				logger.Error("Error finding careers", "error", err)
 				http.Redirect(w, r, "/500", 500)
@@ -65,7 +70,7 @@ func NewSchedulesRouter() func(r chi.Router) {
 				return
 			}
 
-			subjects, err := service.FindSubjectsByCareerID(ctx, careerId)
+			subjects, err := subjectService.FindSubjectsByCareerID(ctx, careerId)
 			if err != nil {
 				logger.Error("Error finding subjects", "error", err, "careerID", rawId)
 				http.Redirect(w, r, "/500", 500)
@@ -99,7 +104,7 @@ func NewSchedulesRouter() func(r chi.Router) {
 			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*200)
 			defer cancel()
 
-			err = service.DeleteSchedule(ctx, userID, scheduleID)
+			err = scheduleService.DeleteSchedule(ctx, userID, scheduleID)
 			if err != nil {
 				logger.Error("cannot delete schedule", "error", err)
 				w.Header().Set("HX-Redirect", "/500")
@@ -144,7 +149,7 @@ func NewSchedulesRouter() func(r chi.Router) {
 			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*200)
 			defer cancel()
 
-			err = service.CreateSchedule(ctx, userID, sheetVersionID, description, subjectIDs)
+			err = scheduleService.CreateSchedule(ctx, userID, sheetVersionID, description, subjectIDs)
 			if err != nil {
 				logger.Error("cannot create schedule", "error", err)
 				w.Header().Set("HX-Redirect", "/500")

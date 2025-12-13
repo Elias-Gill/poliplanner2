@@ -17,7 +17,7 @@ import (
 
 const latest_selection_cookie = "latestScheduleSelection"
 
-func NewDashboardRouter() func(r chi.Router) {
+func NewDashboardRouter(service *service.ScheduleService) func(r chi.Router) {
 	layouts := web.BaseLayout
 
 	return func(r chi.Router) {

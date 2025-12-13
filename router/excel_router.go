@@ -9,7 +9,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func NewExcelRouter() func(r chi.Router) {
+func NewExcelRouter(service *service.ExcelService) func(r chi.Router) {
 	key := config.Get().UPDATE_KEY
 
 	return func(r chi.Router) {
