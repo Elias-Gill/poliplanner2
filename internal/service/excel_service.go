@@ -41,18 +41,18 @@ func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 
 	newestSource, err := scraper.FindLatestDownloadSource()
 	if err != nil {
-		logger.Info("scraper failed to retrieve latest source", "error", err)
+		logger.Info("Scraper failed to retrieve latest source", "error", err)
 		return fmt.Errorf("error searching for excel versions: %w", err)
 	}
 
 	latestVersion, err := s.sheetVersionStorer.GetNewest(ctx, s.db)
 	if err != nil {
-		logger.Info("cannot retrieve latest version from database", "error", err)
+		logger.Info("Cannot retrieve latest version from database", "error", err)
 		return fmt.Errorf("error searching for excel versions: %w", err)
 	}
 
 	if newestSource.UploadDate.Before(latestVersion.ParsedAt) {
-		logger.Info("excel is already the latest version",
+		logger.Info("Excel is already on the latest version",
 			"fpuna", newestSource.UploadDate,
 			"database", latestVersion.ParsedAt)
 		return nil
@@ -60,7 +60,7 @@ func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 
 	path, err := newestSource.DownloadThisSource()
 	if err != nil {
-		logger.Info("failed to download source", "source", newestSource.URL, "error", err)
+		logger.Info("Failed to download source", "source", newestSource.URL, "error", err)
 		return fmt.Errorf("error downloading latest excel: %w", err)
 	}
 
@@ -81,7 +81,7 @@ func (s *ExcelService) ParseExcelFile(ctx context.Context, path string, name str
 	rollback := func(e error) error {
 		rbErr := tx.Rollback()
 		if rbErr != nil {
-			logger.Error("rollback failed", "error", rbErr)
+			logger.Error("Rollback failed", "error", rbErr)
 		}
 		return e
 	}
@@ -92,7 +92,7 @@ func (s *ExcelService) ParseExcelFile(ctx context.Context, path string, name str
 	}
 
 	if err := s.sheetVersionStorer.Insert(ctx, tx, version); err != nil {
-		logger.Error("error persisting excel version", "error", err)
+		logger.Error("Error persisting excel version", "error", err)
 		return rollback(err)
 	}
 
@@ -101,7 +101,7 @@ func (s *ExcelService) ParseExcelFile(ctx context.Context, path string, name str
 	for parserExcel.NextSheet() {
 		result, perr := parserExcel.ParseCurrentSheet()
 		if perr != nil {
-			logger.Error("error parsing sheet", "error", perr)
+			logger.Error("Error parsing sheet", "error", perr)
 			return rollback(perr)
 		}
 
@@ -111,11 +111,11 @@ func (s *ExcelService) ParseExcelFile(ctx context.Context, path string, name str
 		}
 
 		if err := s.careerStorer.Insert(ctx, tx, career); err != nil {
-			logger.Error("error persisting career", "error", err)
+			logger.Error("Error persisting career", "error", err)
 			return rollback(err)
 		}
 
-		logger.Info("persisting subjects from career", "career", career.CareerCode, "num_subjects", len(result.Subjects), "cache_hits", metadata.CacheHits)
+		logger.Info("Persisting subjects from career", "career", career.CareerCode, "num_subjects", len(result.Subjects), "cache_hits", metadata.CacheHits)
 
 		insertedCount := 0
 		for _, sub := range result.Subjects {
@@ -129,20 +129,20 @@ func (s *ExcelService) ParseExcelFile(ctx context.Context, path string, name str
 			}
 
 			if err := s.subjectStorer.Insert(ctx, tx, career.ID, subject); err != nil {
-				logger.Error("error persisting subject", "error", err)
+				logger.Error("Error persisting subject", "error", err)
 				return rollback(err)
 			}
 			insertedCount++
 		}
 
-		logger.Info("persisted subjects from career", "career", career.CareerCode, "inserted_subjects", insertedCount)
+		logger.Info("Persisted subjects from career", "career", career.CareerCode, "inserted_subjects", insertedCount)
 	}
 
 	if err := tx.Commit(); err != nil {
-		logger.Error("error committing transaction", "error", err)
+		logger.Error("Error committing transaction", "error", err)
 		return rollback(err)
 	}
 
-	logger.Info("excel import completed successfully", "file", name, "url", url)
+	logger.Info("Excel import completed successfully", "file", name, "url", url)
 	return nil
 }
