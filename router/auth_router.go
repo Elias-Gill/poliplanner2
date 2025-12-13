@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/auth"
+	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/logger"
 	"github.com/elias-gill/poliplanner2/internal/service"
 	"github.com/elias-gill/poliplanner2/web"
@@ -60,7 +61,7 @@ func NewAuthRouter(service *service.UserService) func(r chi.Router) {
 				Value:    sessionID,
 				Path:     "/",
 				HttpOnly: true,
-				Secure:   false, // FIX: make false on dev mode
+				Secure:   config.Get().Security.SecureHTTP,
 				SameSite: http.SameSiteLaxMode,
 				Expires:  time.Now().Add(30 * time.Minute),
 			})

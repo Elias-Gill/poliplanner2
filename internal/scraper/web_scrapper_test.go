@@ -1,6 +1,7 @@
 package scraper
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"testing"
@@ -26,9 +27,13 @@ func TestFindLatestExcelUrlFromLocalHtml(t *testing.T) {
 		t.Fatalf("read html: %+v", err)
 	}
 
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	// Scrap and measure execution times
 	s := NewWebScraper(nil)
 	start := time.Now()
-	src, err := s.FindLatestSourceFromHTML(string(html))
+	src, err := s.FindLatestSourceFromHTML(ctx, string(html))
 	end := time.Now()
 	t.Logf("Scrapping concluded in: %dms", end.Sub(start).Milliseconds())
 
@@ -52,9 +57,12 @@ func TestFindLatestExcelUrlWithDriveFolders(t *testing.T) {
 		t.Fatalf("read html: %+v", err)
 	}
 
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
 	helper := NewGoogleDriveHelper(apiKey)
 	s := NewWebScraper(helper)
-	src, err := s.FindLatestSourceFromHTML(string(html))
+	src, err := s.FindLatestSourceFromHTML(ctx, string(html))
 	if err != nil {
 		t.Fatalf("find source: %+v", err)
 	}

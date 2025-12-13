@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"net/http"
-	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/auth"
 	"github.com/elias-gill/poliplanner2/internal/config"
@@ -20,7 +19,7 @@ func main() {
 	config.MustLoad()
 	cfg := config.Get()
 
-	log.InitLogger(config.Get().VerboseLogs)
+	log.InitLogger(config.Get().Logging.Verbose)
 	log.Info("Loading env configuraion")
 
 	log.Debug("Initializing db")
@@ -57,15 +56,15 @@ func main() {
 
 	go func() {
 		// 30 seconds has to be more than enough, even when google drive is slow
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+		ctx, cancel := context.WithTimeout(context.Background(), config.Get().Excel.ScraperTimeout)
 		defer cancel()
 		// The result of this operation is irrelevant
 		services.ExcelService.SearchOnStartup(ctx)
 	}()
 
 	// Start Server
-	log.Info("Server is running", "addr", cfg.ServerAddr)
-	err = http.ListenAndServe(cfg.ServerAddr, r)
+	log.Info("Server is running", "addr", cfg.Server.Addr)
+	err = http.ListenAndServe(cfg.Server.Addr, r)
 	if err != nil {
 		panic(err)
 	}

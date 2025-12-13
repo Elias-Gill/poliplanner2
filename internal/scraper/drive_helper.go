@@ -3,7 +3,6 @@ package scraper
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -40,11 +39,10 @@ type GoogleFilesResponse struct {
 
 func NewGoogleDriveHelper(apiKey string) *GoogleDriveHelper {
 	if apiKey == "" {
-		log.Warn("GOOGLE_API_KEY environment variable not set")
+		log.Warn("GOOGLE_API_KEY not set, Google Drive integration disabled")
 		return nil
 	}
 
-	log.Debug("Google Drive Helper initialized", "key_length", len(apiKey))
 	return &GoogleDriveHelper{
 		apiKey: apiKey,
 		folderIDPattern: regexp.MustCompile(
@@ -52,228 +50,193 @@ func NewGoogleDriveHelper(apiKey string) *GoogleDriveHelper {
 		spreadsheetIDPattern: regexp.MustCompile(
 			`spreadsheets/d/([a-zA-Z0-9_-]+)`),
 		httpClient: &http.Client{
-			Timeout: 10 * time.Second,
+			Transport: &http.Transport{
+				MaxIdleConns:       5,
+				IdleConnTimeout:    30 * time.Second,
+				DisableCompression: false,
+			},
 		},
 	}
 }
 
-func (g *GoogleDriveHelper) ListSourcesInURL(url string) ([]*ExcelDownloadSource, error) {
-	log.Info("Searching for sources in Google Drive URL", "url", url)
+func (g *GoogleDriveHelper) ListSourcesInURL(
+	ctx context.Context,
+	url string,
+) ([]*ExcelDownloadSource, error) {
+	log.Info("Listing Google Drive folder sources", "url", url)
 
 	folderID := g.extractFolderID(url)
 	if folderID == "" {
-		return nil, fmt.Errorf("could not extract folder ID from URL: %s", url)
+		return nil, fmt.Errorf("could not extract folder ID from url")
 	}
 
-	log.Debug("Extracted folder ID", "folder_id", folderID)
-	files, err := g.listFilesInFolder(folderID)
+	files, err := g.listFilesInFolder(ctx, folderID)
 	if err != nil {
-		return nil, fmt.Errorf("error listing files in folder: %w", err)
+		return nil, err
 	}
 
-	log.Debug("Retrieved files from folder", "total_files", len(files))
-	var sources []*ExcelDownloadSource
-	excelCount := 0
-
+	sources := make([]*ExcelDownloadSource, 0, len(files))
 	for _, file := range files {
-		if g.isExcelFile(file.Name) {
-			downloadURL := fmt.Sprintf("https://drive.google.com/uc?export=download&id=%s", file.ID)
-			fileDate, err := extractDateFromFilename(file.Name)
-
-			if err != nil {
-				log.Warn("Skipping file", "file", file.Name, "error", err)
-				continue
-			}
-
-			sources = append(sources, &ExcelDownloadSource{
-				URL:        downloadURL,
-				FileName:   file.Name,
-				UploadDate: fileDate,
-			})
-			excelCount++
-			log.Debug("Added Excel source", "file", file.Name, "date", fileDate.Format("2006-01-02"))
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		default:
 		}
+
+		if !g.isExcelFile(file.Name) {
+			continue
+		}
+
+		fileDate, err := extractDateFromFilename(file.Name)
+		if err != nil {
+			log.Warn("Skipping file, date not found", "file", file.Name)
+			continue
+		}
+
+		sources = append(sources, &ExcelDownloadSource{
+			URL:        "https://drive.google.com/uc?export=download&id=" + file.ID,
+			FileName:   file.Name,
+			UploadDate: fileDate,
+		})
 	}
 
-	log.Info("Successfully extracted Google Drive sources",
-		"excel_files", excelCount,
-		"total_files", len(files),
-		"folder_id", folderID)
 	return sources, nil
 }
 
-func (g *GoogleDriveHelper) GetSourceFromSpreadsheetLink(url string) (*ExcelDownloadSource, error) {
+func (g *GoogleDriveHelper) GetSourceFromSpreadsheetLink(
+	ctx context.Context,
+	url string,
+) (*ExcelDownloadSource, error) {
 	log.Info("Processing Google Spreadsheet link", "url", url)
 
 	spreadsheetID := g.extractSpreadsheetID(url)
 	if spreadsheetID == "" {
-		return nil, fmt.Errorf("could not extract spreadsheet ID from URL: %s", url)
+		return nil, fmt.Errorf("could not extract spreadsheet ID")
 	}
 
-	log.Debug("Extracted spreadsheet ID", "spreadsheet_id", spreadsheetID)
-	metadata, err := g.fetchSpreadsheetMetadata(spreadsheetID)
+	metadata, err := g.fetchSpreadsheetMetadata(ctx, spreadsheetID)
 	if err != nil {
-		return nil, fmt.Errorf("error fetching spreadsheet metadata: %w", err)
+		return nil, err
 	}
 
-	log.Debug("Retrieved spreadsheet metadata", "name", metadata.Name)
 	if !g.containsExamKeyword(metadata.Name) {
-		return nil, fmt.Errorf("spreadsheet name does not contain exam keywords: %s", metadata.Name)
+		return nil, fmt.Errorf("spreadsheet name does not match expected keywords")
 	}
 
-	downloadURL := fmt.Sprintf("https://docs.google.com/spreadsheets/d/%s/export?format=xlsx", spreadsheetID)
-	fileDate, err := extractDateFromFilename(metadata.Name)
-
+	date, err := extractDateFromFilename(metadata.Name)
 	if err != nil {
-		return nil, fmt.Errorf("could not extract date from filename: %s", metadata.Name)
+		return nil, err
 	}
 
-	source := &ExcelDownloadSource{
-		URL:        downloadURL,
+	return &ExcelDownloadSource{
+		URL:        "https://docs.google.com/spreadsheets/d/" + spreadsheetID + "/export?format=xlsx",
 		FileName:   metadata.Name,
-		UploadDate: fileDate,
-	}
-
-	log.Info("Successfully created spreadsheet source",
-		"file", source.FileName,
-		"date", source.UploadDate.Format("2006-01-02"),
-		"spreadsheet_id", spreadsheetID)
-	return source, nil
+		UploadDate: date,
+	}, nil
 }
 
 // =====================================
 // ======== Private methods ============
 // =====================================
 
-func (g *GoogleDriveHelper) extractFolderID(url string) string {
-	matches := g.folderIDPattern.FindStringSubmatch(url)
-	if len(matches) > 1 {
-		folderID := matches[1]
-		log.Debug("Extracted folder ID from URL", "url", url, "folder_id", folderID)
-		return folderID
-	}
-	log.Debug("Could not extract folder ID from URL", "url", url)
-	return ""
-}
-
-func (g *GoogleDriveHelper) extractSpreadsheetID(url string) string {
-	matches := g.spreadsheetIDPattern.FindStringSubmatch(url)
-	if len(matches) > 1 {
-		spreadsheetID := matches[1]
-		log.Debug("Extracted spreadsheet ID from URL", "url", url, "spreadsheet_id", spreadsheetID)
-		return spreadsheetID
-	}
-	log.Debug("Could not extract spreadsheet ID from URL", "url", url)
-	return ""
-}
-
-func (g *GoogleDriveHelper) listFilesInFolder(folderID string) ([]GoogleFile, error) {
+func (g *GoogleDriveHelper) listFilesInFolder(
+	ctx context.Context,
+	folderID string,
+) ([]GoogleFile, error) {
 	if g.apiKey == "" {
 		return nil, fmt.Errorf("GOOGLE_API_KEY not set")
 	}
 
-	url := fmt.Sprintf("https://www.googleapis.com/drive/v3/files?q='%s'+in+parents&key=%s",
-		folderID, g.apiKey)
-
-	log.Debug("Making Google Drive API request", "folder_id", folderID, "url", url)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second) // an eternity
-	defer cancel()
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return nil, fmt.Errorf("error creating Google Drive request: %w", err)
-	}
-
-	resp, err := g.httpClient.Do(req)
-	if err != nil {
-		if errors.Is(err, context.DeadlineExceeded) || errors.Is(err, context.Canceled) {
-			return nil, fmt.Errorf("request canceled or timed out: %w", err)
-		}
-		return nil, fmt.Errorf("error execution Google Drive request: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
-		log.Error("Google Drive API request failed",
-			"status_code", resp.StatusCode,
-			"response", string(body))
-		return nil, fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(body))
-	}
-
-	var filesResponse GoogleFilesResponse
-	if err := json.NewDecoder(resp.Body).Decode(&filesResponse); err != nil {
-		log.Error("Error decoding Google Drive API response", "error", err)
-		return nil, fmt.Errorf("error decoding JSON response: %v", err)
-	}
-
-	log.Debug("Successfully decoded Google Drive API response", "files_count", len(filesResponse.Files))
-	return filesResponse.Files, nil
-}
-
-func (g *GoogleDriveHelper) fetchSpreadsheetMetadata(spreadsheetID string) (*GoogleFile, error) {
-	if g.apiKey == "" {
-		return nil, fmt.Errorf("GOOGLE_API_KEY not set")
-	}
-
-	url := fmt.Sprintf(
-		"https://www.googleapis.com/drive/v3/files/%s?fields=name&key=%s",
-		spreadsheetID, g.apiKey,
+	reqURL := fmt.Sprintf(
+		"https://www.googleapis.com/drive/v3/files?q='%s'+in+parents&key=%s",
+		folderID,
+		g.apiKey,
 	)
 
-	log.Debug("Fetching spreadsheet metadata", "spreadsheet_id", spreadsheetID)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, reqURL, nil)
 	if err != nil {
-		return nil, fmt.Errorf("error creating metadata request: %w", err)
+		return nil, err
 	}
 
 	resp, err := g.httpClient.Do(req)
 	if err != nil {
-		if errors.Is(err, context.DeadlineExceeded) || errors.Is(err, context.Canceled) {
-			return nil, fmt.Errorf("metadata request canceled or timed out: %w", err)
-		}
-		return nil, fmt.Errorf("error executing metadata request: %w", err)
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		log.Error("Spreadsheet metadata request failed",
-			"status_code", resp.StatusCode,
-			"response", string(body),
-		)
-		return nil, fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(body))
+		return nil, fmt.Errorf("google drive api error %d: %s", resp.StatusCode, body)
+	}
+
+	var result GoogleFilesResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	return result.Files, nil
+}
+
+func (g *GoogleDriveHelper) fetchSpreadsheetMetadata(
+	ctx context.Context,
+	spreadsheetID string,
+) (*GoogleFile, error) {
+	reqURL := fmt.Sprintf(
+		"https://www.googleapis.com/drive/v3/files/%s?fields=name&key=%s",
+		spreadsheetID,
+		g.apiKey,
+	)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, reqURL, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := g.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("metadata api error %d: %s", resp.StatusCode, body)
 	}
 
 	var file GoogleFile
 	if err := json.NewDecoder(resp.Body).Decode(&file); err != nil {
-		return nil, fmt.Errorf("error decoding metadata response: %w", err)
+		return nil, err
 	}
 
-	log.Debug("Successfully retrieved spreadsheet metadata", "name", file.Name)
 	return &file, nil
 }
 
-func (g *GoogleDriveHelper) isExcelFile(filename string) bool {
-	isExcel := len(filename) > 5 && filename[len(filename)-5:] == ".xlsx"
-	log.Debug("Checking if file is Excel", "file", filename, "is_excel", isExcel)
-	return isExcel
+func (g *GoogleDriveHelper) extractFolderID(url string) string {
+	m := g.folderIDPattern.FindStringSubmatch(url)
+	if len(m) > 1 {
+		return m[1]
+	}
+	return ""
 }
 
-func (g *GoogleDriveHelper) containsExamKeyword(filename string) bool {
-	lowerName := strings.ToLower(filename)
-	keywords := []string{"examen", "exame", "exam", "horario", "clases"}
+func (g *GoogleDriveHelper) extractSpreadsheetID(url string) string {
+	m := g.spreadsheetIDPattern.FindStringSubmatch(url)
+	if len(m) > 1 {
+		return m[1]
+	}
+	return ""
+}
 
-	for _, keyword := range keywords {
-		if strings.Contains(lowerName, keyword) {
-			log.Debug("Filename contains exam keyword", "file", filename, "keyword", keyword)
+func (g *GoogleDriveHelper) isExcelFile(name string) bool {
+	return strings.HasSuffix(strings.ToLower(name), ".xlsx")
+}
+
+func (g *GoogleDriveHelper) containsExamKeyword(name string) bool {
+	n := strings.ToLower(name)
+	for _, k := range []string{"examen", "exame", "exam", "horario", "clases"} {
+		if strings.Contains(n, k) {
 			return true
 		}
 	}
-	log.Debug("Filename does not contain exam keywords", "file", filename)
 	return false
 }

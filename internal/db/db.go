@@ -18,10 +18,10 @@ var dbConnection *sql.DB
 func InitDB() error {
 	cfg := config.Get()
 
-	log.Info("Initializing database connection", "url", cfg.DatabaseURL)
+	log.Info("Initializing database connection", "url", cfg.Database.URL)
 
 	// Open database file connection
-	db, err := sql.Open("sqlite3", cfg.DatabaseURL)
+	db, err := sql.Open("sqlite3", cfg.Database.URL)
 	if err != nil {
 		return fmt.Errorf("error opening db: %w", err)
 	}
@@ -41,10 +41,10 @@ func InitDB() error {
 
 	dbConnection = db
 
-	migrateURL := "sqlite3://file:" + cfg.DatabaseURL + "?cache=shared&mode=rwc"
-	log.Debug("Running database migrations", "migrations_dir", cfg.MigrationsDir)
+	migrateURL := "sqlite3://file:" + cfg.Database.URL + "?cache=shared&mode=rwc"
+	log.Debug("Running database migrations", "migrations_dir", cfg.Database.MigrationsDir)
 
-	return runMigrations(cfg.MigrationsDir, migrateURL)
+	return runMigrations(cfg.Database.MigrationsDir, migrateURL)
 }
 
 func runMigrations(migrationsDir, databaseURL string) error {

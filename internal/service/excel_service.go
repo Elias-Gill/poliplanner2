@@ -46,10 +46,10 @@ func (s *ExcelService) SearchOnStartup(ctx context.Context) {
 }
 
 func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
-	key := config.Get().GoogleAPIKey
+	key := config.Get().Excel.GoogleAPIKey
 	scraper := scraper.NewWebScraper(scraper.NewGoogleDriveHelper(key))
 
-	newestSource, err := scraper.FindLatestDownloadSource()
+	newestSource, err := scraper.FindLatestDownloadSource(ctx)
 	if err != nil {
 		logger.Info("Scraper failed to retrieve latest source", "error", err)
 		return fmt.Errorf("error searching for excel versions: %w", err)
@@ -68,7 +68,7 @@ func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 		return nil
 	}
 
-	path, err := newestSource.DownloadThisSource()
+	path, err := newestSource.DownloadThisSource(ctx)
 	if err != nil {
 		logger.Info("Failed to download source", "source", newestSource.URL, "error", err)
 		return fmt.Errorf("error downloading latest excel: %w", err)
@@ -78,7 +78,7 @@ func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 }
 
 func (s *ExcelService) ParseExcelFile(ctx context.Context, path string, name string, url string) error {
-	parserExcel, err := parser.NewExcelParser(config.Get().LayoutsDir, path)
+	parserExcel, err := parser.NewExcelParser(config.Get().Paths.LayoutsDir, path)
 	if err != nil {
 		return fmt.Errorf("error creating excel parser: %w", err)
 	}
@@ -106,7 +106,7 @@ func (s *ExcelService) ParseExcelFile(ctx context.Context, path string, name str
 		return rollback(err)
 	}
 
-	metadata := parser.NewSubjectMetadataLoader(config.Get().MetadataDir)
+	metadata := parser.NewSubjectMetadataLoader(config.Get().Paths.MetadataDir)
 
 	for parserExcel.NextSheet() {
 		result, perr := parserExcel.ParseCurrentSheet()

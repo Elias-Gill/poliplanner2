@@ -1,6 +1,7 @@
 package router
 
 import (
+	"context"
 	"html/template"
 	"io"
 	"net/http"
@@ -16,7 +17,7 @@ import (
 const maxUploadSize = 8 << 20 // 8MB
 
 func NewExcelRouter(service *service.ExcelService) func(r chi.Router) {
-	key := config.Get().UPDATE_KEY
+	key := config.Get().Security.UpdateKey
 	layout := web.BaseLayout
 
 	return func(r chi.Router) {
@@ -94,7 +95,10 @@ func handleFileUpload(w http.ResponseWriter, r *http.Request, service *service.E
 }
 
 func handleSyncRequest(w http.ResponseWriter, r *http.Request, service *service.ExcelService) {
-	err := service.SearchNewestExcel(r.Context())
+	ctx, cancel := context.WithTimeout(r.Context(), config.Get().Excel.ScraperTimeout)
+	defer cancel()
+
+	err := service.SearchNewestExcel(ctx)
 	if err != nil {
 		http.Error(w, "Cannot parse excel: "+err.Error(), http.StatusInternalServerError)
 		return
