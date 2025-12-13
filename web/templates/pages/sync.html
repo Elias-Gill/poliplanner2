@@ -1,0 +1,104 @@
+{{define "custom_head"}}
+<head>
+  <title>Excel dashboard</title>
+</head>
+{{end}}
+{{define "content"}}
+<main>
+  <h1>Sync Excel Dashboard</h1>
+  <section>
+    <h2>Trigger autonomous update</h2>
+    <form id="syncForm">
+      <label for="syncKey">Password:</label>
+      <input type="password" id="syncKey" name="syncKey" required />
+      <br />
+      <br />
+      <button type="submit">Sync Excel</button>
+    </form>
+    <div id="syncResult"></div>
+  </section>
+  <hr />
+  <section>
+    <h2>Upload file manually</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+      <label for="uploadKey">Password:</label>
+      <input type="password" id="uploadKey" name="uploadKey" required />
+      <br />
+      <br />
+      <label for="downloadUrl">Download URL (optional):</label>
+      <input type="url" id="downloadUrl" name="downloadUrl" placeholder="https://example.com/file.xlsx" />
+      <br />
+      <br />
+      <label for="fileInput">Choose Excel file:</label>
+      <input type="file" id="fileInput" name="file" accept=".xls,.xlsx" required />
+      <br />
+      <br />
+      <button type="submit">Upload File</button>
+    </form>
+  </section>
+  <div id="uploadResult"></div>
+  <script>
+    // Handle sync form submission
+    document.getElementById('syncForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const key = document.getElementById('syncKey').value;
+        const resultEl = document.getElementById('syncResult');
+
+        try {
+            const response = await fetch('/excel/sync', {
+                method: 'POST',
+                headers: {
+                    'Authorization': "Bearer " + key
+                }
+            });
+
+            if (response.ok) {
+                resultEl.textContent = 'Sync request succeeded.';
+            } else {
+                const text = await response.text();
+                resultEl.textContent = `Sync failed: ${text}`;
+            }
+        } catch (err) {
+            resultEl.textContent = `Error: ${err.message}`;
+        }
+    });
+
+    // Handle upload form submission
+    document.getElementById('uploadForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const key = document.getElementById('uploadKey').value;
+        const fileInput = document.getElementById('fileInput');
+        const downloadUrlInput = document.getElementById('downloadUrl');
+        const resultEl = document.getElementById('uploadResult');
+
+        if (fileInput.files.length === 0) {
+            resultEl.textContent = 'Please select a file.';
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        formData.append('downloadUrl', downloadUrlInput.value);
+
+        try {
+            const response = await fetch('/excel/sync', {
+                method: 'POST',
+                headers: {
+                    'Authorization': "Bearer " + key
+                },
+                body: formData
+            });
+
+            if (response.ok) {
+                resultEl.textContent = 'File uploaded successfully.';
+            } else {
+                const text = await response.text();
+                resultEl.textContent = `Upload failed: ${text}`;
+            }
+        } catch (err) {
+            resultEl.textContent = `Error: ${err.message}`;
+        }
+    });
+  </script>
+</main>
+{{end}}

@@ -58,13 +58,17 @@ func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 		return nil
 	}
 
-	file, err := newestSource.DownloadThisSource()
+	path, err := newestSource.DownloadThisSource()
 	if err != nil {
 		logger.Info("failed to download source", "source", newestSource.URL, "error", err)
 		return fmt.Errorf("error downloading latest excel: %w", err)
 	}
 
-	parserExcel, err := parser.NewExcelParser(config.Get().LayoutsDir, file)
+	return s.ParseExcelFile(ctx, path, newestSource.FileName, newestSource.URL)
+}
+
+func (s *ExcelService) ParseExcelFile(ctx context.Context, path string, name string, url string) error {
+	parserExcel, err := parser.NewExcelParser(config.Get().LayoutsDir, path)
 	if err != nil {
 		return fmt.Errorf("error creating excel parser: %w", err)
 	}
@@ -83,8 +87,8 @@ func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 	}
 
 	version := &model.SheetVersion{
-		FileName: newestSource.FileName,
-		URL:      newestSource.URL,
+		FileName: name,
+		URL:      url,
 	}
 
 	if err := s.sheetVersionStorer.Insert(ctx, tx, version); err != nil {
@@ -111,7 +115,7 @@ func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 			return rollback(err)
 		}
 
-		logger.Info("persisting subjects from career", "career", career.CareerCode, "num_subjects", len(result.Subjects))
+		logger.Info("persisting subjects from career", "career", career.CareerCode, "num_subjects", len(result.Subjects), "cache_hits", metadata.CacheHits)
 
 		insertedCount := 0
 		for _, sub := range result.Subjects {
@@ -139,6 +143,6 @@ func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 		return rollback(err)
 	}
 
-	logger.Info("excel import completed successfully", "file", newestSource.FileName, "url", newestSource.URL)
+	logger.Info("excel import completed successfully", "file", name, "url", url)
 	return nil
 }
