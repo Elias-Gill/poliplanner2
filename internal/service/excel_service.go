@@ -111,6 +111,9 @@ func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 			return rollback(err)
 		}
 
+		logger.Info("persisting subjects from career", "career", career.CareerCode, "num_subjects", len(result.Subjects))
+
+		insertedCount := 0
 		for _, sub := range result.Subjects {
 			subject := mapper.MapToSubject(sub)
 
@@ -125,7 +128,10 @@ func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 				logger.Error("error persisting subject", "error", err)
 				return rollback(err)
 			}
+			insertedCount++
 		}
+
+		logger.Info("persisted subjects from career", "career", career.CareerCode, "inserted_subjects", insertedCount)
 	}
 
 	if err := tx.Commit(); err != nil {
@@ -133,5 +139,6 @@ func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 		return rollback(err)
 	}
 
+	logger.Info("excel import completed successfully", "file", newestSource.FileName, "url", newestSource.URL)
 	return nil
 }
