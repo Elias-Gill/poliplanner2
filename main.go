@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"net/http"
+	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/auth"
 	"github.com/elias-gill/poliplanner2/internal/config"
@@ -52,6 +54,14 @@ func main() {
 	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./web/static"))))
 	// 404 - Not found
 	r.NotFound(router.NotFoundHandler)
+
+	go func() {
+		// 30 seconds has to be more than enough, even when google drive is slow
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+		defer cancel()
+		// The result of this operation is irrelevant
+		services.ExcelService.SearchOnStartup(ctx)
+	}()
 
 	// Start Server
 	log.Info("Server is running", "addr", cfg.ServerAddr)

@@ -2,8 +2,12 @@ package store
 
 import (
 	"context"
+	"database/sql"
+	"errors"
+	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
+	"github.com/elias-gill/poliplanner2/internal/logger"
 )
 
 type SqliteSheetVersionStore struct {
@@ -43,4 +47,45 @@ func (s SqliteSheetVersionStore) GetNewest(ctx context.Context, exec Executor) (
 		return nil, err
 	}
 	return sv, nil
+}
+
+func (s SqliteSheetVersionStore) HasToUpdate(ctx context.Context, exec Executor) bool {
+	const id = 1
+	var lastCheckedAt string
+
+	err := exec.QueryRowContext(ctx, `SELECT last_checked_at FROM auto_sync_excel_check WHERE id = ?`, id).Scan(&lastCheckedAt)
+	if err != nil {
+		// If no row, initialize it and return true to trigger update
+		if errors.Is(err, sql.ErrNoRows) {
+			_, err := exec.ExecContext(ctx, `INSERT INTO auto_sync_excel_check (id, last_checked_at) VALUES (?, ?)`, id, time.Now().Format(time.RFC3339))
+			if err != nil {
+				logger.Error("Error on auto sync table insert", "error", err)
+			}
+			return true
+		}
+
+		logger.Error("Error querying auto sync table", "error", err)
+		// Do NOT trigger update on error, just log and return false
+		return false
+	}
+
+	// Parse time
+	lastChecked, err := time.Parse(time.RFC3339, lastCheckedAt)
+	if err != nil {
+		logger.Error("Error parsing last update date", "error", err)
+		// Do NOT trigger update on parsing error, just log and return false
+		return false
+	}
+
+	// Check if last check was more than 2 days ago
+	if time.Since(lastChecked) > 48*time.Hour {
+		// Update the timestamp to now
+		_, err := exec.ExecContext(ctx, `UPDATE auto_sync_excel_check SET last_checked_at = ? WHERE id = ?`, time.Now().Format(time.RFC3339), id)
+		if err != nil {
+			logger.Error("Error updating last_checked_at", "error", err)
+		}
+		return true
+	}
+
+	return false
 }

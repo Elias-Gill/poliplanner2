@@ -35,6 +35,16 @@ func NewExcelService(
 	}
 }
 
+func (s *ExcelService) SearchOnStartup(ctx context.Context) {
+	if s.sheetVersionStorer.HasToUpdate(ctx, s.db) {
+		logger.Info("Automatic search for new excel versions started")
+		err := s.SearchNewestExcel(ctx)
+		if err != nil {
+			logger.Error("Error on automatic version sync", "error", err)
+		}
+	}
+}
+
 func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 	key := config.Get().GoogleAPIKey
 	scraper := scraper.NewWebScraper(scraper.NewGoogleDriveHelper(key))
