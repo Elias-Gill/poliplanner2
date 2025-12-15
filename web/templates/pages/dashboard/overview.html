@@ -98,7 +98,7 @@
         <span class="badge-container">
           <span class="date-badge">{{ .Partial1Date.Time.Format "02/01" }}</span>
           {{ if .Partial1Time.Valid }}
-          <span class="date-badge">{{ .Partial1Time.String }}</span>
+          <span class="date-badge">{{ .Partial1Time.String }}hs</span>
           {{ else }}
           <span class="date-badge">Hora pendiente</span>
           {{ end }}
@@ -119,7 +119,7 @@
         <span class="badge-container">
           <span class="date-badge">{{ .Partial2Date.Time.Format "02/01" }}</span>
           {{ if .Partial2Time.Valid }}
-          <span class="date-badge">{{ .Partial2Time.String }}</span>
+          <span class="date-badge">{{ .Partial2Time.String }}hs</span>
           {{ else }}
           <span class="date-badge">Hora pendiente</span>
           {{ end }}
@@ -142,14 +142,25 @@
         <span class="badge-container">
           <span class="date-badge">{{ .Final1Date.Time.Format "02/01" }}</span>
           {{ if .Final1Time.Valid }}
-          <span class="date-badge">{{ .Final1Time.String }}</span>
+          <span class="date-badge">{{ .Final1Time.String }}hs</span>
           {{ else }}
           <span class="date-badge">Hora pendiente</span>
           {{ end }}
         </span>
-        {{ if .Final1Room.Valid }}
-        <div><small>Aula: {{ .Final1Room.String }}</small></div>
-        {{ end }}
+        <div><small>
+            {{ if .Final1Room.Valid }}
+            Aula: {{ .Final1Room.String }}
+            <br>
+            {{ end }}
+            {{ if .Final1RevDate.Valid }}
+            <br>
+            Revision: {{ .Final1RevDate.Time.Format "02/01/2006" }}
+            <br>
+            {{ end }}
+            {{ if .Final1RevTime.Valid }}
+            Hora revision: {{ .Final1RevTime.String }}hs
+            {{ end }}
+          </small></div>
       </article>
       {{ end }}
       {{ end }}
@@ -163,14 +174,25 @@
         <span class="badge-container">
           <span class="date-badge">{{ .Final2Date.Time.Format "02/01" }}</span>
           {{ if .Final2Time.Valid }}
-          <span class="date-badge">{{ .Final2Time.String }}</span>
+          <span class="date-badge">{{ .Final2Time.String }}hs</span>
           {{ else }}
           <span class="date-badge">Hora pendiente</span>
           {{ end }}
         </span>
-        {{ if .Final2Room.Valid }}
-        <div><small>Aula: {{ .Final2Room.String }}</small></div>
-        {{ end }}
+        <div><small>
+            {{ if .Final2Room.Valid }}
+            Aula: {{ .Final2Room.String }}
+            <br>
+            {{ end }}
+            {{ if .Final2RevDate.Valid }}
+            <br>
+            Revision: {{ .Final2RevDate.Time.Format "02/01/2006" }}
+            <br>
+            {{ end }}
+            {{ if .Final2RevTime.Valid }}
+            Hora revision: {{ .Final2RevTime.String }}hs
+            {{ end }}
+          </small></div>
       </article>
       {{ end }}
       {{ end }}

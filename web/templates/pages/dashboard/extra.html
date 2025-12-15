@@ -12,7 +12,7 @@
         {{- end }}
         {{- if ne .TeacherEmail "" }}
         <span style="font-weight: var(--font-weight-semibold);">Email:</span>
-        <span>{{ .TeacherEmail }}</span><br>
+        <a href="mailto:{{.TeacherEmail}}"><span>{{ .TeacherEmail }}</span></a><br>
         {{- end }}
         {{- if ne .Section "" }}
         <span style="font-weight: var(--font-weight-semibold);">Sección:</span>

@@ -31,7 +31,7 @@
       <li style="margin-bottom: 1rem;">
         <strong>Lunes</strong><br>
         <small>
-          <strong>Horario:</strong> {{.Monday.String}}<br>
+          <strong>Horario:</strong> {{.Monday.String}}hs<br>
           {{if .MondayRoom.Valid}}
           <strong>Aula:</strong> {{.MondayRoom.String}}
           {{end}}
@@ -42,7 +42,7 @@
       <li style="margin-bottom: 1rem;">
         <strong>Martes</strong><br>
         <small>
-          <strong>Horario:</strong> {{.Tuesday.String}}<br>
+          <strong>Horario:</strong> {{.Tuesday.String}}hs<br>
           {{if .TuesdayRoom.Valid}}
           <strong>Aula:</strong> {{.TuesdayRoom.String}}
           {{end}}
@@ -53,7 +53,7 @@
       <li style="margin-bottom: 1rem;">
         <strong>Miércoles</strong><br>
         <small>
-          <strong>Horario:</strong> {{.Wednesday.String}}<br>
+          <strong>Horario:</strong> {{.Wednesday.String}}hs<br>
           {{if .WednesdayRoom.Valid}}
           <strong>Aula:</strong> {{.WednesdayRoom.String}}
           {{end}}
@@ -64,7 +64,7 @@
       <li style="margin-bottom: 1rem;">
         <strong>Jueves</strong><br>
         <small>
-          <strong>Horario:</strong> {{.Thursday.String}}<br>
+          <strong>Horario:</strong> {{.Thursday.String}}hs<br>
           {{if .ThursdayRoom.Valid}}
           <strong>Aula:</strong> {{.ThursdayRoom.String}}
           {{end}}
@@ -75,7 +75,7 @@
       <li style="margin-bottom: 1rem;">
         <strong>Viernes</strong><br>
         <small>
-          <strong>Horario:</strong> {{.Friday.String}}<br>
+          <strong>Horario:</strong> {{.Friday.String}}hs<br>
           {{if .FridayRoom.Valid}}
           <strong>Aula:</strong> {{.FridayRoom.String}}
           {{end}}
@@ -86,7 +86,7 @@
       <li style="margin-bottom: 1rem;">
         <strong>Sábado</strong><br>
         <small>
-          <strong>Horario:</strong> {{.Saturday.String}}<br>
+          <strong>Horario:</strong> {{.Saturday.String}}hs<br>
           {{if .SaturdayRoom.Valid}}
           <strong>Aula:</strong> {{.SaturdayRoom.String}}
           {{end}}
@@ -105,7 +105,7 @@
         <small>
           <strong>Fecha:</strong> {{.Partial1Date.Time.Format "02/01/2006"}}<br>
           {{if .Partial1Time.Valid}}
-          <strong>Hora:</strong> {{.Partial1Time.String}}<br>
+          <strong>Hora:</strong> {{.Partial1Time.String}}hs<br>
           {{end}}
           {{if .Partial1Room.Valid}}
           <strong>Aula:</strong> {{.Partial1Room.String}}
@@ -119,7 +119,7 @@
         <small>
           <strong>Fecha:</strong> {{.Partial2Date.Time.Format "02/01/2006"}}<br>
           {{if .Partial2Time.Valid}}
-          <strong>Hora:</strong> {{.Partial2Time.String}}<br>
+          <strong>Hora:</strong> {{.Partial2Time.String}}hs<br>
           {{end}}
           {{if .Partial2Room.Valid}}
           <strong>Aula:</strong> {{.Partial2Room.String}}
@@ -133,24 +133,19 @@
         <small>
           <strong>Fecha:</strong> {{.Final1Date.Time.Format "02/01/2006"}}<br>
           {{if .Final1Time.Valid}}
-          <strong>Hora:</strong> {{.Final1Time.String}}<br>
+          <strong>Hora:</strong> {{.Final1Time.String}}hs<br>
           {{end}}
           {{if .Final1Room.Valid}}
           <strong>Aula:</strong> {{.Final1Room.String}}
           {{end}}
-        </small>
-      </li>
-      {{if .Final1RevDate.Valid}}
-      <li style="margin-bottom: 1rem; margin-left: 1rem;">
-        <em>Revisión Final 1</em><br>
-        <small>
-          <strong>Fecha:</strong> {{.Final1RevDate.Time.Format "02/01/2006"}}<br>
+          {{if .Final1RevDate.Valid}}
+          <strong>Revision:</strong> {{.Final1RevDate.Time.Format "02/01/2006"}}<br>
+          {{end}}
           {{if .Final1RevTime.Valid}}
-          <strong>Hora:</strong> {{.Final1RevTime.String}}
+          <strong>Hora revision:</strong> {{.Final1RevTime.String}}hs
           {{end}}
         </small>
       </li>
-      {{end}}
       {{end}}
       {{if .Final2Date.Valid}}
       <li style="margin-bottom: 1rem;">
@@ -158,24 +153,19 @@
         <small>
           <strong>Fecha:</strong> {{.Final2Date.Time.Format "02/01/2006"}}<br>
           {{if .Final2Time.Valid}}
-          <strong>Hora:</strong> {{.Final2Time.String}}<br>
+          <strong>Hora:</strong> {{.Final2Time.String}}hs<br>
           {{end}}
           {{if .Final2Room.Valid}}
           <strong>Aula:</strong> {{.Final2Room.String}}
           {{end}}
-        </small>
-      </li>
-      {{if .Final2RevDate.Valid}}
-      <li style="margin-bottom: 1rem; margin-left: 1rem;">
-        <em>Revisión Final 2</em><br>
-        <small>
-          <strong>Fecha:</strong> {{.Final2RevDate.Time.Format "02/01/2006"}}<br>
+          {{if .Final2RevDate.Valid}}
+          <strong>Revision:</strong> {{.Final2RevDate.Time.Format "02/01/2006"}}<br>
+          {{end}}
           {{if .Final2RevTime.Valid}}
-          <strong>Hora:</strong> {{.Final2RevTime.String}}
+          <strong>Hora revision:</strong> {{.Final2RevTime.String}}hs
           {{end}}
         </small>
       </li>
-      {{end}}
       {{end}}
     </ul>
   </section>
