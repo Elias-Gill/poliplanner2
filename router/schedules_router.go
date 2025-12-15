@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
+	"github.com/elias-gill/poliplanner2/internal/db/store"
 	"github.com/elias-gill/poliplanner2/internal/logger"
 	"github.com/elias-gill/poliplanner2/internal/service"
 	"github.com/elias-gill/poliplanner2/web"
@@ -78,7 +79,7 @@ func NewSchedulesRouter(
 			}
 
 			// Template data
-			data := struct{ Subjects []*model.Subject }{
+			data := struct{ Subjects []*store.SubjectListItem }{
 				Subjects: subjects,
 			}
 

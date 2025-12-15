@@ -28,10 +28,23 @@ type CareerStorer interface {
 	GetBySheetVersion(ctx context.Context, exec Executor, versionID int64) ([]*model.Career, error)
 }
 
+// Light weight subjects info, used to optimize database retrieve when listing a lot of
+// subjects
+type SubjectListItem struct {
+	ID          int64
+	SubjectName string
+	Semester    int
+	Section     string
+
+	TeacherTitle    string
+	TeacherName     string
+	TeacherLastname string
+}
+
 type SubjectStorer interface {
 	Insert(ctx context.Context, exec Executor, careerID int64, s *model.Subject) error
 	GetByID(ctx context.Context, exec Executor, subjectID int64) (*model.Subject, error)
-	GetByCareerID(ctx context.Context, exec Executor, careerID int64) ([]*model.Subject, error)
+	GetByCareerID(ctx context.Context, exec Executor, careerID int64) ([]*SubjectListItem, error)
 }
 
 type ScheduleStorer interface {

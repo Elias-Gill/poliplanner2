@@ -78,7 +78,7 @@ func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 }
 
 func (s *ExcelService) ParseExcelFile(ctx context.Context, path string, name string, url string) error {
-	parserExcel, err := parser.NewExcelParser(config.Get().Paths.LayoutsDir, path)
+	parserExcel, err := parser.NewExcelParser(config.Get().Paths.ExcelParsingLayoutsDir, path)
 	if err != nil {
 		return fmt.Errorf("error creating excel parser: %w", err)
 	}
@@ -106,7 +106,7 @@ func (s *ExcelService) ParseExcelFile(ctx context.Context, path string, name str
 		return rollback(err)
 	}
 
-	metadata := parser.NewSubjectMetadataLoader(config.Get().Paths.MetadataDir)
+	metadata := parser.NewSubjectMetadataLoader(config.Get().Paths.SubjectsMetadataDir)
 
 	for parserExcel.NextSheet() {
 		result, perr := parserExcel.ParseCurrentSheet()

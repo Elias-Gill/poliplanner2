@@ -20,3 +20,12 @@ func extractUserID(r *http.Request) int64 {
 func isHtmx(r *http.Request) bool {
 	return r.Header.Get("HX-Request") == "true"
 }
+
+// Makes a correct redirect if the request is from htmx or is a simple http request
+func customRedirect(w http.ResponseWriter, r *http.Request, target string) {
+	if isHtmx(r) {
+		w.Header().Add("HX-redirect", target)
+	} else {
+		http.Redirect(w, r, target, http.StatusFound)
+	}
+}

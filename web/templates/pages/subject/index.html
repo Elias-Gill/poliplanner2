@@ -1,0 +1,108 @@
+{{define "content"}}
+<main>
+  <h1>Materias por carrera</h1>
+  <section id="careerSelector">
+    <label for="careerId"><h3>Carrera</h3></label>
+    <form>
+      <select>
+        <option disabled selected value="">Selecciona una carrera</option>
+        {{range .}}
+        <option
+            hx-get="/subject/list/{{.ID}}"
+            hx-target="#subjectsList"
+            hx-swap="innerHTML"
+            hx-trigger="click"
+            value="{{.ID}}">
+          {{.CareerCode}}
+        </option>
+        {{end}}
+      </select>
+    </form>
+  </section>
+  <section id="subjectsList">
+    <!-- HTMX injects subject list here -->
+  </section>
+
+  <!-- Modal fijo que siempre está en el DOM -->
+  <div id="subjectModal" class="modal-overlay" style="display: none;">
+    <div class="modal-dialog">
+      <!-- HTMX inyectará el contenido del modal aquí -->
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <style>
+    #subjectsList.htmx-swapping { opacity: 0; transition: opacity .2s ease-out; }
+    #subjectsList.htmx-settling { opacity: 1; transition: opacity .2s ease-in; }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    
+    .modal-dialog {
+      background: var(--color-bg);
+      padding: var(--space-xl);
+      width: 80%;
+      border-radius: var(--border-radius);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      position: relative;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    .modal-close-btn {
+      position: absolute;
+      top: 0.4rem;
+      right: 0.4rem;
+      padding: 0.35rem 0.75rem;
+    }
+  </style>
+
+  <script>
+    // Función global para cerrar el modal
+    window.closeSubjectModal = function() {
+      const modal = document.getElementById('subjectModal');
+      modal.style.display = 'none';
+      document.getElementById('modalContent').innerHTML = '';
+    };
+
+    // Manejar clic fuera del modal para cerrarlo
+    document.getElementById('subjectModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeSubjectModal();
+      }
+    });
+
+    // Manejar tecla ESC
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeSubjectModal();
+      }
+    });
+
+    // Escuchar cuando HTMX carga contenido en el modal
+    document.body.addEventListener('htmx:afterSwap', function(e) {
+      if (e.target.id === 'modalContent' && e.detail.xhr.status === 200) {
+        document.getElementById('subjectModal').style.display = 'flex';
+      }
+    });
+
+    // Opcional: cerrar modal antes de cargar nuevo contenido
+    document.body.addEventListener('htmx:beforeSwap', function(e) {
+      if (e.target.id === 'modalContent') {
+        // Limpiar contenido previo
+        e.target.innerHTML = '';
+      }
+    });
+  </script>
+</main>
+{{end}}

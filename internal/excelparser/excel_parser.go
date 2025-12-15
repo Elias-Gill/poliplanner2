@@ -46,7 +46,6 @@ func NewExcelParser(layoutsDir string, file string) (*ExcelParser, error) {
 		fieldSetters: setters,
 	}
 
-	// FIX: error handling
 	return p, p.prepareParser(file)
 }
 

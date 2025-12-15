@@ -1,0 +1,214 @@
+<div class="modal-content">
+  <button class="modal-close-btn" onclick="closeSubjectModal()">×</button>
+  <div>
+    <p>
+      <h2>{{.SubjectName}}</h2>
+      <small>
+        <strong>Departamento:</strong> {{.Department}}
+        <br>
+        <strong>Semestre:</strong> {{.Semester}}
+        <br>
+        <strong>Sección:</strong> {{.Section}}
+      </small>
+    </p>
+  </div>
+  <hr>
+  <section>
+    <h3>Docente</h3>
+    <p>
+      {{- if ne .TeacherName "" }}
+      <span>{{ .TeacherTitle }} {{ .TeacherLastname }}, {{ .TeacherName }}</span><br>
+      {{- end }}
+      {{- if ne .TeacherEmail "" }}
+      <a href="mailto:{{.TeacherEmail}}">{{ .TeacherEmail }}</a><br>
+      {{- end }}
+    </p>
+  </section>
+  <section>
+    <h3>Horario semanal</h3>
+    <ul>
+      {{if .Monday.Valid}}
+      <li style="margin-bottom: 1rem;">
+        <strong>Lunes</strong><br>
+        <small>
+          <strong>Horario:</strong> {{.Monday.String}}<br>
+          {{if .MondayRoom.Valid}}
+          <strong>Aula:</strong> {{.MondayRoom.String}}
+          {{end}}
+        </small>
+      </li>
+      {{end}}
+      {{if .Tuesday.Valid}}
+      <li style="margin-bottom: 1rem;">
+        <strong>Martes</strong><br>
+        <small>
+          <strong>Horario:</strong> {{.Tuesday.String}}<br>
+          {{if .TuesdayRoom.Valid}}
+          <strong>Aula:</strong> {{.TuesdayRoom.String}}
+          {{end}}
+        </small>
+      </li>
+      {{end}}
+      {{if .Wednesday.Valid}}
+      <li style="margin-bottom: 1rem;">
+        <strong>Miércoles</strong><br>
+        <small>
+          <strong>Horario:</strong> {{.Wednesday.String}}<br>
+          {{if .WednesdayRoom.Valid}}
+          <strong>Aula:</strong> {{.WednesdayRoom.String}}
+          {{end}}
+        </small>
+      </li>
+      {{end}}
+      {{if .Thursday.Valid}}
+      <li style="margin-bottom: 1rem;">
+        <strong>Jueves</strong><br>
+        <small>
+          <strong>Horario:</strong> {{.Thursday.String}}<br>
+          {{if .ThursdayRoom.Valid}}
+          <strong>Aula:</strong> {{.ThursdayRoom.String}}
+          {{end}}
+        </small>
+      </li>
+      {{end}}
+      {{if .Friday.Valid}}
+      <li style="margin-bottom: 1rem;">
+        <strong>Viernes</strong><br>
+        <small>
+          <strong>Horario:</strong> {{.Friday.String}}<br>
+          {{if .FridayRoom.Valid}}
+          <strong>Aula:</strong> {{.FridayRoom.String}}
+          {{end}}
+        </small>
+      </li>
+      {{end}}
+      {{if .Saturday.Valid}}
+      <li style="margin-bottom: 1rem;">
+        <strong>Sábado</strong><br>
+        <small>
+          <strong>Horario:</strong> {{.Saturday.String}}<br>
+          {{if .SaturdayRoom.Valid}}
+          <strong>Aula:</strong> {{.SaturdayRoom.String}}
+          {{end}}
+        </small>
+      </li>
+      {{end}}
+    </ul>
+  </section>
+  {{if or .Partial1Date.Valid .Partial2Date.Valid .Final1Date.Valid .Final2Date.Valid}}
+  <section>
+    <h3>Exámenes</h3>
+    <ul>
+      {{if .Partial1Date.Valid}}
+      <li style="margin-bottom: 1rem;">
+        <strong>Parcial 1</strong><br>
+        <small>
+          <strong>Fecha:</strong> {{.Partial1Date.Time.Format "02/01/2006"}}<br>
+          {{if .Partial1Time.Valid}}
+          <strong>Hora:</strong> {{.Partial1Time.String}}<br>
+          {{end}}
+          {{if .Partial1Room.Valid}}
+          <strong>Aula:</strong> {{.Partial1Room.String}}
+          {{end}}
+        </small>
+      </li>
+      {{end}}
+      {{if .Partial2Date.Valid}}
+      <li style="margin-bottom: 1rem;">
+        <strong>Parcial 2</strong><br>
+        <small>
+          <strong>Fecha:</strong> {{.Partial2Date.Time.Format "02/01/2006"}}<br>
+          {{if .Partial2Time.Valid}}
+          <strong>Hora:</strong> {{.Partial2Time.String}}<br>
+          {{end}}
+          {{if .Partial2Room.Valid}}
+          <strong>Aula:</strong> {{.Partial2Room.String}}
+          {{end}}
+        </small>
+      </li>
+      {{end}}
+      {{if .Final1Date.Valid}}
+      <li style="margin-bottom: 1rem;">
+        <strong>Final 1</strong><br>
+        <small>
+          <strong>Fecha:</strong> {{.Final1Date.Time.Format "02/01/2006"}}<br>
+          {{if .Final1Time.Valid}}
+          <strong>Hora:</strong> {{.Final1Time.String}}<br>
+          {{end}}
+          {{if .Final1Room.Valid}}
+          <strong>Aula:</strong> {{.Final1Room.String}}
+          {{end}}
+        </small>
+      </li>
+      {{if .Final1RevDate.Valid}}
+      <li style="margin-bottom: 1rem; margin-left: 1rem;">
+        <em>Revisión Final 1</em><br>
+        <small>
+          <strong>Fecha:</strong> {{.Final1RevDate.Time.Format "02/01/2006"}}<br>
+          {{if .Final1RevTime.Valid}}
+          <strong>Hora:</strong> {{.Final1RevTime.String}}
+          {{end}}
+        </small>
+      </li>
+      {{end}}
+      {{end}}
+      {{if .Final2Date.Valid}}
+      <li style="margin-bottom: 1rem;">
+        <strong>Final 2</strong><br>
+        <small>
+          <strong>Fecha:</strong> {{.Final2Date.Time.Format "02/01/2006"}}<br>
+          {{if .Final2Time.Valid}}
+          <strong>Hora:</strong> {{.Final2Time.String}}<br>
+          {{end}}
+          {{if .Final2Room.Valid}}
+          <strong>Aula:</strong> {{.Final2Room.String}}
+          {{end}}
+        </small>
+      </li>
+      {{if .Final2RevDate.Valid}}
+      <li style="margin-bottom: 1rem; margin-left: 1rem;">
+        <em>Revisión Final 2</em><br>
+        <small>
+          <strong>Fecha:</strong> {{.Final2RevDate.Time.Format "02/01/2006"}}<br>
+          {{if .Final2RevTime.Valid}}
+          <strong>Hora:</strong> {{.Final2RevTime.String}}
+          {{end}}
+        </small>
+      </li>
+      {{end}}
+      {{end}}
+    </ul>
+  </section>
+  {{end}}
+  {{if or .CommitteePresident.Valid .CommitteeMember1.Valid .CommitteeMember2.Valid}}
+  <section>
+    <h3>Tribunal Revisión</h3>
+    <ul>
+      {{if .CommitteePresident.Valid}}
+      <li><strong>Presidente:</strong><br>
+        <small> {{.CommitteePresident.String}} </small></li>
+      {{end}}
+      <li><strong>Miembros:</strong>
+        {{if .CommitteeMember1.Valid}}
+        <br>
+        <small>{{.CommitteeMember1.String}}</small>
+        {{end}}
+        {{if .CommitteeMember2.Valid}}
+        <br>
+        <small>{{.CommitteeMember2.String}}</small>
+        {{end}}
+      </li>
+    </ul>
+  </section>
+  {{end}}
+</div>
+<style>
+  .modal-content {
+    animation: modalFadeIn 0.25s ease;
+  }
+
+  @keyframes modalFadeIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+</style>

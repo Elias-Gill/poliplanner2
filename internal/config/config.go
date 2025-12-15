@@ -51,10 +51,10 @@ type DatabaseConfig struct {
 }
 
 type PathsConfig struct {
-	BaseDir      string
-	LayoutsDir   string
-	MetadataDir  string
-	DownloadsDir string
+	BaseDir                string
+	ExcelParsingLayoutsDir string
+	SubjectsMetadataDir    string
+	DownloadsDir           string
 }
 
 type ExcelConfig struct {
@@ -134,10 +134,10 @@ func MustLoad() {
 		},
 
 		Paths: PathsConfig{
-			BaseDir:      baseDir,
-			LayoutsDir:   filepath.Join(baseDir, "internal/excelparser/layouts"),
-			MetadataDir:  filepath.Join(baseDir, "internal/excelparser/metadata"),
-			DownloadsDir: resolvePath(baseDir, "DOWNLOADS_DIR", "tmp/poliplanner"),
+			BaseDir:                baseDir,
+			ExcelParsingLayoutsDir: filepath.Join(baseDir, "internal/excelparser/layouts"),
+			SubjectsMetadataDir:    filepath.Join(baseDir, "internal/excelparser/metadata"),
+			DownloadsDir:           resolvePath(baseDir, "DOWNLOADS_DIR", "tmp/poliplanner"),
 		},
 
 		Excel: ExcelConfig{

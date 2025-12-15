@@ -1,0 +1,123 @@
+<style>
+  .mb-1rem {
+    margin-bottom: 1rem;
+  }
+
+  .subjects-container-box {
+    max-height: 60vh;
+    overflow-y: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    background: var(--color-bg);
+    padding: 1rem;
+  }
+
+  .subject-item {
+    padding: .75rem;
+    border-bottom: 1px solid var(--color-border);
+    cursor: pointer;
+  }
+
+  .subject-item:hover {
+    background: var(--color-bg-hover);
+  }
+
+  .subject-title {
+    font-weight: bold;
+  }
+
+  .subject-meta {
+    font-size: 0.85rem;
+    opacity: 0.85;
+  }
+</style>
+<div class="schedule-container">
+  <div class="subjects-list-column">
+    <div class="mb-1rem">
+      <label for="semesterFilter">Filtrar por semestre:</label>
+      <select id="semesterFilter">
+        <option value="all" selected>Todos los semestres</option>
+      </select>
+    </div>
+    <div class="mb-1rem">
+      <label for="subjectSearch">Buscar por materia:</label>
+      <input type="text" id="subjectSearch" placeholder="Ej. Física">
+    </div>
+    {{if .}}
+    <div id="subjectsContainer" class="subjects-container-box"></div>
+    {{else}}
+    <p>No se encontraron materias.</p>
+    {{end}}
+  </div>
+</div>
+{{if .}}
+<script>
+  {
+    const subjectsRaw = [
+      {{range .}}
+      {
+        id: "{{.ID}}",
+        subjectName: "{{.SubjectName | js}}",
+        semester: {{.Semester}},
+        section: "{{.Section | js}}",
+        teacher: "{{.TeacherTitle | js}} {{.TeacherName | js}} {{.TeacherLastname | js}}"
+      },
+      {{end}}
+    ];
+
+    subjectsRaw.sort((a, b) => a.semester - b.semester);
+
+    const subjectsContainer = document.getElementById('subjectsContainer');
+    const searchInput = document.getElementById('subjectSearch');
+    const semesterFilter = document.getElementById('semesterFilter');
+
+    const uniqueSemesters = [...new Set(subjectsRaw.map(s => s.semester))];
+    uniqueSemesters.forEach(sem => {
+      const opt = document.createElement('option');
+      opt.value = sem;
+      opt.textContent = "Semestre " + sem;
+      semesterFilter.appendChild(opt);
+    });
+
+    function matchesFilters(sub) {
+      const sem = semesterFilter.value;
+      if (sem !== "all" && Number(sem) !== sub.semester) return false;
+
+      const q = searchInput.value.trim().toLowerCase();
+      if (!q) return true;
+
+      return sub.subjectName.toLowerCase().includes(q);
+    }
+
+    function renderSubjects() {
+      subjectsContainer.innerHTML = '';
+
+      subjectsRaw.filter(matchesFilters).forEach(sub => {
+        const div = document.createElement('div');
+        div.className = 'subject-item';
+
+        div.setAttribute('hx-get', `/subject/info/${sub.id}`);
+        div.setAttribute('hx-target', '#modalContent');
+        div.setAttribute('hx-swap', 'innerHTML');
+
+        div.innerHTML = `
+          <div class="subject-title">${sub.subjectName}</div>
+          <div class="subject-meta">
+            Semestre ${sub.semester} · Sección ${sub.section}<br>
+            ${sub.teacher || 'Sin docente asignado'}
+          </div>
+        `;
+
+        subjectsContainer.appendChild(div);
+      });
+
+      htmx.process(subjectsContainer);
+    }
+
+    searchInput.addEventListener('input', renderSubjects);
+    semesterFilter.addEventListener('change', renderSubjects);
+
+    renderSubjects();
+  }
+</script>
+{{end}}
