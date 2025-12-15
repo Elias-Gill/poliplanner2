@@ -2,27 +2,21 @@
 <main>
   <h1>Materias por carrera</h1>
   <section id="careerSelector">
-    <label for="careerId"><h3>Carrera</h3></label>
-    <form>
-      <select>
-        <option disabled selected value="">Selecciona una carrera</option>
-        {{range .}}
-        <option
-            hx-get="/subject/list/{{.ID}}"
-            hx-target="#subjectsList"
-            hx-swap="innerHTML"
-            hx-trigger="click"
-            value="{{.ID}}">
-          {{.CareerCode}}
-        </option>
-        {{end}}
-      </select>
-    </form>
+    <label for="careerId">
+      <h3>Carrera</h3>
+    </label>
+    <select onchange="htmx.ajax('GET', '/subject/list/' + this.value, {target:'#subjectsList', swap:'innerHTML'})">
+      <option value="" disabled >Seleccioná una materia</option>
+      {{ range . }}
+      <option value="{{.ID}}">{{.CareerCode}}</option>
+      {{ end }}
+    </select>
   </section>
-  <section id="subjectsList">
+  <section>
     <!-- HTMX injects subject list here -->
+    <div id="subjectsList">
+    </div>
   </section>
-
   <!-- Modal fijo que siempre está en el DOM -->
   <div id="subjectModal" class="modal-overlay" style="display: none;">
     <div class="modal-dialog">
@@ -30,7 +24,6 @@
       <div id="modalContent"></div>
     </div>
   </div>
-
   <style>
     #subjectsList.htmx-swapping { opacity: 0; transition: opacity .2s ease-out; }
     #subjectsList.htmx-settling { opacity: 1; transition: opacity .2s ease-in; }
@@ -47,7 +40,7 @@
       align-items: center;
       z-index: 2000;
     }
-    
+
     .modal-dialog {
       background: var(--color-bg);
       padding: var(--space-xl);
@@ -58,7 +51,7 @@
       max-height: 80vh;
       overflow-y: auto;
     }
-    
+
     .modal-close-btn {
       position: absolute;
       top: 0.4rem;
@@ -66,7 +59,6 @@
       padding: 0.35rem 0.75rem;
     }
   </style>
-
   <script>
     // Función global para cerrar el modal
     window.closeSubjectModal = function() {
