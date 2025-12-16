@@ -2,6 +2,7 @@ package scraper
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"io"
 	"net/http"
@@ -173,6 +174,10 @@ func (ws *WebScrapper) extractSourcesFromURL(
 		colly.Async(true),
 		colly.IgnoreRobotsTxt(),
 	)
+	collector.WithTransport(&http.Transport{
+		// Thanks FPUNA :[. Disable TLS verification.
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	})
 
 	collector.OnRequest(func(r *colly.Request) {
 		select {
