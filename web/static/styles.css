@@ -48,7 +48,7 @@
     --color-muted: oklch(0.7 0.02 240);
     --color-border: oklch(0.386 0.02 240);
 
-    --color-primary: oklch(0.4 0.1 240);
+    --color-primary: oklch(0.5 0.1 240);
     --color-success: oklch(0.65 0.14 160);
     --color-error: oklch(0.6 0.16 20);
     --color-warning: oklch(0.8 0.14 90);
@@ -85,8 +85,6 @@ footer {
 
 header {
     width: 100%;
-    padding-top: var(--space-sm);
-    /* background-color: #20232a; */
 }
 
 main {

@@ -57,13 +57,6 @@
       border: 1px solid var(--color-border);
       border-radius: var(--border-radius);
     }
-    .calendar-button {
-      padding: .4rem .6rem;
-      border-radius: var(--border-radius);
-      text-decoration: none;
-      border: 1px solid var(--color-border);
-      color: inherit;
-    }
     .error {
       background: #dc3545;
       color: #fff;
@@ -97,5 +90,44 @@
       transition: all .24s ease-in;
     }
   </style>
+  <script>
+    class ScriptLoader {
+        constructor(options) {
+            const { src, global, protocol = document.location.protocol } = options
+            this.src = src
+            this.global = global
+            this.protocol = protocol
+            this.isLoaded = false
+        }
+
+        loadScript() {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script')
+                script.type = 'text/javascript'
+                script.async = true
+                script.src = `${this.protocol}//${this.src}`
+
+                const el = document.getElementsByTagName('script')[0]
+                el.parentNode.insertBefore(script, el)
+
+                script.addEventListener('load', () => {
+                    this.isLoaded = true
+                    resolve(script)
+                })
+
+                script.addEventListener('error', () => {
+                    reject(new Error(`${this.src} failed to load.`))
+                })
+            })
+        }
+
+        async load() {
+            if (!this.isLoaded) {
+                await this.loadScript()
+            }
+            return window[this.global]
+        }
+    }
+  </script>
 </main>
 {{ end }}

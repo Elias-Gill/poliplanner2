@@ -1,4 +1,3 @@
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js"></script>
 <div id="calendar-container">
   <div id="calendar"></div>
 </div>
@@ -18,141 +17,65 @@
 </div>
 <script>
   function openModal(data) {
-    const overlay = document.getElementById("exam-modal-overlay");
-    const modal = document.getElementById("exam-modal");
+    document.getElementById("modal-title").textContent = data.materia
+    document.getElementById("modal-time").textContent = "Horario: " + data.hora
+    document.getElementById("modal-type").textContent = "Tipo: " + data.tipo
+    document.getElementById("modal-room").textContent =
+      data.aula ? ("Aula: " + data.aula) : ""
 
-    document.getElementById("modal-title").textContent = data.materia;
-    document.getElementById("modal-time").textContent = "Horario: " + data.hora;
-    document.getElementById("modal-type").textContent = "Tipo: " + data.tipo;
-    document.getElementById("modal-room").textContent = data.aula ? ("Aula: " + data.aula) : "";
-
-    overlay.classList.remove("hidden");
-    modal.classList.remove("hidden");
+    document.getElementById("exam-modal-overlay").classList.remove("hidden")
+    document.getElementById("exam-modal").classList.remove("hidden")
   }
 
   function closeModal() {
-    document.getElementById("exam-modal-overlay").classList.add("hidden");
-    document.getElementById("exam-modal").classList.add("hidden");
+    document.getElementById("exam-modal-overlay").classList.add("hidden")
+    document.getElementById("exam-modal").classList.add("hidden")
   }
 
-  document.getElementById("modal-close").onclick = closeModal;
-  document.getElementById("exam-modal-overlay").onclick = closeModal;
+  document.getElementById("modal-close").onclick = closeModal
+  document.getElementById("exam-modal-overlay").onclick = closeModal
 
-  function initCalendar() {
-    const el = document.getElementById('calendar');
-    if (!el) return;
-    if (el._fullCalendarInitialized) return;
-    el._fullCalendarInitialized = true;
+  async function initCalendar() {
+    const el = document.getElementById('calendar')
+    if (!el || el._fullCalendarInitialized) return
+    el._fullCalendarInitialized = true
 
-    // Leer colores desde CSS variables
-    const styles = getComputedStyle(document.documentElement);
-    const colorExam = styles.getPropertyValue('--color-error').trim();
-    const colorRevision = styles.getPropertyValue('--color-primary').trim();
+    const loader = new ScriptLoader({
+      src: 'cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js',
+      global: 'FullCalendar'
+    })
 
-    // Aquí creamos el arreglo con datos de la plantilla Go
-    // Nota: en tu plantilla Go debe generar solo datos básicos, sin color
+    const FullCalendar = await loader.load()
+
+    const styles = getComputedStyle(document.documentElement)
+    const colorExam = styles.getPropertyValue('--color-error').trim()
+    const colorRevision = styles.getPropertyValue('--color-primary').trim()
+
     const exams = [
       {{- $first := true -}}
       {{- range .Subjects }}
 
         {{- if .Partial1Date.Valid }}
-          {{- if not $first }},{{ end -}}
-          {{- $first = false -}}
-          {
-            title: "",
-            start: "{{.Partial1Date.Time.Format `2006-01-02`}}",
-            color: colorExam,
-            extendedProps: {
-              materia: "{{js .SubjectName}}",
-              tipo: "Primer Parcial",
-              hora: "{{.Partial1Time.String}}",
-              aula: "{{.Partial1Room.String}}"
-            }
+        {{- if not $first }},{{ end -}}{{- $first = false -}}
+        {
+          start: "{{.Partial1Date.Time.Format `2006-01-02`}}",
+          extendedProps: {
+            materia: "{{js .SubjectName}}",
+            tipo: "Primer Parcial",
+            hora: "{{.Partial1Time.String}}",
+            aula: "{{.Partial1Room.String}}"
           }
-        {{- end }}
-
-        {{- if .Partial2Date.Valid }}
-          {{- if not $first }},{{ end -}}
-          {{- $first = false -}}
-          {
-            title: "",
-            start: "{{.Partial2Date.Time.Format `2006-01-02`}}",
-            color: colorExam,
-            extendedProps: {
-              materia: "{{js .SubjectName}}",
-              tipo: "Segundo Parcial",
-              hora: "{{.Partial2Time.String}}",
-              aula: "{{.Partial2Room.String}}"
-            }
-          }
-        {{- end }}
-
-        {{- if .Final1Date.Valid }}
-          {{- if not $first }},{{ end -}}
-          {{- $first = false -}}
-          {
-            title: "",
-            start: "{{.Final1Date.Time.Format `2006-01-02`}}",
-            color: colorExam,
-            extendedProps: {
-              materia: "{{js .SubjectName}}",
-              tipo: "Primer Final",
-              hora: "{{.Final1Time.String}}",
-              aula: "{{.Final1Room.String}}"
-            }
-          }
-        {{- end }}
-
-        {{- if .Final1RevDate.Valid }}
-          {{- if not $first }},{{ end -}}
-          {{- $first = false -}}
-          {
-            title: "",
-            start: "{{.Final1RevDate.Time.Format `2006-01-02`}}",
-            color: colorRevision,
-            extendedProps: {
-              materia: "{{js .SubjectName}}",
-              tipo: "Revisión",
-              hora: "{{.Final1RevTime.String}}",
-              aula: ""
-            }
-          }
-        {{- end }}
-
-        {{- if .Final2Date.Valid }}
-          {{- if not $first }},{{ end -}}
-          {{- $first = false -}}
-          {
-            title: "",
-            start: "{{.Final2Date.Time.Format `2006-01-02`}}",
-            color: colorExam,
-            extendedProps: {
-              materia: "{{js .SubjectName}}",
-              tipo: "Segundo Final",
-              hora: "{{.Final2Time.String}}",
-              aula: "{{.Final2Room.String}}"
-            }
-          }
+        }
         {{- end }}
 
       {{- end }}
-    ];
+    ]
 
-    // FullCalendar no acepta variables JS directas en plantilla Go
-    // Por eso, debemos definir exams sin color aquí y asignar color tras crear el array:
-    // Por ahora, te recomiendo generar el array en Go solo con extendedProps y luego en JS asignar colores.
-
-    // Pero para que funcione el ejemplo, agrego una versión sin plantilla Go, sólo JS puro
-    // Si querés, dame los datos y te ayudo a armarlo mejor.
-
-    // Para que funcione esta plantilla tal cual, reemplaza colors hardcodeados así:
     exams.forEach(ev => {
-      if (ev.extendedProps.tipo.toLowerCase().includes('revisión')) {
-        ev.color = colorRevision;
-      } else {
-        ev.color = colorExam;
-      }
-    });
+      ev.color = ev.extendedProps.tipo.toLowerCase().includes('revisión')
+        ? colorRevision
+        : colorExam
+    })
 
     const calendar = new FullCalendar.Calendar(el, {
       initialView: 'dayGridMonth',
@@ -165,28 +88,29 @@
       },
       events: exams,
       eventDidMount(info) {
-        const { materia, tipo, hora, aula } = info.event.extendedProps;
-        info.el.style.color = 'white';
-        info.el.style.fontFamily = styles.getPropertyValue('--font-base').trim() || 'sans-serif';
+        const { materia, tipo, hora, aula } = info.event.extendedProps
+        info.el.style.color = 'white'
         info.el.innerHTML = `
-          <div style="font-weight:600;">${materia}</div>
-          <div style="font-size:0.85em; font-style:italic;">${tipo}</div>
-          <div style="font-size:0.8em;">${hora}${aula ? ' - ' + aula : ''}</div>
-        `;
+          <div style="font-weight:600">${materia}</div>
+          <div style="font-size:0.85em;font-style:italic">${tipo}</div>
+          <div style="font-size:0.8em">${hora}${aula ? ' - ' + aula : ''}</div>
+        `
       },
       eventClick(info) {
-        openModal(info.event.extendedProps);
+        openModal(info.event.extendedProps)
       }
-    });
+    })
 
-    calendar.render();
+    calendar.render()
   }
 
-  document.body.addEventListener('htmx:afterSwap', function(evt) {
+  document.body.addEventListener('htmx:afterSwap', (evt) => {
     if (evt.detail.target.id === 'schedule-detail') {
-      initCalendar();
+      initCalendar()
     }
-  });
+  })
+
+  initCalendar()
 </script>
 <style>
   .fc-event {
