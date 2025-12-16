@@ -93,11 +93,14 @@ func (g *GoogleDriveHelper) ListSourcesInURL(
 			continue
 		}
 
-		sources = append(sources, &ExcelDownloadSource{
+		source := &ExcelDownloadSource{
 			URL:        "https://drive.google.com/uc?export=download&id=" + file.ID,
 			FileName:   file.Name,
 			UploadDate: fileDate,
-		})
+		}
+		sources = append(sources, source)
+
+		log.Info("Google Drive source found", "url", source.URL, "date", source.UploadDate.String())
 	}
 
 	return sources, nil
