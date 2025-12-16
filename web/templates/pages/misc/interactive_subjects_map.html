@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Malla de materias</title>
+        <script src="https://unpkg.com/cytoscape@3.26.0/dist/cytoscape.min.js"></script>
+        <style>
+        body {
+            font-family: sans-serif;
+        }
+        #graph {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ccc;
+        }
+        </style>
+    </head>
+    <body>
+        <h1>Malla interactiva de materias</h1>
+        <p>Haz click sobre una materia para resaltar sus correlativas.</p>
+        <div id="graph"></div>
+        <script>
+        const elements = [
+            { data: { id: 'mat1', label: 'Álgebra I', semester: 1 } },
+            { data: { id: 'mat2', label: 'Análisis I', semester: 1 } },
+            { data: { id: 'mat3', label: 'Física I', semester: 1 } },
+
+            { data: { id: 'mat4', label: 'Álgebra II', semester: 2 } },
+            { data: { id: 'mat5', label: 'Análisis II', semester: 2 } },
+
+            { data: { source: 'mat1', target: 'mat4' } },
+            { data: { source: 'mat2', target: 'mat5' } },
+            { data: { source: 'mat3', target: 'mat5' } },
+        ];
+
+        const cy = cytoscape({
+            container: document.getElementById('graph'),
+            elements: elements,
+
+            style: [
+                {
+                    selector: 'node',
+                    style: {
+                        'label': 'data(label)',
+                        'text-valign': 'center',
+                        'text-halign': 'center',
+                        'background-color': '#4f46e5',
+                        'color': '#fff',
+                        'font-size': 12,
+                        'width': 60,
+                        'height': 60
+                    }
+                },
+                {
+                    selector: 'edge',
+                    style: {
+                        'line-color': '#94a3b8',
+                        'width': 2,
+                        'target-arrow-shape': 'triangle',
+                        'target-arrow-color': '#94a3b8',
+                        'curve-style': 'bezier'
+                    }
+                },
+                {
+                    selector: '.highlight',
+                    style: {
+                        'background-color': '#22c55e',
+                        'line-color': '#22c55e',
+                        'target-arrow-color': '#22c55e'
+                    }
+                },
+                {
+                    selector: '.faded',
+                    style: {
+                        'opacity': 0.2
+                    }
+                }
+            ],
+
+            layout: {
+                name: 'grid',
+                fit: true,
+                padding: 20,
+                sort: (a, b) => a.data('semester') - b.data('semester'),
+                position: (node) => {
+                    const semester = node.data('semester');
+                    const col = semester - 1;
+
+                    const nodesInSemester = elements
+                    .filter(e => e.data && e.data.semester === semester)
+                    .map(e => e.data.id);
+
+                    const row = nodesInSemester.indexOf(node.id());
+                    return { row, col };
+                }
+            }
+        });
+
+        cy.on('tap', 'node', (evt) => {
+            const node = evt.target;
+            cy.elements().removeClass('highlight faded');
+
+            const neighborhood = node.neighborhood().add(node);
+            neighborhood.addClass('highlight');
+            cy.elements().not(neighborhood).addClass('faded');
+        });
+
+        cy.on('tap', (evt) => {
+            if (evt.target === cy) {
+                cy.elements().removeClass('highlight faded');
+            }
+        });
+        </script>
+    </body>
+</html>

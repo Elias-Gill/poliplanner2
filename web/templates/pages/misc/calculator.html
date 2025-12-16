@@ -3,7 +3,6 @@
   <title>Calculadora - PoliPlanner</title>
 </head>
 {{ end }}
-
 {{ define "content" }}
 <main class="calc-root">
   <h1>Calculadora de Notas</h1>
@@ -20,7 +19,6 @@
       <button id="btnPonderado" type="button">Calcular</button>
     </form>
   </article>
-
   <article>
     <h2>B) Calcular promedio ponderado y examen</h2>
     <p>
@@ -34,14 +32,12 @@
           <label for="promParciales">Promedio Parciales (0–100)</label>
           <input type="number" id="promParciales" min="0" max="100" value="0" />
         </div>
-
         <div class="form-group">
           <label for="pesoTareas">Peso Tareas (%)</label>
           <input type="number" id="pesoTareas" min="0" max="100" value="0" />
           <label for="promTareas">Promedio Tareas (0–100)</label>
           <input type="number" id="promTareas" min="0" max="100" value="0" />
         </div>
-
         <div class="form-group">
           <label for="pesoLab">Peso Laboratorios (%)</label>
           <input type="number" id="pesoLab" min="0" max="100" value="0" />
@@ -52,7 +48,6 @@
       <button id="btnComponentes" type="button">Calcular</button>
     </form>
   </article>
-
   <article id="resultados">
     <h2>Puntajes mínimos requeridos</h2>
     <div class="table-container">
@@ -67,16 +62,13 @@
       </table>
     </div>
   </article>
-
   <section>
     Si quieres saber cómo se calculan las notas puedes visitar la guía de 
     <a href="/guides/calculo_notas">Cálculo de Notas</a>.
   </section>
-
   <script>
     /* tu JS intacto */
   </script>
-
   <style>
     .calc-root {
       max-width: 600px;
@@ -183,5 +175,82 @@
       text-decoration: underline;
     }
   </style>
+  <script>
+    const MIN_EXAM = 50;
+
+    const UMBRALES_NOTAS = [
+        { min: 91, nota: 5 },
+        { min: 81, nota: 4 },
+        { min: 71, nota: 3 },
+        { min: 60, nota: 2 },
+    ];
+
+    function calcularNotaFinal(ponderado, examen) {
+        const puntajeFinal = 0.4 * ponderado + 0.6 * examen;
+        for (const u of UMBRALES_NOTAS) {
+            if (puntajeFinal >= u.min) return u.nota;
+        }
+        return 1;
+    }
+
+    function calcularExamenNecesario(ponderado, notaDeseada) {
+        const u = UMBRALES_NOTAS.find(x => x.nota === notaDeseada);
+        if (!u) return NaN;
+
+        let examen = (u.min - 0.4 * ponderado) / 0.6;
+        examen = Math.max(examen, MIN_EXAM);
+        examen = Math.floor(examen);
+        return examen > 100 ? '-' : examen;
+    }
+
+    function calcularTabla(ponderado) {
+        const tbody = document.getElementById('resultadoTabla');
+        tbody.innerHTML = '';
+
+        for (let n = 5; n >= 2; n--) {
+            const req = calcularExamenNecesario(ponderado, n);
+            tbody.insertAdjacentHTML('beforeend', `
+    <tr>
+    <td>${n}</td>
+    <td>${req}</td>
+    </tr>
+    `);
+        }
+
+        document.getElementById('resultados').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    document.getElementById('btnPonderado').onclick = () => {
+        const v = parseInt(document.getElementById('inputPonderado').value);
+        if (isNaN(v) || v < 0 || v > 100) {
+            alert('Ingresa un promedio válido (0–100)');
+            return;
+        }
+        calcularTabla(v);
+    };
+
+    document.getElementById('btnComponentes').onclick = () => {
+        const p1 = parseInt(document.getElementById('pesoParciales').value) || 0;
+        const p2 = parseInt(document.getElementById('pesoTareas').value) || 0;
+        const p3 = parseInt(document.getElementById('pesoLab').value) || 0;
+
+        if (p1 + p2 + p3 !== 100) {
+            alert('La suma de los pesos debe ser 100');
+            return;
+        }
+
+        const m1 = parseInt(document.getElementById('promParciales').value);
+        const m2 = parseInt(document.getElementById('promTareas').value);
+        const m3 = parseInt(document.getElementById('promLab').value);
+
+        if ([m1, m2, m3].some(x => isNaN(x) || x < 0 || x > 100)) {
+            alert('Promedios deben ser números entre 0 y 100');
+            return;
+        }
+
+        const ponderado = (m1 * p1 + m2 * p2 + m3 * p3) / 100;
+        calcularTabla(ponderado);
+    };
+  </script>
 </main>
 {{ end }}
