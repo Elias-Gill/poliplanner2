@@ -33,6 +33,8 @@ type WebScrapper struct {
 	googleHelper *GoogleDriveHelper
 }
 
+const default_target = "https://www.pol.una.py/academico/horarios-de-clases-y-examenes/"
+
 // ================================
 // ======== Public API ============
 // ================================
@@ -55,10 +57,9 @@ var httpClient = &http.Client{
 }
 
 func NewWebScraper(googleHelper *GoogleDriveHelper) *WebScrapper {
-	uri := "https://www.pol.una.py/academico/horarios-de-clases-y-examenes/"
-	base, err := url.Parse(uri)
+	base, err := url.Parse(default_target)
 	if err != nil {
-		panic(fmt.Sprintf("Cannot parse uri: %s\n%+v", uri, err))
+		panic(fmt.Sprintf("Cannot parse uri: %s\n%+v", default_target, err))
 	}
 
 	if googleHelper == nil {
@@ -66,7 +67,7 @@ func NewWebScraper(googleHelper *GoogleDriveHelper) *WebScrapper {
 	}
 
 	return &WebScrapper{
-		targetURL:    uri,
+		targetURL:    default_target,
 		baseURL:      base,
 		googleHelper: googleHelper,
 	}

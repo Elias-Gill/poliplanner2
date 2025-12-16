@@ -2,7 +2,6 @@ package router
 
 import (
 	"context"
-	"html/template"
 	"io"
 	"net/http"
 	"os"
@@ -37,8 +36,7 @@ func NewExcelRouter(service *service.ExcelService) func(r chi.Router) {
 		})
 
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			tpl := template.Must(template.Must(layout.Clone()).ParseFiles("web/templates/pages/sync.html"))
-			err := tpl.Execute(w, nil)
+			err := execTemplateWithLayout(w, "web/templates/pages/sync.html", layout, nil)
 			if err != nil {
 				http.Redirect(w, r, "/500", http.StatusFound)
 			}

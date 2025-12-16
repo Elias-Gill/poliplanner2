@@ -1,6 +1,12 @@
 package router
 
-import "net/http"
+import (
+	"html/template"
+	"net/http"
+	"path"
+
+	"github.com/elias-gill/poliplanner2/internal/config"
+)
 
 // This function should never fail or panic if the session middleware is functioning correctly.
 // If a protected endpoint is reached without a userID set in the request context,
@@ -28,4 +34,14 @@ func customRedirect(w http.ResponseWriter, r *http.Request, target string) {
 	} else {
 		http.Redirect(w, r, target, http.StatusFound)
 	}
+}
+
+func execTemplateWithLayout(w http.ResponseWriter, tplPath string, layout *template.Template, data any) error {
+	tpl := template.Must(template.Must(layout.Clone()).ParseFiles(path.Join(config.Get().Paths.BaseDir, tplPath)))
+	return tpl.Execute(w, data)
+}
+
+func execTemplate(w http.ResponseWriter, tplPath string, data any) error {
+	tpl := template.Must(template.ParseFiles(path.Join(config.Get().Paths.BaseDir, tplPath)))
+	return tpl.Execute(w, data)
 }

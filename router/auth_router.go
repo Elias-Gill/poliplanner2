@@ -2,7 +2,6 @@ package router
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
 	"net/mail"
 	"regexp"
@@ -34,8 +33,7 @@ func NewAuthRouter(service *service.UserService) func(r chi.Router) {
 			}
 
 			w.Header().Set("Content-Type", "text/html")
-			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/login.html"))
-			tpl.Execute(w, data)
+			execTemplateWithLayout(w, "web/templates/pages/login.html", layouts, data)
 		})
 
 		r.Post("/login", func(w http.ResponseWriter, r *http.Request) {
@@ -80,8 +78,7 @@ func NewAuthRouter(service *service.UserService) func(r chi.Router) {
 		// --- Handle SIGNUP ---
 		r.Get("/signup", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "text/html")
-			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/signup.html"))
-			tpl.Execute(w, nil)
+			execTemplateWithLayout(w, "web/templates/pages/signup.html", layouts, nil)
 		})
 
 		r.Post("/signup", func(w http.ResponseWriter, r *http.Request) {

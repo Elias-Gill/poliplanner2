@@ -2,7 +2,6 @@ package router
 
 import (
 	"context"
-	"html/template"
 	"net/http"
 	"strconv"
 	"time"
@@ -51,8 +50,7 @@ func NewSchedulesRouter(
 				SheetVersion: latestExcel,
 			}
 
-			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/schedule/index.html"))
-			tpl.Execute(w, data)
+			execTemplateWithLayout(w, "web/templates/pages/schedule/index.html", layouts, data)
 		})
 
 		r.Get("/create/details", func(w http.ResponseWriter, r *http.Request) {
@@ -83,8 +81,7 @@ func NewSchedulesRouter(
 				Subjects: subjects,
 			}
 
-			tpl := template.Must(template.ParseFiles("web/templates/pages/schedule/details.html"))
-			tpl.Execute(w, data)
+			execTemplate(w, "web/templates/pages/schedule/details.html", data)
 		})
 
 		r.Delete("/{id}", func(w http.ResponseWriter, r *http.Request) {

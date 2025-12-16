@@ -60,7 +60,6 @@ type PathsConfig struct {
 type ExcelConfig struct {
 	GoogleAPIKey   string
 	ScraperTimeout time.Duration
-	TargetURL      string
 }
 
 type LoggingConfig struct {
@@ -143,10 +142,6 @@ func MustLoad() {
 		Excel: ExcelConfig{
 			GoogleAPIKey:   googleAPIKey,
 			ScraperTimeout: getEnvAsDuration("SCRAPER_TIMEOUT", 30*time.Second),
-			TargetURL: getEnv(
-				"TARGET_URL",
-				"https://www.pol.una.py/academico/horarios-de-clases-y-examenes/",
-			),
 		},
 
 		Logging: LoggingConfig{

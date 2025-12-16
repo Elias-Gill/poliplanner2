@@ -1,7 +1,6 @@
 package router
 
 import (
-	"html/template"
 	"net/http"
 
 	"github.com/elias-gill/poliplanner2/web"
@@ -15,26 +14,22 @@ func NewGuidesRouter() func(r chi.Router) {
 		// Render login
 		r.Get("/calculo_notas", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "text/html")
-			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/guides/calculo_notas.html"))
-			tpl.Execute(w, nil)
+			execTemplateWithLayout(w, "web/templates/pages/guides/calculo_notas.html", layouts, nil)
 		})
 
 		r.Get("/about", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "text/html")
-			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/guides/about.html"))
-			tpl.Execute(w, nil)
+			execTemplateWithLayout(w, "web/templates/pages/guides/about.html", layouts, nil)
 		})
 
 		r.Get("/manual_del_bicho", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "text/html")
-			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/guides/manual_del_bicho.html"))
-			tpl.Execute(w, nil)
+			execTemplateWithLayout(w, "web/templates/pages/guides/manual_del_bicho.html", layouts, nil)
 		})
 
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "text/html")
-			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/guides/index.html"))
-			tpl.Execute(w, nil)
+			execTemplateWithLayout(w, "web/templates/pages/guides/index.html", layouts, nil)
 		})
 	}
 }

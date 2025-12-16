@@ -2,7 +2,6 @@ package router
 
 import (
 	"context"
-	"html/template"
 	"net/http"
 	"strconv"
 	"time"
@@ -40,8 +39,7 @@ func NewSubjectRouter(
 				return
 			}
 
-			tpl := template.Must(template.Must(layout.Clone()).ParseFiles("web/templates/pages/subject/index.html"))
-			tpl.Execute(w, careers)
+			execTemplateWithLayout(w, "web/templates/pages/subject/index.html", layout, careers)
 		})
 
 		// HTMX: load subjects list for a career
@@ -65,8 +63,7 @@ func NewSubjectRouter(
 				return
 			}
 
-			tpl := template.Must(template.ParseFiles("web/templates/pages/subject/filter.html"))
-			tpl.Execute(w, subjects)
+			execTemplate(w, "web/templates/pages/subject/filter.html", subjects)
 		})
 
 		// HTMX: subject detail modal
@@ -90,8 +87,7 @@ func NewSubjectRouter(
 				return
 			}
 
-			tpl := template.Must(template.ParseFiles("web/templates/pages/subject/modal.html"))
-			err = tpl.Execute(w, info)
+			execTemplate(w, "web/templates/pages/subject/modal.html", info)
 		})
 	}
 }

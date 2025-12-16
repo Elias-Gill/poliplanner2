@@ -2,7 +2,6 @@ package router
 
 import (
 	"context"
-	"html/template"
 	"strconv"
 	"time"
 
@@ -53,8 +52,7 @@ func NewDashboardRouter(service *service.ScheduleService) func(r chi.Router) {
 				SelectedScheduleID: latestSelection,
 			}
 
-			tpl := template.Must(template.Must(layouts.Clone()).ParseFiles("web/templates/pages/dashboard/index.html"))
-			tpl.Execute(w, data)
+			execTemplateWithLayout(w, "web/templates/pages/dashboard/index.html", layouts, data)
 		})
 
 		r.Get("/view", func(w http.ResponseWriter, r *http.Request) {
@@ -95,20 +93,15 @@ func NewDashboardRouter(service *service.ScheduleService) func(r chi.Router) {
 				Subjects:           subjects,
 			}
 
-			var tpl *template.Template
+			tpl := "web/templates/pages/dashboard/overview.html"
 			switch mode {
 			case "calendar":
-				tpl = template.Must(template.ParseFiles("web/templates/pages/dashboard/calendar.html"))
+				tpl = "web/templates/pages/dashboard/calendar.html"
 			case "extra":
-				tpl = template.Must(template.ParseFiles("web/templates/pages/dashboard/extra.html"))
-			default:
-				tpl = template.Must(template.ParseFiles("web/templates/pages/dashboard/overview.html"))
+				tpl = "web/templates/pages/dashboard/extra.html"
 			}
 
-			err = tpl.Execute(w, data)
-			if err != nil {
-				logger.Debug("error rendering template", "error", err)
-			}
+			execTemplate(w, tpl, data)
 		})
 	}
 }
