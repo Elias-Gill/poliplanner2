@@ -12,7 +12,7 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-// dtoPool is a sync.Pool for reusing SubjectDTO objects to reduce allocations
+// For reusing SubjectDTO objects to reduce allocations
 var dtoPool = sync.Pool{
 	New: func() any {
 		d := new(dto.SubjectDTO)
@@ -56,7 +56,7 @@ func NewExcelParser(layoutsDir string, filePath string) (*ExcelParser, error) {
 	}
 
 	utils.MemUsageStatus("Excel parser loading", func() {
-		err = p.prepareParserOptimized(filePath)
+		err = p.prepareParser(filePath)
 	})
 
 	if err != nil {
@@ -69,56 +69,51 @@ func NewExcelParser(layoutsDir string, filePath string) (*ExcelParser, error) {
 // buildFieldSetters creates a map of field setters for SubjectDTO
 func buildFieldSetters() map[string]func(*dto.SubjectDTO, string) {
 	return map[string]func(*dto.SubjectDTO, string){
-		"departamento": func(d *dto.SubjectDTO, v string) { d.SetDepartment(v) },
-		"asignatura":   func(d *dto.SubjectDTO, v string) { d.SetSubjectName(v) },
-		"nivel":        func(d *dto.SubjectDTO, v string) { d.SetSemester(v) },
-		"semestre":     func(d *dto.SubjectDTO, v string) { d.SetSemester(v) },
-		"seccion":      func(d *dto.SubjectDTO, v string) { d.SetSection(v) },
-		"titulo":       func(d *dto.SubjectDTO, v string) { d.SetTeacherTitle(v) },
-		"apellido":     func(d *dto.SubjectDTO, v string) { d.SetTeacherLastName(v) },
-		"nombre":       func(d *dto.SubjectDTO, v string) { d.SetTeacherName(v) },
-		"correo":       func(d *dto.SubjectDTO, v string) { d.SetTeacherEmail(v) },
-		"diaParcial1":  func(d *dto.SubjectDTO, v string) { d.SetPartial1Date(v) },
-		"horaParcial1": func(d *dto.SubjectDTO, v string) { d.SetPartial1Time(v) },
-		"aulaParcial1": func(d *dto.SubjectDTO, v string) { d.SetPartial1Room(v) },
-		"diaParcial2":  func(d *dto.SubjectDTO, v string) { d.SetPartial2Date(v) },
-		"horaParcial2": func(d *dto.SubjectDTO, v string) { d.SetPartial2Time(v) },
-		"aulaParcial2": func(d *dto.SubjectDTO, v string) { d.SetPartial2Room(v) },
-		"diaFinal1":    func(d *dto.SubjectDTO, v string) { d.SetFinal1Date(v) },
-		"horaFinal1":   func(d *dto.SubjectDTO, v string) { d.SetFinal1Time(v) },
-		"aulaFinal1":   func(d *dto.SubjectDTO, v string) { d.SetFinal1Room(v) },
-		"diaFinal2":    func(d *dto.SubjectDTO, v string) { d.SetFinal2Date(v) },
-		"horaFinal2":   func(d *dto.SubjectDTO, v string) { d.SetFinal2Time(v) },
-		"aulaFinal2":   func(d *dto.SubjectDTO, v string) { d.SetFinal2Room(v) },
-		"revisionDia": func(d *dto.SubjectDTO, v string) {
-			d.SetFinal1RevDate(v)
-			d.SetFinal2RevDate(v)
-		},
-		"revisionHora": func(d *dto.SubjectDTO, v string) {
-			d.SetFinal1RevTime(v)
-			d.SetFinal2RevTime(v)
-		},
-		"mesaPresidente": func(d *dto.SubjectDTO, v string) { d.SetCommitteePresident(v) },
-		"mesaMiembro1":   func(d *dto.SubjectDTO, v string) { d.SetCommitteeMember1(v) },
-		"mesaMiembro2":   func(d *dto.SubjectDTO, v string) { d.SetCommitteeMember2(v) },
-		"aulaLunes":      func(d *dto.SubjectDTO, v string) { d.SetMondayRoom(v) },
-		"horaLunes":      func(d *dto.SubjectDTO, v string) { d.SetMonday(v) },
-		"aulaMartes":     func(d *dto.SubjectDTO, v string) { d.SetTuesdayRoom(v) },
-		"horaMartes":     func(d *dto.SubjectDTO, v string) { d.SetTuesday(v) },
-		"aulaMiercoles":  func(d *dto.SubjectDTO, v string) { d.SetWednesdayRoom(v) },
-		"horaMiercoles":  func(d *dto.SubjectDTO, v string) { d.SetWednesday(v) },
-		"aulaJueves":     func(d *dto.SubjectDTO, v string) { d.SetThursdayRoom(v) },
-		"horaJueves":     func(d *dto.SubjectDTO, v string) { d.SetThursday(v) },
-		"aulaViernes":    func(d *dto.SubjectDTO, v string) { d.SetFridayRoom(v) },
-		"horaViernes":    func(d *dto.SubjectDTO, v string) { d.SetFriday(v) },
-		"aulaSabado":     func(d *dto.SubjectDTO, v string) { d.SetSaturdayRoom(v) },
-		"horaSabado":     func(d *dto.SubjectDTO, v string) { d.SetSaturday(v) },
-		"fechasSabado":   func(d *dto.SubjectDTO, v string) { d.SetSaturdayDates(v) },
+		"departamento":       func(d *dto.SubjectDTO, v string) { d.SetDepartment(v) },
+		"asignatura":         func(d *dto.SubjectDTO, v string) { d.SetSubjectName(v) },
+		"nivel":              func(d *dto.SubjectDTO, v string) { d.SetSemester(v) },
+		"semestre":           func(d *dto.SubjectDTO, v string) { d.SetSemester(v) },
+		"seccion":            func(d *dto.SubjectDTO, v string) { d.SetSection(v) },
+		"titulo":             func(d *dto.SubjectDTO, v string) { d.SetTeacherTitle(v) },
+		"apellido":           func(d *dto.SubjectDTO, v string) { d.SetTeacherLastName(v) },
+		"nombre":             func(d *dto.SubjectDTO, v string) { d.SetTeacherName(v) },
+		"correo":             func(d *dto.SubjectDTO, v string) { d.SetTeacherEmail(v) },
+		"diaParcial1":        func(d *dto.SubjectDTO, v string) { d.SetPartial1Date(v) },
+		"horaParcial1":       func(d *dto.SubjectDTO, v string) { d.SetPartial1Time(v) },
+		"aulaParcial1":       func(d *dto.SubjectDTO, v string) { d.SetPartial1Room(v) },
+		"diaParcial2":        func(d *dto.SubjectDTO, v string) { d.SetPartial2Date(v) },
+		"horaParcial2":       func(d *dto.SubjectDTO, v string) { d.SetPartial2Time(v) },
+		"aulaParcial2":       func(d *dto.SubjectDTO, v string) { d.SetPartial2Room(v) },
+		"diaFinal1":          func(d *dto.SubjectDTO, v string) { d.SetFinal1Date(v) },
+		"horaFinal1":         func(d *dto.SubjectDTO, v string) { d.SetFinal1Time(v) },
+		"aulaFinal1":         func(d *dto.SubjectDTO, v string) { d.SetFinal1Room(v) },
+		"diaFinal2":          func(d *dto.SubjectDTO, v string) { d.SetFinal2Date(v) },
+		"horaFinal2":         func(d *dto.SubjectDTO, v string) { d.SetFinal2Time(v) },
+		"aulaFinal2":         func(d *dto.SubjectDTO, v string) { d.SetFinal2Room(v) },
+		"revisionFinal1Dia":  func(d *dto.SubjectDTO, v string) { d.SetFinal1RevDate(v) },
+		"revisionFinal2Dia":  func(d *dto.SubjectDTO, v string) { d.SetFinal2RevDate(v) },
+		"revisionFinal1Hora": func(d *dto.SubjectDTO, v string) { d.SetFinal1RevTime(v) },
+		"revisionFinal2Hora": func(d *dto.SubjectDTO, v string) { d.SetFinal2RevTime(v) },
+		"mesaPresidente":     func(d *dto.SubjectDTO, v string) { d.SetCommitteePresident(v) },
+		"mesaMiembro1":       func(d *dto.SubjectDTO, v string) { d.SetCommitteeMember1(v) },
+		"mesaMiembro2":       func(d *dto.SubjectDTO, v string) { d.SetCommitteeMember2(v) },
+		"aulaLunes":          func(d *dto.SubjectDTO, v string) { d.SetMondayRoom(v) },
+		"horaLunes":          func(d *dto.SubjectDTO, v string) { d.SetMonday(v) },
+		"aulaMartes":         func(d *dto.SubjectDTO, v string) { d.SetTuesdayRoom(v) },
+		"horaMartes":         func(d *dto.SubjectDTO, v string) { d.SetTuesday(v) },
+		"aulaMiercoles":      func(d *dto.SubjectDTO, v string) { d.SetWednesdayRoom(v) },
+		"horaMiercoles":      func(d *dto.SubjectDTO, v string) { d.SetWednesday(v) },
+		"aulaJueves":         func(d *dto.SubjectDTO, v string) { d.SetThursdayRoom(v) },
+		"horaJueves":         func(d *dto.SubjectDTO, v string) { d.SetThursday(v) },
+		"aulaViernes":        func(d *dto.SubjectDTO, v string) { d.SetFridayRoom(v) },
+		"horaViernes":        func(d *dto.SubjectDTO, v string) { d.SetFriday(v) },
+		"aulaSabado":         func(d *dto.SubjectDTO, v string) { d.SetSaturdayRoom(v) },
+		"horaSabado":         func(d *dto.SubjectDTO, v string) { d.SetSaturday(v) },
+		"fechasSabado":       func(d *dto.SubjectDTO, v string) { d.SetSaturdayDates(v) },
 	}
 }
 
-// prepareParserOptimized loads and prepares the Excel file with optimized settings
-func (ep *ExcelParser) prepareParserOptimized(filePath string) error {
+func (ep *ExcelParser) prepareParser(filePath string) error {
 	if ep.file != nil {
 		ep.Close()
 	}
@@ -167,22 +162,18 @@ func (ep *ExcelParser) NextSheet() bool {
 	return false
 }
 
-// shouldIgnoreSheet checks if a sheet should be ignored (optimized version)
 func (ep *ExcelParser) shouldIgnoreSheet(name string) bool {
 	// Quick length check first
 	if len(name) == 0 {
 		return false
 	}
 
-	// Fast path: common ignored sheet names
+	// Common ignored sheet names
 	if name == "Códigos" || name == "códigos" {
 		return true
 	}
 
-	// Convert to lowercase once
 	lowerName := strings.ToLower(name)
-
-	// Check for substrings (optimized order by frequency)
 	if strings.Contains(lowerName, "odigos") ||
 		strings.Contains(lowerName, "asignaturas") ||
 		strings.Contains(lowerName, "homologadas") ||
@@ -193,21 +184,20 @@ func (ep *ExcelParser) shouldIgnoreSheet(name string) bool {
 	return false
 }
 
-// ParseCurrentSheet parses the currently selected sheet
+// Parses the currently selected sheet
 func (ep *ExcelParser) ParseCurrentSheet() (*ParsingResult, error) {
 	if ep.currentSheet < 0 || ep.currentSheet >= len(ep.sheetNames) {
 		return nil, exceptions.NewExcelParserException("No current sheet selected", nil)
 	}
 	sheetName := ep.sheetNames[ep.currentSheet]
-	subjects, err := ep.parseSheetOptimized(sheetName)
+	subjects, err := ep.parseSheet(sheetName)
 	if err != nil {
 		return nil, err
 	}
 	return &ParsingResult{Career: sheetName, Subjects: subjects}, nil
 }
 
-// parseSheetOptimized parses a sheet with optimized memory usage and speed
-func (ep *ExcelParser) parseSheetOptimized(sheetName string) ([]dto.SubjectDTO, error) {
+func (ep *ExcelParser) parseSheet(sheetName string) ([]dto.SubjectDTO, error) {
 	subjects := make([]dto.SubjectDTO, 0, 250)
 
 	// Use streaming API for better memory efficiency
@@ -229,15 +219,15 @@ func (ep *ExcelParser) parseSheetOptimized(sheetName string) ([]dto.SubjectDTO, 
 		}
 
 		// Skip completely empty rows early
-		if len(row) == 0 || ep.isEmptyRowFast(row) {
+		if len(row) == 0 || ep.isEmptyRow(row) {
 			rowIdx++
 			continue
 		}
 
 		if layout == nil {
-			if ep.isHeaderRowOptimized(row) {
+			if ep.isHeaderRow(row) {
 				lowerHeader = ep.buildLowerHeader(row)
-				startingCell = ep.calculateStartingCellFast(row)
+				startingCell = ep.calculateStartingCell(row)
 				l, err := ep.findFittingLayout(lowerHeader)
 				if err != nil {
 					return nil, err
@@ -251,7 +241,7 @@ func (ep *ExcelParser) parseSheetOptimized(sheetName string) ([]dto.SubjectDTO, 
 		}
 
 		// Stop on empty row
-		if ep.isEmptyRowFast(row) {
+		if ep.isEmptyRow(row) {
 			break
 		}
 
@@ -292,7 +282,6 @@ func (ep *ExcelParser) parseSheetOptimized(sheetName string) ([]dto.SubjectDTO, 
 	return subjects, nil
 }
 
-// buildLowerHeader creates a lowercase version of the header row
 func (ep *ExcelParser) buildLowerHeader(row []string) []string {
 	lower := make([]string, len(row))
 	for i, val := range row {
@@ -301,18 +290,9 @@ func (ep *ExcelParser) buildLowerHeader(row []string) []string {
 	return lower
 }
 
-// isHeaderRowOptimized checks for header row with minimal allocations
-func (ep *ExcelParser) isHeaderRowOptimized(row []string) bool {
+func (ep *ExcelParser) isHeaderRow(row []string) bool {
 	for _, val := range row {
 		if len(val) == 0 {
-			continue
-		}
-
-		// Fast path: check if val starts with common header chars
-		firstChar := val[0]
-		if !((firstChar >= 'a' && firstChar <= 'z') ||
-			(firstChar >= 'A' && firstChar <= 'Z') ||
-			(firstChar >= '0' && firstChar <= '9')) {
 			continue
 		}
 
@@ -331,10 +311,9 @@ func (ep *ExcelParser) isHeaderRowOptimized(row []string) bool {
 	return false
 }
 
-// isEmptyRowFast checks if a row is empty without allocations
-func (ep *ExcelParser) isEmptyRowFast(row []string) bool {
+func (ep *ExcelParser) isEmptyRow(row []string) bool {
 	for _, val := range row {
-		// Fast check: if any non-whitespace character exists
+		// if any non-whitespace character exists
 		for _, r := range val {
 			if !unicode.IsSpace(r) {
 				return false
@@ -344,8 +323,7 @@ func (ep *ExcelParser) isEmptyRowFast(row []string) bool {
 	return true
 }
 
-// calculateStartingCellFast finds first non-empty cell efficiently
-func (ep *ExcelParser) calculateStartingCellFast(row []string) int {
+func (ep *ExcelParser) calculateStartingCell(row []string) int {
 	for i, val := range row {
 		if len(val) > 0 {
 			// Check if it's not just whitespace
@@ -359,7 +337,7 @@ func (ep *ExcelParser) calculateStartingCellFast(row []string) int {
 	return 0
 }
 
-// findFittingLayout finds a layout that matches the header row
+// Finds a layout that matches the header row
 func (ep *ExcelParser) findFittingLayout(lowerHeader []string) (*Layout, error) {
 	for i := range ep.layouts {
 		if ep.layoutMatches(&ep.layouts[i], lowerHeader) {
@@ -369,7 +347,7 @@ func (ep *ExcelParser) findFittingLayout(lowerHeader []string) (*Layout, error) 
 	return nil, exceptions.NewLayoutMatchException("No matching layout found")
 }
 
-// layoutMatches checks if a layout matches a given header row
+// Check if a layout matches a given header row
 func (ep *ExcelParser) layoutMatches(layout *Layout, lower []string) bool {
 	cellIdx := 0
 	hdrIdx := 0
