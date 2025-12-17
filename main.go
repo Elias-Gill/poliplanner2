@@ -50,8 +50,13 @@ func main() {
 	r.Route("/excel", router.NewExcelRouter(services.ExcelService))
 	r.Route("/misc", router.NewMiscRouter())
 	r.Route("/guides", router.NewGuidesRouter())
+
 	// Static files
 	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./web/static"))))
+	r.Handle("/sitemap.xml", http.FileServer(http.Dir("./web/static")))
+	r.Handle("/robots.txt", http.FileServer(http.Dir("./web/static")))
+	r.Handle("/favicon.ico", http.FileServer(http.Dir("./web/static")))
+
 	// 404 - Not found
 	r.NotFound(router.NotFoundHandler)
 
