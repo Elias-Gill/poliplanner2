@@ -106,8 +106,6 @@ func (s *ExcelService) ParseExcelFile(ctx context.Context, path string, name str
 		return rollback(err)
 	}
 
-	metadata := parser.NewSubjectMetadataLoader(config.Get().Paths.SubjectsMetadataDir)
-
 	for parserExcel.NextSheet() {
 		result, perr := parserExcel.ParseCurrentSheet()
 		if perr != nil {
@@ -125,14 +123,17 @@ func (s *ExcelService) ParseExcelFile(ctx context.Context, path string, name str
 			return rollback(err)
 		}
 
-		logger.Info("Persisting subjects from career", "career", career.CareerCode, "num_subjects", len(result.Subjects), "cache_hits", metadata.CacheHits)
+		metadata, err := parser.NewSubjectMetadataLoader(config.Get().Paths.SubjectsMetadataDir, result.Career)
+		if err != nil {
+			logger.Warn("Metadata loading error", "error", err)
+		}
 
 		insertedCount := 0
 		for _, sub := range result.Subjects {
 			subject := mapper.MapToSubject(sub)
 
-			if subject.Semester == 0 {
-				meta, merr := metadata.FindSubjectByName(result.Career, sub.SubjectName)
+			if subject.Semester == 0 && metadata != nil {
+				meta, merr := metadata.FindSubjectByName(sub.SubjectName)
 				if merr == nil {
 					subject.Semester = meta.Semester
 				}
@@ -145,7 +146,7 @@ func (s *ExcelService) ParseExcelFile(ctx context.Context, path string, name str
 			insertedCount++
 		}
 
-		logger.Info("Persisted subjects from career", "career", career.CareerCode, "inserted_subjects", insertedCount)
+		logger.Info("Persisted subjects from career", "career", career.CareerCode, "inserted_subjects", insertedCount, "cache_hits", metadata.CacheHits)
 	}
 
 	if err := tx.Commit(); err != nil {
