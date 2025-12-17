@@ -49,7 +49,7 @@ func NewSubjectMetadataLoader(metadataDir string, careerCode string) (*SubjectMe
 
 	loader := &SubjectMetadataLoader{
 		metadataDir: metadataDir,
-		careerCode:  careerCode,
+		careerCode:  strings.ToLower(careerCode),
 	}
 
 	err := loader.loadSubjects()
