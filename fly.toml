@@ -13,6 +13,8 @@ primary_region = 'gru'
 [env]
   APP_ENV = 'prod'
   SERVER_ADDR = ':8080'
+  # This is not really a concern because they have to have access to the entire server to
+  # access this, from where whe are fucked up
   DATABASE_URL = '/poliplanner/poliplanner.db'
   APP_BASE_DIR = '/var/poliplanner'
 
@@ -25,7 +27,7 @@ primary_region = 'gru'
   processes = ['app']
 
 [[vm]]
-  memory = '512mb'
+  memory = '256mb'
   cpus = 1
   memory_mb = 256
 

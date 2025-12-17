@@ -4,12 +4,18 @@ go 1.24.0
 
 toolchain go1.24.10
 
+require github.com/gocolly/colly/v2 v2.2.0
+
 require (
-	github.com/gocolly/colly/v2 v2.2.0
-	github.com/tealeg/xlsx/v3 v3.3.13
+	github.com/richardlehane/mscfb v1.0.4 // indirect
+	github.com/richardlehane/msoleps v1.0.4 // indirect
+	github.com/tiendc/go-deepcopy v1.7.1 // indirect
+	github.com/xuri/efp v0.0.1 // indirect
+	github.com/xuri/nfp v0.0.2-0.20250530014748-2ddeb826f9a9 // indirect
 )
 
 require (
+	codeberg.org/tealeg/xlsx/v4 v4.0.1
 	github.com/PuerkitoBio/goquery v1.10.2 // indirect
 	github.com/andybalholm/cascadia v1.3.3 // indirect
 	github.com/antchfx/htmlquery v1.3.4 // indirect
@@ -37,6 +43,7 @@ require (
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
 	github.com/shabbyrobe/xmlwriter v0.0.0-20200208144257-9fca06d00ffa // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
+	github.com/xuri/excelize/v2 v2.10.0
 	golang.org/x/crypto v0.44.0
 	golang.org/x/net v0.46.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
