@@ -4,51 +4,69 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"unicode"
 
 	"github.com/elias-gill/poliplanner2/internal/excelparser/dto"
 	"github.com/elias-gill/poliplanner2/internal/excelparser/exceptions"
-	"github.com/tealeg/xlsx/v3"
+	"github.com/elias-gill/poliplanner2/internal/utils"
+	"github.com/xuri/excelize/v2"
 )
 
+// dtoPool is a sync.Pool for reusing SubjectDTO objects to reduce allocations
 var dtoPool = sync.Pool{
-	New: func() any { return new(dto.SubjectDTO) },
+	New: func() any {
+		d := new(dto.SubjectDTO)
+		d.Reset() // Ensure clean state
+		return d
+	},
 }
 
+// ExcelParser handles parsing of Excel files containing subject schedules
 type ExcelParser struct {
 	layouts        []Layout
-	file           *xlsx.File
-	sheets         []string
+	file           *excelize.File
+	sheetNames     []string
 	currentSheet   int
-	headerKeywords map[string]bool
+	headerKeywords []string // Keywords to identify header rows
 	fieldSetters   map[string]func(*dto.SubjectDTO, string)
 }
 
+// ParsingResult contains the parsed subjects for a specific career/sheet
 type ParsingResult struct {
 	Career   string
 	Subjects []dto.SubjectDTO
 }
 
-func NewExcelParser(layoutsDir string, file string) (*ExcelParser, error) {
+// NewExcelParser creates a new Excel parser instance
+func NewExcelParser(layoutsDir string, filePath string) (*ExcelParser, error) {
+	// Loads the possible known layouts of the excel file
 	loader := NewJsonLayoutLoader(layoutsDir)
 	layouts, err := loader.LoadJsonLayouts()
 	if err != nil {
 		return nil, exceptions.NewExcelParserConfigurationException("Failed to load layouts", err)
 	}
+
 	setters := buildFieldSetters()
 
 	p := &ExcelParser{
-		layouts: layouts,
-		headerKeywords: map[string]bool{
-			"item": true,
-			"ítem": true,
-		},
-		currentSheet: -1,
-		fieldSetters: setters,
+		layouts:        layouts,
+		headerKeywords: []string{"item", "ítem"},
+		currentSheet:   -1,
+		fieldSetters:   setters,
 	}
 
-	return p, p.prepareParser(file)
+	utils.MemUsageStatus("Excel parser loading", func() {
+		err = p.prepareParserOptimized(filePath)
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return p, nil
 }
 
+// buildFieldSetters creates a map of field setters for SubjectDTO
 func buildFieldSetters() map[string]func(*dto.SubjectDTO, string) {
 	return map[string]func(*dto.SubjectDTO, string){
 		"departamento": func(d *dto.SubjectDTO, v string) { d.SetDepartment(v) },
@@ -99,41 +117,48 @@ func buildFieldSetters() map[string]func(*dto.SubjectDTO, string) {
 	}
 }
 
-func (ep *ExcelParser) prepareParser(filePath string) error {
+// prepareParserOptimized loads and prepares the Excel file with optimized settings
+func (ep *ExcelParser) prepareParserOptimized(filePath string) error {
 	if ep.file != nil {
-		ep.file = nil // no Close, GC manages its deallocation
+		ep.Close()
 	}
-	f, err := xlsx.OpenFile(filePath)
+
+	// Use optimized options for better performance
+	f, err := excelize.OpenFile(filePath, excelize.Options{
+		// Limit memory usage by restricting unzip size
+		UnzipSizeLimit: 256 << 20, // 256MB limit
+		// Skip loading cell styles we don't need
+		UnzipXMLSizeLimit: 64 << 20, // 64MB per XML file
+	})
 	if err != nil {
 		if os.IsNotExist(err) {
 			return exceptions.NewExcelParserConfigurationException("File not found: "+filePath, err)
 		}
 		return exceptions.NewExcelParserInputException("Error reading file: "+filePath, err)
 	}
+
 	ep.file = f
-	ep.sheets = make([]string, len(f.Sheets))
-	for i, s := range f.Sheets {
-		ep.sheets[i] = s.Name
-	}
+	ep.sheetNames = f.GetSheetList()
 	ep.currentSheet = -1
+
 	return nil
 }
 
+// Close releases resources used by the parser
 func (ep *ExcelParser) Close() {
-	ep.file = nil // mark for GC
+	if ep.file != nil {
+		ep.file.Close()
+		ep.file = nil
+	}
 }
 
+// NextSheet moves to the next valid sheet for parsing
 func (ep *ExcelParser) NextSheet() bool {
 	ep.currentSheet++
-	for ep.currentSheet < len(ep.sheets) {
-		name := ep.sheets[ep.currentSheet]
-		lower := strings.ToLower(name)
-		// Ignore this garbage
-		if strings.Contains(lower, "odigos") ||
-			strings.Contains(lower, "asignaturas") ||
-			strings.Contains(lower, "homologadas") ||
-			strings.Contains(lower, "homólogas") ||
-			lower == "códigos" {
+	for ep.currentSheet < len(ep.sheetNames) {
+		name := ep.sheetNames[ep.currentSheet]
+		// Fast check for ignored sheets
+		if ep.shouldIgnoreSheet(name) {
 			ep.currentSheet++
 			continue
 		}
@@ -142,57 +167,77 @@ func (ep *ExcelParser) NextSheet() bool {
 	return false
 }
 
+// shouldIgnoreSheet checks if a sheet should be ignored (optimized version)
+func (ep *ExcelParser) shouldIgnoreSheet(name string) bool {
+	// Quick length check first
+	if len(name) == 0 {
+		return false
+	}
+
+	// Fast path: common ignored sheet names
+	if name == "Códigos" || name == "códigos" {
+		return true
+	}
+
+	// Convert to lowercase once
+	lowerName := strings.ToLower(name)
+
+	// Check for substrings (optimized order by frequency)
+	if strings.Contains(lowerName, "odigos") ||
+		strings.Contains(lowerName, "asignaturas") ||
+		strings.Contains(lowerName, "homologadas") ||
+		strings.Contains(lowerName, "homólogas") {
+		return true
+	}
+
+	return false
+}
+
+// ParseCurrentSheet parses the currently selected sheet
 func (ep *ExcelParser) ParseCurrentSheet() (*ParsingResult, error) {
-	if ep.currentSheet < 0 || ep.currentSheet >= len(ep.sheets) {
+	if ep.currentSheet < 0 || ep.currentSheet >= len(ep.sheetNames) {
 		return nil, exceptions.NewExcelParserException("No current sheet selected", nil)
 	}
-	sheetName := ep.sheets[ep.currentSheet]
-	subjects, err := ep.parseSheet(sheetName)
+	sheetName := ep.sheetNames[ep.currentSheet]
+	subjects, err := ep.parseSheetOptimized(sheetName)
 	if err != nil {
 		return nil, err
 	}
 	return &ParsingResult{Career: sheetName, Subjects: subjects}, nil
 }
 
-func (ep *ExcelParser) parseSheet(sheetName string) ([]dto.SubjectDTO, error) {
-	sh, ok := ep.file.Sheet[sheetName]
-	if !ok {
-		return nil, exceptions.NewExcelParserInputException("Sheet not found: "+sheetName, nil)
-	}
+// parseSheetOptimized parses a sheet with optimized memory usage and speed
+func (ep *ExcelParser) parseSheetOptimized(sheetName string) ([]dto.SubjectDTO, error) {
 	subjects := make([]dto.SubjectDTO, 0, 250)
+
+	// Use streaming API for better memory efficiency
+	stream, err := ep.file.Rows(sheetName)
+	if err != nil {
+		return nil, exceptions.NewExcelParserInputException("Sheet not found: "+sheetName, err)
+	}
+	defer stream.Close()
+
 	var lowerHeader []string
 	var layout *Layout
 	var startingCell int
 	rowIdx := 0
-	maxRow := sh.MaxRow
 
-	// Helper to collect cells into slice
-	collectCells := func() ([]*xlsx.Cell, bool) {
-		row, _ := sh.Row(rowIdx)
-		if row == nil {
-			return nil, false
-		}
-		cells := make([]*xlsx.Cell, 0, 50)
-		err := row.ForEachCell(func(c *xlsx.Cell) error {
-			cells = append(cells, c)
-			return nil
-		})
+	for stream.Next() {
+		row, err := stream.Columns()
 		if err != nil {
-			return nil, false
+			return nil, exceptions.NewExcelParserInputException("Error reading row", err)
 		}
-		return cells, true
-	}
 
-	for rowIdx < maxRow {
-		cells, ok := collectCells()
-		if !ok || len(cells) == 0 {
+		// Skip completely empty rows early
+		if len(row) == 0 || ep.isEmptyRowFast(row) {
 			rowIdx++
 			continue
 		}
+
 		if layout == nil {
-			if ep.isHeaderRow(cells) {
-				lowerHeader = ep.buildLowerHeader(cells)
-				startingCell = ep.calculateStartingCell(cells)
+			if ep.isHeaderRowOptimized(row) {
+				lowerHeader = ep.buildLowerHeader(row)
+				startingCell = ep.calculateStartingCellFast(row)
 				l, err := ep.findFittingLayout(lowerHeader)
 				if err != nil {
 					return nil, err
@@ -204,20 +249,32 @@ func (ep *ExcelParser) parseSheet(sheetName string) ([]dto.SubjectDTO, error) {
 			rowIdx++
 			continue
 		}
-		if ep.isEmptyRow(cells) {
+
+		// Stop on empty row
+		if ep.isEmptyRowFast(row) {
 			break
 		}
+
+		// Parse data row
 		d := dtoPool.Get().(*dto.SubjectDTO)
-		*d = dto.SubjectDTO{}
+		d.Reset()
 		current := startingCell - 1
+
 		for _, field := range layout.Headers {
 			current++
-			if current >= len(cells) {
+			if current >= len(row) {
 				break
 			}
-			val := strings.TrimSpace(cells[current].Value)
-			if val == "" {
+			val := row[current]
+			if len(val) == 0 {
 				continue
+			}
+			// Fast trim inline (only if needed)
+			if val[0] == ' ' || val[len(val)-1] == ' ' {
+				val = strings.TrimSpace(val)
+				if len(val) == 0 {
+					continue
+				}
 			}
 			if setter, ok := ep.fieldSetters[field]; ok {
 				setter(d, val)
@@ -227,24 +284,46 @@ func (ep *ExcelParser) parseSheet(sheetName string) ([]dto.SubjectDTO, error) {
 		dtoPool.Put(d)
 		rowIdx++
 	}
+
 	if layout == nil {
 		return nil, exceptions.NewLayoutMatchException("No header row found in sheet: " + sheetName)
 	}
+
 	return subjects, nil
 }
 
-func (ep *ExcelParser) buildLowerHeader(cells []*xlsx.Cell) []string {
-	lower := make([]string, len(cells))
-	for i, c := range cells {
-		lower[i] = strings.ToLower(strings.TrimSpace(c.Value))
+// buildLowerHeader creates a lowercase version of the header row
+func (ep *ExcelParser) buildLowerHeader(row []string) []string {
+	lower := make([]string, len(row))
+	for i, val := range row {
+		lower[i] = strings.ToLower(strings.TrimSpace(val))
 	}
 	return lower
 }
 
-func (ep *ExcelParser) isHeaderRow(cells []*xlsx.Cell) bool {
-	for _, c := range cells {
-		if c.Value != "" {
-			if ep.headerKeywords[strings.ToLower(strings.TrimSpace(c.Value))] {
+// isHeaderRowOptimized checks for header row with minimal allocations
+func (ep *ExcelParser) isHeaderRowOptimized(row []string) bool {
+	for _, val := range row {
+		if len(val) == 0 {
+			continue
+		}
+
+		// Fast path: check if val starts with common header chars
+		firstChar := val[0]
+		if !((firstChar >= 'a' && firstChar <= 'z') ||
+			(firstChar >= 'A' && firstChar <= 'Z') ||
+			(firstChar >= '0' && firstChar <= '9')) {
+			continue
+		}
+
+		// Normalize and check
+		trimmed := strings.TrimSpace(val)
+		if len(trimmed) == 0 {
+			continue
+		}
+		lowerVal := strings.ToLower(trimmed)
+		for _, keyword := range ep.headerKeywords {
+			if strings.Contains(lowerVal, keyword) {
 				return true
 			}
 		}
@@ -252,24 +331,35 @@ func (ep *ExcelParser) isHeaderRow(cells []*xlsx.Cell) bool {
 	return false
 }
 
-func (ep *ExcelParser) isEmptyRow(cells []*xlsx.Cell) bool {
-	for _, c := range cells {
-		if strings.TrimSpace(c.Value) != "" {
-			return false
+// isEmptyRowFast checks if a row is empty without allocations
+func (ep *ExcelParser) isEmptyRowFast(row []string) bool {
+	for _, val := range row {
+		// Fast check: if any non-whitespace character exists
+		for _, r := range val {
+			if !unicode.IsSpace(r) {
+				return false
+			}
 		}
 	}
 	return true
 }
 
-func (ep *ExcelParser) calculateStartingCell(cells []*xlsx.Cell) int {
-	for i, c := range cells {
-		if strings.TrimSpace(c.Value) != "" {
-			return i
+// calculateStartingCellFast finds first non-empty cell efficiently
+func (ep *ExcelParser) calculateStartingCellFast(row []string) int {
+	for i, val := range row {
+		if len(val) > 0 {
+			// Check if it's not just whitespace
+			for _, r := range val {
+				if !unicode.IsSpace(r) {
+					return i
+				}
+			}
 		}
 	}
 	return 0
 }
 
+// findFittingLayout finds a layout that matches the header row
 func (ep *ExcelParser) findFittingLayout(lowerHeader []string) (*Layout, error) {
 	for i := range ep.layouts {
 		if ep.layoutMatches(&ep.layouts[i], lowerHeader) {
@@ -279,6 +369,7 @@ func (ep *ExcelParser) findFittingLayout(lowerHeader []string) (*Layout, error) 
 	return nil, exceptions.NewLayoutMatchException("No matching layout found")
 }
 
+// layoutMatches checks if a layout matches a given header row
 func (ep *ExcelParser) layoutMatches(layout *Layout, lower []string) bool {
 	cellIdx := 0
 	hdrIdx := 0

@@ -82,6 +82,7 @@ func (s *ExcelService) ParseExcelFile(ctx context.Context, path string, name str
 	if err != nil {
 		return fmt.Errorf("error creating excel parser: %w", err)
 	}
+	defer parserExcel.Close()
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -146,7 +147,17 @@ func (s *ExcelService) ParseExcelFile(ctx context.Context, path string, name str
 			insertedCount++
 		}
 
-		logger.Info("Persisted subjects from career", "career", career.CareerCode, "inserted_subjects", insertedCount, "cache_hits", metadata.CacheHits)
+		// Log parsing summary
+		cacheHits := 0
+		if metadata != nil {
+			cacheHits = metadata.CacheHits
+		}
+		logger.Info(
+			"Persisted subjects from career",
+			"career", career.CareerCode,
+			"inserted_subjects", insertedCount,
+			"cache_hits", cacheHits,
+		)
 	}
 
 	if err := tx.Commit(); err != nil {

@@ -438,3 +438,7 @@ func isValidDate(day, month, year int) bool {
 
 	return day <= daysInMonth
 }
+
+func (d *SubjectDTO) Reset() {
+	*d = SubjectDTO{}
+}
