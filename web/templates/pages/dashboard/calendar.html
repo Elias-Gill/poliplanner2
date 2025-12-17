@@ -1,117 +1,3 @@
-<div id="calendar-container">
-  <div id="calendar"></div>
-</div>
-<!-- Overlay + Modal -->
-<div id="exam-modal-overlay" class="modal-overlay hidden"></div>
-<div id="exam-modal" class="modal hidden">
-  <div class="modal-header">
-    <span id="modal-title"></span>
-    <button id="modal-close">×</button>
-  </div>
-  <div class="modal-body">
-    <p id="modal-subject"></p>
-    <p id="modal-time"></p>
-    <p id="modal-type"></p>
-    <p id="modal-room"></p>
-  </div>
-</div>
-<script>
-  function openModal(data) {
-    document.getElementById("modal-title").textContent = data.materia
-    document.getElementById("modal-time").textContent = "Horario: " + data.hora
-    document.getElementById("modal-type").textContent = "Tipo: " + data.tipo
-    document.getElementById("modal-room").textContent =
-      data.aula ? ("Aula: " + data.aula) : ""
-
-    document.getElementById("exam-modal-overlay").classList.remove("hidden")
-    document.getElementById("exam-modal").classList.remove("hidden")
-  }
-
-  function closeModal() {
-    document.getElementById("exam-modal-overlay").classList.add("hidden")
-    document.getElementById("exam-modal").classList.add("hidden")
-  }
-
-  document.getElementById("modal-close").onclick = closeModal
-  document.getElementById("exam-modal-overlay").onclick = closeModal
-
-  async function initCalendar() {
-    const el = document.getElementById('calendar')
-    if (!el || el._fullCalendarInitialized) return
-    el._fullCalendarInitialized = true
-
-    const loader = new ScriptLoader({
-      src: 'cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js',
-      global: 'FullCalendar'
-    })
-
-    const FullCalendar = await loader.load()
-
-    const styles = getComputedStyle(document.documentElement)
-    const colorExam = styles.getPropertyValue('--color-error').trim()
-    const colorRevision = styles.getPropertyValue('--color-primary').trim()
-
-    const exams = [
-      {{- $first := true -}}
-      {{- range .Subjects }}
-
-        {{- if .Partial1Date.Valid }}
-        {{- if not $first }},{{ end -}}{{- $first = false -}}
-        {
-          start: "{{.Partial1Date.Time.Format `2006-01-02`}}",
-          extendedProps: {
-            materia: "{{js .SubjectName}}",
-            tipo: "Primer Parcial",
-            hora: "{{.Partial1Time.String}}",
-            aula: "{{.Partial1Room.String}}"
-          }
-        }
-        {{- end }}
-
-      {{- end }}
-    ]
-
-    exams.forEach(ev => {
-      ev.color = ev.extendedProps.tipo.toLowerCase().includes('revisión')
-        ? colorRevision
-        : colorExam
-    })
-
-    const calendar = new FullCalendar.Calendar(el, {
-      initialView: 'dayGridMonth',
-      locale: 'es',
-      height: 'auto',
-      headerToolbar: {
-        left: 'prev,next',
-        center: 'title',
-        right: ''
-      },
-      events: exams,
-      eventDidMount(info) {
-        const { materia, tipo, hora, aula } = info.event.extendedProps
-        info.el.style.color = 'white'
-        info.el.innerHTML = `
-          <div style="font-weight:600">${materia}</div>
-          <div style="font-size:0.85em;font-style:italic">${tipo}</div>
-          <div style="font-size:0.8em">${hora}${aula ? ' - ' + aula : ''}</div>
-        `
-      },
-      eventClick(info) {
-        openModal(info.event.extendedProps)
-      }
-    })
-
-    calendar.render()
-  }
-
-  document.body.addEventListener('htmx:afterSwap', (evt) => {
-    if (evt.detail.target.id === 'schedule-detail') {
-      initCalendar()
-    }
-  })
-
-  initCalendar()
-</script>
 <style>
   .fc-event {
     white-space: nowrap;
@@ -199,3 +85,284 @@
       color: var(--color-fg);
   }
 </style>
+<div id="calendar-container">
+  <div id="calendar"></div>
+</div>
+<!-- Overlay + Modal -->
+<div id="exam-modal-overlay" class="modal-overlay hidden"></div>
+<div id="exam-modal" class="modal hidden">
+  <div class="modal-header">
+    <span id="modal-title"></span>
+    <button id="modal-close">×</button>
+  </div>
+  <div class="modal-body">
+    <p id="modal-subject"></p>
+    <p id="modal-time"></p>
+    <p id="modal-type"></p>
+    <p id="modal-room"></p>
+  </div>
+</div>
+<!-- Modal script -->
+<script>
+  function openModal(data) {
+    document.getElementById("modal-title").textContent = data.materia
+    document.getElementById("modal-time").textContent = "Horario: " + data.hora
+    document.getElementById("modal-type").textContent = "Tipo: " + data.tipo
+    document.getElementById("modal-room").textContent =
+      data.aula ? ("Aula: " + data.aula) : ""
+
+    document.getElementById("exam-modal-overlay").classList.remove("hidden")
+    document.getElementById("exam-modal").classList.remove("hidden")
+  }
+
+  function closeModal() {
+    document.getElementById("exam-modal-overlay").classList.add("hidden")
+    document.getElementById("exam-modal").classList.add("hidden")
+  }
+
+  document.getElementById("modal-close").onclick = closeModal
+  document.getElementById("exam-modal-overlay").onclick = closeModal
+</script>
+<!-- Calendar script -->
+<script>
+  (() => {
+    // Variables para mantener estado
+    let calendarInstance = null;
+
+    // Función para abrir modal
+    function openModal(data) {
+      document.getElementById("modal-title").textContent = data.materia;
+      document.getElementById("modal-subject").textContent = "Materia: " + data.materia;
+      document.getElementById("modal-time").textContent = "Horario: " + data.hora;
+      document.getElementById("modal-type").textContent = "Tipo: " + data.tipo;
+      document.getElementById("modal-room").textContent = data.aula ? ("Aula: " + data.aula) : "";
+
+      document.getElementById("exam-modal-overlay").classList.remove("hidden");
+      document.getElementById("exam-modal").classList.remove("hidden");
+    }
+
+    // Función para cerrar modal
+    function closeModal() {
+      document.getElementById("exam-modal-overlay").classList.add("hidden");
+      document.getElementById("exam-modal").classList.add("hidden");
+    }
+
+    // Configurar eventos del modal
+    document.getElementById("modal-close").onclick = closeModal;
+    document.getElementById("exam-modal-overlay").onclick = closeModal;
+
+    // Cerrar modal con Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' &&
+          !document.getElementById("exam-modal-overlay").classList.contains('hidden')) {
+        closeModal();
+      }
+    });
+
+    async function initCalendar() {
+      const el = document.getElementById('calendar');
+      if (!el) return;
+
+      // Destruir calendario existente si hay uno
+      if (calendarInstance) {
+        calendarInstance.destroy();
+        calendarInstance = null;
+        el.innerHTML = '';
+      }
+
+      const loader = new ScriptLoader({
+        src: 'cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js',
+        global: 'FullCalendar'
+      });
+
+      const FullCalendar = await loader.load();
+
+      const styles = getComputedStyle(document.documentElement);
+      const colorExam = styles.getPropertyValue('--color-error').trim();
+      const colorRevision = styles.getPropertyValue('--color-primary').trim();
+
+      // Construir array de exámenes
+      const exams = [
+        {{- $first := true -}}
+        {{- range .Subjects }}
+
+          {{/* Primer Parcial */}}
+          {{- if .Partial1Date.Valid }}
+          {{- if not $first }},{{ end -}}{{- $first = false -}}
+          {
+            start: "{{.Partial1Date.Time.Format `2006-01-02`}}",
+            extendedProps: {
+              materia: "{{js .SubjectName}}",
+              tipo: "Primer Parcial",
+              hora: "{{.Partial1Time.String}}",
+              aula: "{{.Partial1Room.String}}"
+            }
+          }
+          {{- end }}
+
+          {{/* Segundo Parcial */}}
+          {{- if .Partial2Date.Valid }}
+          {{- if not $first }},{{ end -}}{{- $first = false -}}
+          {
+            start: "{{.Partial2Date.Time.Format `2006-01-02`}}",
+            extendedProps: {
+              materia: "{{js .SubjectName}}",
+              tipo: "Segundo Parcial",
+              hora: "{{.Partial2Time.String}}",
+              aula: "{{.Partial2Room.String}}"
+            }
+          }
+          {{- end }}
+
+          {{/* Primer Final */}}
+          {{- if .Final1Date.Valid }}
+          {{- if not $first }},{{ end -}}{{- $first = false -}}
+          {
+            start: "{{.Final1Date.Time.Format `2006-01-02`}}",
+            extendedProps: {
+              materia: "{{js .SubjectName}}",
+              tipo: "Primer Final",
+              hora: "{{.Final1Time.String}}",
+              aula: "{{.Final1Room.String}}"
+            }
+          }
+          {{- end }}
+
+          {{/* Revisión Primer Final */}}
+          {{- if .Final1RevDate.Valid }}
+          {{- if not $first }},{{ end -}}{{- $first = false -}}
+          {
+            start: "{{.Final1RevDate.Time.Format `2006-01-02`}}",
+            extendedProps: {
+              materia: "{{js .SubjectName}}",
+              tipo: "Revisión Primer Final",
+              hora: "{{.Final1RevTime.String}}",
+              aula: "" // Las revisiones normalmente no tienen aula específica
+            }
+          }
+          {{- end }}
+
+          {{/* Segundo Final */}}
+          {{- if .Final2Date.Valid }}
+          {{- if not $first }},{{ end -}}{{- $first = false -}}
+          {
+            start: "{{.Final2Date.Time.Format `2006-01-02`}}",
+            extendedProps: {
+              materia: "{{js .SubjectName}}",
+              tipo: "Segundo Final",
+              hora: "{{.Final2Time.String}}",
+              aula: "{{.Final2Room.String}}"
+            }
+          }
+          {{- end }}
+
+          {{/* Revisión Segundo Final */}}
+          {{- if .Final2RevDate.Valid }}
+          {{- if not $first }},{{ end -}}{{- $first = false -}}
+          {
+            start: "{{.Final2RevDate.Time.Format `2006-01-02`}}",
+            extendedProps: {
+              materia: "{{js .SubjectName}}",
+              tipo: "Revisión Segundo Final",
+              hora: "{{.Final2RevTime.String}}",
+              aula: "" // Las revisiones normalmente no tienen aula específica
+            }
+          }
+          {{- end }}
+
+        {{- end }}
+      ];
+
+      // Asignar colores según el tipo de examen
+      exams.forEach(ev => {
+        const tipo = ev.extendedProps.tipo.toLowerCase();
+
+        if (tipo.includes('revisión')) {
+          ev.color = colorRevision; // Color para revisiones
+          ev.textColor = '#FFFFFF'; // Texto blanco
+        } else {
+          ev.color = colorExam; // Color por defecto
+          ev.textColor = '#FFFFFF';
+        }
+      });
+
+      calendarInstance = new FullCalendar.Calendar(el, {
+        initialView: 'dayGridMonth',
+        locale: 'es',
+        height: 'auto',
+        headerToolbar: {
+          left: 'prev,next',
+          center: 'title',
+          right: ''
+        },
+        events: exams,
+        eventDidMount(info) {
+          const { materia, tipo, hora, aula } = info.event.extendedProps;
+
+          // Aplicar colores
+          info.el.style.backgroundColor = info.event.backgroundColor;
+          info.el.style.borderColor = info.event.borderColor;
+          info.el.style.color = info.event.textColor;
+
+          // Crear contenido del evento
+          info.el.innerHTML = `
+            <div style="font-weight:600;margin-bottom:2px">${materia}</div>
+            <div style="font-size:0.85em;font-style:italic;margin-bottom:2px">${tipo}</div>
+            <div style="font-size:0.8em;opacity:0.9">${hora}${aula ? ' - ' + aula : ''}</div>
+          `;
+
+          // Añadir tooltip
+          info.el.title = `${materia} - ${tipo}\n${hora}${aula ? '\nAula: ' + aula : ''}`;
+        },
+        eventClick(info) {
+          openModal(info.event.extendedProps);
+        },
+        dayMaxEventRows: 3, // Máximo de eventos por día
+        eventDisplay: 'block',
+        eventTimeFormat: {
+          hour: '2-digit',
+          minute: '2-digit',
+          meridiem: false
+        }
+      });
+
+      calendarInstance.render();
+    }
+
+    // Función para destruir calendario
+    function destroyCalendar() {
+      if (calendarInstance) {
+        calendarInstance.destroy();
+        calendarInstance = null;
+        const el = document.getElementById('calendar');
+        if (el) el.innerHTML = '';
+      }
+    }
+
+    // Manejar eventos de HTMX
+    document.body.addEventListener('htmx:beforeSwap', (evt) => {
+      if (evt.detail.target.id === 'schedule-detail') {
+        destroyCalendar();
+      }
+    });
+
+    document.body.addEventListener('htmx:afterSwap', (evt) => {
+      if (evt.detail.target.id === 'schedule-detail') {
+        const hasCalendar = evt.detail.target.querySelector('#calendar');
+        if (hasCalendar) {
+          // Pequeño delay para asegurar que el DOM esté listo
+          setTimeout(() => {
+            initCalendar();
+          }, 50);
+        }
+      }
+    });
+
+    // Inicializar si ya hay un calendario en la página
+    if (document.getElementById('calendar')) {
+      setTimeout(() => {
+        initCalendar();
+      }, 100);
+    }
+  })();
+</script>

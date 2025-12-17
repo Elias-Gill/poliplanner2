@@ -5,20 +5,36 @@
     {{ range .Subjects }}
     <article>
       <h3>{{ .SubjectName }}</h3>
-      <p>
-        {{- if ne .TeacherName "" }}
-        <span style="font-weight: var(--font-weight-semibold);">Profesor:</span>
-        <span>{{ .TeacherTitle }} {{ .TeacherLastname }}, {{ .TeacherName }}</span><br>
-        {{- end }}
-        {{- if ne .TeacherEmail "" }}
-        <span style="font-weight: var(--font-weight-semibold);">Email:</span>
-        <a href="mailto:{{.TeacherEmail}}"><span>{{ .TeacherEmail }}</span></a><br>
-        {{- end }}
-        {{- if ne .Section "" }}
-        <span style="font-weight: var(--font-weight-semibold);">Sección:</span>
-        <span>{{ .Section }}</span>
-        {{- end }}
-      </p>
+      <h4>Profesor</h4>
+      {{- if ne .TeacherName "" }}
+      <small>{{ .TeacherTitle }} {{ .TeacherLastname }}, {{ .TeacherName }}</small>
+      <br>
+      {{- end }}
+      {{- if ne .TeacherEmail "" }}
+      <small><a href="mailto:{{.TeacherEmail}}">{{ .TeacherEmail }}</a></small>
+      {{- end }}
+      {{- if ne .Section "" }}
+      <small>{{ .Section }}</small>
+      {{- end }}
+      {{if or .CommitteePresident.Valid .CommitteeMember1.Valid .CommitteeMember2.Valid}}
+      <h4>Mesa de Revisión</h4>
+      <ul>
+        {{if .CommitteePresident.Valid}}
+        <li><strong>Presidente:</strong><br>
+          <small> {{.CommitteePresident.String}} </small></li>
+        {{end}}
+        <li><strong>Miembros:</strong>
+          {{if .CommitteeMember1.Valid}}
+          <br>
+          <small>{{.CommitteeMember1.String}}</small>
+          {{end}}
+          {{if .CommitteeMember2.Valid}}
+          <br>
+          <small>{{.CommitteeMember2.String}}</small>
+          {{end}}
+        </li>
+      </ul>
+      {{end}}
     </article>
     {{ end }}
   </div>
