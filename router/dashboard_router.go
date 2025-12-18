@@ -33,15 +33,17 @@ func NewDashboardRouter(service *service.ScheduleService) func(r chi.Router) {
 				return
 			}
 
+			// Extract last viewed schedule
 			var latestSelection int64 = -1
-			if len(schedules) != 0 {
-				latestSelection = schedules[0].ID
-			}
 
 			if cookie, err := r.Cookie(latest_selection_cookie); err == nil {
 				if parsedValue, err := strconv.ParseInt(cookie.Value, 10, 64); err == nil {
 					latestSelection = parsedValue
 				}
+			}
+
+			if latestSelection == -1 && len(schedules) > 0 {
+				latestSelection = schedules[0].ID
 			}
 
 			data := struct {
@@ -84,6 +86,15 @@ func NewDashboardRouter(service *service.ScheduleService) func(r chi.Router) {
 				customRedirect(w, r, "/404")
 				return
 			}
+
+			http.SetCookie(w, &http.Cookie{
+				Name:     latest_selection_cookie,
+				Value:    strconv.FormatInt(id, 10),
+				Path:     "/dashboard",
+				HttpOnly: true,
+				SameSite: http.SameSiteLaxMode,
+				MaxAge:   60 * 60 * 24 * 30, // 30 days
+			})
 
 			data := struct {
 				SelectedScheduleID int64

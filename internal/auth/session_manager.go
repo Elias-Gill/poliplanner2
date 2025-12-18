@@ -48,7 +48,15 @@ func CreateSession(userID int64) string {
 	return id
 }
 
-// HTTP middleware setting the user id on the request context
+// SessionMiddleware is an HTTP middleware that verifies whether the incoming request
+// is associated with an authenticated user.
+//
+// Authentication is based on a session cookie that stores a session identifier.
+// When a request reaches this middleware, the session ID is extracted from the cookie
+// and validated against the sessions table.
+//
+// If the session is valid, the user ID associated with that session is injected into
+// the request context under the key "userID", making it available to downstream handlers.
 func SessionMiddleware(next http.Handler) http.Handler {
 	protected := []string{
 		"/dashboard",
@@ -73,28 +81,20 @@ func SessionMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		target := "/login?redirect=" + url.QueryEscape(r.URL.RequestURI())
+		loginPage := "/login?redirect=" + url.QueryEscape(r.URL.RequestURI())
 
 		// Validate session. If invalid, redirects to the login page.
 		cookie, err := r.Cookie("session_id")
 		if err != nil {
 			logger.Debug("Session middleware redirection", "cause", "cookie not present")
-			if isHtmx(r) {
-				w.Header().Add("HX-redirect", target)
-			} else {
-				http.Redirect(w, r, target, http.StatusFound)
-			}
+			customRedirect(w, r, loginPage)
 			return
 		}
 
 		session, ok := getSession(cookie.Value)
 		if !ok {
 			logger.Debug("Session middleware redirection", "cause", "session expired or invalid token")
-			if isHtmx(r) {
-				w.Header().Add("HX-redirect", target)
-			} else {
-				http.Redirect(w, r, target, http.StatusFound)
-			}
+			customRedirect(w, r, loginPage)
 			return
 		}
 
@@ -104,6 +104,11 @@ func SessionMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func isHtmx(r *http.Request) bool {
-	return r.Header.Get("HX-Request") == "true"
+func customRedirect(w http.ResponseWriter, r *http.Request, target string) {
+	isHtmx := r.Header.Get("HX-Request") == "true"
+	if isHtmx {
+		w.Header().Add("HX-redirect", target)
+	} else {
+		http.Redirect(w, r, target, http.StatusFound)
+	}
 }
