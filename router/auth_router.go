@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"net/mail"
 	"regexp"
-	"strings"
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/auth"
@@ -52,8 +51,10 @@ func NewAuthRouter(service *service.UserService) func(r chi.Router) {
 				return
 			}
 
-			// Create a session cookie
+			// Generate a new session
 			sessionID := auth.CreateSession(user.ID)
+
+			// Set the session cookie
 			http.SetCookie(w, &http.Cookie{
 				Name:     "session_id",
 				Value:    sessionID,
@@ -106,7 +107,7 @@ func NewAuthRouter(service *service.UserService) func(r chi.Router) {
 				return
 			}
 
-			err := service.CreateUser(r.Context(), strings.ToLower(username), email, rawPassword)
+			err := service.CreateUser(r.Context(), username, email, rawPassword)
 			if err != nil {
 				w.Write([]byte(newErrorFragment(err.Error())))
 				return

@@ -33,9 +33,11 @@
     {{ else }}
     <p>No tienes horarios registrados.</p>
     {{ end }}
-    <button style="margin-left: 1rem;">
-      <a href="/schedule/create" style="color: white; text-decoration: none;">Crear</a>
-    </button>
+    <a href="/schedule/create" style="color: white; text-decoration: none;">
+        <button>
+            <i class="bi bi-plus-circle" style="margin-right: var(--space-sm)"></i>Crear
+        </button>
+    </a>
   </div>
   <section>
     <div id="schedule-detail"></div>

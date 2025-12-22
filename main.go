@@ -37,6 +37,7 @@ func main() {
 		store.NewSqliteSubjectStore(),
 		store.NewSqliteScheduleStore(),
 		store.NewSqliteScheduleDetailStore(),
+		config.Get().Email.APIKey,
 	)
 
 	// Configure http server

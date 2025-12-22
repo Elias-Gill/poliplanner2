@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
 	"github.com/elias-gill/poliplanner2/internal/db/store"
@@ -36,6 +37,8 @@ func (s *UserService) AuthenticateUser(
 	username string,
 	rawPassword string,
 ) (*model.User, error) {
+	// Normalize username
+	username = strings.ToLower(username)
 
 	// Search first by username. If not found then search by email
 	user, err := s.userStorer.GetByUsername(ctx, s.db, username)
@@ -61,6 +64,11 @@ func (s *UserService) CreateUser(
 	email string,
 	rawPassword string,
 ) error {
+	// Normalize username
+	username = strings.Trim(strings.ToLower(username), " ")
+	if username == "" {
+		return fmt.Errorf("Username cannot be empty")
+	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword(
 		[]byte(rawPassword),
