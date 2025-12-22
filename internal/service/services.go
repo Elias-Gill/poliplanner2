@@ -13,6 +13,7 @@ type Services struct {
 	SubjectService      *SubjectService
 	ScheduleService     *ScheduleService
 	ExcelService        *ExcelService
+	EmailService        *EmailService
 }
 
 // Convenience function to instantiate all the services in one call
@@ -24,6 +25,7 @@ func NewServices(
 	subjectStore store.SubjectStorer,
 	scheduleStore store.ScheduleStorer,
 	scheduleDetailStore store.ScheduleDetailStorer,
+	emailApiKey string,
 ) *Services {
 	return &Services{
 		UserService:         NewUserService(conn, userStore),
@@ -32,5 +34,6 @@ func NewServices(
 		SubjectService:      NewSubjectService(conn, subjectStore),
 		ScheduleService:     NewScheduleService(conn, scheduleStore, scheduleDetailStore),
 		ExcelService:        NewExcelService(conn, sheetVersionStore, careerStore, subjectStore),
+		EmailService:        NewEmailService(emailApiKey),
 	}
 }

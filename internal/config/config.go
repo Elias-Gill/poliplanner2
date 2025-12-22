@@ -35,6 +35,7 @@ type Config struct {
 	Excel    ExcelConfig
 	Logging  LoggingConfig
 	Security SecurityConfig
+	Email    EmailConfig
 }
 
 // ================================
@@ -69,6 +70,10 @@ type LoggingConfig struct {
 type SecurityConfig struct {
 	UpdateKey  string
 	SecureHTTP bool
+}
+
+type EmailConfig struct {
+	APIKey string
 }
 
 // ================================
@@ -111,6 +116,11 @@ func MustLoad() {
 		log.Warn("Missing Google API key, excel scrapping will be disabled")
 	}
 
+	emailAPIKey := getEnv("EMAIL_API_KEY", "")
+	if emailAPIKey == "" {
+		log.Warn("Missing Email api key, emails will be disabled")
+	}
+
 	updateKey := getEnv("UPDATE_KEY", "")
 	if updateKey == "" {
 		log.Error("Missing UPDATE_KEY, refusing to start")
@@ -151,6 +161,9 @@ func MustLoad() {
 		Security: SecurityConfig{
 			UpdateKey:  updateKey,
 			SecureHTTP: getEnvAsBool("SECURE_HTTP", secureHTTPDefault),
+		},
+		Email: EmailConfig{
+			APIKey: emailAPIKey,
 		},
 	}
 }
