@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <title>Theme Palette Selector</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      /* ================= BASE ================= */
+      :root {
+          --color-bg: oklch(0.96 0.005 70);
+          --color-secondary-bg: oklch(0.92 0.01 240);
+          --color-text: oklch(0.15 0.02 240);
+          --color-border: oklch(0.79 0.02 240);
+
+          --color-primary: oklch(0.4 0.1 240);
+          --color-muted: oklch(0.4 0.02 240);
+          --color-success: oklch(0.55 0.12 160);
+          --color-error: oklch(0.5 0.14 20);
+          --color-warning: oklch(0.75 0.12 90);
+
+          --space-md: 1rem;
+          --space-lg: 1.5rem;
+          --border-radius: 0.25rem;
+
+          --font-base: system-ui, sans-serif;
+      }
+
+      body {
+          margin: 0;
+          padding: var(--space-lg);
+          font-family: var(--font-base);
+          background: var(--color-bg);
+          color: var(--color-text);
+      }
+
+      .card {
+          background: var(--color-secondary-bg);
+          padding: var(--space-lg);
+          border-radius: var(--border-radius);
+          border: 1px solid var(--color-border);
+          max-width: 520px;
+      }
+
+      button {
+          padding: 0.4rem 0.7rem;
+          border-radius: var(--border-radius);
+          border: 1px solid var(--color-border);
+          background: var(--color-bg);
+          color: var(--color-text);
+          cursor: pointer;
+      }
+
+      button:hover {
+          background: var(--color-primary);
+          color: white;
+      }
+
+      .palette-buttons {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
+      }
+
+      /* ================= PALETTES ================= */
+
+      /* Dark */
+      .theme-dark {
+          --color-bg: oklch(0.20 0 200);
+          --color-secondary-bg: oklch(0.28 0.02 240);
+          --color-text: oklch(1 0.01 240);
+          --color-muted: oklch(0.7 0.02 240);
+          --color-border: oklch(0.38 0.02 240);
+
+          --color-primary: oklch(0.5 0.1 240);
+          --color-success: oklch(0.65 0.14 160);
+          --color-error: oklch(0.6 0.16 20);
+          --color-warning: oklch(0.8 0.14 90);
+      }
+
+      /* Warm */
+      .theme-warm {
+          --color-bg: oklch(0.95 0.02 80);
+          --color-secondary-bg: oklch(0.9 0.03 70);
+          --color-text: oklch(0.18 0.03 60);
+          --color-border: oklch(0.75 0.04 70);
+
+          --color-primary: oklch(0.55 0.14 40);
+          --color-success: oklch(0.6 0.16 140);
+          --color-error: oklch(0.55 0.18 25);
+          --color-warning: oklch(0.8 0.15 85);
+      }
+
+      /* Forest */
+      .theme-forest {
+          --color-bg: oklch(0.93 0.03 150);
+          --color-secondary-bg: oklch(0.88 0.05 150);
+          --color-text: oklch(0.2 0.05 150);
+          --color-border: oklch(0.7 0.06 150);
+
+          --color-primary: oklch(0.45 0.14 150);
+          --color-success: oklch(0.55 0.18 145);
+          --color-error: oklch(0.5 0.16 25);
+          --color-warning: oklch(0.75 0.14 95);
+      }
+
+      /* Ocean */
+      .theme-ocean {
+          --color-bg: oklch(0.94 0.02 230);
+          --color-secondary-bg: oklch(0.9 0.04 220);
+          --color-text: oklch(0.18 0.04 230);
+          --color-border: oklch(0.72 0.05 220);
+
+          --color-primary: oklch(0.45 0.15 220);
+          --color-success: oklch(0.6 0.15 170);
+          --color-error: oklch(0.55 0.18 20);
+          --color-warning: oklch(0.78 0.14 100);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h3>Theme selector</h3>
+      <div class="palette-buttons">
+        <button onclick="setTheme('')">Default</button>
+        <button onclick="setTheme('theme-dark')">Dark</button>
+        <button onclick="setTheme('theme-warm')">Warm</button>
+        <button onclick="setTheme('theme-forest')">Forest</button>
+        <button onclick="setTheme('theme-ocean')">Ocean</button>
+      </div>
+      <p>
+        Texto de ejemplo<br>
+        <small style="color: var(--color-muted)">Muted text</small>
+      </p>
+      <button>Primary action</button>
+    </div>
+    <script>
+      function setTheme(theme) {
+          document.documentElement.className = theme;
+      }
+    </script>
+  </body>
+</html>

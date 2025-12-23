@@ -37,11 +37,13 @@ func customRedirect(w http.ResponseWriter, r *http.Request, target string) {
 }
 
 func execTemplateWithLayout(w http.ResponseWriter, tplPath string, layout *template.Template, data any) error {
+	w.Header().Set("Content-Type", "text/html")
 	tpl := template.Must(template.Must(layout.Clone()).ParseFiles(path.Join(config.Get().Paths.BaseDir, tplPath)))
 	return tpl.Execute(w, data)
 }
 
 func execTemplate(w http.ResponseWriter, tplPath string, data any) error {
+	w.Header().Set("Content-Type", "text/html")
 	tpl := template.Must(template.ParseFiles(path.Join(config.Get().Paths.BaseDir, tplPath)))
 	return tpl.Execute(w, data)
 }

@@ -1,10 +1,13 @@
 package router
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/mail"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/auth"
@@ -15,7 +18,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func NewAuthRouter(service *service.UserService) func(r chi.Router) {
+func NewAuthRouter(userService *service.UserService, emailService *service.EmailService) func(r chi.Router) {
 	layouts := web.CleanLayout
 
 	return func(r chi.Router) {
@@ -31,8 +34,7 @@ func NewAuthRouter(service *service.UserService) func(r chi.Router) {
 				"Redirect": r.URL.Query().Get("redirect"),
 			}
 
-			w.Header().Set("Content-Type", "text/html")
-			execTemplateWithLayout(w, "web/templates/pages/login.html", layouts, data)
+			execTemplateWithLayout(w, "web/templates/pages/auth/login.html", layouts, data)
 		})
 
 		r.Post("/login", func(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +46,7 @@ func NewAuthRouter(service *service.UserService) func(r chi.Router) {
 			// Authentication
 			username := r.FormValue("username")
 			password := r.FormValue("password")
-			user, err := service.AuthenticateUser(r.Context(), username, password)
+			user, err := userService.AuthenticateUser(r.Context(), username, password)
 			if err != nil {
 				w.Header().Set("Content-Type", "text/html")
 				w.Write([]byte(newErrorFragment("Usuario o contraseña incorrectos")))
@@ -79,7 +81,7 @@ func NewAuthRouter(service *service.UserService) func(r chi.Router) {
 		// --- Handle SIGNUP ---
 		r.Get("/signup", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "text/html")
-			execTemplateWithLayout(w, "web/templates/pages/signup.html", layouts, nil)
+			execTemplateWithLayout(w, "web/templates/pages/auth/signup.html", layouts, nil)
 		})
 
 		r.Post("/signup", func(w http.ResponseWriter, r *http.Request) {
@@ -107,7 +109,7 @@ func NewAuthRouter(service *service.UserService) func(r chi.Router) {
 				return
 			}
 
-			err := service.CreateUser(r.Context(), username, email, rawPassword)
+			err := userService.CreateUser(r.Context(), username, email, rawPassword)
 			if err != nil {
 				w.Write([]byte(newErrorFragment(err.Error())))
 				return

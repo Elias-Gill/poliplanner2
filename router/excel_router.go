@@ -36,7 +36,7 @@ func NewExcelRouter(service *service.ExcelService) func(r chi.Router) {
 		})
 
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			err := execTemplateWithLayout(w, "web/templates/pages/sync.html", layout, nil)
+			err := execTemplateWithLayout(w, "web/templates/pages/excel/sync-form.html", layout, nil)
 			if err != nil {
 				http.Redirect(w, r, "/500", http.StatusFound)
 			}
