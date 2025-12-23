@@ -2,7 +2,6 @@ package store
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
 )
@@ -99,10 +98,8 @@ func (s SqliteSubjectStore) GetByID(
 	row := exec.QueryRowContext(ctx, query, subjectID)
 
 	sub := &model.Subject{}
-	var careerID sql.NullInt64
-
 	err := row.Scan(
-		&sub.ID, &careerID, &sub.Department, &sub.SubjectName, &sub.Semester, &sub.Section,
+		&sub.ID, &sub.CareerID, &sub.Department, &sub.SubjectName, &sub.Semester, &sub.Section,
 		&sub.TeacherTitle, &sub.TeacherLastname, &sub.TeacherName, &sub.TeacherEmail,
 		&sub.Monday, &sub.MondayRoom,
 		&sub.Tuesday, &sub.TuesdayRoom,
@@ -118,10 +115,6 @@ func (s SqliteSubjectStore) GetByID(
 	)
 	if err != nil {
 		return nil, err
-	}
-
-	if careerID.Valid {
-		sub.CareerID = careerID.Int64
 	}
 
 	return sub, nil
@@ -169,4 +162,36 @@ func (s SqliteSubjectStore) GetByCareerID(
 	}
 
 	return result, rows.Err()
+}
+
+func (s SqliteSubjectStore) GetByNameAndSheetVersion(
+	ctx context.Context,
+	exec Executor,
+	subjectName string,
+	sheetVersionID int64,
+) (int64, error) {
+
+	query := `
+	SELECT s.subject_id
+	FROM subjects s
+	JOIN career_version cv ON cv.career_version_id = s.career_id
+	JOIN career c ON c.career_id = cv.career_id
+	WHERE s.subject_name = ?
+	  AND cv.sheet_version_id = ?
+	LIMIT 1
+	`
+
+	var subjectID int64
+	err := exec.QueryRowContext(
+		ctx,
+		query,
+		subjectName,
+		sheetVersionID,
+	).Scan(&subjectID)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return subjectID, nil
 }

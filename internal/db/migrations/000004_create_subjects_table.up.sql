@@ -1,7 +1,7 @@
 -- +migrate Up
 CREATE TABLE subjects (
     subject_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    career_id INTEGER,
+    career_id INTEGER NOT NULL,
     department TEXT,
     subject_name TEXT,
     semester INTEGER,
@@ -48,7 +48,7 @@ CREATE TABLE subjects (
     committee_member1 TEXT,
     committee_member2 TEXT,
 
-    FOREIGN KEY (career_id) REFERENCES careers(career_id) ON DELETE CASCADE
+    FOREIGN KEY (career_id) REFERENCES career_version(career_version_id) ON DELETE CASCADE
 );
 
 CREATE INDEX idx_subjects_name_career ON subjects(subject_name, career_id);

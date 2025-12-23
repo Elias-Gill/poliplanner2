@@ -13,17 +13,21 @@ type ScheduleService struct {
 	db                   *sql.DB
 	scheduleStorer       store.ScheduleStorer
 	scheduleDetailStorer store.ScheduleDetailStorer
+	sheetVersionStorer   store.SheetVersionStorer
+	subjecStorer         store.SubjectStorer
 }
 
 func NewScheduleService(
 	db *sql.DB,
 	scheduleStorer store.ScheduleStorer,
 	scheduleDetailStorer store.ScheduleDetailStorer,
+	sheetVersionStorer store.SheetVersionStorer,
 ) *ScheduleService {
 	return &ScheduleService{
 		db:                   db,
 		scheduleStorer:       scheduleStorer,
 		scheduleDetailStorer: scheduleDetailStorer,
+		sheetVersionStorer:   sheetVersionStorer,
 	}
 }
 
@@ -136,6 +140,63 @@ func (s *ScheduleService) DeleteSchedule(
 	err = tx.Commit()
 	if err != nil {
 		return fmt.Errorf("cannot commit schedule deletion: %w", err)
+	}
+
+	return nil
+}
+
+func (s *ScheduleService) MigrateSchedule(ctx context.Context, userID int64, scheduleID int64) error {
+	schedule, err := s.scheduleStorer.GetByID(ctx, s.db, scheduleID)
+	if err != nil {
+		return fmt.Errorf("failed to get schedule: %w", err)
+	}
+
+	// Check if the schedule belongs to the user
+	if schedule.UserID != userID {
+		return fmt.Errorf("permission denied")
+	}
+
+	latestExcel, err := s.sheetVersionStorer.GetNewest(ctx, s.db)
+	if err != nil {
+		return fmt.Errorf("failed to get newest sheet version: %w", err)
+	}
+
+	tx, err := s.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+
+	// Make sure to rollback if anything fails
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		}
+	}()
+
+	// Get current subjects linked to the schedule
+	details, err := s.scheduleDetailStorer.GetSubjectsByScheduleID(ctx, tx, scheduleID)
+	if err != nil {
+		return fmt.Errorf("failed to get schedule subjects: %w", err)
+	}
+
+	// Collect updated subject IDs for the new sheet version
+	var updatedSubjectIDs []int64
+	for _, subject := range details {
+		updatedVersion, err := s.subjecStorer.GetByNameAndSheetVersion(ctx, tx, subject.SubjectName, latestExcel.ID)
+		if err != nil {
+			return fmt.Errorf("failed to find updated subject version for %s: %w", subject.SubjectName, err)
+		}
+		updatedSubjectIDs = append(updatedSubjectIDs, updatedVersion)
+	}
+
+	// Update schedule subjects
+	err = s.scheduleDetailStorer.UpdateScheduleSubjects(ctx, tx, scheduleID, updatedSubjectIDs)
+	if err != nil {
+		return fmt.Errorf("failed to update schedule subjects: %w", err)
+	}
+
+	if err = tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
 	return nil

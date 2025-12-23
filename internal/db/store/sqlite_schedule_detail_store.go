@@ -2,7 +2,6 @@ package store
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
 )
@@ -51,10 +50,8 @@ func (s SqliteScheduleDetailStore) GetSubjectsByScheduleID(ctx context.Context, 
 	var subjects []*model.Subject
 	for rows.Next() {
 		sub := &model.Subject{}
-		var careerID sql.NullInt64
-
 		err := rows.Scan(
-			&sub.ID, &careerID, &sub.Department, &sub.SubjectName, &sub.Semester, &sub.Section,
+			&sub.ID, &sub.CareerID, &sub.Department, &sub.SubjectName, &sub.Semester, &sub.Section,
 			&sub.TeacherTitle, &sub.TeacherLastname, &sub.TeacherName, &sub.TeacherEmail,
 			&sub.Monday, &sub.MondayRoom,
 			&sub.Tuesday, &sub.TuesdayRoom,
@@ -74,11 +71,36 @@ func (s SqliteScheduleDetailStore) GetSubjectsByScheduleID(ctx context.Context, 
 			return nil, err
 		}
 
-		if careerID.Valid {
-			sub.CareerID = careerID.Int64
-		}
-
 		subjects = append(subjects, sub)
 	}
 	return subjects, rows.Err()
+}
+
+func (s SqliteScheduleDetailStore) UpdateScheduleSubjects(
+	ctx context.Context,
+	exec Executor,
+	scheduleID int64,
+	newSubjectIDs []int64,
+) error {
+	// Delete old entries
+	_, err := exec.ExecContext(ctx, "DELETE FROM schedule_subjects WHERE schedule_id = ?", scheduleID)
+	if err != nil {
+		return err
+	}
+
+	// Prepare multiple insertion
+	stmt, err := exec.PrepareContext(ctx, "INSERT INTO schedule_subjects(schedule_id, subject_id) VALUES (?, ?)")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	for _, subjectID := range newSubjectIDs {
+		_, err := stmt.ExecContext(ctx, scheduleID, subjectID)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
