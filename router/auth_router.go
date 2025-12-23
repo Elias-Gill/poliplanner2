@@ -116,6 +116,113 @@ func NewAuthRouter(service *service.UserService) func(r chi.Router) {
 			w.Header().Set("HX-Redirect", "/login")
 			w.WriteHeader(http.StatusOK)
 		})
+
+		r.Get("/password-recovery", func(w http.ResponseWriter, r *http.Request) {
+			execTemplateWithLayout(w, "web/templates/pages/auth/password-recovery.html", layouts, nil)
+		})
+
+		r.Post("/password-recovery", func(w http.ResponseWriter, r *http.Request) {
+			err := r.ParseForm()
+			if err != nil {
+				w.Header().Set("Content-Type", "text/html")
+				w.Write([]byte(newErrorFragment("Error al parsear el form")))
+				return
+			}
+
+			email := strings.TrimSpace(r.Form.Get("email"))
+			if email == "" {
+				w.Header().Set("Content-Type", "text/html")
+				w.Write([]byte(newErrorFragment("El email no puede estar vacío")))
+				return
+			}
+
+			if !isValidEmail(email) {
+				w.Header().Set("Content-Type", "text/html")
+				w.Write([]byte(newErrorFragment("Email inválido")))
+				return
+			}
+
+			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*300)
+			defer cancel()
+
+			token, err := userService.StartPasswordRecovery(ctx, email)
+			if err != nil {
+				if errors.Is(err, service.CannotFindUserError) {
+					w.Header().Set("Content-Type", "text/html")
+					w.Write([]byte(newSuccessFragment("Se ha enviado un link de recuperación al correo proporcionado.")))
+					return
+				} else {
+					customRedirect(w, r, "/500")
+					return
+				}
+			}
+
+			err = emailService.SendRecoveryEmail(email, token)
+			if err != nil {
+				customRedirect(w, r, "/500")
+				logger.Error("Error sending recovery email", "error", err)
+				return
+			}
+
+			w.Header().Set("Content-Type", "text/html")
+			w.Write([]byte(newSuccessFragment("Se ha enviado un link de recuperación al correo proporcionado.")))
+		})
+
+		r.Get("/password-recovery/{token}", func(w http.ResponseWriter, r *http.Request) {
+			token := chi.URLParam(r, "token")
+			if strings.TrimSpace(token) == "" {
+				customRedirect(w, r, "/500")
+				return
+			}
+
+			data := map[string]any{
+				"Token": token,
+			}
+
+			execTemplateWithLayout(w, "web/templates/pages/auth/password-recovery-commit.html", layouts, data)
+		})
+
+		r.Post("/password-recovery/{token}", func(w http.ResponseWriter, r *http.Request) {
+			token := chi.URLParam(r, "token")
+			if strings.TrimSpace(token) == "" {
+				w.Write([]byte(newErrorFragment("Token inválido")))
+				return
+			}
+
+			if err := r.ParseForm(); err != nil {
+				w.Write([]byte(newErrorFragment("Error al procesar el formulario")))
+				return
+			}
+
+			password := r.Form.Get("password")
+			confirm := r.Form.Get("confirm_password")
+
+			if password == "" || confirm == "" {
+				w.Write([]byte(newErrorFragment("La contraseña no puede estar vacía")))
+				return
+			}
+
+			if password != confirm {
+				w.Write([]byte(newErrorFragment("Las contraseñas no coinciden")))
+				return
+			}
+
+			if len(password) < 6 {
+				w.Write([]byte(newErrorFragment("La contraseña debe tener al menos 6 caracteres")))
+				return
+			}
+
+			err := userService.CommitPasswordRecovery(r.Context(), token, password)
+			if err != nil {
+				w.Write([]byte(newErrorFragment("El enlace es inválido o ya expiró")))
+				return
+			}
+
+			w.Write([]byte(`
+				<section class="success">
+				<span>Contraseña actualizada correctamente</span>
+				</section>`))
+		})
 	}
 }
 
@@ -144,6 +251,15 @@ func newErrorFragment(msg string) string {
 	<section role="alert" class="error">
 		<span>` + msg + `</span>
 		<button type="button" style="background-color: var(--color-error);" onclick="this.parentElement.remove()" aria-label="Cerrar alerta">×</button>
+	</section>
+	`
+}
+
+func newSuccessFragment(msg string) string {
+	return `
+	<section role="alert" class="success">
+	<span>` + msg + `</span>
+	<button type="button" style="background-color: var(--color-success);" onclick="this.parentElement.remove()" aria-label="Cerrar alerta">×</button>
 	</section>
 	`
 }

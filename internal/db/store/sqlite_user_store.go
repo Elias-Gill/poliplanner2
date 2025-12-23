@@ -29,6 +29,31 @@ func (s SqliteUserStore) Insert(ctx context.Context, exec Executor, u *model.Use
 	return nil
 }
 
+func (s SqliteUserStore) Update(ctx context.Context, exec Executor, user *model.User) error {
+	query := `
+		UPDATE users
+		SET username = ?,
+		    password = ?,
+		    email = ?,
+		    recovery_token_hash = ?,
+		    recovery_token_expiration = ?,
+		    recovery_token_used = ?
+		WHERE user_id = ?
+	`
+
+	_, err := exec.ExecContext(ctx, query,
+		user.Username,
+		user.Password,
+		user.Email,
+		user.RecoveryTokenHash,
+		user.RecoveryTokenExpiration,
+		user.RecoveryTokenUsed,
+		user.ID,
+	)
+
+	return err
+}
+
 func (s SqliteUserStore) Delete(ctx context.Context, exec Executor, userID int64) error {
 	_, err := exec.ExecContext(ctx, `DELETE FROM users WHERE user_id = ?`, userID)
 	return err
@@ -68,6 +93,20 @@ func (s SqliteUserStore) GetByEmail(ctx context.Context, exec Executor, email st
 		SELECT user_id, username, password, email,
 		       recovery_token_hash, recovery_token_expiration, recovery_token_used
 		FROM users WHERE email = ?`, email).
+		Scan(&u.ID, &u.Username, &u.Password, &u.Email,
+			&u.RecoveryTokenHash, &u.RecoveryTokenExpiration, &u.RecoveryTokenUsed)
+	if err != nil {
+		return nil, err
+	}
+	return u, nil
+}
+
+func (s SqliteUserStore) GetByRecoveryToken(ctx context.Context, exec Executor, token string) (*model.User, error) {
+	u := &model.User{}
+	err := exec.QueryRowContext(ctx, `
+		SELECT user_id, username, password, email,
+		recovery_token_hash, recovery_token_expiration, recovery_token_used
+		FROM users WHERE recovery_token_hash = ?`, token).
 		Scan(&u.ID, &u.Username, &u.Password, &u.Email,
 			&u.RecoveryTokenHash, &u.RecoveryTokenExpiration, &u.RecoveryTokenUsed)
 	if err != nil {

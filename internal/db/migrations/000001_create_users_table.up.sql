@@ -8,4 +8,5 @@ CREATE TABLE IF NOT EXISTS users (
     recovery_token_used BOOLEAN DEFAULT FALSE
 );
 
-CREATE INDEX idx_users_name ON users(username);
+CREATE INDEX idx_users_name ON users(username, recovery_token_hash);
+

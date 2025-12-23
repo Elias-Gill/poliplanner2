@@ -10,9 +10,11 @@ import (
 type UserStorer interface {
 	Insert(ctx context.Context, exec Executor, u *model.User) error
 	Delete(ctx context.Context, exec Executor, userID int64) error
+	Update(ctx context.Context, exec Executor, user *model.User) error
 	GetByID(ctx context.Context, exec Executor, userID int64) (*model.User, error)
 	GetByUsername(ctx context.Context, exec Executor, username string) (*model.User, error)
 	GetByEmail(ctx context.Context, exec Executor, email string) (*model.User, error)
+	GetByRecoveryToken(ctx context.Context, exec Executor, token string) (*model.User, error)
 }
 
 type SheetVersionStorer interface {
