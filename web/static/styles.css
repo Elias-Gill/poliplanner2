@@ -618,3 +618,7 @@ input:-webkit-autofill:focus {
 summary {
     cursor: pointer;
 }
+
+strong {
+    font-weight: var(--font-weight-semibold);
+}

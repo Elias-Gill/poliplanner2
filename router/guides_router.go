@@ -27,6 +27,11 @@ func NewGuidesRouter() func(r chi.Router) {
 			execTemplateWithLayout(w, "web/templates/pages/guides/manual_del_bicho.html", layouts, nil)
 		})
 
+		r.Get("/news", func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "text/html")
+			execTemplateWithLayout(w, "web/templates/pages/guides/news.html", layouts, nil)
+		})
+
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "text/html")
 			execTemplateWithLayout(w, "web/templates/pages/guides/index.html", layouts, nil)

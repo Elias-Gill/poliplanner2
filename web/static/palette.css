@@ -16,7 +16,7 @@
 .default-theme.dark-mode {
     --color-bg: oklch(0.20 0 200);
     --color-secondary-bg: oklch(0.4 0.02 240);
-    --color-text: oklch(1 0.01 240);
+    --color-text: oklch(0.9 0.01 240);
     --color-muted: oklch(0.7 0.02 240);
     --color-border: oklch(0.386 0.02 240);
 
