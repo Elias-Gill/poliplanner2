@@ -104,6 +104,13 @@ func SessionMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+func DeleteSession(r *http.Request) {
+	cookie, err := r.Cookie("session_id")
+	if err == nil {
+		delete(sessions, cookie.Value)
+	}
+}
+
 func customRedirect(w http.ResponseWriter, r *http.Request, target string) {
 	isHtmx := r.Header.Get("HX-Request") == "true"
 	if isHtmx {
