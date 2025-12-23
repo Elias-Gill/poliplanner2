@@ -32,7 +32,7 @@ func NewServices(
 		SheetVersionService: NewSheetVersionService(conn, sheetVersionStore),
 		CareerService:       NewCareerService(conn, careerStore),
 		SubjectService:      NewSubjectService(conn, subjectStore),
-		ScheduleService:     NewScheduleService(conn, scheduleStore, scheduleDetailStore, sheetVersionStore),
+		ScheduleService:     NewScheduleService(conn, scheduleStore, scheduleDetailStore, sheetVersionStore, subjectStore),
 		ExcelService:        NewExcelService(conn, sheetVersionStore, careerStore, subjectStore),
 		EmailService:        NewEmailService(emailApiKey),
 	}

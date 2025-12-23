@@ -22,12 +22,14 @@ func NewScheduleService(
 	scheduleStorer store.ScheduleStorer,
 	scheduleDetailStorer store.ScheduleDetailStorer,
 	sheetVersionStorer store.SheetVersionStorer,
+	subjecStorer store.SubjectStorer,
 ) *ScheduleService {
 	return &ScheduleService{
 		db:                   db,
 		scheduleStorer:       scheduleStorer,
 		scheduleDetailStorer: scheduleDetailStorer,
 		sheetVersionStorer:   sheetVersionStorer,
+		subjecStorer:         subjecStorer,
 	}
 }
 
@@ -182,7 +184,7 @@ func (s *ScheduleService) MigrateSchedule(ctx context.Context, userID int64, sch
 	// Collect updated subject IDs for the new sheet version
 	var updatedSubjectIDs []int64
 	for _, subject := range details {
-		updatedVersion, err := s.subjecStorer.GetByNameAndSheetVersion(ctx, tx, subject.SubjectName, latestExcel.ID)
+		updatedVersion, err := s.subjecStorer.GetBySheetVersion(ctx, tx, subject, latestExcel.ID)
 		if err != nil {
 			return fmt.Errorf("failed to find updated subject version for %s: %w", subject.SubjectName, err)
 		}
@@ -190,9 +192,15 @@ func (s *ScheduleService) MigrateSchedule(ctx context.Context, userID int64, sch
 	}
 
 	// Update schedule subjects
-	err = s.scheduleDetailStorer.UpdateScheduleSubjects(ctx, tx, scheduleID, updatedSubjectIDs)
+	err = s.scheduleStorer.UpdateScheduleSubjects(ctx, tx, scheduleID, updatedSubjectIDs)
 	if err != nil {
 		return fmt.Errorf("failed to update schedule subjects: %w", err)
+	}
+
+	// Update schedule sheet version
+	err = s.scheduleStorer.UpdateScheduleExcelVersion(ctx, tx, scheduleID, latestExcel.ID)
+	if err != nil {
+		return fmt.Errorf("failed to update schedule sheet version: %w", err)
 	}
 
 	if err = tx.Commit(); err != nil {

@@ -164,12 +164,7 @@ func (s SqliteSubjectStore) GetByCareerID(
 	return result, rows.Err()
 }
 
-func (s SqliteSubjectStore) GetByNameAndSheetVersion(
-	ctx context.Context,
-	exec Executor,
-	subjectName string,
-	sheetVersionID int64,
-) (int64, error) {
+func (s SqliteSubjectStore) GetBySheetVersion(ctx context.Context, exec Executor, subject *model.Subject, sheetVersionID int64) (int64, error) {
 
 	query := `
 	SELECT s.subject_id
@@ -178,20 +173,18 @@ func (s SqliteSubjectStore) GetByNameAndSheetVersion(
 	JOIN career c ON c.career_id = cv.career_id
 	WHERE s.subject_name = ?
 	  AND cv.sheet_version_id = ?
+	  AND s.section = ?
 	LIMIT 1
 	`
 
-	var subjectID int64
+	var subjectID int64 = 0
 	err := exec.QueryRowContext(
 		ctx,
 		query,
-		subjectName,
+		subject.SubjectName,
 		sheetVersionID,
+		subject.Section,
 	).Scan(&subjectID)
 
-	if err != nil {
-		return 0, err
-	}
-
-	return subjectID, nil
+	return subjectID, err
 }

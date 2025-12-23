@@ -75,32 +75,3 @@ func (s SqliteScheduleDetailStore) GetSubjectsByScheduleID(ctx context.Context, 
 	}
 	return subjects, rows.Err()
 }
-
-func (s SqliteScheduleDetailStore) UpdateScheduleSubjects(
-	ctx context.Context,
-	exec Executor,
-	scheduleID int64,
-	newSubjectIDs []int64,
-) error {
-	// Delete old entries
-	_, err := exec.ExecContext(ctx, "DELETE FROM schedule_subjects WHERE schedule_id = ?", scheduleID)
-	if err != nil {
-		return err
-	}
-
-	// Prepare multiple insertion
-	stmt, err := exec.PrepareContext(ctx, "INSERT INTO schedule_subjects(schedule_id, subject_id) VALUES (?, ?)")
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	for _, subjectID := range newSubjectIDs {
-		_, err := stmt.ExecContext(ctx, scheduleID, subjectID)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}

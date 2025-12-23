@@ -156,5 +156,27 @@ func NewSchedulesRouter(
 
 			w.Header().Set("HX-Redirect", "/dashboard")
 		})
+
+		r.Get("/{scheduleID}/update", func(w http.ResponseWriter, r *http.Request) {
+			userID := extractUserID(r)
+
+			rawScheduleID := chi.URLParam(r, "scheduleID")
+			scheduleID, err := strconv.ParseInt(rawScheduleID, 10, 64)
+			if err != nil {
+				customRedirect(w, r, "/404")
+				return
+			}
+
+			err = scheduleService.MigrateSchedule(r.Context(), userID, scheduleID)
+			if err != nil {
+				// Log the error with context for debugging
+				logger.Error("Failed to migrate schedule", "user", userID, "scheduleID", scheduleID, "error", err)
+				customRedirect(w, r, "/500")
+				return
+			}
+
+			// redirect to dashboard
+			customRedirect(w, r, "/")
+		})
 	}
 }

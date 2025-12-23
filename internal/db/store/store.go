@@ -47,7 +47,7 @@ type SubjectStorer interface {
 	Insert(ctx context.Context, exec Executor, careerID int64, s *model.Subject) error
 	GetByID(ctx context.Context, exec Executor, subjectID int64) (*model.Subject, error)
 	GetByCareerID(ctx context.Context, exec Executor, careerID int64) ([]*SubjectListItem, error)
-	GetByNameAndSheetVersion(ctx context.Context, exec Executor, name string, sheetVersionID int64) (int64, error)
+	GetBySheetVersion(ctx context.Context, exec Executor, subject *model.Subject, sheetVersionID int64) (int64, error)
 }
 
 type ScheduleStorer interface {
@@ -55,12 +55,13 @@ type ScheduleStorer interface {
 	Delete(ctx context.Context, exec Executor, scheduleID int64) error
 	GetByUserID(ctx context.Context, exec Executor, userID int64) ([]*model.Schedule, error)
 	GetByID(ctx context.Context, exec Executor, scheduleID int64) (*model.Schedule, error)
+	UpdateScheduleSubjects(ctx context.Context, exec Executor, scheduleID int64, newSubjectIDs []int64) error
+	UpdateScheduleExcelVersion(ctx context.Context, exec Executor, scheduleID int64, newSheetVersionID int64) error
 }
 
 type ScheduleDetailStorer interface {
 	Insert(ctx context.Context, exec Executor, scheduleID int64, subjectID int64) error
 	GetSubjectsByScheduleID(ctx context.Context, exec Executor, scheduleID int64) ([]*model.Subject, error)
-	UpdateScheduleSubjects(ctx context.Context, exec Executor, scheduleID int64, newSubjectIDs []int64) error
 }
 
 // Executor abstracts over sql.DB and sql.Tx, allowing them to be used interchangeably.

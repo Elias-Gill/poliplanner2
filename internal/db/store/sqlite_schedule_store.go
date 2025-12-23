@@ -77,3 +77,50 @@ func (s SqliteScheduleStore) GetByID(ctx context.Context, exec Executor, schedul
 	}
 	return sched, nil
 }
+
+func (s SqliteScheduleStore) UpdateScheduleSubjects(
+	ctx context.Context,
+	exec Executor,
+	scheduleID int64,
+	newSubjectIDs []int64,
+) error {
+	// Delete old entries
+	_, err := exec.ExecContext(ctx, "DELETE FROM schedule_subjects WHERE schedule_id = ?", scheduleID)
+	if err != nil {
+		return err
+	}
+
+	// Prepare multiple insertion
+	stmt, err := exec.PrepareContext(ctx, "INSERT INTO schedule_subjects(schedule_id, subject_id) VALUES (?, ?)")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	for _, subjectID := range newSubjectIDs {
+		_, err := stmt.ExecContext(ctx, scheduleID, subjectID)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s SqliteScheduleStore) UpdateScheduleExcelVersion(
+	ctx context.Context,
+	exec Executor,
+	scheduleID int64,
+	newSheetVersionID int64,
+) error {
+	_, err := exec.ExecContext(ctx,
+		`UPDATE schedules SET schedule_sheet_version = ? WHERE schedule_id = ?`,
+		newSheetVersionID,
+		scheduleID,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
