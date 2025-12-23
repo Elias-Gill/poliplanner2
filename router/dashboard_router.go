@@ -16,17 +16,30 @@ import (
 
 const latest_selection_cookie = "latestScheduleSelection"
 
-func NewDashboardRouter(service *service.ScheduleService) func(r chi.Router) {
+type Data struct {
+	Schedule    *model.Schedule
+	NeedsUpdate bool
+}
+
+func NewDashboardRouter(
+	scheduleService *service.ScheduleService,
+	sheetVersionService *service.SheetVersionService,
+) func(r chi.Router) {
 	layouts := web.BaseLayout
 
 	return func(r chi.Router) {
 		// Dashboard layout
+		type Data struct {
+			Schedule    *model.Schedule
+			NeedsUpdate bool
+		}
+
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*200)
 			defer cancel()
 
 			userID := extractUserID(r)
-			schedules, err := service.FindUserSchedules(ctx, userID)
+			schedules, err := scheduleService.FindUserSchedules(ctx, userID)
 			if err != nil {
 				logger.Error("error finding user schedules", "user", userID, "error", err)
 				customRedirect(w, r, "/500")
@@ -46,11 +59,28 @@ func NewDashboardRouter(service *service.ScheduleService) func(r chi.Router) {
 				latestSelection = schedules[0].ID
 			}
 
+			// FIX: error handling
+			latestExcel, _ := sheetVersionService.FindLatestSheetVersion(r.Context())
+
+			// Prepare slice of Data combining schedule and update flag
+			var scheduleData []Data
+			for _, sched := range schedules {
+				needsUpdate := false
+				if sched.SheetVersion < latestExcel.ID {
+					needsUpdate = true
+				}
+
+				scheduleData = append(scheduleData, Data{
+					Schedule:    sched,
+					NeedsUpdate: needsUpdate,
+				})
+			}
+
 			data := struct {
-				Schedules          []*model.Schedule
+				Schedules          []Data
 				SelectedScheduleID int64
 			}{
-				Schedules:          schedules,
+				Schedules:          scheduleData,
 				SelectedScheduleID: latestSelection,
 			}
 
@@ -76,7 +106,7 @@ func NewDashboardRouter(service *service.ScheduleService) func(r chi.Router) {
 			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*200)
 			defer cancel()
 
-			subjects, err := service.FindScheduleDetail(ctx, id)
+			subjects, err := scheduleService.FindScheduleDetail(ctx, id)
 			if err != nil {
 				logger.Error("error finding schedule subjects", "schedule", id, "error", err)
 				customRedirect(w, r, "/500")

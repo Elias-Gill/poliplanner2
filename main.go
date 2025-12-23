@@ -45,7 +45,7 @@ func main() {
 	r.Use(auth.SessionMiddleware)
 
 	r.Route("/", router.NewAuthRouter(services.UserService, services.EmailService))
-	r.Route("/dashboard", router.NewDashboardRouter(services.ScheduleService))
+	r.Route("/dashboard", router.NewDashboardRouter(services.ScheduleService, services.SheetVersionService))
 	r.Route("/subject", router.NewSubjectRouter(services.SubjectService, services.SheetVersionService, services.CareerService))
 	r.Route("/schedule", router.NewSchedulesRouter(services.SubjectService, services.ScheduleService, services.SheetVersionService, services.CareerService))
 	r.Route("/excel", router.NewExcelRouter(services.ExcelService))
