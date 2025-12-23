@@ -1,0 +1,60 @@
+/* default colorscheme */
+.default-theme {
+    --color-bg: oklch(0.96 0.005 70);
+    --color-secondary-bg: oklch(0.92 0.01 240);
+    --color-text: oklch(0.15 0.02 240);
+    --color-border: oklch(0.79 0.02 240);
+
+    --color-primary: oklch(0.4 0.1 240);
+    --color-muted: oklch(0.4 0.02 240);
+    --color-success: oklch(0.55 0.12 160);
+    --color-error: oklch(0.5 0.14 20);
+    --color-warning: oklch(0.75 0.12 90);
+}
+
+/* Modo Oscuro */
+.default-theme.dark-mode {
+    --color-bg: oklch(0.20 0 200);
+    --color-secondary-bg: oklch(0.4 0.02 240);
+    --color-text: oklch(1 0.01 240);
+    --color-muted: oklch(0.7 0.02 240);
+    --color-border: oklch(0.386 0.02 240);
+
+    --color-primary: oklch(0.5 0.1 240);
+    --color-success: oklch(0.65 0.14 160);
+    --color-error: oklch(0.6 0.16 20);
+    --color-warning: oklch(0.8 0.14 90);
+}
+
+.theme-warm {
+    --color-bg: oklch(0.95 0.02 80);
+    --color-secondary-bg: oklch(0.9 0.03 70);
+    --color-text: oklch(0.18 0.03 60);
+    --color-border: oklch(0.75 0.04 70);
+    --color-primary: oklch(0.55 0.14 40);
+    --color-success: oklch(0.6 0.16 140);
+    --color-error: oklch(0.55 0.18 25);
+    --color-warning: oklch(0.8 0.15 85);
+}
+
+.theme-forest {
+    --color-bg: oklch(0.93 0.03 150);
+    --color-secondary-bg: oklch(0.88 0.05 150);
+    --color-text: oklch(0.2 0.05 150);
+    --color-border: oklch(0.7 0.06 150);
+    --color-primary: oklch(0.45 0.14 150);
+    --color-success: oklch(0.55 0.18 145);
+    --color-error: oklch(0.5 0.16 25);
+    --color-warning: oklch(0.75 0.14 95);
+}
+
+.theme-ocean {
+    --color-bg: oklch(0.94 0.02 230);
+    --color-secondary-bg: oklch(0.9 0.04 220);
+    --color-text: oklch(0.18 0.04 230);
+    --color-border: oklch(0.72 0.05 220);
+    --color-primary: oklch(0.45 0.15 220);
+    --color-success: oklch(0.6 0.15 170);
+    --color-error: oklch(0.55 0.18 20);
+    --color-warning: oklch(0.78 0.14 100);
+}

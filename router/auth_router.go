@@ -19,7 +19,7 @@ import (
 )
 
 func NewAuthRouter(userService *service.UserService, emailService *service.EmailService) func(r chi.Router) {
-	layouts := web.CleanLayout
+	layouts := web.BaseLayout
 
 	return func(r chi.Router) {
 		// Redirect to the dashboard.

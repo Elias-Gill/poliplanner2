@@ -1,16 +1,5 @@
 /* === Variables CSS y paleta de colores === */
 :root {
-    --color-bg: oklch(0.96 0.005 70);
-    --color-secondary-bg: oklch(0.92 0.01 240);
-    --color-text: oklch(0.15 0.02 240);
-    --color-border: oklch(0.79 0.02 240);
-
-    --color-primary: oklch(0.4 0.1 240);
-    --color-muted: oklch(0.4 0.02 240);
-    --color-success: oklch(0.55 0.12 160);
-    --color-error: oklch(0.5 0.14 20);
-    --color-warning: oklch(0.75 0.12 90);
-
     /* Espaciado (basado en rem) */
     --space-xs: 0.25rem;
     --space-sm: 0.5rem;
@@ -38,20 +27,6 @@
     --font-weight-bold: 600;
 
     --line-height: 1.4;
-}
-
-/* Modo Oscuro */
-.dark-mode {
-    --color-bg: oklch(0.20 0 200);
-    --color-secondary-bg: oklch(0.4 0.02 240);
-    --color-text: oklch(1 0.01 240);
-    --color-muted: oklch(0.7 0.02 240);
-    --color-border: oklch(0.386 0.02 240);
-
-    --color-primary: oklch(0.5 0.1 240);
-    --color-success: oklch(0.65 0.14 160);
-    --color-error: oklch(0.6 0.16 20);
-    --color-warning: oklch(0.8 0.14 90);
 }
 
 /* === Reset básico === */

@@ -162,6 +162,7 @@ func MustLoad() {
 			UpdateKey:  updateKey,
 			SecureHTTP: getEnvAsBool("SECURE_HTTP", secureHTTPDefault),
 		},
+
 		Email: EmailConfig{
 			APIKey: emailAPIKey,
 		},

@@ -5,7 +5,7 @@
 {{ end }}
 
 {{ define "content"}}
-  <main>
+  <main style="min-height: 84vh;">
     <div class="login-container">
       <img src="/static/logo.svg" alt="Logo PoliPlanner" class="login-logo" />
       <h2>Iniciar Sesión</h2>
@@ -51,7 +51,7 @@
           class="form-group"
           style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 1.5rem;"
         >
-          <a href="/password-recovery" style="color: #3273dc; font-weight: 600;">
+          <a href="/password-recovery" style="font-weight: 600;">
             ¿Olvidaste la contraseña?
           </a>
         </div>
@@ -71,7 +71,7 @@
 
       <p class="login-footer" style="margin-top: 1.5rem;">
         ¿No tenés cuenta?
-        <a href="/signup" style="color: #3273dc; font-weight: 600;">Registrate acá</a>
+        <a href="/signup" style="font-weight: 600;">Registrate acá</a>
       </p>
 
       <p class="login-links" style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--color-muted);">
