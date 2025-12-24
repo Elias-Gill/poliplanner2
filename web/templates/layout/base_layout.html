@@ -48,67 +48,6 @@
 
     {{ block "custom_head" . }}{{ end }}
     <title>PoliPlanner</title>
-
-    <style>
-      /* Paleta desplegable - Ahora en vertical */
-      .palette-selector {
-        position: fixed;
-        bottom: 60px;
-        right: 10px;
-        background: var(--color-secondary-bg);
-        border-radius: 0.5rem;
-        padding: 0.75rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        display: none;
-        flex-direction: column;
-        gap: 0.5rem;
-        z-index: 9999;
-        min-width: 120px;
-        border: 1px solid var(--color-border);
-      }
-
-      .palette-selector button {
-        border-radius: 0.25rem;
-        border: 1px solid oklch(0.79 0.02 240);
-        background: oklch(0.96 0.005 70);
-        color: oklch(0.15 0.02 240);
-        cursor: pointer;
-        padding: 0.25rem 0.5rem;
-        font-size: 0.9rem;
-      }
-
-      .palette-selector button:hover {
-        background: oklch(0.4 0.1 240);
-        color: white;
-      }
-
-      /* Mostrar la paleta cuando tiene la clase 'visible' */
-      .palette-selector.visible {
-        display: flex;
-      }
-
-      /* Botón modo oscuro */
-      #theme-toggle {
-        position: fixed;
-        bottom: 10px;
-        right: 10px;
-        z-index: 10000;
-        background: var(--color-secondary-bg);
-        border: none;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-      }
-
-      #theme-toggle:focus {
-        outline: 2px solid var(--color-primary);
-      }
-    </style>
   </head>
 
   <body>
@@ -118,8 +57,7 @@
           <a
             href="/"
             class="contrast logo"
-            style="font-weight: var(--font-weight-bold)"
-          >
+            style="font-weight: var(--font-weight-bold)" >
             <span class="icon"><i class="bi bi-calendar3"></i></span> PoliPlanner
           </a>
         </div>
@@ -169,14 +107,16 @@
       id="theme-toggle"
       class="theme-toggle-btn"
       aria-label="Cambiar modo y tema"
-      title="Cambiar modo (manten presionado para cambiar de tema)"
       type="button"
     >
       <i class="bi bi-moon"></i>
     </button>
+    <small id="theme-hint" hidden>
+        Manten presionado para cambiar de tema
+    </small>
 
     <!-- Paleta de temas -->
-    <div class="palette-selector" id="palette-selector" aria-label="Selector de temas">
+    <div id="palette-selector" aria-label="Selector de temas">
       <button type="button" data-theme="default-theme">Default</button>
       <button type="button" data-theme="theme-warm">Warm</button>
       <button type="button" data-theme="theme-forest">Forest</button>
@@ -189,6 +129,58 @@
         <a href="https://github.com/elias-gill">Elias Gill</a>
       </div>
     </footer>
+
+    <!-- theme selector hint -->
+    <script>
+        const hint = document.getElementById("theme-hint");
+        const toggle = document.getElementById("theme-toggle");
+
+        if (hint && toggle) {
+          const hasSeenHint = localStorage.getItem("theme-hint-seen");
+
+          // Por defecto oculto
+          hint.hidden = true;
+
+          // Mostrar hint automáticamente solo la primera vez
+          if (!hasSeenHint) {
+            hint.hidden = false;
+
+            // Ocultar el hint al primer mouseleave o touchend y guardar en localStorage
+            const hideAndSave = () => {
+              hint.hidden = true;
+              localStorage.setItem("theme-hint-seen", "true");
+              toggle.removeEventListener("mouseleave", hideAndSave);
+              toggle.removeEventListener("touchend", hideAndSave);
+            };
+
+            toggle.addEventListener("mouseleave", hideAndSave);
+            toggle.addEventListener("touchend", hideAndSave);
+          }
+
+          // Eventos normales para mostrar/ocultar hint
+          toggle.addEventListener("mouseenter", () => {
+            hint.hidden = false;
+          });
+
+          toggle.addEventListener("mouseleave", () => {
+            // Solo ocultar si ya vio el hint la primera vez
+            if (localStorage.getItem("theme-hint-seen")) {
+              hint.hidden = true;
+            }
+          });
+
+          // Soporte táctil básico
+          toggle.addEventListener("touchstart", () => {
+            hint.hidden = false;
+          });
+
+          toggle.addEventListener("touchend", () => {
+            if (localStorage.getItem("theme-hint-seen")) {
+              hint.hidden = true;
+            }
+          });
+        }
+    </script>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -317,5 +309,6 @@
         }
       });
     </script>
+
   </body>
 </html>

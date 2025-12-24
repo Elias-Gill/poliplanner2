@@ -575,6 +575,54 @@ article ol li {
     color: white;
 }
 
+#theme-hint {
+    position: fixed;
+    bottom: 4rem;
+    right: var(--space-sm);
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: var(--space-sm);
+    background: var(--color-secondary-bg);
+}
+
+/* Paleta desplegable - Ahora en vertical */
+#palette-selector {
+    position: fixed;
+    bottom: 60px;
+    right: 10px;
+    background: var(--color-secondary-bg);
+    padding: var(--space-sm);
+    display: none;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 9999;
+    min-width: 120px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+}
+
+#palette-selector button {
+    border-radius: 0.25rem;
+    border: 1px solid oklch(0.79 0.02 240);
+    background: var(--color-bg);
+    color: var(--color-fg);
+    cursor: pointer;
+    padding: var(--space-sm);
+    font-size: var(--font-size-small);
+}
+
+#palette-selector button:hover {
+    background-color: var(--color-primary);
+}
+
+/* Mostrar la paleta cuando tiene la clase 'visible' */
+#palette-selector.visible {
+    display: flex;
+}
+
 /* === Código === */
 .pre-container {
     margin-bottom: var(--space-md);
