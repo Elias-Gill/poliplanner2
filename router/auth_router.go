@@ -27,6 +27,10 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 			http.Redirect(w, r, "/dashboard", http.StatusFound)
 		})
 
+		r.Get("/500", func(w http.ResponseWriter, r *http.Request) {
+			execTemplateWithLayout(w, "web/templates/pages/500.html", layouts, nil)
+		})
+
 		// --- Handle LOGIN ---
 		r.Get("/login", func(w http.ResponseWriter, r *http.Request) {
 			// Set redirection parameter if a redirection path is present
@@ -100,18 +104,18 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 			}
 
 			if !isValidEmail(email) {
-				w.Write([]byte(newErrorFragment("Invalid email provided")))
+				w.Write([]byte(newErrorFragment("Email inválido")))
 				return
 			}
 
 			if len(rawPassword) < 6 {
-				w.Write([]byte(newErrorFragment("Password must have at least 6 characters")))
+				w.Write([]byte(newErrorFragment("Contraseña debe tener al menos 6 caracteres")))
 				return
 			}
 
 			err := userService.CreateUser(r.Context(), username, email, rawPassword)
 			if err != nil {
-				w.Write([]byte(newErrorFragment(err.Error())))
+				w.Write([]byte(newErrorFragment("El usuario ya existe")))
 				return
 			}
 
