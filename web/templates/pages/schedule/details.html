@@ -282,6 +282,11 @@
         return;
       }
 
+      // VALIDACIÓN NATIVA
+      if (!mainForm.reportValidity()) {
+          return;
+      }
+
       // Limpiar inputs anteriores de subjectIds
       document.querySelectorAll('#mainForm input[name="subjectIds"]').forEach(el => el.remove());
 
