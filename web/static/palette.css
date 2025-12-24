@@ -1,7 +1,7 @@
 /* default colorscheme */
 .default-theme {
     --color-bg: oklch(0.96 0.005 70);
-    --color-secondary-bg: oklch(0.92 0.01 240);
+    --color-secondary-bg: oklch(0.85 0.01 240);
     --color-text: oklch(0.15 0.02 240);
     --color-border: oklch(0.79 0.02 240);
 
@@ -76,27 +76,57 @@
     --color-warning: oklch(0.8 0.14 95);
 }
 
-.theme-ocean {
-    --color-bg: oklch(0.94 0.02 230);
-    --color-secondary-bg: oklch(0.9 0.04 220);
-    --color-text: oklch(0.18 0.04 230);
-    --color-border: oklch(0.72 0.05 220);
-    --color-primary: oklch(0.45 0.15 220);
-    --color-success: oklch(0.6 0.15 170);
-    --color-error: oklch(0.55 0.18 20);
-    --color-warning: oklch(0.78 0.14 100);
+.theme-pink {
+    --color-bg: oklch(0.95 0.04 330);
+    --color-secondary-bg: oklch(0.90 0.06 320);
+    --color-text: oklch(0.18 0.05 320);
+    --color-border: oklch(0.75 0.06 320);
+
+    --color-primary: oklch(0.55 0.10 330); /* menos saturado */
+    --color-muted: oklch(0.40 0.03 320);
+    --color-success: oklch(0.60 0.10 140);
+    --color-error: oklch(0.55 0.08 30); /* menos saturado */
+    --color-warning: oklch(0.80 0.10 30); /* menos saturado */
 }
 
-/* Modo Oscuro Ocean */
-.theme-ocean.dark-mode {
-    --color-bg: oklch(0.17 0.02 230);
-    --color-secondary-bg: oklch(0.35 0.04 220);
-    --color-text: oklch(0.93 0.02 230);
-    --color-muted: oklch(0.7 0.03 230);
-    --color-border: oklch(0.42 0.05 220);
+.theme-pink.dark-mode {
+    --color-bg: oklch(0.18 0.03 330);
+    --color-secondary-bg: oklch(0.35 0.05 320);
+    --color-text: oklch(0.93 0.04 320);
+    --color-muted: oklch(0.70 0.02 320);
+    --color-border: oklch(0.42 0.04 320);
 
-    --color-primary: oklch(0.55 0.15 220);
-    --color-success: oklch(0.65 0.15 170);
-    --color-error: oklch(0.65 0.18 20);
-    --color-warning: oklch(0.83 0.14 100);
+    --color-primary: oklch(0.60 0.10 330); /* menos saturado */
+    --color-success: oklch(0.65 0.10 140);
+    --color-error: oklch(0.65 0.12 30); /* menos saturado */
+    --color-warning: oklch(0.85 0.12 30); /* menos saturado */
+}
+
+
+/* Paleta basada en tu esquema - Modo Claro (default) */
+.theme-lavender {
+    --color-bg: #f8f8f8;
+    --color-secondary-bg: #ffffff;
+    --color-text: #27272a;
+    --color-border: #d4d4d8;
+    --color-muted: #6c6874;
+
+    --color-primary: #6b749f;
+    --color-success: #90b99f;
+    --color-error: #ea83a5;
+    --color-warning: #f5a191;
+}
+
+/* Modo Oscuro */
+.theme-lavender.dark-mode {
+    --color-bg: #1c1c1c;
+    --color-secondary-bg: #131314;
+    --color-text: #c9c7cd;
+    --color-muted: #8b8693;
+    --color-border: #37373a;
+
+    --color-primary: #7a89c2;
+    --color-success: #9dc6ac;
+    --color-error: #f591b2;
+    --color-warning: #ffae9f;
 }

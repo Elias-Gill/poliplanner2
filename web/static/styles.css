@@ -241,7 +241,7 @@ input[type="number"] {
 
 /* === Tarjetas (solo article) === */
 article {
-    background-color: color-mix(in srgb, var(--color-bg), var(--color-secondary-bg) 20%);
+    background-color: color-mix(in srgb, var(--color-bg), var(--color-secondary-bg) 10%);
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius);
     padding: var(--space-md);
@@ -608,7 +608,7 @@ article ol li {
     border-radius: 0.25rem;
     border: 1px solid oklch(0.79 0.02 240);
     background: var(--color-bg);
-    color: var(--color-fg);
+    color: var(--color-text);
     cursor: pointer;
     padding: var(--space-sm);
     font-size: var(--font-size-small);

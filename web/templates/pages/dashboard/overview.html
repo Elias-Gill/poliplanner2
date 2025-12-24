@@ -93,8 +93,8 @@
       <h3>Parcial I</h3>
       {{ range .Subjects }}
       {{ if .Partial1Date.Valid }}
-      <article class="exam-item">
-        <span class="exam-name"><i>{{ .SubjectName }}</i></span>
+      <article>
+        <span><i>{{ .SubjectName }}</i></span>
         <span class="badge-container">
           <span class="date-badge">{{ .Partial1Date.Time.Format "02/01" }}</span>
           {{ if .Partial1Time.Valid }}
@@ -114,8 +114,8 @@
       <h3>Parcial II</h3>
       {{ range .Subjects }}
       {{ if .Partial2Date.Valid }}
-      <article class="exam-item">
-        <span class="exam-name"><i>{{ .SubjectName }}</i></span>
+      <article>
+        <span><i>{{ .SubjectName }}</i></span>
         <span class="badge-container">
           <span class="date-badge">{{ .Partial2Date.Time.Format "02/01" }}</span>
           {{ if .Partial2Time.Valid }}
@@ -137,8 +137,8 @@
       <h3>Final I</h3>
       {{ range .Subjects }}
       {{ if .Final1Date.Valid }}
-      <article class="exam-item">
-        <span class="exam-name"><i>{{ .SubjectName }}</i></span>
+      <article>
+        <span><i>{{ .SubjectName }}</i></span>
         <span class="badge-container">
           <span class="date-badge">{{ .Final1Date.Time.Format "02/01" }}</span>
           {{ if .Final1Time.Valid }}
@@ -169,8 +169,8 @@
       <h3>Final II</h3>
       {{ range .Subjects }}
       {{ if .Final2Date.Valid }}
-      <article class="exam-item">
-        <span class="exam-name"><i>{{ .SubjectName }}</i></span>
+      <article>
+        <span><i>{{ .SubjectName }}</i></span>
         <span class="badge-container">
           <span class="date-badge">{{ .Final2Date.Time.Format "02/01" }}</span>
           {{ if .Final2Time.Valid }}
