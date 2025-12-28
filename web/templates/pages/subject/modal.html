@@ -15,14 +15,16 @@
   <hr>
   <section>
     <h3>Docente</h3>
-    <p>
-      {{- if ne .TeacherName "" }}
-      <span>{{ .TeacherTitle }} {{ .TeacherLastname }}, {{ .TeacherName }}</span><br>
-      {{- end }}
-      {{- if ne .TeacherEmail "" }}
-      <a href="mailto:{{.TeacherEmail}}">{{ .TeacherEmail }}</a><br>
-      {{- end }}
-    </p>
+    <ul>
+        <li>
+            {{- if ne .TeacherName "" }}
+            <span>{{ .TeacherTitle }} {{ .TeacherLastname }}, {{ .TeacherName }}</span><br>
+            {{- end }}
+            {{- if ne .TeacherEmail "" }}
+            <a href="mailto:{{.TeacherEmail}}">{{ .TeacherEmail }}</a><br>
+            {{- end }}
+        </li>
+    </ul>
   </section>
   <section>
     <h3>Horario semanal</h3>
@@ -88,7 +90,10 @@
         <small>
           <strong>Horario:</strong> {{.Saturday.String}}hs<br>
           {{if .SaturdayRoom.Valid}}
-          <strong>Aula:</strong> {{.SaturdayRoom.String}}
+            <strong>Aula:</strong> {{.SaturdayRoom.String}}<br>
+          {{end}}
+          {{if .SaturdayDates.Valid}}
+            <strong>Fechas:</strong> {{.SaturdayDates.String}}
           {{end}}
         </small>
       </li>
@@ -133,16 +138,16 @@
         <small>
           <strong>Fecha:</strong> {{.Final1Date.Time.Format "02/01/2006"}}<br>
           {{if .Final1Time.Valid}}
-          <strong>Hora:</strong> {{.Final1Time.String}}hs<br>
+            <strong>Hora:</strong> {{.Final1Time.String}}hs<br>
           {{end}}
           {{if .Final1Room.Valid}}
-          <strong>Aula:</strong> {{.Final1Room.String}}
+            <strong>Aula:</strong> {{.Final1Room.String}}<br>
           {{end}}
           {{if .Final1RevDate.Valid}}
-          <strong>Revision:</strong> {{.Final1RevDate.Time.Format "02/01/2006"}}<br>
+            <strong>Revision:</strong> {{.Final1RevDate.Time.Format "02/01/2006"}}<br>
           {{end}}
           {{if .Final1RevTime.Valid}}
-          <strong>Hora revision:</strong> {{.Final1RevTime.String}}hs
+            <strong>Hora revision:</strong> {{.Final1RevTime.String}}hs
           {{end}}
         </small>
       </li>
@@ -153,16 +158,16 @@
         <small>
           <strong>Fecha:</strong> {{.Final2Date.Time.Format "02/01/2006"}}<br>
           {{if .Final2Time.Valid}}
-          <strong>Hora:</strong> {{.Final2Time.String}}hs<br>
+            <strong>Hora:</strong> {{.Final2Time.String}}hs<br>
           {{end}}
           {{if .Final2Room.Valid}}
-          <strong>Aula:</strong> {{.Final2Room.String}}
+            <strong>Aula:</strong> {{.Final2Room.String}}<br>
           {{end}}
           {{if .Final2RevDate.Valid}}
-          <strong>Revision:</strong> {{.Final2RevDate.Time.Format "02/01/2006"}}<br>
+            <strong>Revision:</strong> {{.Final2RevDate.Time.Format "02/01/2006"}}<br>
           {{end}}
           {{if .Final2RevTime.Valid}}
-          <strong>Hora revision:</strong> {{.Final2RevTime.String}}hs
+            <strong>Hora revision:</strong> {{.Final2RevTime.String}}hs
           {{end}}
         </small>
       </li>

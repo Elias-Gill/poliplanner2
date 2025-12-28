@@ -28,7 +28,7 @@ func (s SqliteSubjectStore) Insert(
 		wednesday, wednesday_classroom,
 		thursday, thursday_classroom,
 		friday, friday_classroom,
-		saturday, saturday_night_dates,
+		saturday, saturday_night_dates, saturday_classroom,
 		partial1_date, partial1_time, partial1_classroom,
 		partial2_date, partial2_time, partial2_classroom,
 		final1_date, final1_time, final1_classroom,
@@ -36,7 +36,7 @@ func (s SqliteSubjectStore) Insert(
 		final2_date, final2_time, final2_classroom,
 		final2_review_date, final2_review_time,
 		committee_chair, committee_member1, committee_member2
-	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
 	          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 
@@ -50,7 +50,7 @@ func (s SqliteSubjectStore) Insert(
 		sub.Wednesday, sub.WednesdayRoom,
 		sub.Thursday, sub.ThursdayRoom,
 		sub.Friday, sub.FridayRoom,
-		sub.Saturday, sub.SaturdayDates,
+		sub.Saturday, sub.SaturdayDates, sub.SaturdayRoom,
 		sub.Partial1Date, sub.Partial1Time, sub.Partial1Room,
 		sub.Partial2Date, sub.Partial2Time, sub.Partial2Room,
 		sub.Final1Date, sub.Final1Time, sub.Final1Room, sub.Final1RevDate, sub.Final1RevTime,
@@ -83,7 +83,7 @@ func (s SqliteSubjectStore) GetByID(
 		wednesday, wednesday_classroom,
 		thursday, thursday_classroom,
 		friday, friday_classroom,
-		saturday, saturday_night_dates,
+		saturday, saturday_night_dates, saturday_classroom,
 		partial1_date, partial1_time, partial1_classroom,
 		partial2_date, partial2_time, partial2_classroom,
 		final1_date, final1_time, final1_classroom,
@@ -106,7 +106,7 @@ func (s SqliteSubjectStore) GetByID(
 		&sub.Wednesday, &sub.WednesdayRoom,
 		&sub.Thursday, &sub.ThursdayRoom,
 		&sub.Friday, &sub.FridayRoom,
-		&sub.Saturday, &sub.SaturdayDates,
+		&sub.Saturday, &sub.SaturdayDates, &sub.SaturdayRoom,
 		&sub.Partial1Date, &sub.Partial1Time, &sub.Partial1Room,
 		&sub.Partial2Date, &sub.Partial2Time, &sub.Partial2Room,
 		&sub.Final1Date, &sub.Final1Time, &sub.Final1Room, &sub.Final1RevDate, &sub.Final1RevTime,

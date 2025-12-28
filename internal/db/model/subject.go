@@ -22,12 +22,13 @@ type Subject struct {
 	TeacherEmail    string
 
 	// Weekly schedule
-	Monday    sql.NullString
-	Tuesday   sql.NullString
-	Wednesday sql.NullString
-	Thursday  sql.NullString
-	Friday    sql.NullString
-	Saturday  sql.NullString
+	Monday        sql.NullString
+	Tuesday       sql.NullString
+	Wednesday     sql.NullString
+	Thursday      sql.NullString
+	Friday        sql.NullString
+	Saturday      sql.NullString
+	SaturdayDates sql.NullString
 
 	// Classrooms
 	MondayRoom    sql.NullString
@@ -35,7 +36,7 @@ type Subject struct {
 	WednesdayRoom sql.NullString
 	ThursdayRoom  sql.NullString
 	FridayRoom    sql.NullString
-	SaturdayDates sql.NullString
+	SaturdayRoom  sql.NullString
 
 	// Exams
 	Partial1Date sql.NullTime

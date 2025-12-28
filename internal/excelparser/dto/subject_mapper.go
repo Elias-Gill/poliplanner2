@@ -38,6 +38,7 @@ func MapToSubject(dto SubjectDTO) *model.Subject {
 	subject.Thursday = stringToNullString(dto.Thursday)
 	subject.Friday = stringToNullString(dto.Friday)
 	subject.Saturday = stringToNullString(dto.Saturday)
+	subject.SaturdayRoom = stringToNullString(dto.SaturdayRoom)
 
 	// Classrooms (convertir string vacío a NullString)
 	subject.MondayRoom = stringToNullString(dto.MondayRoom)

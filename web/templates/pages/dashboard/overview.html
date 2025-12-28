@@ -74,6 +74,9 @@
         {{ if and .Saturday.Valid (ne .Saturday.String "") }}
         <td>
           <span><small>{{ .Saturday.String }}</small></span><br>
+          {{ if and .SaturdayRoom.Valid (ne .SaturdayRoom.String "") }}
+          <span><small>Aula: {{ .SaturdayRoom.String }}</small></span><br>
+          {{ end }}
           {{ if and .SaturdayDates.Valid (ne .SaturdayDates.String "") }}
           <span><small>Fechas: {{ .SaturdayDates.String }}</small></span>
           {{ end }}
