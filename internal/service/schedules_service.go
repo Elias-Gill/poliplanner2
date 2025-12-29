@@ -65,11 +65,11 @@ func (s *ScheduleService) CreateSchedule(
 	sheetVersionId int64,
 	description string,
 	subjects []int64,
-) error {
+) (int64, error) {
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return fmt.Errorf("cannot start transaction over schedule table: %w", err)
+		return -1, fmt.Errorf("cannot start transaction over schedule table: %w", err)
 	}
 
 	// Roll back if any error has been encountered
@@ -85,22 +85,22 @@ func (s *ScheduleService) CreateSchedule(
 		Description:  description,
 	})
 	if err != nil {
-		return fmt.Errorf("error creating schedule: %w", err)
+		return -1, fmt.Errorf("error creating schedule: %w", err)
 	}
 
 	for _, id := range subjects {
 		err := s.scheduleDetailStorer.Insert(ctx, tx, scheId, id)
 		if err != nil {
-			return fmt.Errorf("error inserting schedule detail: %w", err)
+			return -1, fmt.Errorf("error inserting schedule detail: %w", err)
 		}
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		return fmt.Errorf("cannot commit schedule creation: %w", err)
+		return -1, fmt.Errorf("cannot commit schedule creation: %w", err)
 	}
 
-	return nil
+	return scheId, nil
 }
 
 func (s *ScheduleService) DeleteSchedule(

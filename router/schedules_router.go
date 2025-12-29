@@ -22,8 +22,7 @@ func NewSchedulesRouter(
 ) func(r chi.Router) {
 	layouts := web.BaseLayout
 
-	return func(r chi.Router) {
-		r.Get("/create", func(w http.ResponseWriter, r *http.Request) {
+	return func(r chi.Router) { r.Get("/create", func(w http.ResponseWriter, r *http.Request) {
 			// IMPORTANT: All the database operations should be done in no more than 400ms
 			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*400)
 			defer cancel()
@@ -147,12 +146,22 @@ func NewSchedulesRouter(
 			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*200)
 			defer cancel()
 
-			err = scheduleService.CreateSchedule(ctx, userID, sheetVersionID, description, subjectIDs)
+			id, err := scheduleService.CreateSchedule(ctx, userID, sheetVersionID, description, subjectIDs)
 			if err != nil {
 				logger.Error("cannot create schedule", "error", err)
 				w.Header().Set("HX-Redirect", "/500")
 				return
 			}
+
+			// Set the new schedule as the last selected
+			http.SetCookie(w, &http.Cookie{
+				Name:     latest_selection_cookie,
+				Value:    strconv.FormatInt(id, 10),
+				Path:     "/dashboard",
+				HttpOnly: true,
+				SameSite: http.SameSiteLaxMode,
+				MaxAge:   60 * 60 * 24 * 30, // 30 days
+			})
 
 			w.Header().Set("HX-Redirect", "/dashboard")
 		})
