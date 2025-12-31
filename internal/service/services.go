@@ -21,6 +21,7 @@ func NewServices(
 	conn *sql.DB,
 	userStore store.UserStorer,
 	sheetVersionStore store.SheetVersionStorer,
+	sheetVersionCheckStore store.SheetVersionCheckStorer,
 	careerStore store.CareerStorer,
 	subjectStore store.SubjectStorer,
 	scheduleStore store.ScheduleStorer,
@@ -33,7 +34,7 @@ func NewServices(
 		CareerService:       NewCareerService(conn, careerStore),
 		SubjectService:      NewSubjectService(conn, subjectStore),
 		ScheduleService:     NewScheduleService(conn, scheduleStore, scheduleDetailStore, sheetVersionStore, subjectStore),
-		ExcelService:        NewExcelService(conn, sheetVersionStore, careerStore, subjectStore),
+		ExcelService:        NewExcelService(conn, sheetVersionStore, sheetVersionCheckStore, careerStore, subjectStore),
 		EmailService:        NewEmailService(emailApiKey),
 	}
 }

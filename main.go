@@ -33,6 +33,7 @@ func main() {
 		db.GetConnection(),
 		store.NewSqliteUserStore(),
 		store.NewSqliteSheetVersionStore(),
+		store.NewSqliteSheetVersionCheckStore(),
 		store.NewSqliteCareerStore(),
 		store.NewSqliteSubjectStore(),
 		store.NewSqliteScheduleStore(),

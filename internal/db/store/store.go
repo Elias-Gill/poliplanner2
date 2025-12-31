@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
 )
@@ -20,7 +21,11 @@ type UserStorer interface {
 type SheetVersionStorer interface {
 	Insert(ctx context.Context, exec Executor, s *model.SheetVersion) error
 	GetNewest(ctx context.Context, exec Executor) (*model.SheetVersion, error)
-	HasToUpdate(ctx context.Context, exec Executor) bool
+}
+
+type SheetVersionCheckStorer interface {
+	GetLastCheckedAt(ctx context.Context, exec Executor) (*time.Time, error)
+	SetLastCheckedAt(ctx context.Context, exec Executor, t time.Time) error
 }
 
 type CareerStorer interface {

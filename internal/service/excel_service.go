@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/db/model"
@@ -15,34 +16,46 @@ import (
 )
 
 type ExcelService struct {
-	db                 *sql.DB
-	sheetVersionStorer store.SheetVersionStorer
-	careerStorer       store.CareerStorer
-	subjectStorer      store.SubjectStorer
+	db                      *sql.DB
+	sheetVersionStorer      store.SheetVersionStorer
+	sheetVersionCheckStorer store.SheetVersionCheckStorer
+	careerStorer            store.CareerStorer
+	subjectStorer           store.SubjectStorer
 }
 
 func NewExcelService(
 	db *sql.DB,
 	sheetVersionStorer store.SheetVersionStorer,
+	sheetVersionCheckStorer store.SheetVersionCheckStorer,
 	careerStorer store.CareerStorer,
 	subjectStorer store.SubjectStorer,
 ) *ExcelService {
 	return &ExcelService{
-		db:                 db,
-		sheetVersionStorer: sheetVersionStorer,
-		careerStorer:       careerStorer,
-		subjectStorer:      subjectStorer,
+		db:                      db,
+		sheetVersionStorer:      sheetVersionStorer,
+		sheetVersionCheckStorer: sheetVersionCheckStorer,
+		careerStorer:            careerStorer,
+		subjectStorer:           subjectStorer,
 	}
 }
 
 func (s *ExcelService) SearchOnStartup(ctx context.Context) {
-	if s.sheetVersionStorer.HasToUpdate(ctx, s.db) {
-		logger.Info("Automatic search for new excel versions started")
-		err := s.SearchNewestExcel(ctx)
-		if err != nil {
-			logger.Error("Error on automatic version sync", "error", err)
-		}
+	checkDate, err := s.sheetVersionCheckStorer.GetLastCheckedAt(ctx, s.db)
+	if checkDate != nil && time.Since(*checkDate) < 48*time.Hour {
+		logger.Info("Excel auto-sync skipped: last check was performed less than 48 hours ago")
+		return
 	}
+
+	logger.Info("Automatic excel sync started")
+
+	err = s.SearchNewestExcel(ctx)
+	if err != nil {
+		logger.Error("Error on automatic version sync", "error", err)
+	}
+
+	s.sheetVersionCheckStorer.SetLastCheckedAt(ctx, s.db, time.Now())
+
+	logger.Info("Successfull auto excel sync")
 }
 
 func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
