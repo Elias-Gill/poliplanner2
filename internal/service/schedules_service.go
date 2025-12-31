@@ -184,7 +184,11 @@ func (s *ScheduleService) MigrateSchedule(ctx context.Context, userID int64, sch
 	// Collect updated subject IDs for the new sheet version
 	var updatedSubjectIDs []int64
 	for _, subject := range details {
-		updatedVersion, err := s.subjecStorer.GetBySheetVersion(ctx, tx, subject, latestExcel.ID)
+		updatedVersion, err := s.subjecStorer.FindEquivalentSubjectIDBySheetVersion(
+			ctx, tx,
+			subject.SubjectName,
+			subject.Section,
+			latestExcel.ID)
 		if err != nil {
 			return fmt.Errorf("failed to find updated subject version for %s: %w", subject.SubjectName, err)
 		}

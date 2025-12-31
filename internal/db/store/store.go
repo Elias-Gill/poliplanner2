@@ -47,7 +47,13 @@ type SubjectStorer interface {
 	Insert(ctx context.Context, exec Executor, careerID int64, s *model.Subject) error
 	GetByID(ctx context.Context, exec Executor, subjectID int64) (*model.Subject, error)
 	GetByCareerID(ctx context.Context, exec Executor, careerID int64) ([]*SubjectListItem, error)
-	GetBySheetVersion(ctx context.Context, exec Executor, subject *model.Subject, sheetVersionID int64) (int64, error)
+	FindEquivalentSubjectIDBySheetVersion(
+		ctx context.Context,
+		exec Executor,
+		subjectName string,
+		section string,
+		sheetVersionID int64,
+	) (int64, error)
 }
 
 type ScheduleStorer interface {

@@ -164,7 +164,13 @@ func (s SqliteSubjectStore) GetByCareerID(
 	return result, rows.Err()
 }
 
-func (s SqliteSubjectStore) GetBySheetVersion(ctx context.Context, exec Executor, subject *model.Subject, sheetVersionID int64) (int64, error) {
+func (s SqliteSubjectStore) FindEquivalentSubjectIDBySheetVersion(
+	ctx context.Context,
+	exec Executor,
+	subjectName string,
+	section string,
+	sheetVersionID int64,
+) (int64, error) {
 
 	query := `
 	SELECT s.subject_id
@@ -181,9 +187,9 @@ func (s SqliteSubjectStore) GetBySheetVersion(ctx context.Context, exec Executor
 	err := exec.QueryRowContext(
 		ctx,
 		query,
-		subject.SubjectName,
+		subjectName,
 		sheetVersionID,
-		subject.Section,
+		section,
 	).Scan(&subjectID)
 
 	return subjectID, err
