@@ -47,7 +47,7 @@
     { "encabezado": "aulaSabado", "patron": ["aula sábado", "aula sabado", "aula"] },
     { "encabezado": "horaSabado", "patron": ["sábado", "sabado", "horario sábado"] },
     { "encabezado": "fechasSabado", "patron": [ "fechas de clases de sábados (turno noche)",
-        "sábado noche", "sabado noche", "fechas sábado", "fechas sabado"
+        "sábado noche", "sabado noche", "fechas sábado", "fechas sabado", "fechas"
       ] 
     } 
   ] 
