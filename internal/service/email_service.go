@@ -61,7 +61,7 @@ func (e *EmailService) SendRecoveryEmail(to string, recToken string) error {
 			  <p>Recibimos una solicitud para recuperar tu contraseña. Si no solicitaste este cambio, podés ignorar este correo.</p>
 
 			  <a
-			    href="https://poliplanner2.fly.dev/password-recovery/` + recToken + `"
+			    href="https://poliplanner.fly.dev/password-recovery/` + recToken + `"
 			    style="
 			  	display: block;
 			  	width: 100%;

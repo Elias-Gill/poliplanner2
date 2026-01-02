@@ -3,7 +3,7 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'poliplanner2'
+app = 'poliplanner'
 primary_region = 'gru'
 
 [build]
@@ -32,5 +32,5 @@ primary_region = 'gru'
   memory_mb = 256
 
 [mounts]
-  source = "poliplanner2"
+  source = "poliplanner"
   destination = "/poliplanner"
