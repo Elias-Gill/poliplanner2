@@ -115,7 +115,8 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 
 			err := userService.CreateUser(r.Context(), username, email, rawPassword)
 			if err != nil {
-				w.Write([]byte(newErrorFragment("El usuario ya existe")))
+				// FIX: error handling for better error messages
+				w.Write([]byte(newErrorFragment("Un usuario con ese email o nombre de usuario ya existe")))
 				return
 			}
 
@@ -237,7 +238,7 @@ func validateUsername(username string) error {
 		return fmt.Errorf("El nombre de usuario debe tener al menos 3 caracteres")
 	}
 	if !isAlphanumeric(username) {
-		return fmt.Errorf("El nombre de usuario solo puede contener letras, numeros y _")
+		return fmt.Errorf("El nombre de usuario solo puede contener letras, numeros, guión (-) o guión bajo (_)")
 	}
 	return nil
 }
@@ -248,7 +249,7 @@ func isValidEmail(email string) bool {
 }
 
 func isAlphanumeric(str string) bool {
-	re := regexp.MustCompile(`^[A-Za-z0-9_]+$`)
+	re := regexp.MustCompile(`^[A-Za-z0-9_-]+$`)
 	return re.MatchString(str)
 }
 

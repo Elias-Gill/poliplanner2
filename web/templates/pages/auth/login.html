@@ -3,12 +3,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Iniciar Sesión - PoliPlanner</title>
 {{ end }}
-
 {{ define "content"}}
   <main style="min-height: 84vh;">
     <div class="login-container">
       <img src="/static/logo.svg" alt="Logo PoliPlanner" class="login-logo" />
       <h2>Iniciar Sesión</h2>
+
+      <small style="color: var(--color-error)"><i class="bi bi-question-circle"></i> Este es un
+            reinicio, por lo que las cuentas antiguas fueron eliminadas.</small>
 
       <form
         hx-post="/login?redirect={{ .Redirect }}"
