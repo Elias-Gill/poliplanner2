@@ -55,6 +55,21 @@ go build
 - Se utiliza **HTMX** de forma limitada para agregar cierta reactividad sin introducir un
   frontend pesado.
 
+### Limitaciones de la plataforma de despliegue
+
+Actualmente el servicio se encuentra desplegado en Fly.io.
+Debido al plan gratuito, existen algunas limitaciones operativas que es importante tener en
+cuenta.
+
+El servidor entra en auto-suspensión luego de algunos minutos de inactividad.
+Esto implica que cualquier dato almacenado únicamente en memoria volátil se pierde cuando la
+instancia se apaga.
+
+Además, el despliegue está configurado para consumir la menor cantidad posible de recursos (256
+MB de RAM y 1 core compartido), con el objetivo de mantener el servicio funcionando sin costos.
+Por este motivo, las decisiones técnicas y futuras funcionalidades deben considerar estas
+restricciones.
+
 ## Trabajo pendiente / líneas de evolución
 
 Una de las tareas más importantes a corto plazo es modernizar la capa de frontend.

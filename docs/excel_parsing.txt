@@ -1,0 +1,283 @@
+DOCUMENTACIÓN – FORMATO Y PROCESO DE PARSEADO DEL EXCEL
+Proyecto: Poliplanner
+Formato: TXT
+----------------------------------------------------
+
+Este documento describe cómo funciona el procesamiento del Excel de horarios dentro de
+Poliplanner. El objetivo del diseño es tolerar múltiples layouts, cambios futuros en los
+archivos y diferencias entre sedes, manteniendo un proceso robusto y transaccional.
+
+====================================================
+1. VISION GENERAL
+====================================================
+
+El parseado del Excel está dividido en 3 capas bien definidas:
+
+1) Layout Resolver
+2) Normalización y resolución de datos
+3) Completado de metadatos y persistencia
+
+Cada capa tiene una responsabilidad clara. Si cualquier etapa falla, el proceso completo se
+aborta y no se persiste ningún dato.
+
+----------------------------------------------------
+Diagrama general del flujo
+----------------------------------------------------
+
++------------------+
+|      Excel       |
++------------------+
+         |
+         v
++---------------------------+
+|     Layout Resolver       |
+| - Detecta encabezados     |
+| - Selecciona layout JSON  |
++---------------------------+
+         |
+         v
++---------------------------+
+|   Parseado de materias    |
++---------------------------+
+         |
+         v
+     DTOs (raw data)
+         |
+         v
++---------------------------+
+| Normalización / Resolución|
+| - Limpieza de datos       |
+| - Parseo de fechas/horas  |
+| - Validaciones            |
++---------------------------+
+         |
+         v
+     Modelo final
+         |
+         v
++---------------------------+
+| Completado de metadatos   |
+| - JSON por carrera        |
+| - Rellena campos faltantes|
++---------------------------+
+         |
+         v
++---------------------------+
+| Persistencia en BD        |
+| (transaccional)           |
++---------------------------+
+
+====================================================
+2. CAPA 1 – LAYOUT RESOLVER
+====================================================
+
+El Layout Resolver se encarga de interpretar la estructura del Excel, independientemente del
+orden, nombre exacto o pequeñas variaciones en los encabezados.
+
+Esto es necesario porque:
+- Existen múltiples layouts (por ejemplo, Oviedo y Villarrica).
+- Los encabezados pueden cambiar con el tiempo.
+- Hay encabezados repetidos o ambiguos (por ejemplo, aula / hora).
+- No se puede confiar en posiciones fijas de columnas.
+
+----------------------------------------------------
+2.1 Definición de layouts
+----------------------------------------------------
+
+Los layouts se definen mediante archivos JSON con el siguiente formato:
+
+{
+  "lista": [
+    { "encabezado": "item", "patron": ["item", "ítem"] },
+    { "encabezado": "departamento", "patron": ["dpto", "dpto.", "departamento"] },
+    { "encabezado": "asignatura", "patron": ["asignatura", "materia", "curso"] },
+    { "encabezado": "nivel", "patron": ["nivel", "correlativas"] },
+    { "encabezado": "semestre", "patron": ["sem/grupo", "semestre", "grupo"] },
+    { "encabezado": "carrera", "patron": ["sigla carrera", "carrera", "sigla"] },
+    { "encabezado": "enfasis", "patron": ["enfasis", "énfasis", "especialidad"] },
+    { "encabezado": "plan", "patron": ["plan", "programa"] },
+    { "encabezado": "turno", "patron": ["turno", "horario"] },
+    { "encabezado": "seccion", "patron": ["sección", "seccion", "grupo"] }
+  ]
+}
+
+- "encabezado": nombre lógico interno del campo.
+- "patron": lista de palabras clave buscadas usando string.startswith (ignorando acentos y
+  variaciones menores).
+
+----------------------------------------------------
+2.2 Detección de la fila de encabezados
+----------------------------------------------------
+
+El primer paso del parseado es encontrar la fila de encabezados del Excel.
+
+Regla:
+- Se busca la fila que contenga una columna equivalente a "item".
+- Se prueban variaciones con y sin acentos.
+- El orden de las columnas no importa.
+
+Una vez detectada esta fila, se considera como fila base para resolver el layout.
+
+----------------------------------------------------
+2.3 Selección del layout
+----------------------------------------------------
+
+Luego de detectar la fila de encabezados:
+- Se compara contra los layouts conocidos.
+- Se selecciona el layout que mejor coincide con los encabezados encontrados.
+- Si no se puede resolver un layout válido, el proceso falla.
+
+----------------------------------------------------
+2.4 Carga inicial de datos (DTO)
+----------------------------------------------------
+
+Con el layout resuelto:
+- Cada fila del Excel se carga en un DTO.
+- Todos los campos se guardan inicialmente como string.
+- No se realizan validaciones ni transformaciones complejas en esta etapa.
+
+====================================================
+3. CAPA 2 – NORMALIZACIÓN Y RESOLUCIÓN
+====================================================
+
+Esta capa se encarga de transformar los DTOs en modelos consistentes y utilizables.
+
+----------------------------------------------------
+3.1 Objetivo
+----------------------------------------------------
+
+- Limpiar datos crudos.
+- Resolver formatos inconsistentes.
+- Convertir strings a tipos finales.
+- Detectar errores de formato.
+
+----------------------------------------------------
+3.2 Ejemplos de transformaciones
+----------------------------------------------------
+
+- Limpieza y parseo de fechas.
+- Normalización de horas.
+- Parseo de nombres de materias.
+- Unificación de textos (mayúsculas, acentos, espacios).
+- Validaciones de campos obligatorios.
+
+----------------------------------------------------
+3.3 Generación de modelos finales
+----------------------------------------------------
+
+Cada DTO, luego de pasar por esta capa:
+- Genera uno o más modelos finales.
+- Los modelos ya están listos para persistencia.
+- Si un DTO no puede resolverse correctamente, el proceso falla.
+
+====================================================
+4. CAPA 3 – COMPLETADO DE METADATOS
+====================================================
+
+Esta capa existe porque el Excel no siempre contiene toda la información necesaria.
+
+----------------------------------------------------
+4.1 Problema
+----------------------------------------------------
+
+Ejemplos de datos faltantes en el Excel:
+- Semestre de la materia.
+- Créditos.
+- Información académica conocida pero no explicitada.
+
+----------------------------------------------------
+4.2 Archivos de metadatos
+----------------------------------------------------
+
+Los metadatos se definen en archivos JSON por carrera:
+
+{
+  "career_code": "IAE",
+  "subjects": [
+    {
+      "name": "aerodinamica i",
+      "semester": 6,
+      "credits": 0
+    }
+  ]
+}
+
+- Los metadatos se usan solo para completar campos faltantes.
+- No sobrescriben información válida proveniente del Excel.
+
+----------------------------------------------------
+4.3 Proceso
+----------------------------------------------------
+
+- Se identifican modelos con campos incompletos.
+- Se buscan coincidencias por carrera y nombre de materia.
+- Se rellenan los campos faltantes cuando es posible.
+- Si no se puede completar información crítica, el proceso falla.
+
+====================================================
+5. PERSISTENCIA Y TRANSACCIONES
+====================================================
+
+----------------------------------------------------
+5.1 Persistencia
+----------------------------------------------------
+
+Una vez completados los modelos finales:
+- Se inicia una transacción de base de datos.
+- Se persisten todos los registros.
+
+----------------------------------------------------
+5.2 Manejo de errores
+----------------------------------------------------
+
+Regla fundamental:
+NO se permiten estados parciales.
+
+- Si cualquier etapa del parseado falla:
+  - Se aborta la transacción.
+  - Se descarta todo el Excel.
+  - No queda ningún dato persistido.
+
+----------------------------------------------------
+Diagrama de control transaccional
+----------------------------------------------------
+
++----------------------+
+| Begin Transaction    |
++----------------------+
+           |
+           v
++------------------------------+
+| Parsear Excel                |
+| + Resolver layout            |
+| + Normalizar datos           |
+| + Completar metadatos        |
++------------------------------+
+           |
+           v
+      +---------+
+      | ¿Error? |
+      +---------+
+       /       \
+      /         \
+    Sí           No
+    |             |
+    v             v
++-----------+   +-----------+
+| Rollback  |   | Commit    |
+| total     |   | cambios   |
++-----------+   +-----------+
+    |
+    v
++-----------+
+| Fin       |
++-----------+
+
+====================================================
+6. CONSIDERACIONES FINALES
+====================================================
+
+- El sistema está diseñado para tolerar cambios de formato.
+- Los layouts pueden evolucionar sin romper el parseado.
+- La separación en capas permite aislar errores y extender el sistema.
+- La consistencia de datos es prioritaria sobre la tolerancia a errores parciales.
