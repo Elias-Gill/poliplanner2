@@ -1,12 +1,13 @@
 # Poliplanner
 
 Poliplanner es un servicio web para la creación y gestión de horarios académicos.
-Está desarrollado íntegramente en **Go**, sin dependencias externas al runtime estándar.
+Está desarrollado íntegramente en **Go**.
 
 ## Requisitos
 
 - Go (versión reciente, recomendado Go ≥ 1.21)
-- No se requieren bases de datos ni servicios externos para levantar el proyecto
+- No se requieren bases de datos ni servicios externos para levantar el proyecto (se utiliza
+  sqlite3 como BD)
 
 ## Configuración
 
@@ -16,19 +17,7 @@ La **única variable obligatoria** es:
 
 - `UPDATE_KEY`:
   contraseña utilizada para proteger el endpoint de actualización manual del Excel (`/excel`).
-  Sin esta variable, el servicio no debería considerarse correctamente configurado.
-
-  Copiar el archivo de ejemplo y ajustar los valores:
-
-  ```bash
-  cp example.env .env
-  ```
-
-  Luego exportar las variables (o usar cualquier método equivalente):
-
-  ```bash
-  export $(cat .env | xargs)
-  ```
+  Sin esta variable, el servidor no se levantara y terminara con un mensaje de error.
 
 ## Ejecución
 
