@@ -1,0 +1,36 @@
+DOCUMENTACIÓN – AUTOMATIZACIONES  
+---------------------------------------------------------------
+
+Este documento describe las automatizaciones que ejecuta el servidor para mantener actualizados
+los datos.
+
+---------------------------------------------------------------  
+Actualización automática del Excel y Web Scraping  
+---------------------------------------------------------------
+
+La operación principal es la búsqueda periódica de nuevas versiones del archivo Excel oficial
+de horarios de la universidad.
+
+Este proceso se ejecuta automáticamente cada 2 días. Al iniciar el servidor, se verifica la
+fecha de la última búsqueda mediante la tabla `auto_sync_excel_check`.
+
+- Si no han pasado 2 días desde la última verificación, solo se actualiza la fecha y no se
+  realiza ninguna solicitud web.  
+- Si han pasado más de 2 días, se realiza un scraping en la web oficial de la universidad para
+  buscar nuevas versiones del archivo Excel.
+
+Si se detecta una versión más reciente, se inicia automáticamente la descarga, el procesamiento
+y la persistencia de los datos contenidos en la nueva planilla.
+
+Mas de esto se puede ver en el *main.go* y *services/excel_service.go*:
+
+```go
+go func() {
+    // 30 seconds has to be more than enough, even when google drive is slow
+    ctx, cancel := context.WithTimeout(context.Background(), config.Get().Excel.ScraperTimeout)
+    defer cancel()
+
+    // The result of this operation is irrelevant
+    services.ExcelService.SearchOnStartup(ctx)
+}()
+```
