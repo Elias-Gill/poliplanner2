@@ -2,50 +2,27 @@ package auth
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/base64"
-	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
-	"sync"
+	"time"
 
+	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/logger"
+	"github.com/golang-jwt/jwt/v5"
 )
 
-var (
-	mu       sync.RWMutex
-	sessions = make(map[string]*Session)
-)
+type Claims struct {
+	UserID int64 `json:"user_id"`
+	jwt.RegisteredClaims
+}
+
+// ================================
+// =         Public API           =
+// ================================
 
 type Session struct {
 	UserID int64
-}
-
-func newSessionID() string {
-	b := make([]byte, 32) // 256-bit random session ID
-	_, err := rand.Read(b)
-	if err != nil {
-		panic(fmt.Sprintf("Cannot generate secure session IDs: %+v", err))
-	}
-	return base64.RawURLEncoding.EncodeToString(b)
-}
-
-func getSession(sessionID string) (*Session, bool) {
-	mu.RLock()
-	s, ok := sessions[sessionID]
-	mu.RUnlock()
-	return s, ok
-}
-
-func CreateSession(userID int64) string {
-	id := newSessionID()
-
-	mu.Lock()
-	sessions[id] = &Session{UserID: userID}
-	mu.Unlock()
-
-	return id
 }
 
 // SessionMiddleware is an HTTP middleware that verifies whether the incoming request
@@ -104,11 +81,46 @@ func SessionMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func DeleteSession(r *http.Request) {
-	cookie, err := r.Cookie("session_id")
-	if err == nil {
-		delete(sessions, cookie.Value)
+// CreateSession generates a JWT token containing the userID and expiration time
+func CreateSession(userID int64) string {
+	expirationTime := time.Now().Add(30 * time.Minute)
+
+	claims := &Claims{
+		UserID: userID,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+		},
 	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString([]byte(config.Get().Security.UpdateKey))
+	if err != nil {
+		// Panic or handle error properly if token generation fails
+		panic("Error generating JWT: " + err.Error())
+	}
+
+	return tokenString
+}
+
+// getSession validates the JWT token and returns the session containing session info
+func getSession(tokenString string) (*Session, bool) {
+	claims := &Claims{}
+
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (any, error) {
+		// Verify the signing method is HMAC
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, jwt.ErrTokenMalformed
+		}
+		return []byte(config.Get().Security.UpdateKey), nil
+	})
+
+	if err != nil || !token.Valid {
+		logger.Debug("Invalid or expired JWT", "error", err)
+		return nil, false
+	}
+
+	return &Session{UserID: claims.UserID}, true
 }
 
 func customRedirect(w http.ResponseWriter, r *http.Request, target string) {

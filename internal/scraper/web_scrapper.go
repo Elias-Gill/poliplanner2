@@ -18,9 +18,9 @@ import (
 	log "github.com/elias-gill/poliplanner2/internal/logger"
 )
 
-// ================================
-// ======== Data Structures =======
-// ================================
+// ==================================
+// =        Data Structures         =
+// ==================================
 
 type ExcelDownloadSource struct {
 	URL        string
@@ -37,7 +37,7 @@ type WebScrapper struct {
 const default_target = "https://www.pol.una.py/academico/horarios-de-clases-y-examenes/"
 
 // ================================
-// ======== Public API ============
+// =        Public API            =
 // ================================
 
 var (
@@ -159,7 +159,7 @@ func (s *ExcelDownloadSource) DownloadThisSource(
 }
 
 // =====================================
-// ======== Private methods ============
+// =        Private methods            =
 // =====================================
 
 func (ws *WebScrapper) extractSourcesFromURL(
