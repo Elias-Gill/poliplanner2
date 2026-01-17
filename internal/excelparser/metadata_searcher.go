@@ -41,7 +41,7 @@ type SubjectMetadataLoader struct {
 }
 
 // ================================
-// ======== Public API ============
+// =        Public API            =
 // ================================
 
 func NewSubjectMetadataLoader(metadataDir string, careerCode string) (*SubjectMetadataLoader, error) {
@@ -133,7 +133,7 @@ func (loader *SubjectMetadataLoader) GetSubjects() []SubjectMetadata {
 }
 
 // =====================================
-// ======== Private methods ============
+// =        Private methods            =
 // =====================================
 
 func (loader *SubjectMetadataLoader) loadSubjects() error {

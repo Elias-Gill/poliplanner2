@@ -34,7 +34,7 @@ type GoogleFilesResponse struct {
 }
 
 // ================================
-// ======== Public API ============
+// =        Public API            =
 // ================================
 
 func NewGoogleDriveHelper(apiKey string) *GoogleDriveHelper {
@@ -139,7 +139,7 @@ func (g *GoogleDriveHelper) GetSourceFromSpreadsheetLink(
 }
 
 // =====================================
-// ======== Private methods ============
+// =        Private methods            =
 // =====================================
 
 func (g *GoogleDriveHelper) listFilesInFolder(

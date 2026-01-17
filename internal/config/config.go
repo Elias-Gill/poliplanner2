@@ -83,7 +83,7 @@ type EmailConfig struct {
 var cfg *Config = nil
 
 // ================================
-// ========= Public API ============
+// =         Public API           =
 // ================================
 
 // Get returns the loaded configuration.
