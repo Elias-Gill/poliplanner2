@@ -44,6 +44,8 @@ go build
 - Se utiliza **HTMX** de forma limitada para agregar cierta reactividad sin introducir un
   frontend pesado.
 
+Mas informacion se puede encontrar en la carpeta de `docs`.
+
 ### Limitaciones de la plataforma de despliegue
 
 Actualmente el servicio se encuentra desplegado en Fly.io.
