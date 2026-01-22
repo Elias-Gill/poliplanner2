@@ -1,0 +1,46 @@
+DOCUMENTACIÓN – SISTEMA ACTUAL DE AUTENTICACIÓN DE USUARIOS (JWT)  
+---------------------------------------------------------------
+
+Este documento describe los motivos e incorporaciones de cada nueva migracion que se realiza.
+El objetivo es tener doucmentado las decisiones que se realizan en cuanto al modelo de los
+datos.
+
+====================================================  
+1. LISTADO DE MIGRACIONES
+====================================================
+
+- *v1 A v6*: Migraciones basicas de creacion y evolucion inicial del esquema de la base de
+  datos. Corresponden a las primeras decisiones de modelado (bastante malas por cierto) y
+  establecen el modelo historico sobre el cual se construyen las versiones posteriores.
+
+- *v7*: Se agrega una tabla para registrar el ultimo chequeo de busqueda de nuevos archivos
+  Excel. Esta informacion se utiliza para habilitar busquedas automaticas en la web cuando el
+  server se reinicia. Si el tiempo transcurrido desde la ultima busqueda es mayor o igual a 2
+  dias se fuerza una nueva verificacion.
+
+- *v8*: Refactorizacion profunda del modelo de datos. Las tablas `subjects y careers` se
+  reemplazan por un nuevo modelo compuesto por `departamentos, carrera, asignatura, mall,`
+  `_periodo, docente y cursos`. Esto elimina redundancia, permite extraer informacion mas rica
+  sobre docentes, carreras y mallas universitarias de forma automatizada y habilita la futura
+  exposicion de servicios para otras aplicaciones reutilizando el heavy lifting de poliplanner
+  para parsear datos de carreras. 
+  WARNING: a partir de esta migracion los cambios NO SON REVERSIBLES, esto se refleja con la
+  ausencia de versiones "down".
+
+- *migracion de datos intermedia*: En el intermedio de las migraciones v8 y v9 se ejecuta un
+  proceso externo de migracion de datos que incluye estandarizacion de materias y migracion de
+  los horarios antiguos hacia la nueva estructura de BD. Las funciones utilizadas durante este
+  proceso se marcaran como "DEPRECATED" para su eliminacion en versiones posteriores. Tanto las
+  migraciones v8 y v9 no deberian interferir para deploys nuevos ni el ambiente de desarrollo.
+  Este proceso existe principalmente para la migracion de datos de produccion.
+
+- *v9*: Eliminacion definitiva de las tablas antiguas (`subjects y careers`) para limpiar el
+  esquema y evitar el uso de datos obsoletos. La tabla `excel_version` se conserva, pero pasa
+  a utilizarse exclusivamente para el control de versiones de la web.
+
+====================================================  
+2. ACLARACIONES DEL MODELO DE DATOS
+====================================================
+
+El modelo de datos queda completamente definidio por el codigo fuente y los structs encontrados
+en la carpeta `internal/db/model/`.
