@@ -1,0 +1,124 @@
+-- Carreras
+CREATE TABLE carreras (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre VARCHAR(255) NOT NULL, -- Siglas de la carrera
+);
+
+-- Docentes
+CREATE TABLE docentes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL,
+    correo TEXT NOT NULL,
+    -- key que se utiliza para ciertas busquedas rapidas
+    -- de uso secundario
+    search_key TEXT NOT NULL
+);
+CREATE UNIQUE INDEX idx_docentes_correo ON docentes(correo);
+CREATE INDEX idx_docentes_search_key ON docentes(search_key);
+
+-- Departamentos
+CREATE TABLE departamentos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre VARCHAR(255) NOT NULL,
+    siglas VARCHAR(255) NOT NULL
+);
+
+-- Asignaturas (concepto académico, estable. Misma asignatura puede pertenecer a
+-- varias mallas)
+CREATE TABLE asignaturas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL,
+    departamento INTEGER NOT NULL REFERENCES departamentos(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+CREATE INDEX idx_asignaturas_nombre ON asignaturas(nombre);
+CREATE INDEX idx_asignaturas_departamento ON asignaturas(departamento);
+
+-- Malla curricular (asignatura por carrera). Semestre puede ser rellenado con
+-- metadatos luego
+CREATE TABLE mallas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    carrera INTEGER NOT NULL REFERENCES carreras(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    asignatura INTEGER NOT NULL REFERENCES asignaturas(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    semestre INTEGER NOT NULL
+);
+-- que no se repita asignaturas en la misma carrera
+CREATE UNIQUE INDEX idx_mallas_asignatura_carrera ON mallas(carrera, asignatura);
+-- busqueda por carrera
+CREATE INDEX idx_mallas_carrera_semestre ON mallas(carrera);
+
+-- Períodos académicos
+CREATE TABLE periodos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    year INTEGER NOT NULL,
+    periodo INTEGER NOT NULL CHECK (periodo IN (1, 2)),
+    UNIQUE (year, periodo)
+);
+
+-- Cursos (asignatura dictada en un período. Diferenciados por secciones)
+CREATE TABLE cursos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    malla INTEGER NOT NULL REFERENCES mallas(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    periodo INTEGER NOT NULL REFERENCES periodos(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    seccion TEXT NOT NULL,
+    -- 0: Solo es examen final, 
+    -- 1 (DEFAULT): curso normal con periodo de clases
+    solo_examen_final INTEGER NOT NULL DEFAULT 1 CHECK (solo_examen_final IN (0, 1))
+
+-- Weekly schedule
+    lunes TEXT,
+    lunes_aula TEXT,
+
+    martes TEXT,
+    martes_aula TEXT,
+
+    miercoles TEXT,
+    miercoles_aula TEXT,
+
+    jueves TEXT,
+    jueves_aula TEXT,
+
+    viernes TEXT,
+    viernes_aula TEXT,
+
+    sabado TEXT,
+    sabado_aula TEXT,
+    sabado_night_fechas TEXT,
+
+-- Exams
+    partial1_fecha DATE,
+    partial1_hora TEXT,
+    partial1_aula TEXT,
+
+    partial2_fecha DATE,
+    partial2_hora TEXT,
+    partial2_aula TEXT,
+
+    final1_fecha DATE,
+    final1_hora TEXT,
+    final1_aula TEXT,
+    final1_fecha_revision DATE,
+    final1_hora_revision TEXT,
+
+    final2_fecha DATE,
+    final2_hora TEXT,
+    final2_aula TEXT,
+    final2_fecha_revision DATE,
+    final2_hora_revision TEXT,
+
+-- Committee de revision
+    comite_presidente TEXT,
+    comite_miembro1 TEXT,
+    comite_miembro2 TEXT
+);
+
+-- Evita duplicar el mismo curso (asignatura + seccion + carrerar) en un mismo periodo
+CREATE UNIQUE INDEX idx_curso_unico ON cursos(malla, seccion, periodo);
+
+CREATE INDEX idx_cursos_malla_periodo ON cursos(malla, periodo);
+
+-- Tabla con los docentes del curso, porque hay cursos con mas de un docente
+CREATE TABLE docentes_curso(
+    id_docente INTEGER NOT NULL REFERENCES docentes(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    id_curso INTEGER NOT NULL REFERENCES cursos(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (id_docente, id_curso)
+);
