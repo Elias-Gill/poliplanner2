@@ -1,0 +1,130 @@
+DOCUMENTACION – SISTEMA DE NORMALIZACION Y VINCULACION DE DOCENTES
+----------------------------------------------------------------
+
+Este documento describe el mecanismo utilizado para identificar, normalizar y vincular docentes
+a partir de datos inconsistentes provenientes de archivos Excel oficiales de la universidad.
+El diseño prioriza performance, tolerancia a errores humanos y trazabilidad, evitando procesos
+costosos de comparación exhaustiva.
+
+====================================================
+1. VISION GENERAL
+====================================================
+
+El sistema procesa mallas y secciones académicas importadas desde Excel, donde los nombres de
+docentes pueden variar entre períodos (abreviaciones, uso inconsistente de mayúsculas, acentos,
+segundos nombres omitidos, etc.).
+
+El objetivo principal es:
+- Detectar si un docente ya existe en la base de datos
+- Evitar duplicación innecesaria de registros
+- Permitir ambigüedad controlada
+- Ejecutar comparaciones complejas solo cuando sea necesario
+
+====================================================
+2. PROBLEMA A RESOLVER
+====================================================
+
+Los datos de origen no son confiables. Un mismo docente puede aparecer como:
+
+- Juan Carlos Bodoque
+- Juan C. Bodoque
+- JUAN BODOQUE
+- Juan Bodoque
+
+Realizar comparaciones complejas (normalización + fuzzy matching) contra toda la tabla de
+docentes para cada fila del Excel no es escalable.
+
+====================================================
+3. ESTRATEGIA GENERAL
+====================================================
+
+El sistema se apoya en una estrategia de dos niveles:
+
+1) Normalización rápida
+2) Desambiguación localizada
+
+La clave es reducir el espacio de búsqueda lo antes posible.
+
+====================================================
+4. CLAVE CANONICA DE DOCENTE
+====================================================
+
+Para cada nombre de docente se genera una "clave canónica", utilizada solo para búsqueda.
+
+Proceso de normalización:
+- Pasar todo a minúsculas
+- Eliminar acentos
+- Eliminar puntuación
+- Separar palabras
+- Conservar:
+  - Primer nombre
+  - Primer apellido (se asume que los docentes tienen como maximo 2 apellidos)
+- Ignorar:
+  - Segundos nombres completos
+  - Iniciales intermedias
+
+Ejemplos:
+- "Juan Carlos Bodoque"  -> juan_bodoque
+- "Juan C. Bodoque"      -> juan_bodoque
+- "JUAN BODOQUE"         -> juan_bodoque
+
+Esta clave NO es única ni una PK. Es solo un índice de búsqueda.
+
+====================================================
+5. FLUJO DE INGESTA DE DATOS
+====================================================
+
+1) Se extrae el nombre del docente
+2) Se genera la clave canónica
+3) Se consulta la base de datos por esa clave
+
+Casos posibles:
+
+A) No hay coincidencias
+   - Se crea un nuevo docente
+   - Se guarda su clave canónica
+
+B) Hay una única coincidencia
+   - Se reutiliza ese docente
+
+C) Hay múltiples coincidencias
+   - Se activa el proceso de desambiguación
+
+====================================================
+6. DESAMBIGUACIÓN CONTROLADA
+====================================================
+
+La desambiguación solo ocurre cuando hay más de un candidato con la misma clave canónica.
+
+Criterios posibles:
+- Coincidencia de segundo nombre (completo o inicial)
+- Coincidencias históricas de asignaturas
+- Coincidencias de departamentos
+- Persistencia temporal (docente ya usado en períodos anteriores)
+
+Si no se puede desambiguar automáticamente:
+- Se permite la ambigüedad
+- Se registra el caso para revisión posterior
+
+Si la desambiguación fue existosa *se compara* el nombre completo del docente con el match y se
+elije el mas largo de ellos y se actualiza el registro. Esto para poder tener el nombre mas
+completo en caso de haberse usado abreviaciones en cargas previas.
+
+
+====================================================
+8. CONSIDERACIONES DE DISEÑO
+====================================================
+
+Esto permite procesar miles de secciones con decenas de docentes sin impacto significativo.
+
+- La clave canónica no representa identidad real
+- Se acepta que existan homónimos reales
+- La identidad final del docente es el ID interno
+- El sistema favorece consistencia operativa sobre perfección semántica
+
+====================================================
+9. RESULTADO
+====================================================
+
+El sistema tolera errores humanos de carga, minimiza duplicados, sin introducir complejidad
+innecesaria en la etapa de ingesta.
