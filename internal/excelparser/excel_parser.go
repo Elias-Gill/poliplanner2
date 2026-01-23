@@ -6,7 +6,6 @@ import (
 	"sync"
 	"unicode"
 
-	"github.com/elias-gill/poliplanner2/internal/excelparser/dto"
 	"github.com/elias-gill/poliplanner2/internal/excelparser/exceptions"
 	"github.com/elias-gill/poliplanner2/internal/utils"
 	"github.com/xuri/excelize/v2"
@@ -15,7 +14,7 @@ import (
 // For reusing SubjectDTO objects to reduce allocations
 var dtoPool = sync.Pool{
 	New: func() any {
-		d := new(dto.SubjectDTO)
+		d := new(SubjectDTO)
 		d.Reset() // Ensure clean state
 		return d
 	},
@@ -28,13 +27,13 @@ type ExcelParser struct {
 	sheetNames     []string
 	currentSheet   int
 	headerKeywords []string // Keywords to identify header rows
-	fieldSetters   map[string]func(*dto.SubjectDTO, string)
+	fieldSetters   map[string]func(*SubjectDTO, string)
 }
 
 // ParsingResult contains the parsed subjects for a specific career/sheet
 type ParsingResult struct {
 	Career   string
-	Subjects []dto.SubjectDTO
+	Subjects []SubjectDTO
 }
 
 // NewExcelParser creates a new Excel parser instance
@@ -67,49 +66,49 @@ func NewExcelParser(layoutsDir string, filePath string) (*ExcelParser, error) {
 }
 
 // buildFieldSetters creates a map of field setters for SubjectDTO
-func buildFieldSetters() map[string]func(*dto.SubjectDTO, string) {
-	return map[string]func(*dto.SubjectDTO, string){
-		"departamento":       func(d *dto.SubjectDTO, v string) { d.SetDepartment(v) },
-		"asignatura":         func(d *dto.SubjectDTO, v string) { d.SetSubjectName(v) },
-		"nivel":              func(d *dto.SubjectDTO, v string) { d.SetSemester(v) },
-		"semestre":           func(d *dto.SubjectDTO, v string) { d.SetSemester(v) },
-		"seccion":            func(d *dto.SubjectDTO, v string) { d.SetSection(v) },
-		"titulo":             func(d *dto.SubjectDTO, v string) { /* do nothing */ },
-		"apellido":           func(d *dto.SubjectDTO, v string) { d.SetTeachersLastNames(v) },
-		"nombre":             func(d *dto.SubjectDTO, v string) { d.SetTeachersFirtNames(v) },
-		"correo":             func(d *dto.SubjectDTO, v string) { d.SetTeachersEmails(v) },
-		"diaParcial1":        func(d *dto.SubjectDTO, v string) { d.SetPartial1Date(v) },
-		"horaParcial1":       func(d *dto.SubjectDTO, v string) { d.SetPartial1Time(v) },
-		"aulaParcial1":       func(d *dto.SubjectDTO, v string) { d.SetPartial1Room(v) },
-		"diaParcial2":        func(d *dto.SubjectDTO, v string) { d.SetPartial2Date(v) },
-		"horaParcial2":       func(d *dto.SubjectDTO, v string) { d.SetPartial2Time(v) },
-		"aulaParcial2":       func(d *dto.SubjectDTO, v string) { d.SetPartial2Room(v) },
-		"diaFinal1":          func(d *dto.SubjectDTO, v string) { d.SetFinal1Date(v) },
-		"horaFinal1":         func(d *dto.SubjectDTO, v string) { d.SetFinal1Time(v) },
-		"aulaFinal1":         func(d *dto.SubjectDTO, v string) { d.SetFinal1Room(v) },
-		"diaFinal2":          func(d *dto.SubjectDTO, v string) { d.SetFinal2Date(v) },
-		"horaFinal2":         func(d *dto.SubjectDTO, v string) { d.SetFinal2Time(v) },
-		"aulaFinal2":         func(d *dto.SubjectDTO, v string) { d.SetFinal2Room(v) },
-		"revisionFinal1Dia":  func(d *dto.SubjectDTO, v string) { d.SetFinal1RevDate(v) },
-		"revisionFinal2Dia":  func(d *dto.SubjectDTO, v string) { d.SetFinal2RevDate(v) },
-		"revisionFinal1Hora": func(d *dto.SubjectDTO, v string) { d.SetFinal1RevTime(v) },
-		"revisionFinal2Hora": func(d *dto.SubjectDTO, v string) { d.SetFinal2RevTime(v) },
-		"mesaPresidente":     func(d *dto.SubjectDTO, v string) { d.SetCommitteePresident(v) },
-		"mesaMiembro1":       func(d *dto.SubjectDTO, v string) { d.SetCommitteeMember1(v) },
-		"mesaMiembro2":       func(d *dto.SubjectDTO, v string) { d.SetCommitteeMember2(v) },
-		"aulaLunes":          func(d *dto.SubjectDTO, v string) { d.SetMondayRoom(v) },
-		"horaLunes":          func(d *dto.SubjectDTO, v string) { d.SetMonday(v) },
-		"aulaMartes":         func(d *dto.SubjectDTO, v string) { d.SetTuesdayRoom(v) },
-		"horaMartes":         func(d *dto.SubjectDTO, v string) { d.SetTuesday(v) },
-		"aulaMiercoles":      func(d *dto.SubjectDTO, v string) { d.SetWednesdayRoom(v) },
-		"horaMiercoles":      func(d *dto.SubjectDTO, v string) { d.SetWednesday(v) },
-		"aulaJueves":         func(d *dto.SubjectDTO, v string) { d.SetThursdayRoom(v) },
-		"horaJueves":         func(d *dto.SubjectDTO, v string) { d.SetThursday(v) },
-		"aulaViernes":        func(d *dto.SubjectDTO, v string) { d.SetFridayRoom(v) },
-		"horaViernes":        func(d *dto.SubjectDTO, v string) { d.SetFriday(v) },
-		"aulaSabado":         func(d *dto.SubjectDTO, v string) { d.SetSaturdayRoom(v) },
-		"horaSabado":         func(d *dto.SubjectDTO, v string) { d.SetSaturday(v) },
-		"fechasSabado":       func(d *dto.SubjectDTO, v string) { d.SetSaturdayDates(v) },
+func buildFieldSetters() map[string]func(*SubjectDTO, string) {
+	return map[string]func(*SubjectDTO, string){
+		"departamento":       func(d *SubjectDTO, v string) { d.SetDepartment(v) },
+		"asignatura":         func(d *SubjectDTO, v string) { d.SetSubjectName(v) },
+		"nivel":              func(d *SubjectDTO, v string) { d.SetSemester(v) },
+		"semestre":           func(d *SubjectDTO, v string) { d.SetSemester(v) },
+		"seccion":            func(d *SubjectDTO, v string) { d.SetSection(v) },
+		"titulo":             func(d *SubjectDTO, v string) { /* do nothing */ },
+		"apellido":           func(d *SubjectDTO, v string) { d.SetTeachersLastNames(v) },
+		"nombre":             func(d *SubjectDTO, v string) { d.SetTeachersFirtNames(v) },
+		"correo":             func(d *SubjectDTO, v string) { d.SetTeachersEmails(v) },
+		"diaParcial1":        func(d *SubjectDTO, v string) { d.SetPartial1Date(v) },
+		"horaParcial1":       func(d *SubjectDTO, v string) { d.SetPartial1Time(v) },
+		"aulaParcial1":       func(d *SubjectDTO, v string) { d.SetPartial1Room(v) },
+		"diaParcial2":        func(d *SubjectDTO, v string) { d.SetPartial2Date(v) },
+		"horaParcial2":       func(d *SubjectDTO, v string) { d.SetPartial2Time(v) },
+		"aulaParcial2":       func(d *SubjectDTO, v string) { d.SetPartial2Room(v) },
+		"diaFinal1":          func(d *SubjectDTO, v string) { d.SetFinal1Date(v) },
+		"horaFinal1":         func(d *SubjectDTO, v string) { d.SetFinal1Time(v) },
+		"aulaFinal1":         func(d *SubjectDTO, v string) { d.SetFinal1Room(v) },
+		"diaFinal2":          func(d *SubjectDTO, v string) { d.SetFinal2Date(v) },
+		"horaFinal2":         func(d *SubjectDTO, v string) { d.SetFinal2Time(v) },
+		"aulaFinal2":         func(d *SubjectDTO, v string) { d.SetFinal2Room(v) },
+		"revisionFinal1Dia":  func(d *SubjectDTO, v string) { d.SetFinal1RevDate(v) },
+		"revisionFinal2Dia":  func(d *SubjectDTO, v string) { d.SetFinal2RevDate(v) },
+		"revisionFinal1Hora": func(d *SubjectDTO, v string) { d.SetFinal1RevTime(v) },
+		"revisionFinal2Hora": func(d *SubjectDTO, v string) { d.SetFinal2RevTime(v) },
+		"mesaPresidente":     func(d *SubjectDTO, v string) { d.SetCommitteePresident(v) },
+		"mesaMiembro1":       func(d *SubjectDTO, v string) { d.SetCommitteeMember1(v) },
+		"mesaMiembro2":       func(d *SubjectDTO, v string) { d.SetCommitteeMember2(v) },
+		"aulaLunes":          func(d *SubjectDTO, v string) { d.SetMondayRoom(v) },
+		"horaLunes":          func(d *SubjectDTO, v string) { d.SetMonday(v) },
+		"aulaMartes":         func(d *SubjectDTO, v string) { d.SetTuesdayRoom(v) },
+		"horaMartes":         func(d *SubjectDTO, v string) { d.SetTuesday(v) },
+		"aulaMiercoles":      func(d *SubjectDTO, v string) { d.SetWednesdayRoom(v) },
+		"horaMiercoles":      func(d *SubjectDTO, v string) { d.SetWednesday(v) },
+		"aulaJueves":         func(d *SubjectDTO, v string) { d.SetThursdayRoom(v) },
+		"horaJueves":         func(d *SubjectDTO, v string) { d.SetThursday(v) },
+		"aulaViernes":        func(d *SubjectDTO, v string) { d.SetFridayRoom(v) },
+		"horaViernes":        func(d *SubjectDTO, v string) { d.SetFriday(v) },
+		"aulaSabado":         func(d *SubjectDTO, v string) { d.SetSaturdayRoom(v) },
+		"horaSabado":         func(d *SubjectDTO, v string) { d.SetSaturday(v) },
+		"fechasSabado":       func(d *SubjectDTO, v string) { d.SetSaturdayDates(v) },
 	}
 }
 
@@ -197,8 +196,8 @@ func (ep *ExcelParser) ParseCurrentSheet() (*ParsingResult, error) {
 	return &ParsingResult{Career: sheetName, Subjects: subjects}, nil
 }
 
-func (ep *ExcelParser) parseSheet(sheetName string) ([]dto.SubjectDTO, error) {
-	subjects := make([]dto.SubjectDTO, 0, 250)
+func (ep *ExcelParser) parseSheet(sheetName string) ([]SubjectDTO, error) {
+	subjects := make([]SubjectDTO, 0, 250)
 
 	// Use streaming API for better memory efficiency
 	stream, err := ep.file.Rows(sheetName)
@@ -246,7 +245,7 @@ func (ep *ExcelParser) parseSheet(sheetName string) ([]dto.SubjectDTO, error) {
 		}
 
 		// Parse data row
-		d := dtoPool.Get().(*dto.SubjectDTO)
+		d := dtoPool.Get().(*SubjectDTO)
 		d.Reset()
 		current := startingCell - 1
 

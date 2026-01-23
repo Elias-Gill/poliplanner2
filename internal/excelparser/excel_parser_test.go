@@ -3,8 +3,6 @@ package parser
 import (
 	"testing"
 	"time"
-
-	"github.com/elias-gill/poliplanner2/internal/excelparser/dto"
 )
 
 func TestParseSheet(t *testing.T) {
@@ -67,17 +65,18 @@ func validateParsingResult(t *testing.T, result *ParsingResult) {
 	if first.Section != "MI" {
 		t.Errorf("First subject Section = %s, want %s", first.Section, "MI")
 	}
-	if first.TeacherTitle != "Lic." {
-		t.Errorf("First subject TeacherTitle = %s, want %s", first.TeacherTitle, "Lic.")
+
+	if len(first.Teachers) != 1 {
+		t.Errorf("Last subject teachers length = %s, want %d", first.Teachers[0].LastName, 1)
 	}
-	if first.TeacherLastName != "Villasanti Flores" {
-		t.Errorf("First subject TeacherLastName = %s, want %s", first.TeacherLastName, "Villasanti Flores")
+	if first.Teachers[0].LastName != "Villasanti Flores" {
+		t.Errorf("First subject TeacherLastName = %s, want %s", first.Teachers[0].LastName, "Villasanti Flores")
 	}
-	if first.TeacherName != "Richard Adrián" {
-		t.Errorf("First subject TeacherName = %s, want %s", first.TeacherName, "Richard Adrián")
+	if first.Teachers[0].FirstName != "Richard Adrián" {
+		t.Errorf("First subject TeacherName = %s, want %s", first.Teachers[0].FirstName, "Richard Adrián")
 	}
-	if first.TeacherEmail != "" {
-		t.Errorf("First subject TeacherEmail = %s, want empty", first.TeacherEmail)
+	if first.Teachers[0].Email != "" {
+		t.Errorf("First subject TeacherEmail = %s, want empty", first.Teachers[0].Email)
 	}
 
 	// Última entrada
@@ -85,7 +84,7 @@ func validateParsingResult(t *testing.T, result *ParsingResult) {
 	validateLastSubject(t, last)
 }
 
-func validateLastSubject(t *testing.T, last dto.SubjectDTO) {
+func validateLastSubject(t *testing.T, last SubjectDTO) {
 	if last.Department != "DG" {
 		t.Errorf("Last subject Department = %s, want %s", last.Department, "DG")
 	}
@@ -98,17 +97,18 @@ func validateLastSubject(t *testing.T, last dto.SubjectDTO) {
 	if last.Section != "NA" {
 		t.Errorf("Last subject Section = %s, want %s", last.Section, "NA")
 	}
-	if last.TeacherTitle != "Ms." {
-		t.Errorf("Last subject TeacherTitle = %s, want %s", last.TeacherTitle, "Ms.")
+
+	if len(last.Teachers) != 1 {
+		t.Errorf("Last subject teachers length = %s, want %d", last.Teachers[0].LastName, 1)
 	}
-	if last.TeacherLastName != "Ramírez Barboza" {
-		t.Errorf("Last subject TeacherLastName = %s, want %s", last.TeacherLastName, "Ramírez Barboza")
+	if last.Teachers[0].LastName != "Ramírez Barboza" {
+		t.Errorf("Last subject TeacherLastName = %s, want %s", last.Teachers[0].LastName, "Ramírez Barboza")
 	}
-	if last.TeacherName != "Estela Mary" {
-		t.Errorf("Last subject TeacherName = %s, want %s", last.TeacherName, "Estela Mary")
+	if last.Teachers[0].FirstName != "Estela Mary" {
+		t.Errorf("Last subject TeacherName = %s, want %s", last.Teachers[0].FirstName, "Estela Mary")
 	}
-	if last.TeacherEmail != "emramirez@pol.una.py" {
-		t.Errorf("Last subject TeacherEmail = %s, want %s", last.TeacherEmail, "emramirez@pol.una.py")
+	if last.Teachers[0].Email != "emramirez@pol.una.py" {
+		t.Errorf("Last subject TeacherEmail = %s, want %s", last.Teachers[0].Email, "emramirez@pol.una.py")
 	}
 
 	// Validar fecha del primer parcial (17/09/24)
