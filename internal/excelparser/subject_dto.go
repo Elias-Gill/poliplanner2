@@ -34,10 +34,15 @@ type TeacherDTO struct {
 
 type SubjectDTO struct {
 	// General info
-	Department  string
-	Semester    int
-	Section     string
-	SubjectName string
+	Department string
+	Semester   int
+	Section    string
+
+	RawSubjectName string
+	// this contains the plaussible real name of the subject. Example:
+	// "Electiva I - Machine Learning" contains: "electiva I"
+	// "Física 2" normalizes to: "fisica II"
+	TentativeRealSubjectName string
 
 	// Teachers info
 	Teachers []TeacherDTO
@@ -101,7 +106,8 @@ func (s *SubjectDTO) SetDepartment(val string) {
 }
 
 func (s *SubjectDTO) SetSubjectName(val string) {
-	s.SubjectName = val
+	s.RawSubjectName = val
+	s.TentativeRealSubjectName = normalizeSubjectName(val)
 }
 
 func (s *SubjectDTO) SetSemester(val string) {
@@ -273,9 +279,9 @@ func (s *SubjectDTO) SetSaturdayDates(val string) {
 	s.SaturdayDates = val
 }
 
-// -------------------------
+// ----------------------------------------
 // Cleaning helper functions
-// -------------------------
+// ----------------------------------------
 
 // Updated cleanTime function with performance improvements
 func cleanTime(timeStr string) string {
@@ -461,4 +467,69 @@ func isValidDate(day, month, year int) bool {
 
 func (d *SubjectDTO) Reset() {
 	*d = SubjectDTO{}
+}
+
+var roman = [...]string{
+	"", "I", "II", "III", "IV", "V",
+	"VI", "VII", "VIII", "IX", "X",
+	"XI", "XII", "XIII", "XIV", "XV",
+	"XVI", "XVII", "XVIII", "XIX", "XX",
+}
+
+var romanToInt = map[string]int{
+	"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5,
+	"VI": 6, "VII": 7, "VIII": 8, "IX": 9, "X": 10,
+	"XI": 11, "XII": 12, "XIII": 13, "XIV": 14, "XV": 15,
+	"XVI": 16, "XVII": 17, "XVIII": 18, "XIX": 19, "XX": 20,
+}
+
+func normalizeSubjectName(val string) string {
+	// Take the part before "-" and trim spaces
+	normalized := strings.Split(val, "-")[0]
+	normalized = strings.TrimSpace(normalized)
+
+	fields := strings.Fields(normalized)
+
+	for i, field := range fields {
+		// Try to parse the field as an Arabic number between 1 and 20
+		n, err := strconv.Atoi(field)
+		if err == nil && n >= 1 && n <= 20 {
+			// Convert to Roman numeral if valid
+			fields[i] = roman[n]
+			continue
+		}
+
+		// Check if field is a valid Roman numeral (I–XX)
+		up := strings.ToUpper(field) // if not capitalized yet
+		if _, ok := romanToInt[up]; ok {
+			// Keep Roman numeral uppercase
+			fields[i] = up
+			continue
+		}
+
+		// Otherwise, lowercase and normalize accented vowels manually
+		s := strings.ToLower(field)
+		result := make([]rune, 0, len(s))
+		for _, r := range s {
+			switch r {
+			case 'á':
+				result = append(result, 'a')
+			case 'é':
+				result = append(result, 'e')
+			case 'í':
+				result = append(result, 'i')
+			case 'ó':
+				result = append(result, 'o')
+			case 'ú':
+				result = append(result, 'u')
+			default:
+				result = append(result, r)
+			}
+		}
+		// Replace field with normalized string
+		fields[i] = string(result)
+	}
+
+	// Join fields with space and return
+	return strings.Join(fields, " ")
 }

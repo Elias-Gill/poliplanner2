@@ -37,6 +37,49 @@ func TestParseSheet(t *testing.T) {
 	validateParsingResult(t, iin)
 }
 
+func TestNameNormalization(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"Fisica 2", "fisica II"},
+		{"calculo 7", "calculo VII"},
+		{"Algebra 10", "algebra X"},
+		{"programacion 1", "programacion I"},
+		{"estadistica 20", "estadistica XX"},
+
+		// Espacios y mayúsculas
+		{"  Fisica   3  ", "fisica III"},
+		{"CALCULO 5", "calculo V"},
+		{"CáLCULO 5", "calculo V"},
+
+		// No se debe normalizar
+		{"fisica", "fisica"},
+		{"fisica II", "fisica II"},
+		{"fisica 0", "fisica 0"},
+		{"fisica 21", "fisica 21"},
+
+		{"Electiva 1 - Machine Learning", "electiva I"},
+		{"electIVa 2 - quien sabe", "electiva II"},
+	}
+
+	for _, testCase := range tests {
+		t.Run(testCase.input, func(t *testing.T) {
+			dto := SubjectDTO{}
+			dto.SetSubjectName(testCase.input)
+
+			if dto.TentativeRealSubjectName != testCase.expected {
+				t.Errorf(
+					"SetSubjectName(%q) => %q, expected %q",
+					testCase.input,
+					dto.TentativeRealSubjectName,
+					testCase.expected,
+				)
+			}
+		})
+	}
+}
+
 func validateParsingResult(t *testing.T, result *ParsingResult) {
 	if result == nil {
 		t.Fatal("Parsing result should not be nil")
@@ -56,8 +99,8 @@ func validateParsingResult(t *testing.T, result *ParsingResult) {
 	if first.Department != "DCB" {
 		t.Errorf("First subject Department = %s, want %s", first.Department, "DCB")
 	}
-	if first.SubjectName != "Algebra Lineal" {
-		t.Errorf("First subject SubjectName = %s, want %s", first.SubjectName, "Algebra Lineal")
+	if first.RawSubjectName != "Algebra Lineal" {
+		t.Errorf("First subject SubjectName = %s, want %s", first.RawSubjectName, "Algebra Lineal")
 	}
 	if first.Semester != 2 {
 		t.Errorf("First subject Semester = %d, want %d", first.Semester, 2)
@@ -88,8 +131,8 @@ func validateLastSubject(t *testing.T, last SubjectDTO) {
 	if last.Department != "DG" {
 		t.Errorf("Last subject Department = %s, want %s", last.Department, "DG")
 	}
-	if last.SubjectName != "Técnicas de Organización y Métodos" {
-		t.Errorf("Last subject SubjectName = %s, want %s", last.SubjectName, "Técnicas de Organización y Métodos")
+	if last.RawSubjectName != "Técnicas de Organización y Métodos" {
+		t.Errorf("Last subject SubjectName = %s, want %s", last.RawSubjectName, "Técnicas de Organización y Métodos")
 	}
 	if last.Semester != 5 {
 		t.Errorf("Last subject Semester = %d, want %d", last.Semester, 5)
