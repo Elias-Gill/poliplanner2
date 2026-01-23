@@ -26,18 +26,21 @@ var timeBufferPool = sync.Pool{
 	},
 }
 
+type TeacherDTO struct {
+	FirstName string
+	LastName  string
+	Email     string
+}
+
 type SubjectDTO struct {
 	// General info
 	Department  string
-	SubjectName string
-	Semester    int // Number of correlatives
+	Semester    int
 	Section     string
+	SubjectName string
 
-	// Teacher info
-	TeacherTitle    string
-	TeacherLastName string
-	TeacherName     string
-	TeacherEmail    string
+	// Teachers info
+	Teachers []TeacherDTO
 
 	// Exams
 	// First partial
@@ -109,20 +112,37 @@ func (s *SubjectDTO) SetSection(val string) {
 	s.Section = val
 }
 
-func (s *SubjectDTO) SetTeacherTitle(val string) {
-	s.TeacherTitle = val
+func (s *SubjectDTO) SetTeachersFirtNames(firstNames string) {
+	list := strings.Split(firstNames, "\n")
+	s.ensureTeachersLen(max(len(s.Teachers), len(list)))
+
+	for i, v := range list {
+		s.Teachers[i].FirstName = strings.TrimSpace(v)
+	}
 }
 
-func (s *SubjectDTO) SetTeacherLastName(val string) {
-	s.TeacherLastName = val
+func (s *SubjectDTO) SetTeachersLastNames(secondNames string) {
+	list := strings.Split(secondNames, "\n")
+	s.ensureTeachersLen(max(len(s.Teachers), len(list)))
+
+	for i, v := range list {
+		s.Teachers[i].LastName = strings.TrimSpace(v)
+	}
 }
 
-func (s *SubjectDTO) SetTeacherName(val string) {
-	s.TeacherName = val
+func (s *SubjectDTO) SetTeachersEmails(emails string) {
+	list := strings.Split(emails, "\n")
+	s.ensureTeachersLen(max(len(s.Teachers), len(list)))
+
+	for i, v := range list {
+		s.Teachers[i].Email = strings.TrimSpace(v)
+	}
 }
 
-func (s *SubjectDTO) SetTeacherEmail(val string) {
-	s.TeacherEmail = val
+func (s *SubjectDTO) ensureTeachersLen(n int) {
+	if len(s.Teachers) < n {
+		s.Teachers = append(s.Teachers, make([]TeacherDTO, n-len(s.Teachers))...)
+	}
 }
 
 func (s *SubjectDTO) SetPartial1Date(val string) {
