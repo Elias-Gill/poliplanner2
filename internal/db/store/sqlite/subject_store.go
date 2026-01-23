@@ -1,9 +1,10 @@
-package store
+package sqlite
 
 import (
 	"context"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
+	"github.com/elias-gill/poliplanner2/internal/db/store"
 )
 
 type SqliteSubjectStore struct {
@@ -15,7 +16,7 @@ func NewSqliteSubjectStore() *SqliteSubjectStore {
 
 func (s SqliteSubjectStore) Insert(
 	ctx context.Context,
-	exec Executor,
+	exec store.Executor,
 	careerID int64,
 	sub *model.Subject,
 ) error {
@@ -71,7 +72,7 @@ func (s SqliteSubjectStore) Insert(
 
 func (s SqliteSubjectStore) GetByID(
 	ctx context.Context,
-	exec Executor,
+	exec store.Executor,
 	subjectID int64,
 ) (*model.Subject, error) {
 	const query = `
@@ -122,9 +123,9 @@ func (s SqliteSubjectStore) GetByID(
 
 func (s SqliteSubjectStore) GetByCareerID(
 	ctx context.Context,
-	exec Executor,
+	exec store.Executor,
 	careerID int64,
-) ([]*SubjectListItem, error) {
+) ([]*model.SubjectListItem, error) {
 	const query = `
 	SELECT
 		subject_id,
@@ -145,10 +146,10 @@ func (s SqliteSubjectStore) GetByCareerID(
 	}
 	defer rows.Close()
 
-	result := make([]*SubjectListItem, 0, 64)
+	result := make([]*model.SubjectListItem, 0, 64)
 
 	for rows.Next() {
-		var item SubjectListItem
+		var item model.SubjectListItem
 
 		err := rows.Scan(
 			&item.ID, &item.SubjectName, &item.Semester, &item.Section,
@@ -166,7 +167,7 @@ func (s SqliteSubjectStore) GetByCareerID(
 
 func (s SqliteSubjectStore) FindEquivalentSubjectIDBySheetVersion(
 	ctx context.Context,
-	exec Executor,
+	exec store.Executor,
 	subjectName string,
 	section string,
 	sheetVersionID int64,

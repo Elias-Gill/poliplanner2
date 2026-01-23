@@ -10,7 +10,6 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/db/model"
 	"github.com/elias-gill/poliplanner2/internal/db/store"
 	parser "github.com/elias-gill/poliplanner2/internal/excelparser"
-	mapper "github.com/elias-gill/poliplanner2/internal/excelparser/dto"
 	"github.com/elias-gill/poliplanner2/internal/logger"
 	"github.com/elias-gill/poliplanner2/internal/scraper"
 )

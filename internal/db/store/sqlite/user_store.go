@@ -1,8 +1,10 @@
-package store
+package sqlite
 
 import (
 	"context"
+
 	"github.com/elias-gill/poliplanner2/internal/db/model"
+	"github.com/elias-gill/poliplanner2/internal/db/store"
 )
 
 type SqliteUserStore struct {
@@ -12,7 +14,7 @@ func NewSqliteUserStore() *SqliteUserStore {
 	return &SqliteUserStore{}
 }
 
-func (s SqliteUserStore) Insert(ctx context.Context, exec Executor, u *model.User) error {
+func (s SqliteUserStore) Insert(ctx context.Context, exec store.Executor, u *model.User) error {
 	query := `
 		INSERT INTO users (username, password, email)
 		VALUES (?, ?, ?)
@@ -29,7 +31,7 @@ func (s SqliteUserStore) Insert(ctx context.Context, exec Executor, u *model.Use
 	return nil
 }
 
-func (s SqliteUserStore) Update(ctx context.Context, exec Executor, user *model.User) error {
+func (s SqliteUserStore) Update(ctx context.Context, exec store.Executor, user *model.User) error {
 	query := `
 		UPDATE users
 		SET username = ?,
@@ -54,12 +56,12 @@ func (s SqliteUserStore) Update(ctx context.Context, exec Executor, user *model.
 	return err
 }
 
-func (s SqliteUserStore) Delete(ctx context.Context, exec Executor, userID int64) error {
+func (s SqliteUserStore) Delete(ctx context.Context, exec store.Executor, userID int64) error {
 	_, err := exec.ExecContext(ctx, `DELETE FROM users WHERE user_id = ?`, userID)
 	return err
 }
 
-func (s SqliteUserStore) GetByID(ctx context.Context, exec Executor, userID int64) (*model.User, error) {
+func (s SqliteUserStore) GetByID(ctx context.Context, exec store.Executor, userID int64) (*model.User, error) {
 	u := &model.User{}
 	err := exec.QueryRowContext(ctx, `
 		SELECT user_id, username, password, email,
@@ -73,7 +75,7 @@ func (s SqliteUserStore) GetByID(ctx context.Context, exec Executor, userID int6
 	return u, nil
 }
 
-func (s SqliteUserStore) GetByUsername(ctx context.Context, exec Executor, username string) (*model.User, error) {
+func (s SqliteUserStore) GetByUsername(ctx context.Context, exec store.Executor, username string) (*model.User, error) {
 	u := &model.User{}
 	err := exec.QueryRowContext(ctx, `
 		SELECT user_id, username, password, email,
@@ -87,7 +89,7 @@ func (s SqliteUserStore) GetByUsername(ctx context.Context, exec Executor, usern
 	return u, nil
 }
 
-func (s SqliteUserStore) GetByEmail(ctx context.Context, exec Executor, email string) (*model.User, error) {
+func (s SqliteUserStore) GetByEmail(ctx context.Context, exec store.Executor, email string) (*model.User, error) {
 	u := &model.User{}
 	err := exec.QueryRowContext(ctx, `
 		SELECT user_id, username, password, email,
@@ -101,7 +103,7 @@ func (s SqliteUserStore) GetByEmail(ctx context.Context, exec Executor, email st
 	return u, nil
 }
 
-func (s SqliteUserStore) GetByRecoveryToken(ctx context.Context, exec Executor, token string) (*model.User, error) {
+func (s SqliteUserStore) GetByRecoveryToken(ctx context.Context, exec store.Executor, token string) (*model.User, error) {
 	u := &model.User{}
 	err := exec.QueryRowContext(ctx, `
 		SELECT user_id, username, password, email,

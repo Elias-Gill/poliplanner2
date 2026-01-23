@@ -1,10 +1,11 @@
-package store
+package sqlite
 
 import (
 	"context"
 	"database/sql"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
+	"github.com/elias-gill/poliplanner2/internal/db/store"
 )
 
 type SqliteCareerStore struct {
@@ -14,7 +15,7 @@ func NewSqliteCareerStore() *SqliteCareerStore {
 	return &SqliteCareerStore{}
 }
 
-func (s SqliteCareerStore) Insert(ctx context.Context, exec Executor, c *model.Career) error {
+func (s SqliteCareerStore) Insert(ctx context.Context, exec store.Executor, c *model.Career) error {
 	// Try to find existing career by career_code
 	var careerID int64
 	err := exec.QueryRowContext(ctx, `SELECT career_id FROM career WHERE career_code = ?`, c.CareerCode).Scan(&careerID)
@@ -54,12 +55,12 @@ func (s SqliteCareerStore) Insert(ctx context.Context, exec Executor, c *model.C
 	return nil
 }
 
-func (s SqliteCareerStore) Delete(ctx context.Context, exec Executor, careerID int64) error {
+func (s SqliteCareerStore) Delete(ctx context.Context, exec store.Executor, careerID int64) error {
 	_, err := exec.ExecContext(ctx, `DELETE FROM careers_version WHERE career_version_id = ?`, careerID)
 	return err
 }
 
-func (s SqliteCareerStore) GetByID(ctx context.Context, exec Executor, careerID int64) (*model.Career, error) {
+func (s SqliteCareerStore) GetByID(ctx context.Context, exec store.Executor, careerID int64) (*model.Career, error) {
 	c := &model.Career{}
 
 	err := exec.QueryRowContext(ctx, `
@@ -79,7 +80,7 @@ func (s SqliteCareerStore) GetByID(ctx context.Context, exec Executor, careerID 
 	return c, nil
 }
 
-func (s SqliteCareerStore) GetBySheetVersion(ctx context.Context, exec Executor, versionID int64) ([]*model.Career, error) {
+func (s SqliteCareerStore) GetBySheetVersion(ctx context.Context, exec store.Executor, versionID int64) ([]*model.Career, error) {
 	rows, err := exec.QueryContext(ctx, `
 		SELECT
 			cv.career_version_id,

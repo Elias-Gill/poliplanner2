@@ -1,9 +1,10 @@
-package store
+package sqlite
 
 import (
 	"context"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
+	"github.com/elias-gill/poliplanner2/internal/db/store"
 )
 
 type SqliteScheduleStore struct {
@@ -13,7 +14,7 @@ func NewSqliteScheduleStore() *SqliteScheduleStore {
 	return &SqliteScheduleStore{}
 }
 
-func (s SqliteScheduleStore) Insert(ctx context.Context, exec Executor, sched *model.Schedule) (int64, error) {
+func (s SqliteScheduleStore) Insert(ctx context.Context, exec store.Executor, sched *model.Schedule) (int64, error) {
 	query := `
 	INSERT INTO schedules (user_id, schedule_description, schedule_sheet_version)
 	VALUES (?, ?, ?)
@@ -33,12 +34,12 @@ func (s SqliteScheduleStore) Insert(ctx context.Context, exec Executor, sched *m
 	return id, nil
 }
 
-func (s SqliteScheduleStore) Delete(ctx context.Context, exec Executor, scheduleID int64) error {
+func (s SqliteScheduleStore) Delete(ctx context.Context, exec store.Executor, scheduleID int64) error {
 	_, err := exec.ExecContext(ctx, `DELETE FROM schedules WHERE schedule_id = ?`, scheduleID)
 	return err
 }
 
-func (s SqliteScheduleStore) GetByUserID(ctx context.Context, exec Executor, userID int64) ([]*model.Schedule, error) {
+func (s SqliteScheduleStore) GetByUserID(ctx context.Context, exec store.Executor, userID int64) ([]*model.Schedule, error) {
 	rows, err := exec.QueryContext(ctx, `
 		SELECT schedule_id, created_at, schedule_description, schedule_sheet_version
 		FROM schedules
@@ -66,7 +67,7 @@ func (s SqliteScheduleStore) GetByUserID(ctx context.Context, exec Executor, use
 	return list, rows.Err()
 }
 
-func (s SqliteScheduleStore) GetByID(ctx context.Context, exec Executor, scheduleID int64) (*model.Schedule, error) {
+func (s SqliteScheduleStore) GetByID(ctx context.Context, exec store.Executor, scheduleID int64) (*model.Schedule, error) {
 	sched := &model.Schedule{}
 	err := exec.QueryRowContext(ctx, `
 		SELECT schedule_id, created_at, user_id, schedule_description, schedule_sheet_version
@@ -80,7 +81,7 @@ func (s SqliteScheduleStore) GetByID(ctx context.Context, exec Executor, schedul
 
 func (s SqliteScheduleStore) UpdateScheduleSubjects(
 	ctx context.Context,
-	exec Executor,
+	exec store.Executor,
 	scheduleID int64,
 	newSubjectIDs []int64,
 ) error {
@@ -109,7 +110,7 @@ func (s SqliteScheduleStore) UpdateScheduleSubjects(
 
 func (s SqliteScheduleStore) UpdateScheduleExcelVersion(
 	ctx context.Context,
-	exec Executor,
+	exec store.Executor,
 	scheduleID int64,
 	newSheetVersionID int64,
 ) error {

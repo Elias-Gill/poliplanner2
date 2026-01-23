@@ -7,7 +7,7 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/auth"
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/db"
-	"github.com/elias-gill/poliplanner2/internal/db/store"
+	"github.com/elias-gill/poliplanner2/internal/db/store/sqlite"
 	log "github.com/elias-gill/poliplanner2/internal/logger"
 	"github.com/elias-gill/poliplanner2/internal/service"
 	"github.com/elias-gill/poliplanner2/router"
@@ -31,13 +31,13 @@ func main() {
 
 	services := service.NewServices(
 		db.GetConnection(),
-		store.NewSqliteUserStore(),
-		store.NewSqliteSheetVersionStore(),
-		store.NewSqliteSheetVersionCheckStore(),
-		store.NewSqliteCareerStore(),
-		store.NewSqliteSubjectStore(),
-		store.NewSqliteScheduleStore(),
-		store.NewSqliteScheduleDetailStore(),
+		sqlite.NewSqliteUserStore(),
+		sqlite.NewSqliteSheetVersionStore(),
+		sqlite.NewSqliteSheetVersionCheckStore(),
+		sqlite.NewSqliteCareerStore(),
+		sqlite.NewSqliteSubjectStore(),
+		sqlite.NewSqliteScheduleStore(),
+		sqlite.NewSqliteScheduleDetailStore(),
 		config.Get().Email.APIKey,
 	)
 

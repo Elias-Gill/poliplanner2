@@ -1,8 +1,10 @@
-package store
+package sqlite
 
 import (
 	"context"
+
 	"github.com/elias-gill/poliplanner2/internal/db/model"
+	"github.com/elias-gill/poliplanner2/internal/db/store"
 )
 
 type SqliteSheetVersionStore struct {
@@ -12,7 +14,7 @@ func NewSqliteSheetVersionStore() *SqliteSheetVersionStore {
 	return &SqliteSheetVersionStore{}
 }
 
-func (s SqliteSheetVersionStore) Insert(ctx context.Context, exec Executor, sv *model.SheetVersion) error {
+func (s SqliteSheetVersionStore) Insert(ctx context.Context, exec store.Executor, sv *model.SheetVersion) error {
 	query := `
 	INSERT INTO sheet_version (file_name, url)
 	VALUES (?, ?)
@@ -29,7 +31,7 @@ func (s SqliteSheetVersionStore) Insert(ctx context.Context, exec Executor, sv *
 	return nil
 }
 
-func (s SqliteSheetVersionStore) GetNewest(ctx context.Context, exec Executor) (*model.SheetVersion, error) {
+func (s SqliteSheetVersionStore) GetNewest(ctx context.Context, exec store.Executor) (*model.SheetVersion, error) {
 	sv := &model.SheetVersion{}
 	err := exec.QueryRowContext(ctx, `
 		SELECT version_id, file_name, url, parsed_at

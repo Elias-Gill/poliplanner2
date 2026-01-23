@@ -1,4 +1,4 @@
-package store
+package sqlite
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/elias-gill/poliplanner2/internal/db/store"
 	"github.com/elias-gill/poliplanner2/internal/logger"
 )
 
@@ -20,7 +21,7 @@ func NewSqliteSheetVersionCheckStore() *SqliteSheetVersionCheckStore {
 
 func (s SqliteSheetVersionCheckStore) GetLastCheckedAt(
 	ctx context.Context,
-	exec Executor,
+	exec store.Executor,
 ) (*time.Time, error) {
 
 	var lastCheckedAt string
@@ -51,7 +52,7 @@ func (s SqliteSheetVersionCheckStore) GetLastCheckedAt(
 
 func (s SqliteSheetVersionCheckStore) SetLastCheckedAt(
 	ctx context.Context,
-	exec Executor,
+	exec store.Executor,
 	t time.Time,
 ) error {
 
