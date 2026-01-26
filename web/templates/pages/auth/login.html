@@ -9,9 +9,6 @@
       <img src="/static/logo.svg" alt="Logo PoliPlanner" class="login-logo" />
       <h2>Iniciar Sesión</h2>
 
-      <small style="color: var(--color-error)"><i class="bi bi-question-circle"></i> Este es un
-            reinicio, por lo que las cuentas antiguas fueron eliminadas.</small>
-
       <form
         hx-post="/login?redirect={{ .Redirect }}"
         hx-target="#messages"
@@ -188,56 +185,5 @@
       }
     </style>
 
-    <!-- FUTURE: TEMPORAL, DEBERIA DE QUITAR EN ALGUN MOMENTO -->
-    <!-- Modal de bienvenida -->
-    <div id="welcome-modal" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-      <div style="position: relative; background: var(--color-bg); padding: var(--space-lg); border: 1px solid var(--color-border); border-radius: var(--border-radius); max-width: 400px; width: 90%; box-shadow: 0 2px 8px rgba(0,0,0,0.3); text-align: center;">
-        <button
-          id="welcome-close"
-          aria-label="Cerrar"
-          type="button"
-          style="position:absolute; top:0.5rem; right:0.5rem; background:none; color: var(--color-primary); border:none; font-size:1.25rem; cursor:pointer;"
-        >×</button>
-        <h2 style="font-size: var(--font-size-h2); margin-bottom: var(--space-md); color: var(--color-primary);">
-          🚀 ¡Bienvenido a PoliPlanner!
-        </h2>
-        <p style="font-size: var(--font-size-base); margin-bottom: var(--space-md); color: var(--color-text);">
-          Conocé las nuevas funcionalidades que agregamos para mejorar tu experiencia.
-        </p>
-        <p style="font-size: var(--font-size-base); margin-bottom: var(--space-md); color: var(--color-text);">
-            <i>Estamos comenzando de nuevo, por lo que las <strong>cuentas</strong> registradas ya <strong>NO estarán disponibles</strong>.</i>
-        </p>
-        <button
-          id="welcome-btn"
-          style="background-color: var(--color-primary); color: white; border: none; border-radius: var(--border-radius); padding: var(--space-sm) var(--space-md); font-weight: var(--font-weight-semibold); cursor: pointer;"
-        > Ver novedades </button>
-      </div>
-    </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-          const modal = document.getElementById("welcome-modal");
-          const btn = document.getElementById("welcome-btn");
-          const closeBtn = document.getElementById("welcome-close");
-
-          const hasSeenModal = localStorage.getItem("hasSeenWelcomeModal");
-
-          if (!hasSeenModal) {
-            modal.style.display = "flex";
-          }
-
-          const closeModal = () => {
-            localStorage.setItem("hasSeenWelcomeModal", "true");
-            modal.style.display = "none";
-          };
-
-          btn.addEventListener("click", () => {
-            closeModal();
-            window.location.href = "/guides/news";
-          });
-
-          closeBtn.addEventListener("click", closeModal);
-        });
-    </script>
   </main>
 {{ end }}
