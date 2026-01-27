@@ -59,7 +59,10 @@ CREATE TABLE cursos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     malla INTEGER NOT NULL REFERENCES mallas(id) ON DELETE CASCADE ON UPDATE CASCADE,
     periodo INTEGER NOT NULL REFERENCES periodos(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    seccion TEXT NOT NULL,
+    -- El nombre del curso nos dice el nombre de materia completo pero sucio, nos sirve para
+    -- las electivas y optativas.
+    nombre TEXT NOT NULL,
+    seccion varchar(6),
     -- 0: Solo es examen final, 
     -- 1 (DEFAULT): curso normal con periodo de clases
     solo_examen_final INTEGER NOT NULL DEFAULT 1 CHECK (solo_examen_final IN (0, 1))
