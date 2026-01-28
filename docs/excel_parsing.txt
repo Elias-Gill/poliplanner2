@@ -1,6 +1,4 @@
 DOCUMENTACIÓN – FORMATO Y PROCESO DE PARSEADO DEL EXCEL
-Proyecto: Poliplanner
-Formato: TXT
 ----------------------------------------------------
 
 Este documento describe cómo funciona el procesamiento del Excel de horarios dentro de

@@ -1,0 +1,90 @@
+DOCUMENTACIÓN – WEB SCRAPER PARA DESCARGA DE HORARIOS  
+-----------------------------------------------------
+
+Este documento describe el funcionamiento del scraper web desarrollado para Poliplanner, cuyo
+objetivo es encontrar y descargar la versión más reciente de archivos Excel con horarios
+académicos, desde la página oficial y enlaces asociados, incluyendo integración con Google
+Drive y Google Sheets.
+
+====================================================
+1. VISIÓN GENERAL  
+====================================================
+
+El scraper automatiza la búsqueda y descarga de archivos Excel relacionados a horarios y
+exámenes en el sitio oficial de la Facultad Politécnica (https://www.pol.una.py), extendiendo
+la búsqueda a enlaces directos, carpetas y hojas de cálculo en Google Drive.
+
+Componentes principales:
+
+- 1) WebScrapper: motor principal para explorar la página objetivo y extraer URLs relevantes.  
+- 2) GoogleDriveHelper: cliente API para listar archivos y extraer metadatos de Google Drive y
+  Google Sheets.  
+- 3) Funciones auxiliares: para validar URLs, extraer fechas de nombres de archivo y descargar
+  archivos.
+
+----------------------------------------------------
+2. FLUJO DE FUNCIONAMIENTO  
+----------------------------------------------------
+
+- *Inicialización:* Se crea un `WebScrapper` con la URL objetivo por defecto y opcionalmente un
+  `GoogleDriveHelper` con la API Key para Google Drive.
+
+- *Búsqueda de fuentes:* El scraper visita la página oficial y captura todos los enlaces (`<a
+  href>`), filtrando aquellos que apuntan a archivos Excel directos o a URLs de Google Drive
+  (carpetas o spreadsheets).  Para URLs de Google Drive, se utilizan los métodos del
+  `GoogleDriveHelper` para listar archivos y validar si contienen archivos Excel con palabras
+  clave relevantes.
+
+- *Extracción de metadatos:* Para cada archivo identificado, se extrae el nombre y se intenta
+  obtener una fecha de subida a partir del nombre del archivo usando patrones comunes de
+  fechas. Esto permite identificar cuál es la versión más reciente.
+
+- *Descarga:* La fuente más reciente puede descargarse mediante una petición HTTP, guardándose
+  en un archivo temporal con un nombre derivado.
+
+----------------------------------------------------
+3. DETALLES TÉCNICOS  
+----------------------------------------------------
+
+- *Colly:*  La librería `colly` se usa para realizar scraping HTML de manera eficiente y con
+  soporte de concurrencia.
+
+- *GoogleDriveHelper:*  Usa la API de Google Drive para listar archivos dentro de carpetas y
+  obtener metadatos de hojas de cálculo.  Valida que los nombres de archivos contengan palabras
+  clave como "examen", "horario" o "clases".
+
+- *Expresiones regulares:*  Se utilizan para detectar URLs relevantes y para extraer fechas de
+  los nombres de archivos con formatos variados (ej. `DD-MM-YYYY`, `YYYY.MM.DD`).
+
+- *Contexto y cancelación:*  Todas las operaciones usan `context.Context` para permitir
+  cancelación y control del ciclo de vida de las peticiones.
+
+----------------------------------------------------
+4. EJEMPLO DE USO  
+----------------------------------------------------
+
+```go
+ctx := context.Background()
+googleHelper := NewGoogleDriveHelper("GOOGLE_API_KEY")
+scraper := NewWebScraper(googleHelper)
+
+latestSource, err := scraper.FindLatestDownloadSource(ctx)
+if err != nil {
+    // manejar error
+}
+
+filePath, err := latestSource.DownloadThisSource(ctx)
+if err != nil {
+    // manejar error
+}
+
+// Usar archivo descargado en filePath
+```
+
+----------------------------------------------------
+LIMITACIONES
+----------------------------------------------------
+
+- La fecha se extrae solo del nombre del archivo, especialmente problematico para descargas
+  desde google drive.
+- No hay almacenamiento local de los archivos ni historial de versiones.

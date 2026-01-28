@@ -1,0 +1,43 @@
+DOCUMENTACIÓN – SISTEMA ACTUAL DE AUTENTICACIÓN DE USUARIOS (JWT)  
+---------------------------------------------------------------
+
+Este documento describe el sistema de autenticación de usuarios en Poliplanner, basado en JWT.
+Este diseño soluciona la autenticacion basica sin demasiado trabajo de ingenieria en su
+implementacion.
+
+====================================================  
+1. VISIÓN GENERAL  
+====================================================
+
+La autenticación se realiza mediante la emisión y validación de JWT firmados, que contienen la
+información del usuario y su expiración.
+
+Componentes principales:
+
+1) Creación del token JWT  
+2) Middleware de validación del token  
+3) Manejo de expiración y revocación
+
+----------------------------------------------------  
+Flujo de autenticacion
+----------------------------------------------------
+
+1. **Login y creación del token JWT:**  
+- Cuando un usuario se autentica correctamente en `/login`, se genera un token JWT que incluye
+  el `userID` y una fecha de expiración (30 minutos).  
+- El token se firma con una clave secreta
+- Se envía el token al cliente dentro de una cookie `session_id` con atributos de seguridad
+  (HttpOnly, Secure, SameSite, expiración).
+
+2. **Middleware de validación del token:**  
+- En cada petición a rutas protegidas, el middleware extrae el token JWT de la cookie
+  `session_id`.  
+- Se valida la firma y se verifica que el token no esté expirado.  
+- Si es válido, se extrae el `userID` del token y se añade al contexto de la petición para su
+  uso en los handlers.  
+- Si es inválido o expirado, se redirige al usuario a la página de login con la ruta original
+  para redirección posterior.
+
+3. **Eliminación y revocación del token:**  
+- El logout se realiza simplemente eliminando o expirando la cookie en el cliente.  
+- Un sistema de blacklist para revocación anticipada aun no ha sido implementado.
