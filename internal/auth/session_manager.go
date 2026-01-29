@@ -94,7 +94,7 @@ func CreateSession(userID int64) string {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString([]byte(config.Get().Security.UpdateKey))
+	tokenString, err := token.SignedString([]byte(config.Get().Security.JWTSignKey))
 	if err != nil {
 		// Panic or handle error properly if token generation fails
 		panic("Error generating JWT: " + err.Error())

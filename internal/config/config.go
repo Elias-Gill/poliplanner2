@@ -69,6 +69,7 @@ type LoggingConfig struct {
 
 type SecurityConfig struct {
 	UpdateKey  string
+	JWTSignKey string
 	SecureHTTP bool
 }
 
@@ -127,6 +128,12 @@ func MustLoad() {
 		os.Exit(1)
 	}
 
+	jwtKey := getEnv("JWT_KEY", "")
+	if updateKey == "" {
+		log.Error("Missing JWT signature key, refusing to start")
+		os.Exit(1)
+	}
+
 	secureHTTPDefault := env == EnvProd // true on production
 	verboseLogsDefault := env == EnvDev // false on production
 
@@ -160,6 +167,7 @@ func MustLoad() {
 
 		Security: SecurityConfig{
 			UpdateKey:  updateKey,
+			JWTSignKey: jwtKey,
 			SecureHTTP: getEnvAsBool("SECURE_HTTP", secureHTTPDefault),
 		},
 
