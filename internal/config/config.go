@@ -129,7 +129,7 @@ func MustLoad() {
 	}
 
 	jwtKey := getEnv("JWT_KEY", "")
-	if updateKey == "" {
+	if jwtKey == "" {
 		log.Error("Missing JWT signature key, refusing to start")
 		os.Exit(1)
 	}
