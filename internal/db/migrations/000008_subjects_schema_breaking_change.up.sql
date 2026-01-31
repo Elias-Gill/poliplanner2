@@ -1,26 +1,32 @@
 -- Carreras
 CREATE TABLE carreras (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombre VARCHAR(255) NOT NULL, -- Siglas de la carrera
+    siglas VARCHAR(6) NOT NULL,
+    UNIQUE (siglas)
 );
 
 -- Docentes
 CREATE TABLE docentes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    -- nombre crudo y sin normalizacion
     nombre TEXT NOT NULL,
+    -- se utiliza como principal llave de busqueda para la base de datos de docentes
     correo TEXT NOT NULL,
-    -- key que se utiliza para ciertas busquedas rapidas
-    -- de uso secundario
-    search_key TEXT NOT NULL
+    -- key que se utiliza para ciertas busquedas rapidas. De uso secundario.
+    -- Es la combinacion del primer nombre y el primer apellido. Ej: juan_gonzales
+    search_key TEXT NOT NULL,
+    -- Los docentes se diferencian ultimamente por su correo electronico, asi por mas
+    -- de que
+    -- existan nombres iguales, seran unicos segun su correo.
+    UNIQUE (correo)
 );
-CREATE UNIQUE INDEX idx_docentes_correo ON docentes(correo);
 CREATE INDEX idx_docentes_search_key ON docentes(search_key);
 
 -- Departamentos
 CREATE TABLE departamentos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombre VARCHAR(255) NOT NULL,
-    siglas VARCHAR(255) NOT NULL
+    siglas VARCHAR(6) UNIQUE NOT NULL,
+    UNIQUE (siglas)
 );
 
 -- Asignaturas (concepto académico, estable. Misma asignatura puede pertenecer a
@@ -28,9 +34,11 @@ CREATE TABLE departamentos (
 CREATE TABLE asignaturas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nombre TEXT NOT NULL,
-    departamento INTEGER NOT NULL REFERENCES departamentos(id) ON DELETE CASCADE ON UPDATE CASCADE
+    departamento INTEGER NOT NULL REFERENCES departamentos(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    -- No deberian de haber asignaturas con el mismo nombre, puesto que son unidades
+    -- unicas y estables en el tiempo
+    UNIQUE (nombre)
 );
-CREATE INDEX idx_asignaturas_nombre ON asignaturas(nombre);
 CREATE INDEX idx_asignaturas_departamento ON asignaturas(departamento);
 
 -- Malla curricular (asignatura por carrera). Semestre puede ser rellenado con
@@ -39,10 +47,10 @@ CREATE TABLE mallas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     carrera INTEGER NOT NULL REFERENCES carreras(id) ON DELETE CASCADE ON UPDATE CASCADE,
     asignatura INTEGER NOT NULL REFERENCES asignaturas(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    semestre INTEGER NOT NULL
+    semestre INTEGER NOT NULL,
+    -- Asegura que no se repitan asignaturas en la misma carrera
+    UNIQUE (carrera, asignatura)
 );
--- que no se repita asignaturas en la misma carrera
-CREATE UNIQUE INDEX idx_mallas_asignatura_carrera ON mallas(carrera, asignatura);
 -- busqueda por carrera
 CREATE INDEX idx_mallas_carrera_semestre ON mallas(carrera);
 
@@ -59,10 +67,11 @@ CREATE TABLE cursos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     malla INTEGER NOT NULL REFERENCES mallas(id) ON DELETE CASCADE ON UPDATE CASCADE,
     periodo INTEGER NOT NULL REFERENCES periodos(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    -- El nombre del curso nos dice el nombre de materia completo pero sucio, nos sirve para
-    -- las electivas y optativas.
+    -- El nombre del curso nos dice el nombre de materia completo pero sucio, nos
+    -- sirve para
+    -- diferenciar las electivas y optativas.
     nombre TEXT NOT NULL,
-    seccion varchar(6),
+    seccion VARCHAR(6) NOT NULL,
     -- 0: Solo es examen final, 
     -- 1 (DEFAULT): curso normal con periodo de clases
     solo_examen_final INTEGER NOT NULL DEFAULT 1 CHECK (solo_examen_final IN (0, 1))
@@ -111,11 +120,12 @@ CREATE TABLE cursos (
 -- Committee de revision
     comite_presidente TEXT,
     comite_miembro1 TEXT,
-    comite_miembro2 TEXT
-);
+    comite_miembro2 TEXT,
 
 -- Evita duplicar el mismo curso (asignatura + seccion + carrerar) en un mismo periodo
-CREATE UNIQUE INDEX idx_curso_unico ON cursos(malla, seccion, periodo);
+    UNIQUE (malla, seccion, periodo)
+);
+
 
 CREATE INDEX idx_cursos_malla_periodo ON cursos(malla, periodo);
 

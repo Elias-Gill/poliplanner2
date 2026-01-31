@@ -1,0 +1,57 @@
+====================================================
+DOCUMENTACIÓN – MODELO DE CURSOS Y PROCESO DE CARGA
+====================================================
+
+Este documento describe el concepto de **curso** dentro del sistema académico y el flujo
+utilizado para su creación y vinculación a partir de los datos de materias, períodos y
+docentes.
+
+====================================================
+1. CONCEPTO DE CURSO
+====================================================
+
+Un curso representa la **instancia concreta de una asignatura** dictada en un período académico
+específico.
+
+Es la entidad que concentra la información: horarios de clases, fechas y aulas de evaluaciones,
+secciones y docentes asignados. A diferencia de la asignatura, que es un concepto académico
+estable, el curso es temporal y dependiente del período.
+
+====================================================
+2. ORIGEN Y CARGA DE CURSOS
+====================================================
+
+La carga de cursos se realiza a partir de los datos de materias provenientes del Excel, en
+combinación con el período académico activo.
+
+Para cada registro se verifica primero si **ya existe un curso para la misma asignatura,
+sección y período**.
+
+Si no existe una entrada correspondiente, se procede a crear un nuevo curso utilizando la
+información disponible.
+
+====================================================
+3. MANEJO DE ASIGNATURAS Y SECCIONES
+====================================================
+
+Si la asignatura aún no se encuentra registrada en el sistema, se crea un nuevo registro con
+los datos disponibles y los metadatos derivados. Durante este proceso se intenta completar
+datos adicionales mediante el `metadata_service`, siempre que sea posible.
+
+El curso queda entonces enlazado a dicha asignatura a través de la malla correspondiente.
+
+En caso de que la asignatura exista, pero la sección asociada a esa carrera todavía no haya
+sido creada, se registra la nueva sección. Se asume que la unicidad de la sección está
+garantizada por la fuente de datos (Excel).
+
+====================================================
+4. DOCENTES Y ASIGNACIONES
+====================================================
+
+Los docentes se procesan de forma análoga: se normalizan y se enlazan al curso mediante la
+tabla de relaciones correspondiente.
+
+Cuando una materia indica un docente con estado “A confirmar” o carece de información válida,
+**no se crea ninguna asignación**. En estos casos el curso queda sin docente asociado, lo que
+se representa explícitamente como `NULL` en las estructuras finales utilizadas por la capa de
+servicios.
