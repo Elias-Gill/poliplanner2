@@ -15,11 +15,9 @@ type SheetVersionService struct {
 }
 
 func NewSheetVersionService(
-	db *sql.DB,
 	sheetVersionStorer store.SheetVersionStorer,
 ) *SheetVersionService {
 	return &SheetVersionService{
-		db:                 db,
 		sheetVersionStorer: sheetVersionStorer,
 	}
 }
@@ -27,8 +25,7 @@ func NewSheetVersionService(
 func (s *SheetVersionService) FindLatestSheetVersion(
 	ctx context.Context,
 ) (*model.SheetVersion, error) {
-
-	version, err := s.sheetVersionStorer.GetNewest(ctx, s.db)
+	version, err := s.sheetVersionStorer.GetNewest(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("error searching latest schedule: %w", err)
 	}

@@ -2,72 +2,62 @@ package store
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
 )
 
 type UserStorer interface {
-	Insert(ctx context.Context, exec Executor, u *model.User) error
-	Delete(ctx context.Context, exec Executor, userID int64) error
-	Update(ctx context.Context, exec Executor, user *model.User) error
-	GetByID(ctx context.Context, exec Executor, userID int64) (*model.User, error)
-	GetByUsername(ctx context.Context, exec Executor, username string) (*model.User, error)
-	GetByEmail(ctx context.Context, exec Executor, email string) (*model.User, error)
-	GetByRecoveryToken(ctx context.Context, exec Executor, token string) (*model.User, error)
+	Insert(ctx context.Context, u *model.User) error
+	Delete(ctx context.Context, userID int64) error
+	Update(ctx context.Context, user *model.User) error
+	GetByID(ctx context.Context, userID int64) (*model.User, error)
+	GetByUsername(ctx context.Context, username string) (*model.User, error)
+	GetByEmail(ctx context.Context, email string) (*model.User, error)
+	GetByRecoveryToken(ctx context.Context, token string) (*model.User, error)
 }
 
 type SheetVersionStorer interface {
-	Insert(ctx context.Context, exec Executor, s *model.SheetVersion) error
-	GetNewest(ctx context.Context, exec Executor) (*model.SheetVersion, error)
-}
+	GetNewest(ctx context.Context) (*model.SheetVersion, error)
+	GetLastCheckedAt(ctx context.Context) (*time.Time, error)
+	SetLastCheckedAt(ctx context.Context, t time.Time) error
 
-type SheetVersionCheckStorer interface {
-	GetLastCheckedAt(ctx context.Context, exec Executor) (*time.Time, error)
-	SetLastCheckedAt(ctx context.Context, exec Executor, t time.Time) error
-}
-
-type CareerStorer interface {
-	Insert(ctx context.Context, exec Executor, c *model.Career) error
-	Delete(ctx context.Context, exec Executor, careerID int64) error
-	GetByID(ctx context.Context, exec Executor, careerID int64) (*model.Career, error)
-	GetBySheetVersion(ctx context.Context, exec Executor, versionID int64) ([]*model.Career, error)
-}
-
-type SubjectStorer interface {
-	Insert(ctx context.Context, exec Executor, careerID int64, s *model.Subject) error
-	GetByID(ctx context.Context, exec Executor, subjectID int64) (*model.Subject, error)
-	GetByCareerID(ctx context.Context, exec Executor, careerID int64) ([]*model.SubjectListItem, error)
-	FindEquivalentSubjectIDBySheetVersion(
+	// TODO: refactor to use a struct
+	Save(
 		ctx context.Context,
-		exec Executor,
-		subjectName string,
-		section string,
-		sheetVersionID int64,
+		fileName string,
+		localPath string,
+		url string,
+		processedSheets int,
+		succeededSheets int,
+		errors []error,
 	) (int64, error)
 }
 
+type GradeStorer interface {
+	// Upsert opens a transaction and allows inserting multiple GradeModel records sequentially
+	// via the insertFn callback. This keeps memory low during large excel imports by processing
+	// and persisting one record at a time.
+	//
+	// The insertFn callback exposes a "persist" function as its argument. The caller must
+	// use this function to persist each individual GradeModel inside the transaction.
+	//
+	// All inserts run atomically (everything commits or the whole operation rolls back).
+	Upsert(ctx context.Context, insertFn func(persist func(model.GradeModel) error) error) error
+	FindById(ctx context.Context, id int64) (*model.GradeModel, error)
+}
+
 type ScheduleStorer interface {
-	Insert(ctx context.Context, exec Executor, s *model.Schedule) (int64, error)
-	Delete(ctx context.Context, exec Executor, scheduleID int64) error
-	GetByUserID(ctx context.Context, exec Executor, userID int64) ([]*model.Schedule, error)
-	GetByID(ctx context.Context, exec Executor, scheduleID int64) (*model.Schedule, error)
-	UpdateScheduleSubjects(ctx context.Context, exec Executor, scheduleID int64, newSubjectIDs []int64) error
-	UpdateScheduleExcelVersion(ctx context.Context, exec Executor, scheduleID int64, newSheetVersionID int64) error
+	Insert(ctx context.Context, s *model.Schedule) (int64, error)
+	Delete(ctx context.Context, scheduleID int64, validateFn func(owner int64) error) error
+
+	// TODO: This should return a basic schedule info
+	GetByUserID(ctx context.Context, userID int64) ([]*model.Schedule, error)
+
+	// TODO: This should return a complete aggregate of grades for the given schedule
+	GetByID(ctx context.Context, scheduleID int64, validateFn func(owner int64) error) (*model.ScheduleDetails, error)
 }
 
-type ScheduleDetailStorer interface {
-	Insert(ctx context.Context, exec Executor, scheduleID int64, subjectID int64) error
-	GetSubjectsByScheduleID(ctx context.Context, exec Executor, scheduleID int64) ([]*model.Subject, error)
-}
-
-// Executor abstracts over sql.DB and sql.Tx, allowing them to be used interchangeably.
-// This design lets the service layer manage transaction boundaries explicitly,
-// since it has the knowledge of which operations must be grouped within a transaction.
-type Executor interface {
-	QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error)
-	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
-	QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row
-	PrepareContext(ctx context.Context, query string) (*sql.Stmt, error)
+type CareerStorer interface {
+	List(ctx context.Context) ([]*model.Career, error)
 }

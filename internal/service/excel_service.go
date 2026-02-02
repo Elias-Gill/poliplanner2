@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/config"
@@ -15,31 +15,22 @@ import (
 )
 
 type ExcelService struct {
-	db                      *sql.DB
-	sheetVersionStorer      store.SheetVersionStorer
-	sheetVersionCheckStorer store.SheetVersionCheckStorer
-	careerStorer            store.CareerStorer
-	subjectStorer           store.SubjectStorer
+	sheetVersionStorer store.SheetVersionStorer
+	GradeStorer        store.GradeStorer
 }
 
 func NewExcelService(
-	db *sql.DB,
 	sheetVersionStorer store.SheetVersionStorer,
-	sheetVersionCheckStorer store.SheetVersionCheckStorer,
-	careerStorer store.CareerStorer,
-	subjectStorer store.SubjectStorer,
+	GradeStorer store.GradeStorer,
 ) *ExcelService {
 	return &ExcelService{
-		db:                      db,
-		sheetVersionStorer:      sheetVersionStorer,
-		sheetVersionCheckStorer: sheetVersionCheckStorer,
-		careerStorer:            careerStorer,
-		subjectStorer:           subjectStorer,
+		sheetVersionStorer: sheetVersionStorer,
+		GradeStorer:        GradeStorer,
 	}
 }
 
 func (s *ExcelService) SearchOnStartup(ctx context.Context) {
-	checkDate, err := s.sheetVersionCheckStorer.GetLastCheckedAt(ctx, s.db)
+	checkDate, err := s.sheetVersionStorer.GetLastCheckedAt(ctx)
 	if checkDate != nil && time.Since(*checkDate) < 48*time.Hour {
 		logger.Info("Excel auto-sync skipped: last check was performed less than 48 hours ago")
 		return
@@ -52,7 +43,7 @@ func (s *ExcelService) SearchOnStartup(ctx context.Context) {
 		logger.Error("Error on automatic version sync", "error", err)
 	}
 
-	s.sheetVersionCheckStorer.SetLastCheckedAt(ctx, s.db, time.Now())
+	s.sheetVersionStorer.SetLastCheckedAt(ctx, time.Now())
 
 	logger.Info("Successfull auto excel sync")
 }
@@ -67,7 +58,7 @@ func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 		return fmt.Errorf("error searching for excel versions: %w", err)
 	}
 
-	latestVersion, err := s.sheetVersionStorer.GetNewest(ctx, s.db)
+	latestVersion, err := s.sheetVersionStorer.GetNewest(ctx)
 	if err != nil {
 		logger.Info("Cannot retrieve latest version from database", "error", err)
 		return fmt.Errorf("error searching for excel versions: %w", err)
@@ -86,97 +77,180 @@ func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 		return fmt.Errorf("error downloading latest excel: %w", err)
 	}
 
-	return s.ParseExcelFile(ctx, path, newestSource.FileName, newestSource.URL)
+	return s.ParseAndPersistExcelFile(ctx, path, newestSource)
 }
 
-func (s *ExcelService) ParseExcelFile(ctx context.Context, path string, name string, url string) error {
-	parserExcel, err := parser.NewExcelParser(config.Get().Paths.ExcelParsingLayoutsDir, path)
+func (s *ExcelService) ParseAndPersistExcelFile(
+	ctx context.Context,
+	filePath string,
+	source *scraper.ExcelDownloadSource,
+) error {
+	parserExcel, err := parser.NewExcelParser(config.Get().Paths.ExcelParsingLayoutsDir, filePath)
 	if err != nil {
 		return fmt.Errorf("error creating excel parser: %w", err)
 	}
 	defer parserExcel.Close()
 
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return fmt.Errorf("error starting transaction: %w", err)
-	}
-
-	rollback := func(e error) error {
-		rbErr := tx.Rollback()
-		if rbErr != nil {
-			logger.Error("Rollback failed", "error", rbErr)
-		}
-		return e
-	}
-
-	version := &model.SheetVersion{
-		FileName: name,
-		URL:      url,
-	}
-
-	if err := s.sheetVersionStorer.Insert(ctx, tx, version); err != nil {
-		logger.Error("Error persisting excel version", "error", err)
-		return rollback(err)
-	}
-
+	// Start the sheets parsing and persisting process
+	processedSheets := 0
+	succeded := 0
+	var errors []error
 	for parserExcel.NextSheet() {
-		result, perr := parserExcel.ParseCurrentSheet()
-		if perr != nil {
-			logger.Error("Error parsing sheet", "error", perr)
-			return rollback(perr)
+		processedSheets++
+
+		// Parse sheet data, if error register the error and ignore this sheet
+		result, pError := parserExcel.ParseCurrentSheet()
+		if pError != nil {
+			logger.Error("Error parsing sheet", "error", pError)
+			errors = append(errors, pError)
+			continue
 		}
 
-		career := &model.Career{
-			CareerCode:     result.Career,
-			SheetVersionID: version.ID,
-		}
-
-		if err := s.careerStorer.Insert(ctx, tx, career); err != nil {
-			logger.Error("Error persisting career", "error", err)
-			return rollback(err)
-		}
-
+		// Load subjects metadata for the known careers
 		metadata, err := parser.NewSubjectMetadataLoader(config.Get().Paths.SubjectsMetadataDir, result.Career)
 		if err != nil {
 			logger.Warn("Metadata loading error", "error", err)
 		}
 
+		// insert every subject, one at a time
 		insertedCount := 0
-		for _, sub := range result.Subjects {
-			subject := mapper.MapToSubject(sub)
+		upsertError := s.GradeStorer.Upsert(
+			ctx,
+			func(persist func(model.GradeModel) error) error {
+				// Agreggate and persist structs data
+				for _, sub := range result.Subjects {
+					// Resolve all empty metadata first
+					if sub.Semester == 0 && metadata != nil {
+						meta, merr := metadata.Find(sub.RawSubjectName)
+						if merr == nil {
+							sub.Semester = meta.Semester
+						}
+						// FUTURE: expand with more metadata
+					}
 
-			if subject.Semester == 0 && metadata != nil {
-				meta, merr := metadata.FindSubjectByName(sub.SubjectName)
-				if merr == nil {
-					subject.Semester = meta.Semester
+					// Create the final aggregated data model
+					var grade model.GradeModel
+
+					grade.Name = sub.RawSubjectName
+
+					grade.Section = sub.Section
+
+					grade.Period = model.Period{
+						Year:   source.UploadDate.Year(),
+						Period: source.Period,
+					}
+
+					grade.Teachers = make([]model.Teacher, len(sub.Teachers))
+					for i, t := range sub.Teachers {
+						grade.Teachers[i] = model.Teacher{
+							Name:  strings.TrimSpace(t.FirstName + " " + t.LastName),
+							Email: t.Email,
+						}
+					}
+
+					grade.Curriculum = model.Curriculum{
+						Semester: sub.Semester,
+						Career:   result.Career,
+						Subject: model.Subject{
+							Name:       sub.TentativeRealSubjectName,
+							Department: sub.Department,
+						},
+					}
+
+					// partials info
+					grade.Partial1Date = sub.Partial1Date
+					grade.Partial1Time = sub.Partial1Time
+					grade.Partial1Room = sub.Partial1Room
+
+					grade.Partial2Date = sub.Partial2Date
+					grade.Partial2Time = sub.Partial2Time
+					grade.Partial2Room = sub.Partial2Room
+
+					// finals info
+					grade.Final1Date = sub.Final1Date
+					grade.Final1Time = sub.Final1Time
+					grade.Final1Room = sub.Final1Room
+					grade.Final1RevDate = sub.Final1RevDate
+					grade.Final1RevTime = sub.Final1RevTime
+
+					grade.Final2Date = sub.Final2Date
+					grade.Final2Time = sub.Final2Time
+					grade.Final2Room = sub.Final2Room
+					grade.Final2RevDate = sub.Final2RevDate
+					grade.Final2RevTime = sub.Final2RevTime
+
+					// revision committee info
+					grade.CommitteeMember1 = sub.CommitteeMember1
+					grade.CommitteeMember2 = sub.CommitteeMember2
+					grade.CommitteePresident = sub.CommitteePresident
+
+					// weekly schedules
+					grade.Monday = model.TimeSlot{Start: sub.Monday.Start, End: sub.Monday.End}
+					grade.Tuesday = model.TimeSlot{Start: sub.Tuesday.Start, End: sub.Tuesday.End}
+					grade.Wednesday = model.TimeSlot{Start: sub.Wednesday.Start, End: sub.Wednesday.End}
+					grade.Thursday = model.TimeSlot{Start: sub.Thursday.Start, End: sub.Thursday.End}
+					grade.Friday = model.TimeSlot{Start: sub.Friday.Start, End: sub.Friday.End}
+					grade.Saturday = model.TimeSlot{Start: sub.Saturday.Start, End: sub.Saturday.End}
+
+					// classrooms
+					grade.MondayRoom = sub.MondayRoom
+					grade.TuesdayRoom = sub.TuesdayRoom
+					grade.WednesdayRoom = sub.WednesdayRoom
+					grade.ThursdayRoom = sub.ThursdayRoom
+					grade.FridayRoom = sub.FridayRoom
+					grade.SaturdayRoom = sub.SaturdayRoom
+					grade.SaturdayDates = sub.SaturdayDates
+
+					if err := persist(grade); err != nil {
+						logger.Error("Error persisting subject", "error", err)
+						errors = append(errors, err)
+						return err
+					}
+
+					insertedCount++
 				}
-			}
 
-			if err := s.subjectStorer.Insert(ctx, tx, career.ID, subject); err != nil {
-				logger.Error("Error persisting subject", "error", err)
-				return rollback(err)
-			}
-			insertedCount++
+				// no errors for this sheet
+				return nil
+			},
+		)
+
+		// Log parsing result summary
+		if upsertError != nil {
+			logger.Error("Cannot persist sheet", "career", result.Career, "error", upsertError)
+			continue
 		}
 
-		// Log parsing summary
 		cacheHits := 0
 		if metadata != nil {
 			cacheHits = metadata.CacheHits
 		}
 		logger.Info(
 			"Persisted subjects from career",
-			"career", career.CareerCode,
+			"career", result.Career,
 			"inserted_subjects", insertedCount,
 			"cache_hits", cacheHits,
 		)
+
+		succeded++
 	}
 
-	if err := tx.Commit(); err != nil {
-		logger.Error("Error committing transaction", "error", err)
-		return rollback(err)
+	// Saves a brief audit summary of the Excel parsing process.
+	// Includes the number of processed sheets and any errors encountered.
+	_, err = s.sheetVersionStorer.Save(
+		ctx,
+		source.Name,
+		filePath,
+		source.URL,
+		processedSheets,
+		succeded,
+		errors,
+	)
+	if err != nil {
+		logger.Error("Error persisting excel audit summary data", "error", err)
+		return err
 	}
 
-	logger.Info("Excel import completed successfully", "file", name, "url", url)
+	logger.Info("Excel import completed successfully", "file", source.Name, "url", source.URL)
 	return nil
 }

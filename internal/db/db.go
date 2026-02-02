@@ -13,9 +13,11 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var dbConnection *sql.DB
+type DbConnection struct {
+	db *sql.DB
+}
 
-func InitDB() error {
+func InitDB() (*DbConnection, error) {
 	cfg := config.Get()
 
 	log.Info("Initializing database connection", "url", cfg.Database.URL)
@@ -23,28 +25,28 @@ func InitDB() error {
 	// Open database file connection
 	db, err := sql.Open("sqlite3", cfg.Database.URL)
 	if err != nil {
-		return fmt.Errorf("error opening db: %w", err)
+		return nil, fmt.Errorf("error opening db: %w", err)
 	}
 	log.Debug("Database connection established successfully")
 
 	log.Debug("Configuring WAL mode for SQLite")
 	if _, err := db.Exec("PRAGMA journal_mode=WAL;"); err != nil {
-		return fmt.Errorf("enable WAL: %v", err)
+		return nil, fmt.Errorf("enable WAL: %v", err)
 	}
 	log.Debug("WAL mode enabled successfully")
 
 	log.Debug("Enabling foreign keys support for SQLite")
 	if _, err := db.Exec("PRAGMA foreign_keys=ON;"); err != nil {
-		return fmt.Errorf("enable foreign keys: %v", err)
+		return nil, fmt.Errorf("enable foreign keys: %v", err)
 	}
 	log.Debug("Foreign keys enabled successfully")
-
-	dbConnection = db
 
 	migrateURL := "sqlite3://file:" + cfg.Database.URL + "?cache=shared&mode=rwc"
 	log.Debug("Running database migrations", "migrations_dir", cfg.Database.MigrationsDir)
 
-	return runMigrations(cfg.Database.MigrationsDir, migrateURL)
+	err = runMigrations(cfg.Database.MigrationsDir, migrateURL)
+
+	return &DbConnection{db: db}, err
 }
 
 func runMigrations(migrationsDir, databaseURL string) error {
@@ -67,13 +69,13 @@ func runMigrations(migrationsDir, databaseURL string) error {
 	return nil
 }
 
-func GetConnection() *sql.DB {
-	return dbConnection
+func (d *DbConnection) GetConnection() *sql.DB {
+	return d.db
 }
 
-func CloseDB() {
-	if dbConnection != nil {
-		if err := dbConnection.Close(); err != nil {
+func (d *DbConnection) CloseDB() {
+	if d.db != nil {
+		if err := d.db.Close(); err != nil {
 			log.Error("Error closing database connection", "error", err)
 		} else {
 			log.Debug("Database connection closed successfully")

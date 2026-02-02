@@ -1,40 +1,35 @@
 package service
 
 import (
-	"database/sql"
-
 	"github.com/elias-gill/poliplanner2/internal/db/store"
 )
 
 type Services struct {
 	UserService         *UserService
 	SheetVersionService *SheetVersionService
-	CareerService       *CareerService
-	SubjectService      *SubjectService
 	ScheduleService     *ScheduleService
 	ExcelService        *ExcelService
 	EmailService        *EmailService
+	SubjectService      *SubjectService
+	CareerService       *CareerService
 }
 
 // Convenience function to instantiate all the services in one call
 func NewServices(
-	conn *sql.DB,
 	userStore store.UserStorer,
 	sheetVersionStore store.SheetVersionStorer,
-	sheetVersionCheckStore store.SheetVersionCheckStorer,
-	careerStore store.CareerStorer,
-	subjectStore store.SubjectStorer,
+	gradeStore store.GradeStorer,
 	scheduleStore store.ScheduleStorer,
-	scheduleDetailStore store.ScheduleDetailStorer,
+	careerStore store.CareerStorer,
 	emailApiKey string,
 ) *Services {
 	return &Services{
-		UserService:         NewUserService(conn, userStore),
-		SheetVersionService: NewSheetVersionService(conn, sheetVersionStore),
-		CareerService:       NewCareerService(conn, careerStore),
-		SubjectService:      NewSubjectService(conn, subjectStore),
-		ScheduleService:     NewScheduleService(conn, scheduleStore, scheduleDetailStore, sheetVersionStore, subjectStore),
-		ExcelService:        NewExcelService(conn, sheetVersionStore, sheetVersionCheckStore, careerStore, subjectStore),
+		UserService:         NewUserService(userStore),
+		SheetVersionService: NewSheetVersionService(sheetVersionStore),
+		ExcelService:        NewExcelService(sheetVersionStore, gradeStore),
+		ScheduleService:     NewScheduleService(scheduleStore),
+		CareerService:       NewCareerService(careerStore),
 		EmailService:        NewEmailService(emailApiKey),
+		SubjectService:      NewSubjectService(gradeStore),
 	}
 }
