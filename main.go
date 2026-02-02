@@ -23,22 +23,19 @@ func main() {
 	log.Info("Loading env configuraion")
 
 	log.Debug("Initializing db")
-	err := db.InitDB()
+	conn, err := db.InitDB()
 	if err != nil {
 		panic(err)
 	}
-	defer db.CloseDB()
+	defer conn.CloseDB()
 
 	services := service.NewServices(
-		db.GetConnection(),
-		sqlite.NewSqliteUserStore(),
-		sqlite.NewSqliteSheetVersionStore(),
-		sqlite.NewSqliteSheetVersionCheckStore(),
-		sqlite.NewSqliteCareerStore(),
-		sqlite.NewSqliteSubjectStore(),
-		sqlite.NewSqliteScheduleStore(),
-		sqlite.NewSqliteScheduleDetailStore(),
-		config.Get().Email.APIKey,
+		sqlite.NewSqliteUserStore(conn.GetConnection()),
+		sqlite.NewSqliteSheetVersionStore(conn.GetConnection()),
+		sqlite.NewSqliteGradeStore(conn.GetConnection()),
+		sqlite.NewSqliteScheduleStore(conn.GetConnection()),
+		sqlite.NewSqliteCareerStore(conn.GetConnection()),
+		config.Get().Email.APIKey, // what the fuck is this doing here
 	)
 
 	// Configure http server
@@ -47,7 +44,7 @@ func main() {
 
 	r.Route("/", router.NewAuthRouter(services.UserService, services.EmailService))
 	r.Route("/dashboard", router.NewDashboardRouter(services.ScheduleService, services.SheetVersionService))
-	r.Route("/subject", router.NewSubjectRouter(services.SubjectService, services.SheetVersionService, services.CareerService))
+	r.Route("/subject", router.NewSubjectRouter(services.SubjectService, services.CareerService))
 	r.Route("/schedule", router.NewSchedulesRouter(services.SubjectService, services.ScheduleService, services.SheetVersionService, services.CareerService))
 	r.Route("/user", router.NewUserRouter(services.UserService))
 	r.Route("/excel", router.NewExcelRouter(services.ExcelService))
