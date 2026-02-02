@@ -67,3 +67,29 @@ func extractDateFromFilename(filename string) (time.Time, error) {
 
 	return time.Time{}, fmt.Errorf("no date found in filename: %s", filename)
 }
+
+func extractPeriodFromFilename(filename string) int {
+	lower := strings.ToLower(filename)
+
+	if strings.Contains(lower, "segundo") ||
+		strings.Contains(lower, "2do") ||
+		strings.Contains(lower, "semestre 2") {
+		return 2
+	}
+
+	if strings.Contains(lower, "primero") ||
+		strings.Contains(lower, "1ro") ||
+		strings.Contains(lower, "semestre 1") {
+		return 1
+	}
+
+	// If not found anything, then use the local date
+	now := time.Now()
+	month := now.Month()
+
+	if month >= time.August {
+		return 1
+	}
+
+	return 2
+}

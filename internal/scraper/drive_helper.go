@@ -93,11 +93,12 @@ func (g *GoogleDriveHelper) ListSourcesInURL(
 			continue
 		}
 
-		source := &ExcelDownloadSource{
-			URL:        "https://drive.google.com/uc?export=download&id=" + file.ID,
-			FileName:   file.Name,
-			UploadDate: fileDate,
-		}
+		source := NewExcelDownloadSource(
+			"https://drive.google.com/uc?export=download&id="+file.ID,
+			file.Name,
+			fileDate,
+			extractPeriodFromFilename(file.Name),
+		)
 		sources = append(sources, source)
 
 		log.Info("Google Drive source found", "url", source.URL, "date", source.UploadDate.String())
@@ -131,11 +132,14 @@ func (g *GoogleDriveHelper) GetSourceFromSpreadsheetLink(
 		return nil, err
 	}
 
-	return &ExcelDownloadSource{
-		URL:        "https://docs.google.com/spreadsheets/d/" + spreadsheetID + "/export?format=xlsx",
-		FileName:   metadata.Name,
-		UploadDate: date,
-	}, nil
+	source := NewExcelDownloadSource(
+		"https://docs.google.com/spreadsheets/d/"+spreadsheetID+"/export?format=xlsx",
+		metadata.Name,
+		date,
+		extractPeriodFromFilename(metadata.Name),
+	)
+
+	return source, nil
 }
 
 // =====================================

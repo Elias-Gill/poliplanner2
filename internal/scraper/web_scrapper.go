@@ -24,14 +24,24 @@ import (
 
 type ExcelDownloadSource struct {
 	URL        string
-	FileName   string
+	Name       string
 	UploadDate time.Time
+	Period     int
 }
 
 type WebScrapper struct {
 	targetURL    string
 	baseURL      *url.URL
 	googleHelper *GoogleDriveHelper
+}
+
+func NewExcelDownloadSource(url string, name string, uploadDate time.Time, period int) *ExcelDownloadSource {
+	return &ExcelDownloadSource{
+		Period:     period,
+		Name:       name,
+		UploadDate: uploadDate,
+		URL:        url,
+	}
 }
 
 const default_target = "https://www.pol.una.py/academico/horarios-de-clases-y-examenes/"
@@ -143,7 +153,7 @@ func (s *ExcelDownloadSource) DownloadThisSource(
 		return "", fmt.Errorf("http status %d", resp.StatusCode)
 	}
 
-	cleanName := strings.TrimSuffix(s.FileName, filepath.Ext(s.FileName))
+	cleanName := strings.TrimSuffix(s.Name, filepath.Ext(s.Name))
 	tmp, err := os.CreateTemp("", "horario_"+cleanName+"__*.xlsx")
 	if err != nil {
 		return "", err
@@ -320,11 +330,12 @@ func (ws *WebScrapper) extractDirectSource(uri string) *ExcelDownloadSource {
 		return nil
 	}
 
-	return &ExcelDownloadSource{
-		URL:        uri,
-		FileName:   name,
-		UploadDate: date,
-	}
+	return NewExcelDownloadSource(
+		uri,
+		name,
+		date,
+		extractPeriodFromFilename(name),
+	)
 }
 
 func (ws *WebScrapper) makeAbsoluteURL(href string) string {
