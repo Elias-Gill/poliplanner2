@@ -1,6 +1,7 @@
 -- Carreras
 CREATE TABLE carreras (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    -- acronimo de la carrera (ej: IIN, ISP). Debe de ir en mayusculas
     siglas VARCHAR(6) NOT NULL,
     UNIQUE (siglas)
 );
@@ -77,22 +78,28 @@ CREATE TABLE cursos (
     solo_examen_final INTEGER NOT NULL DEFAULT 1 CHECK (solo_examen_final IN (0, 1))
 
 -- Weekly schedule
-    lunes TEXT,
+    lunes_desde TEXT,
+    lunes_hasta TEXT,
     lunes_aula TEXT,
 
-    martes TEXT,
+    martes_desde TEXT,
+    martes_hasta TEXT,
     martes_aula TEXT,
 
-    miercoles TEXT,
+    miercoles_desde TEXT,
+    miercoles_hasta TEXT,
     miercoles_aula TEXT,
 
-    jueves TEXT,
+    jueves_desde TEXT,
+    jueves_hasta TEXT,
     jueves_aula TEXT,
 
-    viernes TEXT,
+    viernes_desde TEXT,
+    viernes_hasta TEXT,
     viernes_aula TEXT,
 
-    sabado TEXT,
+    sabado_desde TEXT,
+    sabado_hasta TEXT,
     sabado_aula TEXT,
     sabado_night_fechas TEXT,
 
