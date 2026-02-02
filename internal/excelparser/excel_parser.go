@@ -193,7 +193,7 @@ func (ep *ExcelParser) ParseCurrentSheet() (*ParsingResult, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &ParsingResult{Career: sheetName, Subjects: subjects}, nil
+	return &ParsingResult{Career: strings.ToUpper(sheetName), Subjects: subjects}, nil
 }
 
 func (ep *ExcelParser) parseSheet(sheetName string) ([]SubjectDTO, error) {

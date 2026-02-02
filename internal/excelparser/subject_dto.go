@@ -32,13 +32,21 @@ type TeacherDTO struct {
 	Email     string
 }
 
+type TimeSlot struct {
+	Start string
+	End   string
+}
+
 type SubjectDTO struct {
 	// General info
 	Department string
 	Semester   int
 	Section    string
 
+	// This is used as the name of the table "cursos", which is the final agreggate
+	// with all schedule information of a subject in a specific time period.
 	RawSubjectName string
+
 	// this contains the plaussible real name of the subject. Example:
 	// "Electiva I - Machine Learning" contains: "electiva I"
 	// "Física 2" normalizes to: "fisica II"
@@ -72,41 +80,41 @@ type SubjectDTO struct {
 	Final2RevDate *time.Time
 	Final2RevTime string
 
+	// Weekly schedule
+	MondayRoom string
+	Monday     TimeSlot
+
+	TuesdayRoom string
+	Tuesday     TimeSlot
+
+	WednesdayRoom string
+	Wednesday     TimeSlot
+
+	ThursdayRoom string
+	Thursday     TimeSlot
+
+	FridayRoom string
+	Friday     TimeSlot
+
+	SaturdayRoom  string
+	Saturday      TimeSlot
+	SaturdayDates string
+
 	// Committee
 	CommitteePresident string
 	CommitteeMember1   string
 	CommitteeMember2   string
-
-	// Weekly schedule
-	MondayRoom string
-	Monday     string
-
-	TuesdayRoom string
-	Tuesday     string
-
-	WednesdayRoom string
-	Wednesday     string
-
-	ThursdayRoom string
-	Thursday     string
-
-	FridayRoom string
-	Friday     string
-
-	SaturdayRoom  string
-	Saturday      string
-	SaturdayDates string
 }
 
 // -----------------------------
 // Setters with cleaning methods
 // -----------------------------
 func (s *SubjectDTO) SetDepartment(val string) {
-	s.Department = val
+	s.Department = strings.TrimSpace(val)
 }
 
 func (s *SubjectDTO) SetSubjectName(val string) {
-	s.RawSubjectName = val
+	s.RawSubjectName = strings.TrimSpace(val)
 	s.TentativeRealSubjectName = normalizeSubjectName(val)
 }
 
@@ -115,7 +123,7 @@ func (s *SubjectDTO) SetSemester(val string) {
 }
 
 func (s *SubjectDTO) SetSection(val string) {
-	s.Section = val
+	s.Section = strings.TrimSpace(val)
 }
 
 func (s *SubjectDTO) SetTeachersFirtNames(firstNames string) {
@@ -232,7 +240,7 @@ func (s *SubjectDTO) SetMondayRoom(val string) {
 }
 
 func (s *SubjectDTO) SetMonday(val string) {
-	s.Monday = val
+	s.Monday = convertIntoTimeSlot(val)
 }
 
 func (s *SubjectDTO) SetTuesdayRoom(val string) {
@@ -240,7 +248,7 @@ func (s *SubjectDTO) SetTuesdayRoom(val string) {
 }
 
 func (s *SubjectDTO) SetTuesday(val string) {
-	s.Tuesday = val
+	s.Tuesday = convertIntoTimeSlot(val)
 }
 
 func (s *SubjectDTO) SetWednesdayRoom(val string) {
@@ -248,7 +256,7 @@ func (s *SubjectDTO) SetWednesdayRoom(val string) {
 }
 
 func (s *SubjectDTO) SetWednesday(val string) {
-	s.Wednesday = val
+	s.Wednesday = convertIntoTimeSlot(val)
 }
 
 func (s *SubjectDTO) SetThursdayRoom(val string) {
@@ -256,7 +264,7 @@ func (s *SubjectDTO) SetThursdayRoom(val string) {
 }
 
 func (s *SubjectDTO) SetThursday(val string) {
-	s.Thursday = val
+	s.Thursday = convertIntoTimeSlot(val)
 }
 
 func (s *SubjectDTO) SetFridayRoom(val string) {
@@ -264,7 +272,7 @@ func (s *SubjectDTO) SetFridayRoom(val string) {
 }
 
 func (s *SubjectDTO) SetFriday(val string) {
-	s.Friday = val
+	s.Friday = convertIntoTimeSlot(val)
 }
 
 func (s *SubjectDTO) SetSaturdayRoom(val string) {
@@ -272,7 +280,7 @@ func (s *SubjectDTO) SetSaturdayRoom(val string) {
 }
 
 func (s *SubjectDTO) SetSaturday(val string) {
-	s.Saturday = val
+	s.Saturday = convertIntoTimeSlot(val)
 }
 
 func (s *SubjectDTO) SetSaturdayDates(val string) {
@@ -532,4 +540,32 @@ func normalizeSubjectName(val string) string {
 
 	// Join fields with space and return
 	return strings.Join(fields, " ")
+}
+
+func convertIntoTimeSlot(val string) TimeSlot {
+	val = strings.TrimSpace(val)
+	if val == "" {
+		return TimeSlot{}
+	}
+
+	// Quitar sufijos comunes como "hs", "h", "."
+	val = strings.TrimRight(strings.ToLower(val), "hs h.")
+	val = strings.TrimSpace(val)
+
+	parts := strings.Split(val, "-")
+	if len(parts) != 2 {
+		return TimeSlot{}
+	}
+
+	start := cleanTime(strings.TrimSpace(parts[0]))
+	end := cleanTime(strings.TrimSpace(parts[1]))
+
+	if start == "" || end == "" {
+		return TimeSlot{}
+	}
+
+	return TimeSlot{
+		Start: start,
+		End:   end,
+	}
 }

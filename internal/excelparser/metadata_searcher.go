@@ -60,7 +60,7 @@ func NewSubjectMetadataLoader(metadataDir string, careerCode string) (*SubjectMe
 	return loader, nil
 }
 
-func (loader *SubjectMetadataLoader) FindSubjectByName(subjectName string) (*SubjectMetadata, error) {
+func (loader *SubjectMetadataLoader) Find(subjectName string) (*SubjectMetadata, error) {
 	if subjectName == "" {
 		return nil, fmt.Errorf("subject name cannot be empty")
 	}
@@ -112,22 +112,7 @@ func (loader *SubjectMetadataLoader) FindSubjectByName(subjectName string) (*Sub
 	return found, nil
 }
 
-func (loader *SubjectMetadataLoader) FindSubjectByExactName(subjectName string) *SubjectMetadata {
-	log.Debug("Searching for subject by exact name", "career", loader.careerCode, "subject", subjectName)
-
-	searchName := strings.ToLower(strings.TrimSpace(subjectName))
-
-	for _, subject := range loader.subjects {
-		if strings.ToLower(strings.TrimSpace(subject.Name)) == searchName {
-			log.Debug("Exact match found", "subject", subject.Name)
-			return &subject
-		}
-	}
-
-	log.Debug("No exact match found")
-	return nil
-}
-
+// Just intended for debug
 func (loader *SubjectMetadataLoader) GetSubjects() []SubjectMetadata {
 	return loader.subjects
 }
