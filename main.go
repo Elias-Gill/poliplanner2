@@ -45,7 +45,7 @@ func main() {
 	r.Route("/", router.NewAuthRouter(services.UserService, services.EmailService))
 	r.Route("/dashboard", router.NewDashboardRouter(services.ScheduleService, services.SheetVersionService))
 	r.Route("/subject", router.NewSubjectRouter(services.SubjectService, services.CareerService))
-	r.Route("/schedule", router.NewSchedulesRouter(services.SubjectService, services.ScheduleService, services.SheetVersionService, services.CareerService))
+	r.Route("/schedule", router.NewSchedulesRouter(services.SubjectService, services.ScheduleService, services.CareerService, services.SheetVersionService))
 	r.Route("/user", router.NewUserRouter(services.UserService))
 	r.Route("/excel", router.NewExcelRouter(services.ExcelService))
 	r.Route("/misc", router.NewMiscRouter())

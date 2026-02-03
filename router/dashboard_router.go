@@ -28,18 +28,12 @@ func NewDashboardRouter(
 	layouts := web.BaseLayout
 
 	return func(r chi.Router) {
-		// Dashboard layout
-		type Data struct {
-			Schedule    *model.Schedule
-			NeedsUpdate bool
-		}
-
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*200)
 			defer cancel()
 
 			userID := extractUserID(r)
-			schedules, err := scheduleService.FindUserSchedules(ctx, userID)
+			schedules, err := scheduleService.ListByUser(ctx, userID)
 			if err != nil {
 				logger.Error("error finding user schedules", "user", userID, "error", err)
 				customRedirect(w, r, "/500")
@@ -59,28 +53,12 @@ func NewDashboardRouter(
 				latestSelection = schedules[0].ID
 			}
 
-			// FIX: error handling
-			latestExcel, _ := sheetVersionService.FindLatestSheetVersion(r.Context())
-
-			// Prepare slice of Data combining schedule and update flag
-			var scheduleData []Data
-			for _, sched := range schedules {
-				needsUpdate := false
-				if sched.SheetVersion < latestExcel.ID {
-					needsUpdate = true
-				}
-
-				scheduleData = append(scheduleData, Data{
-					Schedule:    sched,
-					NeedsUpdate: needsUpdate,
-				})
-			}
-
+			// FIX: cambiar las templates por el nuevo struct de grade model
 			data := struct {
-				Schedules          []Data
+				Schedules          []*model.Schedule
 				SelectedScheduleID int64
 			}{
-				Schedules:          scheduleData,
+				Schedules:          schedules,
 				SelectedScheduleID: latestSelection,
 			}
 
@@ -106,7 +84,7 @@ func NewDashboardRouter(
 			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*200)
 			defer cancel()
 
-			subjects, err := scheduleService.FindScheduleDetail(ctx, id)
+			subjects, err := scheduleService.FindDetails(ctx, extractUserID(r), id)
 			if err != nil {
 				logger.Error("error finding schedule subjects", "schedule", id, "error", err)
 				customRedirect(w, r, "/500")
@@ -128,12 +106,13 @@ func NewDashboardRouter(
 
 			data := struct {
 				SelectedScheduleID int64
-				Subjects           []*model.Subject
+				Subjects           *model.ScheduleDetails
 			}{
 				SelectedScheduleID: id,
 				Subjects:           subjects,
 			}
 
+			// FIX: cambiar las templates por el nuevo struct de grade model
 			tpl := "web/templates/pages/dashboard/overview.html"
 			switch mode {
 			case "calendar":

@@ -14,15 +14,15 @@ import (
 )
 
 func NewSchedulesRouter(
-	subjectService *service.SubjectService,
+	gradeService *service.GradeService,
 	scheduleService *service.ScheduleService,
-	sheetVersionService *service.SheetVersionService,
 	careerService *service.CareerService,
+	sheetVersionService *service.SheetVersionService,
 ) func(r chi.Router) {
 	layouts := web.BaseLayout
 
-	return func(r chi.Router) { r.Get("/create", func(w http.ResponseWriter, r *http.Request) {
-			// IMPORTANT: All the database operations should be done in no more than 400ms
+	return func(r chi.Router) {
+		r.Get("/create", func(w http.ResponseWriter, r *http.Request) {
 			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*400)
 			defer cancel()
 
@@ -32,7 +32,7 @@ func NewSchedulesRouter(
 				http.Redirect(w, r, "/500", 500)
 			}
 
-			careers, err := careerService.FindCareersBySheetVersion(ctx, latestExcel.ID)
+			careers, err := careerService.List(ctx)
 			if err != nil {
 				logger.Error("Error finding careers", "error", err)
 				http.Redirect(w, r, "/500", 500)
@@ -67,7 +67,7 @@ func NewSchedulesRouter(
 				return
 			}
 
-			subjects, err := subjectService.FindSubjectsByCareerID(ctx, careerId)
+			grades, err := gradeService.LightListByCareerCurrent(ctx, careerId)
 			if err != nil {
 				logger.Error("Error finding subjects", "error", err, "careerID", rawId)
 				http.Redirect(w, r, "/500", 500)
@@ -75,11 +75,61 @@ func NewSchedulesRouter(
 			}
 
 			// Template data
-			data := struct{ Subjects []*model.SubjectListItem }{
-				Subjects: subjects,
+			data := struct{ Subjects []*model.GradeListItem }{
+				Subjects: grades,
 			}
 
 			execTemplate(w, "web/templates/pages/schedule/details.html", data)
+		})
+
+		// FIX: actualizar plantillas a los nuevos modelos
+		r.Post("/create", func(w http.ResponseWriter, r *http.Request) {
+			r.ParseForm()
+
+			name := r.Form.Get("name")
+			description := r.Form.Get("description")
+			rawSubjectIDs := r.Form["subjectIds"]
+
+			if description == "" || name == "" {
+				w.Header().Set("HX-Redirect", "/500")
+				return
+			}
+
+			subjectIDs := make([]int64, 0, len(rawSubjectIDs))
+			for _, sID := range rawSubjectIDs {
+				id, err := strconv.ParseInt(sID, 10, 64)
+				if err != nil {
+					w.Header().Set("HX-Redirect", "/500")
+					return
+				}
+				subjectIDs = append(subjectIDs, id)
+			}
+
+			// extract user from session
+			userID := extractUserID(r)
+
+			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*200)
+			defer cancel()
+
+			// FIX: add name to form
+			id, err := scheduleService.CreateSchedule(ctx, userID, name, description, subjectIDs)
+			if err != nil {
+				logger.Error("cannot create schedule", "error", err)
+				w.Header().Set("HX-Redirect", "/500")
+				return
+			}
+
+			// Set the new schedule as the last selected
+			http.SetCookie(w, &http.Cookie{
+				Name:     latest_selection_cookie,
+				Value:    strconv.FormatInt(id, 10),
+				Path:     "/dashboard",
+				HttpOnly: true,
+				SameSite: http.SameSiteLaxMode,
+				MaxAge:   60 * 60 * 24 * 30, // 30 days
+			})
+
+			w.Header().Set("HX-Redirect", "/dashboard")
 		})
 
 		r.Delete("/{id}", func(w http.ResponseWriter, r *http.Request) {
@@ -109,82 +159,6 @@ func NewSchedulesRouter(
 
 			// Just redirect to the dashboard so we dont have to handle anything else here
 			w.Header().Set("HX-Redirect", "/dashboard")
-		})
-
-		r.Post("/create", func(w http.ResponseWriter, r *http.Request) {
-			r.ParseForm()
-
-			description := r.Form.Get("description")
-			rawSheetVersionID := r.Form.Get("sheetVersionID")
-			rawSubjectIDs := r.Form["subjectIds"]
-
-			if description == "" {
-				w.Header().Set("HX-Redirect", "/500")
-				return
-			}
-
-			sheetVersionID, err := strconv.ParseInt(rawSheetVersionID, 10, 64)
-			if err != nil {
-				w.Header().Set("HX-Redirect", "/500")
-				return
-			}
-
-			subjectIDs := make([]int64, 0, len(rawSubjectIDs))
-			for _, sID := range rawSubjectIDs {
-				id, err := strconv.ParseInt(sID, 10, 64)
-				if err != nil {
-					w.Header().Set("HX-Redirect", "/500")
-					return
-				}
-				subjectIDs = append(subjectIDs, id)
-			}
-
-			// extract user from session
-			userID := extractUserID(r)
-
-			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*200)
-			defer cancel()
-
-			id, err := scheduleService.CreateSchedule(ctx, userID, sheetVersionID, description, subjectIDs)
-			if err != nil {
-				logger.Error("cannot create schedule", "error", err)
-				w.Header().Set("HX-Redirect", "/500")
-				return
-			}
-
-			// Set the new schedule as the last selected
-			http.SetCookie(w, &http.Cookie{
-				Name:     latest_selection_cookie,
-				Value:    strconv.FormatInt(id, 10),
-				Path:     "/dashboard",
-				HttpOnly: true,
-				SameSite: http.SameSiteLaxMode,
-				MaxAge:   60 * 60 * 24 * 30, // 30 days
-			})
-
-			w.Header().Set("HX-Redirect", "/dashboard")
-		})
-
-		r.Get("/{scheduleID}/update", func(w http.ResponseWriter, r *http.Request) {
-			userID := extractUserID(r)
-
-			rawScheduleID := chi.URLParam(r, "scheduleID")
-			scheduleID, err := strconv.ParseInt(rawScheduleID, 10, 64)
-			if err != nil {
-				customRedirect(w, r, "/404")
-				return
-			}
-
-			err = scheduleService.MigrateSchedule(r.Context(), userID, scheduleID)
-			if err != nil {
-				// Log the error with context for debugging
-				logger.Error("Failed to migrate schedule", "user", userID, "scheduleID", scheduleID, "error", err)
-				customRedirect(w, r, "/500")
-				return
-			}
-
-			// redirect to dashboard
-			customRedirect(w, r, "/")
 		})
 	}
 }

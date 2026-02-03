@@ -10,7 +10,7 @@ type Services struct {
 	ScheduleService     *ScheduleService
 	ExcelService        *ExcelService
 	EmailService        *EmailService
-	SubjectService      *SubjectService
+	SubjectService      *GradeService
 	CareerService       *CareerService
 }
 

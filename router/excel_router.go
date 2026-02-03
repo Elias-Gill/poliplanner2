@@ -6,8 +6,10 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/config"
+	"github.com/elias-gill/poliplanner2/internal/scraper"
 	"github.com/elias-gill/poliplanner2/internal/service"
 	"github.com/elias-gill/poliplanner2/web"
 	"github.com/go-chi/chi/v5"
@@ -78,11 +80,18 @@ func handleFileUpload(w http.ResponseWriter, r *http.Request, service *service.E
 		return
 	}
 
-	// Optional download url
 	downloadUrl := r.FormValue("downloadUrl")
 
-	// Parse and persist file data into database
-	err = service.ParseExcelFile(r.Context(), tmpFile.Name(), fileHeader.Filename, downloadUrl)
+	err = service.ParseAndPersistExcelFile(
+		r.Context(),
+		tmpFile.Name(),
+		scraper.NewExcelDownloadSource(
+			downloadUrl,
+			fileHeader.Filename,
+			time.Now(),
+			1, // FIX: PEDIR PERIODO AL USUARIO
+		),
+	)
 	if err != nil {
 		http.Error(w, "Failed to process uploaded file: "+err.Error(), http.StatusInternalServerError)
 		return

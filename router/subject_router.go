@@ -13,8 +13,7 @@ import (
 )
 
 func NewSubjectRouter(
-	ss *service.SubjectService,
-	sv *service.SheetVersionService,
+	ss *service.GradeService,
 	cs *service.CareerService,
 ) func(r chi.Router) {
 	layout := web.BaseLayout
@@ -25,16 +24,9 @@ func NewSubjectRouter(
 			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*300)
 			defer cancel()
 
-			version, err := sv.FindLatestSheetVersion(ctx)
+			careers, err := cs.List(ctx)
 			if err != nil {
-				logger.Error("Error finding latest excel version", "error", err)
-				customRedirect(w, r, "/500")
-				return
-			}
-
-			careers, err := cs.FindCareersBySheetVersion(ctx, version.ID)
-			if err != nil {
-				logger.Error("Error finding careers for sheet", "error", err, "sheet", version.ID)
+				logger.Error("Error finding careers for sheet", "error", err)
 				customRedirect(w, r, "/500")
 				return
 			}
@@ -56,7 +48,7 @@ func NewSubjectRouter(
 			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*200)
 			defer cancel()
 
-			subjects, err := ss.FindSubjectsByCareerID(ctx, careerID)
+			subjects, err := ss.LightListByCareerCurrent(ctx, careerID)
 			if err != nil {
 				logger.Debug("/subjects cannot find subjects", "error", err)
 				customRedirect(w, r, "/404")
