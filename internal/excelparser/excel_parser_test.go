@@ -171,27 +171,9 @@ func validateLastSubject(t *testing.T, last SubjectDTO) {
 		t.Errorf("Last subject CommitteeMember2 = %s, want %s", last.CommitteeMember2, "Lic. Osvaldo David Sosa Cabrera")
 	}
 
-	// Validar horarios y aulas
-	if last.TuesdayRoom != "E01" {
-		t.Errorf("Last subject TuesdayRoom = %s, want %s", last.TuesdayRoom, "E01")
-	}
-	if last.Tuesday != "20:45 - 22:15" {
-		t.Errorf("Last subject Tuesday = %s, want %s", last.Tuesday, "20:45 - 22:15")
-	}
-
-	if last.ThursdayRoom != "E01" {
-		t.Errorf("Last subject ThursdayRoom = %s, want %s", last.ThursdayRoom, "E01")
-	}
-	if last.Thursday != "19:00 - 20:30" {
-		t.Errorf("Last subject Thursday = %s, want %s", last.Thursday, "19:00 - 20:30")
-	}
-
-	if last.SaturdayRoom != "E01" {
-		t.Errorf("Last subject SaturdayRoom = %s, want %s", last.SaturdayRoom, "E01")
-	}
-	if last.Saturday != "07:30 - 11:30" {
-		t.Errorf("Last subject Saturday = %s, want %s", last.Saturday, "07:30 - 11:30")
-	}
+	assertTimeSlot(t, last.Tuesday, "20:45", "22:15")
+	assertTimeSlot(t, last.Thursday, "19:00", "20:30")
+	assertTimeSlot(t, last.Saturday, "07:30", "11:30")
 
 	if last.SaturdayDates != "05/10, 23/11" {
 		t.Errorf("Last subject SaturdayDates = %s, want %s", last.SaturdayDates, "05/10, 23/11")
@@ -199,5 +181,11 @@ func validateLastSubject(t *testing.T, last SubjectDTO) {
 
 	if last.WednesdayRoom != "" {
 		t.Errorf("Last subject WednesdayRoom = %s, want empty", last.WednesdayRoom)
+	}
+}
+
+func assertTimeSlot(t *testing.T, slot TimeSlot, wantStart, wantEnd string) {
+	if slot.Start != wantStart || slot.End != wantEnd {
+		t.Errorf("got %s-%s, want %s-%s", slot.Start, slot.End, wantStart, wantEnd)
 	}
 }

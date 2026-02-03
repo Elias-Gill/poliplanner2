@@ -19,7 +19,7 @@ func TestMetadataLoader_FindSubjectByName(t *testing.T) {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
 
-	metadata, err := loader.FindSubjectByName(testSubjectName)
+	metadata, err := loader.Find(testSubjectName)
 	if err != nil {
 		t.Fatal("Failed to find subject")
 	}
@@ -41,7 +41,7 @@ func TestMetadataLoader_NameNormalization(t *testing.T) {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
 
-	metadata, err := loader.FindSubjectByName("Álgebra Lineal (*)")
+	metadata, err := loader.Find("Álgebra Lineal (*)")
 	if err != nil {
 		t.Fatal("Failed to find normalized subject")
 	}
@@ -57,7 +57,7 @@ func TestMetadataLoader_DashedNames_FirstPart(t *testing.T) {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
 
-	metadata, err := loader.FindSubjectByName("Cálculo I - Avanzado")
+	metadata, err := loader.Find("Cálculo I - Avanzado")
 	if err != nil {
 		t.Fatal("Failed to find subject with dash (first part)")
 	}
@@ -73,7 +73,7 @@ func TestMetadataLoader_DashedNames_SecondPart(t *testing.T) {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
 
-	metadata, err := loader.FindSubjectByName("Avanzado - Técnicas de Organización y metodos")
+	metadata, err := loader.Find("Avanzado - Técnicas de Organización y metodos")
 	if err != nil {
 		t.Fatalf("Error finding subject: %v", err)
 	}
@@ -96,13 +96,13 @@ func TestMetadataLoader_CacheFunctionality(t *testing.T) {
 	initialHits := loader.CacheHits
 
 	// First search
-	_, err = loader.FindSubjectByName(testSubjectName)
+	_, err = loader.Find(testSubjectName)
 	if err != nil {
 		t.Fatal("Failed to find subject")
 	}
 
 	// Second search - should hit cache
-	_, err = loader.FindSubjectByName(testSubjectName)
+	_, err = loader.Find(testSubjectName)
 	if err != nil {
 		t.Fatal("Failed to find cached subject")
 	}
@@ -119,7 +119,7 @@ func TestMetadataLoader_NonExistentSubject(t *testing.T) {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
 
-	metadata, err := loader.FindSubjectByName("Materia Inexistente Que No Existe")
+	metadata, err := loader.Find("Materia Inexistente Que No Existe")
 	if err == nil || metadata != nil {
 		t.Error("Expected error for non-existent subject")
 	}
@@ -131,7 +131,7 @@ func TestMetadataLoader_CaseAndAccentNormalization(t *testing.T) {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
 
-	metadata, err := loader.FindSubjectByName("BASE de Datós I")
+	metadata, err := loader.Find("BASE de Datós I")
 	if err != nil {
 		t.Fatal("Failed to find subject with case and accent normalization")
 	}
@@ -147,7 +147,7 @@ func TestMetadataLoader_EmptySubjectName(t *testing.T) {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
 
-	metadata, err := loader.FindSubjectByName("")
+	metadata, err := loader.Find("")
 	if err == nil || metadata != nil {
 		t.Error("Expected error for empty subject name")
 	}
