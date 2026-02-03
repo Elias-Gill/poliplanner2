@@ -238,3 +238,8 @@ func (s *SqliteGradeStore) Upsert(
 
 	return tx.Commit()
 }
+
+func (s *SqliteGradeStore) ListByCareerAndPeriod(ctx context.Context, careerID int64, periodID int64) ([]*model.GradeListItem, error) {
+	// TODO: implement
+	return nil, nil
+}

@@ -2,19 +2,6 @@ package model
 
 import "time"
 
-// Light weight grade info, used to optimize database retrieve when listing a lot of
-// grades
-type SubjectListItem struct {
-	ID          int64
-	SubjectName string
-	Semester    int
-	Section     string
-
-	TeacherTitle    string
-	TeacherName     string
-	TeacherLastname string
-}
-
 type Teacher struct {
 	Name  string
 	Email string
@@ -38,6 +25,7 @@ type TimeSlot struct {
 }
 
 type Period struct {
+	ID     int64 // REFACTOR: no me gusta que este aca, mejor tener structs separados para cada cosa
 	Year   int
 	Period int
 }
@@ -96,4 +84,17 @@ type GradeModel struct {
 	CommitteeMember1   string
 	CommitteeMember2   string
 	CommitteePresident string
+}
+
+// Light weight grade info, used to optimize database and network usage when listing a lot of
+// grades
+type GradeListItem struct {
+	ID          int64
+	SubjectName string
+	Section     string
+	Semester    int
+
+	TeacherTitle    string
+	TeacherName     string
+	TeacherLastname string
 }

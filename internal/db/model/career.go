@@ -1,7 +1,6 @@
 package model
 
 type Career struct {
-	ID             int64
-	CareerCode     string
-	SheetVersionID int64
+	ID   int64
+	Code string
 }

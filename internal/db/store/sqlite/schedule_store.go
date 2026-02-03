@@ -2,126 +2,152 @@ package sqlite
 
 import (
 	"context"
+	"database/sql"
+	"fmt"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
-	"github.com/elias-gill/poliplanner2/internal/db/store"
 )
 
 type SqliteScheduleStore struct {
+	db *sql.DB
 }
 
-func NewSqliteScheduleStore() *SqliteScheduleStore {
-	return &SqliteScheduleStore{}
-}
-
-func (s SqliteScheduleStore) Insert(ctx context.Context, exec store.Executor, sched *model.Schedule) (int64, error) {
-	query := `
-	INSERT INTO schedules (user_id, schedule_description, schedule_sheet_version)
-	VALUES (?, ?, ?)
-	`
-	res, err := exec.ExecContext(ctx, query,
-		sched.UserID,
-		sched.Description,
-		sched.SheetVersion,
-	)
-	if err != nil {
-		return 0, err
+func NewSqliteScheduleStore(db *sql.DB) *SqliteScheduleStore {
+	return &SqliteScheduleStore{
+		db: db,
 	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-	return id, nil
 }
 
-func (s SqliteScheduleStore) Delete(ctx context.Context, exec store.Executor, scheduleID int64) error {
-	_, err := exec.ExecContext(ctx, `DELETE FROM schedules WHERE schedule_id = ?`, scheduleID)
-	return err
+func (s *SqliteScheduleStore) Insert(ctx context.Context, sched *model.ScheduleBasicData) (int64, error) {
+	// FIX: insert no se hace como deberia
+	// TODO: continue
+	return 0, nil
 }
 
-func (s SqliteScheduleStore) GetByUserID(ctx context.Context, exec store.Executor, userID int64) ([]*model.Schedule, error) {
-	rows, err := exec.QueryContext(ctx, `
-		SELECT schedule_id, created_at, schedule_description, schedule_sheet_version
-		FROM schedules
-		WHERE user_id = ?
-		ORDER BY created_at DESC`, userID)
+func (s *SqliteScheduleStore) Delete(ctx context.Context, scheduleID int64) error {
+	// FIX: delete no se hace como deberia
+	// TODO: continue
+	return nil
+}
+
+func (s *SqliteScheduleStore) GetByUserID(ctx context.Context, userID int64) ([]*model.Schedule, error) {
+	rows, err := s.db.QueryContext(ctx, `
+		SELECT id, creado_en, nombre, descripcion, periodo_id
+		FROM horarios
+		WHERE usuario_id = ?
+		ORDER BY creado_en DESC`, userID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("query horarios: %w", err)
 	}
 	defer rows.Close()
 
-	var list []*model.Schedule
+	var schedules []*model.Schedule
 	for rows.Next() {
-		sched := &model.Schedule{}
+		var sched model.Schedule
 		err := rows.Scan(
 			&sched.ID,
 			&sched.CreatedAt,
+			&sched.Name,
 			&sched.Description,
-			&sched.SheetVersion,
+			&sched.PeriodID,
 		)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("scan horario: %w", err)
 		}
-		list = append(list, sched)
+		schedules = append(schedules, &sched)
 	}
-	return list, rows.Err()
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("rows error: %w", err)
+	}
+
+	return schedules, nil
 }
 
-func (s SqliteScheduleStore) GetByID(ctx context.Context, exec store.Executor, scheduleID int64) (*model.Schedule, error) {
-	sched := &model.Schedule{}
-	err := exec.QueryRowContext(ctx, `
-		SELECT schedule_id, created_at, user_id, schedule_description, schedule_sheet_version
-		FROM schedules WHERE schedule_id = ?`, scheduleID).
-		Scan(&sched.ID, &sched.CreatedAt, &sched.UserID, &sched.Description, &sched.SheetVersion)
+func (s *SqliteScheduleStore) GetByID(ctx context.Context, scheduleID int64) (*model.ScheduleDetails, error) {
+	var sched model.Schedule
+	var ownerID int64
+
+	err := s.db.QueryRowContext(ctx, `
+        SELECT id, creado_en, usuario_id, nombre, descripcion, periodo_id
+        FROM horarios
+        WHERE id = ?`,
+		scheduleID,
+	).Scan(
+		&sched.ID,
+		&sched.CreatedAt,
+		&ownerID,
+		&sched.Name,
+		&sched.Description,
+		&sched.PeriodID,
+	)
+	if err == sql.ErrNoRows {
+		return nil, fmt.Errorf("schedule not found")
+	}
 	if err != nil {
-		return nil, err
-	}
-	return sched, nil
-}
-
-func (s SqliteScheduleStore) UpdateScheduleSubjects(
-	ctx context.Context,
-	exec store.Executor,
-	scheduleID int64,
-	newSubjectIDs []int64,
-) error {
-	// Delete old entries
-	_, err := exec.ExecContext(ctx, "DELETE FROM schedule_subjects WHERE schedule_id = ?", scheduleID)
-	if err != nil {
-		return err
+		return nil, fmt.Errorf("error finding schedule: %w", err)
 	}
 
-	// Prepare multiple insertion
-	stmt, err := exec.PrepareContext(ctx, "INSERT INTO schedule_subjects(schedule_id, subject_id) VALUES (?, ?)")
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	for _, subjectID := range newSubjectIDs {
-		_, err := stmt.ExecContext(ctx, scheduleID, subjectID)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (s SqliteScheduleStore) UpdateScheduleExcelVersion(
-	ctx context.Context,
-	exec store.Executor,
-	scheduleID int64,
-	newSheetVersionID int64,
-) error {
-	_, err := exec.ExecContext(ctx,
-		`UPDATE schedules SET schedule_sheet_version = ? WHERE schedule_id = ?`,
-		newSheetVersionID,
+	rows, err := s.db.QueryContext(ctx, `
+        SELECT 
+            c.nombre, c.seccion,
+            c.lunes_desde, c.lunes_hasta, c.lunes_aula,
+            c.martes_desde, c.martes_hasta, c.martes_aula,
+            c.miercoles_desde, c.miercoles_hasta, c.miercoles_aula,
+            c.jueves_desde, c.jueves_hasta, c.jueves_aula,
+            c.viernes_desde, c.viernes_hasta, c.viernes_aula,
+            c.sabado_desde, c.sabado_hasta, c.sabado_aula, c.sabado_night_fechas,
+            c.partial1_fecha, c.partial1_hora, c.partial1_aula,
+            c.partial2_fecha, c.partial2_hora, c.partial2_aula,
+            c.final1_fecha, c.final1_hora, c.final1_aula, c.final1_fecha_revision, c.final1_hora_revision,
+            c.final2_fecha, c.final2_hora, c.final2_aula, c.final2_fecha_revision, c.final2_hora_revision,
+            c.comite_presidente, c.comite_miembro1, c.comite_miembro2
+        FROM horarios_detalle hd
+        JOIN cursos c ON hd.curso_id = c.id
+        WHERE hd.horario_id = ?`,
 		scheduleID,
 	)
 	if err != nil {
-		return err
+		return nil, fmt.Errorf("obtener cursos: %w", err)
+	}
+	defer rows.Close()
+
+	var courses []model.GradeModel
+	for rows.Next() {
+		var gm model.GradeModel
+		err := rows.Scan(
+			&gm.Name,
+			&gm.Section,
+			&gm.Monday.Start, &gm.Monday.End, &gm.MondayRoom,
+			&gm.Tuesday.Start, &gm.Tuesday.End, &gm.TuesdayRoom,
+			&gm.Wednesday.Start, &gm.Wednesday.End, &gm.WednesdayRoom,
+			&gm.Thursday.Start, &gm.Thursday.End, &gm.ThursdayRoom,
+			&gm.Friday.Start, &gm.Friday.End, &gm.FridayRoom,
+			&gm.Saturday.Start, &gm.Saturday.End, &gm.SaturdayRoom, &gm.SaturdayDates,
+			&gm.Partial1Date, &gm.Partial1Time, &gm.Partial1Room,
+			&gm.Partial2Date, &gm.Partial2Time, &gm.Partial2Room,
+			&gm.Final1Date, &gm.Final1Time, &gm.Final1Room, &gm.Final1RevDate, &gm.Final1RevTime,
+			&gm.Final2Date, &gm.Final2Time, &gm.Final2Room, &gm.Final2RevDate, &gm.Final2RevTime,
+			&gm.CommitteePresident, &gm.CommitteeMember1, &gm.CommitteeMember2,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("scan curso: %w", err)
+		}
+		courses = append(courses, gm)
 	}
 
-	return nil
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterar cursos: %w", err)
+	}
+
+	return &model.ScheduleDetails{
+		Schedule: sched,
+		Courses:  courses,
+	}, nil
+}
+
+func (s *SqliteScheduleStore) ListByUserID(ctx context.Context, userID int64) ([]*model.Schedule, error) {
+	// TODO: continue
+	// FIX: continue
+	return nil, nil
 }

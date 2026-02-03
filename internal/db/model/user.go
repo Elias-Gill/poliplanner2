@@ -1,16 +1,16 @@
 package model
 
 import (
-	"database/sql"
+	"time"
 )
 
 type User struct {
-	ID                      int64
-	Username                string
-	Password                string
-	Email                   string
+	ID       int64
+	Username string
+	Password string
+	Email    string
 
-	RecoveryTokenHash       sql.NullString
-	RecoveryTokenExpiration sql.NullTime
+	RecoveryTokenHash       string
+	RecoveryTokenExpiration *time.Time
 	RecoveryTokenUsed       bool
 }

@@ -10,7 +10,8 @@ import (
 type UserStorer interface {
 	Insert(ctx context.Context, u *model.User) error
 	Delete(ctx context.Context, userID int64) error
-	Update(ctx context.Context, user *model.User) error
+	Update(ctx context.Context, userID int64, updateFn func(user *model.User) error) error
+
 	GetByID(ctx context.Context, userID int64) (*model.User, error)
 	GetByUsername(ctx context.Context, username string) (*model.User, error)
 	GetByEmail(ctx context.Context, email string) (*model.User, error)
@@ -20,6 +21,7 @@ type UserStorer interface {
 type SheetVersionStorer interface {
 	GetNewest(ctx context.Context) (*model.SheetVersion, error)
 	GetLastCheckedAt(ctx context.Context) (*time.Time, error)
+	// BUG: depends if the server is correctly set
 	SetLastCheckedAt(ctx context.Context, t time.Time) error
 
 	// TODO: refactor to use a struct
@@ -45,19 +47,24 @@ type GradeStorer interface {
 	// All inserts run atomically (everything commits or the whole operation rolls back).
 	Upsert(ctx context.Context, insertFn func(persist func(model.GradeModel) error) error) error
 	FindById(ctx context.Context, id int64) (*model.GradeModel, error)
+	ListByCareerAndPeriod(ctx context.Context, careerID int64, periodID int64) ([]*model.GradeListItem, error)
 }
 
 type ScheduleStorer interface {
-	Insert(ctx context.Context, s *model.Schedule) (int64, error)
-	Delete(ctx context.Context, scheduleID int64, validateFn func(owner int64) error) error
+	Insert(ctx context.Context, s *model.ScheduleBasicData) (int64, error)
+	Delete(ctx context.Context, scheduleID int64) error
 
 	// TODO: This should return a basic schedule info
-	GetByUserID(ctx context.Context, userID int64) ([]*model.Schedule, error)
+	ListByUserID(ctx context.Context, userID int64) ([]*model.Schedule, error)
 
 	// TODO: This should return a complete aggregate of grades for the given schedule
-	GetByID(ctx context.Context, scheduleID int64, validateFn func(owner int64) error) (*model.ScheduleDetails, error)
+	GetByID(ctx context.Context, scheduleID int64) (*model.ScheduleDetails, error)
 }
 
 type CareerStorer interface {
 	List(ctx context.Context) ([]*model.Career, error)
+}
+
+type PeriodStore interface {
+	FindByYearPeriod(ctx context.Context, year int, period int) (*model.Period, error)
 }
