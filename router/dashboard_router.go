@@ -53,7 +53,6 @@ func NewDashboardRouter(
 				latestSelection = schedules[0].ID
 			}
 
-			// FIX: cambiar las templates por el nuevo struct de grade model
 			data := struct {
 				Schedules          []*model.Schedule
 				SelectedScheduleID int64
@@ -65,6 +64,7 @@ func NewDashboardRouter(
 			execTemplateWithLayout(w, "web/templates/pages/dashboard/index.html", layouts, data)
 		})
 
+		// FIX: cambiar las templates por el nuevo struct de grade model
 		r.Get("/view", func(w http.ResponseWriter, r *http.Request) {
 			rawId := r.URL.Query().Get("id")
 			mode := r.URL.Query().Get("mode")

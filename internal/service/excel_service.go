@@ -142,10 +142,12 @@ func (s *ExcelService) ParseAndPersistExcelFile(
 
 					grade.Teachers = make([]model.Teacher, len(sub.Teachers))
 					for i, t := range sub.Teachers {
-						grade.Teachers[i] = model.Teacher{
+						teacher := model.Teacher{
 							Name:  strings.TrimSpace(t.FirstName + " " + t.LastName),
 							Email: t.Email,
 						}
+						teacher.GenerateSearchKey(t.FirstName, t.LastName)
+						grade.Teachers[i] = teacher
 					}
 
 					grade.Curriculum = model.Curriculum{

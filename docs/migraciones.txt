@@ -27,6 +27,10 @@ datos.
   WARNING: a partir de esta migracion los cambios NO SON REVERSIBLES, esto se refleja con la
   ausencia de versiones "down".
 
+- *v9*: Creacion de la nuevas tablas donde seran guardados los horarios de los alumnos, asi
+  como los indices pertinentes. La eliminacion de las tablas viejas facilita agregar nuevos
+  campos y facilita la migracion de los datos.
+
 - *migracion de datos intermedia*: En el intermedio de las migraciones v8 y v9 se ejecuta un
   proceso externo de migracion de datos que incluye estandarizacion de materias y migracion de
   los horarios antiguos hacia la nueva estructura de BD. Las funciones utilizadas durante este
@@ -34,9 +38,13 @@ datos.
   migraciones v8 y v9 no deberian interferir para deploys nuevos ni el ambiente de desarrollo.
   Este proceso existe principalmente para la migracion de datos de produccion.
 
-- *v9*: Eliminacion definitiva de las tablas antiguas (`subjects y careers`) para limpiar el
-  esquema y evitar el uso de datos obsoletos. La tabla `excel_version` se conserva, pero pasa
-  a utilizarse exclusivamente para el control de versiones de la web.
+- *v10* y *v11*: Eliminacion definitiva de las tablas antiguas (`subjects, careers y
+  schedules`) para limpiar el esquema y evitar el uso de datos obsoletos. La tabla
+  `excel_version` se conserva, pero pasa a utilizarse exclusivamente para el control de
+  versiones de la web.
+
+- *v12*: Se agrega una tabla de auditoria para poder registrar errores de parseo de hojas
+  excel, asi como guardar informacion mas detallada para exponerla para futuros usos.
 
 ====================================================  
 2. ACLARACIONES DEL MODELO DE DATOS
