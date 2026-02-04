@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
@@ -79,17 +81,22 @@ func (s *ScheduleService) DeleteSchedule(
 	userID int64,
 	scheduleID int64,
 ) error {
-	sche, err := s.scheduleStorer.GetByID(ctx, scheduleID)
+	schedule, err := s.scheduleStorer.GetByID(ctx, scheduleID)
 	if err != nil {
-		// FIX: continue
-		return err
+		if errors.Is(err, sql.ErrNoRows) {
+			return errors.New("schedule not found")
+		}
+		return fmt.Errorf("get schedule: %w", err)
 	}
 
-	if sche.Schedule.OwnerID != userID {
-		// TODO: return new error
-		// FIX: continue
-		return nil
+	if schedule.Schedule.OwnerID != userID {
+		return errors.New("not authorized: not the owner of this schedule")
 	}
 
-	return s.scheduleStorer.Delete(ctx, scheduleID)
+	err = s.scheduleStorer.Delete(ctx, scheduleID)
+	if err != nil {
+		return fmt.Errorf("delete schedule: %w", err)
+	}
+
+	return nil
 }

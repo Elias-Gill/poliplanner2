@@ -18,16 +18,75 @@ func NewSqliteScheduleStore(db *sql.DB) *SqliteScheduleStore {
 	}
 }
 
-func (s *SqliteScheduleStore) Insert(ctx context.Context, sched *model.ScheduleBasicData) (int64, error) {
-	// FIX: insert no se hace como deberia
-	// TODO: continue
-	return 0, nil
+func (s *SqliteScheduleStore) ListByUserID(ctx context.Context, userID int64) ([]*model.Schedule, error) {
+	rows, err := s.db.QueryContext(ctx, `
+		SELECT id, nombre, descripcion, periodo_id, creado_en
+		FROM horarios
+		WHERE usuario_id = ?
+		ORDER BY creado_en DESC
+	`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var schedules []*model.Schedule
+	for rows.Next() {
+		sched := &model.Schedule{}
+		err := rows.Scan(
+			&sched.ID,
+			&sched.Name,
+			&sched.Description,
+			&sched.PeriodID,
+			&sched.CreatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+		sched.OwnerID = userID // ya filtramos por userID
+		schedules = append(schedules, sched)
+	}
+
+	return schedules, rows.Err()
+}
+
+func (s *SqliteScheduleStore) Insert(ctx context.Context, data *model.ScheduleBasicData) (int64, error) {
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return 0, err
+	}
+	defer tx.Rollback()
+
+	var scheduleID int64
+	err = tx.QueryRowContext(ctx, `
+		INSERT INTO horarios (usuario_id, nombre, descripcion, periodo_id)
+		VALUES (?, ?, ?, ?)
+		RETURNING id
+		`, data.Owner, data.Name, data.Description, 1). // FIX: el periodo debe pasarse como dato y calcularse en el service
+		Scan(&scheduleID)
+	if err != nil {
+		return 0, err
+	}
+
+	// Vincular cursos
+	for _, courseID := range data.GradeIDs {
+		_, err = tx.ExecContext(ctx, `
+			INSERT INTO horarios_detalle (horario_id, curso_id)
+			VALUES (?, ?)
+		`, scheduleID, courseID)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	return scheduleID, tx.Commit()
 }
 
 func (s *SqliteScheduleStore) Delete(ctx context.Context, scheduleID int64) error {
-	// FIX: delete no se hace como deberia
-	// TODO: continue
-	return nil
+	_, err := s.db.ExecContext(ctx, `
+		DELETE FROM horarios WHERE id = ?
+	`, scheduleID)
+	return err
 }
 
 func (s *SqliteScheduleStore) GetByUserID(ctx context.Context, userID int64) ([]*model.Schedule, error) {
@@ -144,10 +203,4 @@ func (s *SqliteScheduleStore) GetByID(ctx context.Context, scheduleID int64) (*m
 		Schedule: sched,
 		Courses:  courses,
 	}, nil
-}
-
-func (s *SqliteScheduleStore) ListByUserID(ctx context.Context, userID int64) ([]*model.Schedule, error) {
-	// TODO: continue
-	// FIX: continue
-	return nil, nil
 }
