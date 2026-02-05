@@ -15,6 +15,7 @@ import (
 
 	"github.com/gocolly/colly/v2"
 
+	"github.com/elias-gill/poliplanner2/internal/logger"
 	log "github.com/elias-gill/poliplanner2/internal/logger"
 )
 
@@ -164,6 +165,8 @@ func (s *ExcelDownloadSource) DownloadThisSource(
 		os.Remove(tmp.Name())
 		return "", err
 	}
+
+	logger.Info("dowloading excel source", "url", s.URL, "name", s.Name)
 
 	return tmp.Name(), nil
 }
