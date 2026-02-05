@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"strings"
 	"time"
 )
@@ -30,11 +31,23 @@ func (t *Teacher) IsSimilar(other string) bool {
 	return dist <= 2
 }
 
-func (t *Teacher) GenerateSearchKey(name string, lastname string) string {
-	a := strings.ToLower(strings.Fields(name)[0])
-	b := strings.ToLower(strings.Fields(lastname)[0])
+func (t *Teacher) GenerateSearchKey(firstName, lastName string) error {
+	first := ""
+	if fields := strings.Fields(firstName); len(fields) > 0 {
+		first = strings.ToLower(fields[0])
+	} else {
+		return errors.New("first name is empty")
+	}
 
-	return strings.Join([]string{a, b}, "_")
+	last := ""
+	if fields := strings.Fields(lastName); len(fields) > 0 {
+		last = strings.ToLower(fields[0])
+	} else {
+		return errors.New("last name is empty")
+	}
+
+	t.searchKey = strings.Join([]string{first, last}, "_")
+	return nil
 }
 
 func (t Teacher) GetSearchKey() string {
