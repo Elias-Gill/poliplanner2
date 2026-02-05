@@ -62,7 +62,7 @@ func (s *SqliteScheduleStore) Insert(ctx context.Context, data *model.ScheduleBa
 		INSERT INTO horarios (usuario_id, nombre, descripcion, periodo_id)
 		VALUES (?, ?, ?, ?)
 		RETURNING id
-		`, data.Owner, data.Name, data.Description, 1). // FIX: el periodo debe pasarse como dato y calcularse en el service
+		`, data.Owner, data.Name, data.Description, 1).
 		Scan(&scheduleID)
 	if err != nil {
 		return 0, err

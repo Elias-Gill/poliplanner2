@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
+	"github.com/mattn/go-sqlite3"
 )
 
 type SqliteGradeStore struct {
@@ -193,24 +194,23 @@ func (s *SqliteGradeStore) upsertTeachers(tx *sql.Tx, ctx context.Context, teach
 }
 
 func (s *SqliteGradeStore) upsertSingleTeacher(tx *sql.Tx, ctx context.Context, teacher model.Teacher) (int64, error) {
-	// Try by email if present
-	if teacher.Email != "" {
-		var id int64
-		err := tx.QueryRowContext(ctx, `
-            INSERT INTO docentes (nombre, correo, search_key)
-            VALUES (?, ?, ?)
-            ON CONFLICT(correo) DO UPDATE SET
-                nombre = excluded.nombre,
-                search_key = excluded.search_key
-            RETURNING id
-        `, teacher.Name, teacher.Email, teacher.GetSearchKey()).Scan(&id)
+	// Always try email first (SQLite will handle NULL as an insert error)
+	var id int64
+	err := tx.QueryRowContext(ctx, `
+        INSERT INTO docentes (nombre, correo, search_key)
+        VALUES (?, ?, ?)
+        ON CONFLICT(correo) DO UPDATE SET
+            nombre = excluded.nombre,
+            search_key = excluded.search_key
+        RETURNING id
+    `, teacher.Name, teacher.Email, teacher.GetSearchKey()).Scan(&id)
 
-		if err == nil {
-			return id, nil
-		}
+	if err == nil {
+		return id, nil
 	}
 
-	// Search candidates by search_key
+	// If we reach here, email upsert failed (likely to insert without email).
+	// Fallback to search_key matching
 	rows, err := tx.QueryContext(ctx, `
         SELECT id, nombre, correo
         FROM docentes
@@ -236,16 +236,16 @@ func (s *SqliteGradeStore) upsertSingleTeacher(tx *sql.Tx, ctx context.Context, 
 		candidates = append(candidates, c)
 	}
 
-	// Try to match using the model's comparison method
 	for _, c := range candidates {
 		if teacher.IsSimilar(c.Name) {
-			// Update if better data is available
+			// Update existing
 			_, err = tx.ExecContext(ctx, `
                 UPDATE docentes SET
                     nombre = COALESCE(NULLIF(?, ''), nombre),
-                    correo = COALESCE(NULLIF(?, ''), correo)
+                    correo = COALESCE(NULLIF(?, ''), correo),
+                    search_key = COALESCE(NULLIF(?, ''), search_key)
                 WHERE id = ?
-            `, teacher.Name, teacher.Email, c.ID)
+            `, teacher.Name, teacher.Email, teacher.GetSearchKey(), c.ID)
 			if err != nil {
 				return 0, fmt.Errorf("update matched teacher: %w", err)
 			}
@@ -253,18 +253,21 @@ func (s *SqliteGradeStore) upsertSingleTeacher(tx *sql.Tx, ctx context.Context, 
 		}
 	}
 
-	// No match: insert new
-	var newID int64
+	// Still no match: safe insert (now with ON CONFLICT just in case)
 	err = tx.QueryRowContext(ctx, `
         INSERT INTO docentes (nombre, correo, search_key)
         VALUES (?, ?, ?)
+        ON CONFLICT(correo) DO UPDATE SET
+            nombre = excluded.nombre,
+            search_key = excluded.search_key
         RETURNING id
-    `, teacher.Name, teacher.Email, teacher.GetSearchKey()).Scan(&newID)
+    `, teacher.Name, teacher.Email, teacher.GetSearchKey()).Scan(&id)
+
 	if err != nil {
 		return 0, fmt.Errorf("insert new teacher: %w", err)
 	}
 
-	return newID, nil
+	return id, nil
 }
 
 func (s *SqliteGradeStore) upsertCurriculum(tx *sql.Tx, ctx context.Context, c model.Curriculum) (int64, error) {
@@ -444,11 +447,18 @@ func (s *SqliteGradeStore) linkTeachersToCourse(tx *sql.Tx, ctx context.Context,
 
 	for _, tid := range teacherIDs {
 		_, err = tx.ExecContext(ctx, `
-            INSERT INTO docentes_curso (id_docente, id_curso)
-            VALUES (?, ?)
-        `, tid, courseID)
+		INSERT INTO docentes_curso (id_docente, id_curso)
+		VALUES (?, ?)
+	`, tid, courseID)
+
 		if err != nil {
-			return fmt.Errorf("link teacher %d to course: %w", tid, err)
+			if sqliteErr, ok := err.(sqlite3.Error); ok {
+				if sqliteErr.Code == sqlite3.ErrConstraint {
+					// duplicado / constraint violado → ignorar
+					continue
+				}
+			}
+			return fmt.Errorf("link teacher %d to course %d: %w", tid, courseID, err)
 		}
 	}
 

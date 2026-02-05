@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
+	"github.com/elias-gill/poliplanner2/internal/db/store"
 	"github.com/elias-gill/poliplanner2/internal/logger"
 )
 
@@ -47,11 +48,15 @@ func (s SqliteSheetVersionStore) GetNewest(ctx context.Context) (*model.SheetVer
 		FROM sheet_version
 		ORDER BY parsed_at DESC
 		LIMIT 1
-		`).Scan(&sv.ID, &sv.FileName, &sv.URL, &sv.ParsedAt)
+	`).Scan(&sv.ID, &sv.FileName, &sv.URL, &sv.ParsedAt)
 
-	if err != nil {
-		return nil, err
+	if err == sql.ErrNoRows {
+		return nil, store.ErrNoSheetVersion
 	}
+	if err != nil {
+		return nil, fmt.Errorf("database error fetching newest sheet version: %w", err)
+	}
+
 	return sv, nil
 }
 
@@ -142,28 +147,39 @@ func (s *SqliteSheetVersionStore) Save(
 	var versionID int64
 	err = tx.QueryRowContext(ctx, `
 		INSERT INTO sheet_version (
-			file_name, file_path, url, parsed_at,
-			processed_sheets, error_count
-		) VALUES (?, ?, ?, datetime('now'), ?, ?)
+			file_name,
+			file_path,
+			url,
+			parsed_at,
+			processed_sheets,
+			succeeded_sheets,
+			error_count
+		) VALUES (?, ?, ?, datetime('now'), ?, ?, ?)
 		RETURNING version_id
-	`, fileName, localPath, url, processedSheets, len(errors)).Scan(&versionID)
+	`,
+		fileName,
+		localPath,
+		url,
+		processedSheets,
+		succeededSheets,
+		len(errors),
+	).Scan(&versionID)
 	if err != nil {
-		return 0, fmt.Errorf("error inserting new excel version: %w", err)
+		return 0, fmt.Errorf("error inserting sheet version: %w", err)
 	}
 
-	// save errors data
-	for _, errItem := range errors {
+	for _, e := range errors {
 		_, err = tx.ExecContext(ctx, `
-        INSERT INTO sheet_errors (version_id, error_message)
-        VALUES (?, ?)
-    `, versionID, errItem.Error())
+			INSERT INTO sheet_errors (version_id, error_message)
+			VALUES (?, ?)
+		`, versionID, e.Error())
 		if err != nil {
-			return 0, fmt.Errorf("error insert audit row: %w", err)
+			return 0, fmt.Errorf("error inserting sheet error: %w", err)
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
-		return 0, fmt.Errorf("error on audit commit: %w", err)
+		return 0, fmt.Errorf("error committing transaction: %w", err)
 	}
 
 	return versionID, nil

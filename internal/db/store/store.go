@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
@@ -17,6 +18,8 @@ type UserStorer interface {
 	GetByEmail(ctx context.Context, email string) (*model.User, error)
 	GetByRecoveryToken(ctx context.Context, token string) (*model.User, error)
 }
+
+var ErrNoSheetVersion = errors.New("no sheet version found")
 
 type SheetVersionStorer interface {
 	GetNewest(ctx context.Context) (*model.SheetVersion, error)
