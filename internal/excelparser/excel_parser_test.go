@@ -61,6 +61,11 @@ func TestNameNormalization(t *testing.T) {
 
 		{"Electiva 1 - Machine Learning", "electiva I"},
 		{"electIVa 2 - quien sabe", "electiva II"},
+
+		// Cosas con parentesis
+		{"calculo V (variable vectorial)", "calculo V"},
+		{"calculo V (*)", "calculo V"},
+		{"calculo V (**)", "calculo V"},
 	}
 
 	for _, testCase := range tests {

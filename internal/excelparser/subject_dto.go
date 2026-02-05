@@ -46,6 +46,7 @@ type SubjectDTO struct {
 	// This is used as the name of the table "cursos", which is the final agreggate
 	// with all schedule information of a subject in a specific time period.
 	RawSubjectName string
+	FinalExamOnly  bool
 
 	// this contains the plaussible real name of the subject. Example:
 	// "Electiva I - Machine Learning" contains: "electiva I"
@@ -491,54 +492,49 @@ var romanToInt = map[string]int{
 	"XVI": 16, "XVII": 17, "XVIII": 18, "XIX": 19, "XX": 20,
 }
 
+var accents = strings.NewReplacer(
+	"á", "a", "Á", "A",
+	"é", "e", "É", "E",
+	"í", "i", "Í", "I",
+	"ó", "o", "Ó", "O",
+	"ú", "u", "Ú", "U",
+)
+
 func normalizeSubjectName(val string) string {
-	// Take the part before "-" and trim spaces
-	normalized := strings.Split(val, "-")[0]
-	normalized = strings.TrimSpace(normalized)
+	// Parte antes del -
+	if i := strings.IndexByte(val, '-'); i >= 0 {
+		val = val[:i]
+	}
+	val = strings.TrimSpace(val)
 
-	fields := strings.Fields(normalized)
+	// Reemplazo de parentesis
+	val = regexp.MustCompile(`\s*\([^()]*\)`).ReplaceAllString(val, "")
 
-	for i, field := range fields {
-		// Try to parse the field as an Arabic number between 1 and 20
-		n, err := strconv.Atoi(field)
-		if err == nil && n >= 1 && n <= 20 {
-			// Convert to Roman numeral if valid
+	fields := strings.Fields(val)
+	if len(fields) == 0 {
+		return ""
+	}
+
+	for i := range fields {
+		f := fields[i]
+
+		// Número arábigo → romano
+		if n, err := strconv.Atoi(f); err == nil && n >= 1 && n <= 20 {
 			fields[i] = roman[n]
 			continue
 		}
 
-		// Check if field is a valid Roman numeral (I–XX)
-		up := strings.ToUpper(field) // if not capitalized yet
+		// Romano ya en mayúscula
+		up := strings.ToUpper(f)
 		if _, ok := romanToInt[up]; ok {
-			// Keep Roman numeral uppercase
 			fields[i] = up
 			continue
 		}
 
-		// Otherwise, lowercase and normalize accented vowels manually
-		s := strings.ToLower(field)
-		result := make([]rune, 0, len(s))
-		for _, r := range s {
-			switch r {
-			case 'á':
-				result = append(result, 'a')
-			case 'é':
-				result = append(result, 'e')
-			case 'í':
-				result = append(result, 'i')
-			case 'ó':
-				result = append(result, 'o')
-			case 'ú':
-				result = append(result, 'u')
-			default:
-				result = append(result, r)
-			}
-		}
-		// Replace field with normalized string
-		fields[i] = string(result)
+		// Normalizar a minúsculas y quitar acentos
+		fields[i] = strings.ToLower(accents.Replace(f))
 	}
 
-	// Join fields with space and return
 	return strings.Join(fields, " ")
 }
 
