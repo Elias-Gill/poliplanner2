@@ -25,14 +25,7 @@ func (s *GradeService) FindByID(ctx context.Context, id int64) (*model.GradeMode
 
 // REFACTOR: rever porque esta feo
 func (s *GradeService) LightListByCareerCurrent(ctx context.Context, careerID int64) ([]*model.GradeListItem, error) {
-	// Determine on which period we currently are
-	period := 2 // January -> July
-	now := time.Now()
-	if now.Month() > 6 {
-		period = 1 // August -> December
-	}
-
-	p, err := s.periodStore.FindByYearPeriod(ctx, now.Year(), period)
+	p, err := s.periodStore.FindByYearPeriod(ctx, time.Now().Year(), calculateCurrentPeriod())
 	if err != nil {
 		return nil, err
 	}

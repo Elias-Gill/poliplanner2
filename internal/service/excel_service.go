@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -59,25 +60,26 @@ func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 	}
 
 	latestVersion, err := s.sheetVersionStorer.GetNewest(ctx)
-	if err != nil {
+	if err != nil && !errors.Is(err, store.ErrNoSheetVersion) {
 		logger.Info("Cannot retrieve latest version from database", "error", err)
 		return fmt.Errorf("error searching for excel versions: %w", err)
 	}
 
-	if newestSource.UploadDate.Before(latestVersion.ParsedAt) {
-		logger.Info("Excel is already on the latest version",
-			"fpuna", newestSource.UploadDate,
-			"database", latestVersion.ParsedAt)
-		return nil
+	// Si no hay versiones o la nueva es más reciente, descargar y procesar
+	if latestVersion == nil || newestSource.UploadDate.After(latestVersion.ParsedAt) {
+		path, err := newestSource.DownloadThisSource(ctx)
+		if err != nil {
+			logger.Info("Failed to download source", "source", newestSource.URL, "error", err)
+			return fmt.Errorf("error downloading latest excel: %w", err)
+		}
+
+		return s.ParseAndPersistExcelFile(ctx, path, newestSource)
 	}
 
-	path, err := newestSource.DownloadThisSource(ctx)
-	if err != nil {
-		logger.Info("Failed to download source", "source", newestSource.URL, "error", err)
-		return fmt.Errorf("error downloading latest excel: %w", err)
-	}
-
-	return s.ParseAndPersistExcelFile(ctx, path, newestSource)
+	logger.Info("Excel is already on the latest version",
+		"fpuna", newestSource.UploadDate,
+		"database", latestVersion.ParsedAt)
+	return nil
 }
 
 func (s *ExcelService) ParseAndPersistExcelFile(
@@ -146,7 +148,10 @@ func (s *ExcelService) ParseAndPersistExcelFile(
 							Name:  strings.TrimSpace(t.FirstName + " " + t.LastName),
 							Email: t.Email,
 						}
-						teacher.GenerateSearchKey(t.FirstName, t.LastName)
+						if err := teacher.GenerateSearchKey(t.FirstName, t.LastName); err != nil {
+							logger.Debug("Cannot generate searching key for teacher", "name", teacher.Name)
+							continue
+						}
 						grade.Teachers[i] = teacher
 					}
 
