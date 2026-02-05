@@ -8,6 +8,9 @@ import (
 	"time"
 )
 
+const finalOnlyGrade = 1
+const normalGrade = 0
+
 // Global compiled patterns
 var (
 	datePattern  = regexp.MustCompile(`(\d{1,2})[^\d]+(\d{1,2})[^\d]+(\d{2,4})`)
@@ -46,12 +49,11 @@ type SubjectDTO struct {
 	// This is used as the name of the table "cursos", which is the final agreggate
 	// with all schedule information of a subject in a specific time period.
 	RawSubjectName string
-	FinalExamOnly  bool
-
 	// this contains the plaussible real name of the subject. Example:
 	// "Electiva I - Machine Learning" contains: "electiva I"
 	// "Física 2" normalizes to: "fisica II"
 	TentativeRealSubjectName string
+	GradeType                int
 
 	// Teachers info
 	Teachers []TeacherDTO
@@ -117,6 +119,16 @@ func (s *SubjectDTO) SetDepartment(val string) {
 func (s *SubjectDTO) SetSubjectName(val string) {
 	s.RawSubjectName = strings.TrimSpace(val)
 	s.TentativeRealSubjectName = normalizeSubjectName(val)
+
+	// Set course type based on the name
+	s.GradeType = normalGrade
+	// If contains a (*) it is a closed grade with only final exam
+	for i := len(val) - 1; i >= 0; i-- {
+		if rune(val[i]) == '*' {
+			s.GradeType = finalOnlyGrade
+			break
+		}
+	}
 }
 
 func (s *SubjectDTO) SetSemester(val string) {

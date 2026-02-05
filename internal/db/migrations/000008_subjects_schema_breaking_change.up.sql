@@ -73,9 +73,9 @@ CREATE TABLE cursos (
     -- diferenciar las electivas y optativas.
     nombre TEXT NOT NULL,
     seccion VARCHAR(6) NOT NULL,
-    -- 0: Solo es examen final, 
-    -- 1 (DEFAULT): curso normal con periodo de clases
-    solo_examen_final INTEGER NOT NULL DEFAULT 1 CHECK (solo_examen_final IN (0, 1)),
+    -- 1: Solo es examen final, 
+    -- 0 (DEFAULT): curso normal con periodo de clases
+    tipo INTEGER NOT NULL DEFAULT 0 CHECK (tipo IN (0, 1)),
 
 -- Weekly schedule
     lunes_desde TEXT,

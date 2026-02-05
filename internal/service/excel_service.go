@@ -137,6 +137,8 @@ func (s *ExcelService) ParseAndPersistExcelFile(
 
 					grade.Section = sub.Section
 
+					grade.GradeType = sub.GradeType
+
 					grade.Period = model.Period{
 						Year:   source.UploadDate.Year(),
 						Period: source.Period,

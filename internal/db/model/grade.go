@@ -84,6 +84,7 @@ type GradeModel struct {
 	Teachers   []Teacher
 	Curriculum Curriculum
 	Section    string
+	GradeType  int
 
 	// First partial
 	Partial1Date *time.Time

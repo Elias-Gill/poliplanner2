@@ -15,6 +15,8 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+// FIX: asignaturas con nombre vacio en el excel a veces aparecen no se por que
+
 func main() {
 	config.MustLoad()
 	cfg := config.Get()

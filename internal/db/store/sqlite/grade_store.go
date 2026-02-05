@@ -27,7 +27,7 @@ func NewSqliteGradeStore(db *sql.DB) *SqliteGradeStore {
 func (s *SqliteGradeStore) FindById(ctx context.Context, id int64) (*model.GradeModel, error) {
 	row := s.db.QueryRowContext(ctx, `
 		SELECT 
-			c.id, c.nombre, c.seccion,
+			c.id, c.nombre, c.seccion, c.tipo
 			p.year, p.periodo,
 			c.lunes_desde, c.lunes_hasta, c.lunes_aula,
 			c.martes_desde, c.martes_hasta, c.martes_aula,
@@ -347,7 +347,7 @@ func (s *SqliteGradeStore) upsertCourse(tx *sql.Tx, ctx context.Context, grade m
 	var id int64
 	err := tx.QueryRowContext(ctx, `
         INSERT INTO cursos (
-            malla, periodo, nombre, seccion, solo_examen_final,
+            malla, periodo, nombre, seccion, tipo,
             lunes_desde, lunes_hasta, lunes_aula,
             martes_desde, martes_hasta, martes_aula,
             miercoles_desde, miercoles_hasta, miercoles_aula,
@@ -360,7 +360,7 @@ func (s *SqliteGradeStore) upsertCourse(tx *sql.Tx, ctx context.Context, grade m
             final2_fecha, final2_hora, final2_aula, final2_fecha_revision, final2_hora_revision,
             comite_presidente, comite_miembro1, comite_miembro2
         ) VALUES (
-            ?, ?, ?, ?, 1,
+            ?, ?, ?, ?, ?,
             ?, ?, ?,
             ?, ?, ?,
             ?, ?, ?,
@@ -374,7 +374,7 @@ func (s *SqliteGradeStore) upsertCourse(tx *sql.Tx, ctx context.Context, grade m
             ?, ?, ?
         ) ON CONFLICT(malla, seccion, periodo) DO UPDATE SET
             nombre = excluded.nombre,
-            solo_examen_final = excluded.solo_examen_final,
+            tipo = excluded.tipo,
             lunes_desde = excluded.lunes_desde,
             lunes_hasta = excluded.lunes_hasta,
             lunes_aula = excluded.lunes_aula,
@@ -415,7 +415,7 @@ func (s *SqliteGradeStore) upsertCourse(tx *sql.Tx, ctx context.Context, grade m
             comite_miembro2 = excluded.comite_miembro2
         RETURNING id
     `,
-		mallaID, periodID, grade.Name, grade.Section,
+		mallaID, periodID, grade.Name, grade.Section, grade.GradeType,
 		grade.Monday.Start, grade.Monday.End, grade.MondayRoom,
 		grade.Tuesday.Start, grade.Tuesday.End, grade.TuesdayRoom,
 		grade.Wednesday.Start, grade.Wednesday.End, grade.WednesdayRoom,
@@ -473,6 +473,7 @@ func scanGradeModel(row *sql.Row) (*model.GradeModel, error) {
 		&gm.ID,
 		&gm.Name,
 		&gm.Section,
+		&gm.GradeType,
 		&gm.Period.Year,
 		&gm.Period.Period,
 		&gm.Monday.Start,
