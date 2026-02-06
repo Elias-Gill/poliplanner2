@@ -10,7 +10,7 @@ type User struct {
 	Password string
 	Email    string
 
-	RecoveryTokenHash       string
+	RecoveryTokenHash       *string
 	RecoveryTokenExpiration *time.Time
 	RecoveryTokenUsed       bool
 }

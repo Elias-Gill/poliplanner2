@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
+	"github.com/elias-gill/poliplanner2/internal/logger"
 )
 
 type SqliteUserStore struct {
@@ -103,7 +104,12 @@ func (s SqliteUserStore) GetByID(ctx context.Context, userID int64) (*model.User
 		FROM users WHERE user_id = ?`, userID).
 		Scan(&u.ID, &u.Username, &u.Password, &u.Email,
 			&u.RecoveryTokenHash, &u.RecoveryTokenExpiration, &u.RecoveryTokenUsed)
+	if err == sql.ErrNoRows {
+		logger.Debug("UserID not found", "id", userID)
+		return nil, err
+	}
 	if err != nil {
+		logger.Warn("Database error searching userID", "userID", userID, "error", err)
 		return nil, err
 	}
 	return u, nil
@@ -112,12 +118,17 @@ func (s SqliteUserStore) GetByID(ctx context.Context, userID int64) (*model.User
 func (s SqliteUserStore) GetByUsername(ctx context.Context, username string) (*model.User, error) {
 	u := &model.User{}
 	err := s.db.QueryRowContext(ctx, `
-		SELECT user_id, username, password, email,
-		       recovery_token_hash, recovery_token_expiration, recovery_token_used
-		FROM users WHERE username = ?`, username).
+		SELECT u.user_id, u.username, u.password, u.email,
+		       u.recovery_token_hash, u.recovery_token_expiration, u.recovery_token_used
+		FROM users u WHERE u.username = ?`, username).
 		Scan(&u.ID, &u.Username, &u.Password, &u.Email,
 			&u.RecoveryTokenHash, &u.RecoveryTokenExpiration, &u.RecoveryTokenUsed)
+	if err == sql.ErrNoRows {
+		logger.Debug("User not found", "username", username)
+		return nil, err
+	}
 	if err != nil {
+		logger.Warn("Database error searching user", "username", username, "error", err)
 		return nil, err
 	}
 	return u, nil
@@ -131,7 +142,12 @@ func (s SqliteUserStore) GetByEmail(ctx context.Context, email string) (*model.U
 		FROM users WHERE email = ?`, email).
 		Scan(&u.ID, &u.Username, &u.Password, &u.Email,
 			&u.RecoveryTokenHash, &u.RecoveryTokenExpiration, &u.RecoveryTokenUsed)
+	if err == sql.ErrNoRows {
+		logger.Debug("Email not found", "email", email)
+		return nil, err
+	}
 	if err != nil {
+		logger.Warn("Database error searching email", "email", email, "error", err)
 		return nil, err
 	}
 	return u, nil
@@ -145,7 +161,12 @@ func (s SqliteUserStore) GetByRecoveryToken(ctx context.Context, token string) (
 		FROM users WHERE recovery_token_hash = ?`, token).
 		Scan(&u.ID, &u.Username, &u.Password, &u.Email,
 			&u.RecoveryTokenHash, &u.RecoveryTokenExpiration, &u.RecoveryTokenUsed)
+	if err == sql.ErrNoRows {
+		logger.Debug("Token not found", "token", token)
+		return nil, err
+	}
 	if err != nil {
+		logger.Warn("Database error searching token", "token", token, "error", err)
 		return nil, err
 	}
 	return u, nil

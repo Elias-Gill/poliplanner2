@@ -49,6 +49,8 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 			}
 
 			sessionID := auth.CreateSession(user.ID)
+
+			// set session cookie
 			http.SetCookie(w, &http.Cookie{
 				Name:     "session_id",
 				Value:    sessionID,

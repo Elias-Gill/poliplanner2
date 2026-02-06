@@ -13,7 +13,6 @@ import (
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
 	"github.com/elias-gill/poliplanner2/internal/db/store"
-	"github.com/elias-gill/poliplanner2/internal/logger"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -125,7 +124,7 @@ func (s *UserService) StartPasswordRecovery(ctx context.Context, email string) (
 	expiration := time.Now().Add(15 * time.Minute)
 
 	err = s.userStorer.Update(ctx, user.ID, func(u *model.User) error {
-		u.RecoveryTokenHash = token
+		u.RecoveryTokenHash = &token
 		u.RecoveryTokenExpiration = &expiration
 		u.RecoveryTokenUsed = false
 		return nil
@@ -163,7 +162,7 @@ func (s *UserService) CommitPasswordRecovery(ctx context.Context, token, newPass
 	return s.userStorer.Update(ctx, user.ID, func(u *model.User) error {
 		u.Password = string(hashed)
 		u.RecoveryTokenUsed = true
-		u.RecoveryTokenHash = ""
+		u.RecoveryTokenHash = nil
 		u.RecoveryTokenExpiration = nil
 		return nil
 	})
