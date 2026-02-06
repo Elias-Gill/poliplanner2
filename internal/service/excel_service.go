@@ -39,12 +39,13 @@ func (s *ExcelService) SearchOnStartup(ctx context.Context) {
 
 	logger.Info("Automatic excel sync started")
 
+	s.sheetVersionStorer.SetLastCheckedAt(ctx, time.Now())
+
 	err = s.SearchNewestExcel(ctx)
 	if err != nil {
 		logger.Error("Error on automatic version sync", "error", err)
+		return
 	}
-
-	s.sheetVersionStorer.SetLastCheckedAt(ctx, time.Now())
 
 	logger.Info("Successfull auto excel sync")
 }
@@ -121,6 +122,11 @@ func (s *ExcelService) ParseAndPersistExcelFile(
 			func(persist func(model.CourseModel) error) error {
 				// Agreggate and persist structs data
 				for _, sub := range result.Subjects {
+					if len(sub.RawSubjectName) == 0 || len(sub.TentativeRealSubjectName) == 0 {
+						logger.Warn("Empty subject name skiped", "career", result.Career)
+						continue
+					}
+
 					// Resolve all empty metadata first
 					if sub.Semester == 0 && metadata != nil {
 						meta, merr := metadata.Find(sub.RawSubjectName)
