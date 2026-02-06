@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-const finalOnlyGrade = 1
-const normalGrade = 0
+const examOnlyCourse = 1
+const normalCourse = 0
 
 // Global compiled patterns
 var (
@@ -53,7 +53,7 @@ type SubjectDTO struct {
 	// "Electiva I - Machine Learning" contains: "electiva I"
 	// "Física 2" normalizes to: "fisica II"
 	TentativeRealSubjectName string
-	GradeType                int
+	CourseType               int
 
 	// Teachers info
 	Teachers []TeacherDTO
@@ -121,11 +121,11 @@ func (s *SubjectDTO) SetSubjectName(val string) {
 	s.TentativeRealSubjectName = normalizeSubjectName(val)
 
 	// Set course type based on the name
-	s.GradeType = normalGrade
+	s.CourseType = normalCourse
 	// If contains a (*) it is a closed grade with only final exam
 	for i := len(val) - 1; i >= 0; i-- {
 		if rune(val[i]) == '*' {
-			s.GradeType = finalOnlyGrade
+			s.CourseType = examOnlyCourse
 			break
 		}
 	}

@@ -14,7 +14,7 @@ import (
 )
 
 func NewSchedulesRouter(
-	gradeService *service.GradeService,
+	courseService *service.CourseService,
 	scheduleService *service.ScheduleService,
 	careerService *service.CareerService,
 	sheetVersionService *service.SheetVersionService,
@@ -67,7 +67,7 @@ func NewSchedulesRouter(
 				return
 			}
 
-			grades, err := gradeService.LightListByCareerCurrent(ctx, careerId)
+			grades, err := courseService.ListActiveByCareer(ctx, careerId)
 			if err != nil {
 				logger.Error("Error finding subjects", "error", err, "careerID", rawId)
 				http.Redirect(w, r, "/500", 500)
@@ -75,7 +75,7 @@ func NewSchedulesRouter(
 			}
 
 			// Template data
-			data := struct{ Subjects []*model.GradeListItem }{
+			data := struct{ Subjects []*model.CourseListItem }{
 				Subjects: grades,
 			}
 

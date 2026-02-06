@@ -69,7 +69,7 @@ func (s *SqliteScheduleStore) Insert(ctx context.Context, data *model.ScheduleBa
 	}
 
 	// Vincular cursos
-	for _, courseID := range data.GradeIDs {
+	for _, courseID := range data.CourseIDs {
 		_, err = tx.ExecContext(ctx, `
 			INSERT INTO horarios_detalle (horario_id, curso_id)
 			VALUES (?, ?)
@@ -171,9 +171,9 @@ func (s *SqliteScheduleStore) GetByID(ctx context.Context, scheduleID int64) (*m
 	}
 	defer rows.Close()
 
-	var courses []model.GradeModel
+	var courses []model.CourseModel
 	for rows.Next() {
-		var gm model.GradeModel
+		var gm model.CourseModel
 		err := rows.Scan(
 			&gm.Name,
 			&gm.Section,

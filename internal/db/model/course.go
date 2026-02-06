@@ -77,14 +77,14 @@ type Period struct {
 	Period int
 }
 
-type GradeModel struct {
+type CourseModel struct {
 	ID         int64
 	Name       string
 	Period     Period
 	Teachers   []Teacher
 	Curriculum Curriculum
 	Section    string
-	GradeType  int
+	CourseType  int
 
 	// First partial
 	Partial1Date *time.Time
@@ -137,15 +137,12 @@ type GradeModel struct {
 
 // Light weight grade info, used to optimize database and network usage when listing a lot of
 // grades
-type GradeListItem struct {
+type CourseListItem struct {
 	ID          int64
 	SubjectName string
 	Section     string
 	Semester    int
-
-	TeacherTitle    string
-	TeacherName     string
-	TeacherLastname string
+	Teachers    string
 }
 
 // ==========================================================

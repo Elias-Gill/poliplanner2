@@ -1,12 +1,9 @@
 package router
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"net/http"
-	"net/mail"
-	"regexp"
 	"strings"
 	"time"
 
@@ -22,7 +19,6 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 	layouts := web.BaseLayout
 
 	return func(r chi.Router) {
-		// Redirect to the dashboard.
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/dashboard", http.StatusFound)
 		})
@@ -31,36 +27,28 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 			execTemplateWithLayout(w, "web/templates/pages/500.html", layouts, nil)
 		})
 
-		// --- Handle LOGIN ---
 		r.Get("/login", func(w http.ResponseWriter, r *http.Request) {
-			// Set redirection parameter if a redirection path is present
-			data := map[string]any{
-				"Redirect": r.URL.Query().Get("redirect"),
-			}
-
+			data := map[string]any{"Redirect": r.URL.Query().Get("redirect")}
 			execTemplateWithLayout(w, "web/templates/pages/auth/login.html", layouts, data)
 		})
 
 		r.Post("/login", func(w http.ResponseWriter, r *http.Request) {
 			if err := r.ParseForm(); err != nil {
-				http.Error(w, "Invalid form data", http.StatusBadRequest)
+				http.Error(w, "Invalid form", http.StatusBadRequest)
 				return
 			}
 
-			// Authentication
 			username := r.FormValue("username")
 			password := r.FormValue("password")
+
 			user, err := userService.AuthenticateUser(r.Context(), username, password)
 			if err != nil {
 				w.Header().Set("Content-Type", "text/html")
-				w.Write([]byte(newErrorFragment("Usuario o contraseña incorrectos")))
+				w.Write([]byte(newErrorFragment("Invalid username or password")))
 				return
 			}
 
-			// Generate a new session
 			sessionID := auth.CreateSession(user.ID)
-
-			// Set the session cookie
 			http.SetCookie(w, &http.Cookie{
 				Name:     "session_id",
 				Value:    sessionID,
@@ -71,57 +59,58 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 				Expires:  time.Now().Add(30 * time.Minute),
 			})
 
-			// Redirect if a redirection path is present
 			redirectTo := r.URL.Query().Get("redirect")
-			if len(redirectTo) == 0 {
+			if redirectTo == "" {
 				redirectTo = "/dashboard"
 			}
-
-			logger.Debug("Redirecting from login", "path", redirectTo)
 
 			w.Header().Set("HX-Redirect", redirectTo)
 		})
 
-		// --- Handle SIGNUP ---
 		r.Get("/signup", func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Content-Type", "text/html")
 			execTemplateWithLayout(w, "web/templates/pages/auth/signup.html", layouts, nil)
 		})
 
 		r.Post("/signup", func(w http.ResponseWriter, r *http.Request) {
 			if err := r.ParseForm(); err != nil {
-				http.Error(w, "Invalid form data", http.StatusBadRequest)
+				http.Error(w, "Invalid form", http.StatusBadRequest)
 				return
 			}
 
 			username := r.FormValue("username")
 			email := r.FormValue("email")
-			rawPassword := r.FormValue("password")
+			password := r.FormValue("password")
+			confirm := r.FormValue("confirm_password")
 
-			if err := validateUsername(username); err != nil {
-				w.Write([]byte(newErrorFragment(err.Error())))
-				return
-			}
-
-			if !isValidEmail(email) {
-				w.Write([]byte(newErrorFragment("Email inválido")))
-				return
-			}
-
-			if len(rawPassword) < 6 {
-				w.Write([]byte(newErrorFragment("Contraseña debe tener al menos 6 caracteres")))
-				return
-			}
-
-			err := userService.CreateUser(r.Context(), username, email, rawPassword)
+			err := userService.CreateUser(r.Context(), username, email, password, confirm)
 			if err != nil {
-				// FIX: error handling for better error messages
-				w.Write([]byte(newErrorFragment("Un usuario con ese email o nombre de usuario ya existe")))
+				var field, msg string
+
+				switch e := err.(type) {
+				case service.ValidationError:
+					field, msg = e.Field, e.Message
+				case error:
+					switch {
+					case errors.Is(err, service.ErrUsernameTaken):
+						field, msg = "username", "Username already taken"
+					case errors.Is(err, service.ErrEmailTaken):
+						field, msg = "email", "Email already in use"
+					default:
+						field, msg = "", "Unexpected error"
+					}
+				}
+
+				if field != "" {
+					w.Header().Set("Content-Type", "text/html")
+					w.Write([]byte(newFieldErrorFragment(field, msg)))
+				} else {
+					w.Header().Set("Content-Type", "text/html")
+					w.Write([]byte(newErrorFragment("Failed to create account")))
+				}
 				return
 			}
 
 			w.Header().Set("HX-Redirect", "/login")
-			w.WriteHeader(http.StatusOK)
 		})
 
 		r.Get("/password-recovery", func(w http.ResponseWriter, r *http.Request) {
@@ -129,135 +118,94 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 		})
 
 		r.Post("/password-recovery", func(w http.ResponseWriter, r *http.Request) {
-			err := r.ParseForm()
-			if err != nil {
-				w.Header().Set("Content-Type", "text/html")
-				w.Write([]byte(newErrorFragment("Error al parsear el form")))
+			if err := r.ParseForm(); err != nil {
+				w.Write([]byte(newErrorFragment("Failed to process form")))
 				return
 			}
 
 			email := strings.TrimSpace(r.Form.Get("email"))
-			if email == "" {
-				w.Header().Set("Content-Type", "text/html")
-				w.Write([]byte(newErrorFragment("El email no puede estar vacío")))
-				return
-			}
 
-			if !isValidEmail(email) {
-				w.Header().Set("Content-Type", "text/html")
-				w.Write([]byte(newErrorFragment("Email inválido")))
-				return
-			}
-
-			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*300)
-			defer cancel()
-
-			token, err := userService.StartPasswordRecovery(ctx, email)
+			token, err := userService.StartPasswordRecovery(r.Context(), email)
 			if err != nil {
-				if errors.Is(err, service.CannotFindUserError) {
-					w.Header().Set("Content-Type", "text/html")
-					w.Write([]byte(newSuccessFragment("Se ha enviado un link de recuperación al correo proporcionado.")))
-					return
+				var msg string
+				if ve, ok := err.(service.ValidationError); ok && ve.Field == "email" {
+					msg = ve.Message
 				} else {
-					customRedirect(w, r, "/500")
-					return
+					msg = "If the email exists, a recovery link has been sent."
 				}
-			}
-
-			err = emailService.SendRecoveryEmail(email, token)
-			if err != nil {
-				customRedirect(w, r, "/500")
-				logger.Error("Error sending recovery email", "error", err)
+				w.Write([]byte(newSuccessFragment(msg)))
 				return
 			}
 
-			w.Header().Set("Content-Type", "text/html")
-			w.Write([]byte(newSuccessFragment("Se ha enviado un link de recuperación al correo proporcionado.")))
+			if token == "" {
+				w.Write([]byte(newSuccessFragment("If the email exists, a recovery link has been sent.")))
+				return
+			}
+
+			if err := emailService.SendRecoveryEmail(email, token); err != nil {
+				logger.Error("Failed to send recovery email", "error", err)
+				customRedirect(w, r, "/500")
+				return
+			}
+
+			w.Write([]byte(newSuccessFragment("If the email exists, a recovery link has been sent.")))
 		})
 
 		r.Get("/password-recovery/{token}", func(w http.ResponseWriter, r *http.Request) {
 			token := chi.URLParam(r, "token")
-			if strings.TrimSpace(token) == "" {
+			if token == "" {
 				customRedirect(w, r, "/500")
 				return
 			}
-
-			data := map[string]any{
-				"Token": token,
-			}
-
+			data := map[string]any{"Token": token}
 			execTemplateWithLayout(w, "web/templates/pages/auth/password-recovery-commit.html", layouts, data)
 		})
 
 		r.Post("/password-recovery/{token}", func(w http.ResponseWriter, r *http.Request) {
 			token := chi.URLParam(r, "token")
-			if strings.TrimSpace(token) == "" {
-				w.Write([]byte(newErrorFragment("Token inválido")))
+			if token == "" {
+				w.Write([]byte(newErrorFragment("Invalid token")))
 				return
 			}
 
 			if err := r.ParseForm(); err != nil {
-				w.Write([]byte(newErrorFragment("Error al procesar el formulario")))
+				w.Write([]byte(newErrorFragment("Failed to process form")))
 				return
 			}
 
 			password := r.Form.Get("password")
 			confirm := r.Form.Get("confirm_password")
 
-			if password == "" || confirm == "" {
-				w.Write([]byte(newErrorFragment("La contraseña no puede estar vacía")))
-				return
-			}
-
-			if password != confirm {
-				w.Write([]byte(newErrorFragment("Las contraseñas no coinciden")))
-				return
-			}
-
-			if len(password) < 6 {
-				w.Write([]byte(newErrorFragment("La contraseña debe tener al menos 6 caracteres")))
-				return
-			}
-
-			err := userService.CommitPasswordRecovery(r.Context(), token, password)
+			err := userService.CommitPasswordRecovery(r.Context(), token, password, confirm)
 			if err != nil {
-				w.Write([]byte(newErrorFragment("El enlace es inválido o ya expiró")))
+				var field, msg string
+				if ve, ok := err.(service.ValidationError); ok {
+					field, msg = ve.Field, ve.Message
+				} else if errors.Is(err, service.ErrInvalidToken) {
+					msg = "Invalid or expired token"
+				} else {
+					msg = "Failed to update password"
+				}
+
+				if field != "" {
+					w.Write([]byte(newFieldErrorFragment(field, msg)))
+				} else {
+					w.Write([]byte(newErrorFragment(msg)))
+				}
 				return
 			}
 
-			w.Write([]byte(`
-				<section class="success">
-				<span>Contraseña actualizada correctamente</span>
-				</section>`))
+			w.Write([]byte(newSuccessFragment("Password updated successfully")))
 		})
 	}
 }
 
-func validateUsername(username string) error {
-	if len(username) < 3 {
-		return fmt.Errorf("El nombre de usuario debe tener al menos 3 caracteres")
-	}
-	if !isAlphanumeric(username) {
-		return fmt.Errorf("El nombre de usuario solo puede contener letras, numeros, guión (-) o guión bajo (_)")
-	}
-	return nil
-}
-
-func isValidEmail(email string) bool {
-	_, err := mail.ParseAddress(email)
-	return err == nil
-}
-
-func isAlphanumeric(str string) bool {
-	re := regexp.MustCompile(`^[A-Za-z0-9_-]+$`)
-	return re.MatchString(str)
-}
-
+// Helpers (actualizados para soportar errores por campo)
 func newErrorFragment(msg string) string {
 	return `
 	<section role="alert" class="error">
 		<span>` + msg + `</span>
-		<button type="button" style="background-color: var(--color-error);" onclick="this.parentElement.remove()" aria-label="Cerrar alerta">×</button>
+		<button type="button" onclick="this.parentElement.remove()" aria-label="Close">×</button>
 	</section>
 	`
 }
@@ -265,8 +213,16 @@ func newErrorFragment(msg string) string {
 func newSuccessFragment(msg string) string {
 	return `
 	<section role="alert" class="success">
-	<span>` + msg + `</span>
-	<button type="button" style="background-color: var(--color-success);" onclick="this.parentElement.remove()" aria-label="Cerrar alerta">×</button>
+		<span>` + msg + `</span>
+		<button type="button" onclick="this.parentElement.remove()" aria-label="Close">×</button>
 	</section>
 	`
+}
+
+func newFieldErrorFragment(field, msg string) string {
+	return fmt.Sprintf(`
+		<div class="field-error" data-field="%s">
+			<span>%s</span>
+		</div>
+	`, field, msg)
 }

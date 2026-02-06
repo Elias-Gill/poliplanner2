@@ -10,12 +10,12 @@ import (
 	"github.com/mattn/go-sqlite3"
 )
 
-type SqliteGradeStore struct {
+type SqliteCoursesStore struct {
 	db *sql.DB
 }
 
-func NewSqliteGradeStore(db *sql.DB) *SqliteGradeStore {
-	return &SqliteGradeStore{
+func NewSqliteCourseStore(db *sql.DB) *SqliteCoursesStore {
+	return &SqliteCoursesStore{
 		db: db,
 	}
 }
@@ -24,7 +24,7 @@ func NewSqliteGradeStore(db *sql.DB) *SqliteGradeStore {
 // =                     PUBLIC API                         =
 // ==========================================================
 
-func (s *SqliteGradeStore) FindById(ctx context.Context, id int64) (*model.GradeModel, error) {
+func (s *SqliteCoursesStore) FindById(ctx context.Context, id int64) (*model.CourseModel, error) {
 	row := s.db.QueryRowContext(ctx, `
 		SELECT 
 			c.id, c.nombre, c.seccion, c.tipo
@@ -53,7 +53,7 @@ func (s *SqliteGradeStore) FindById(ctx context.Context, id int64) (*model.Grade
 		WHERE c.id = ?
 	`, id)
 
-	gm, err := scanGradeModel(row)
+	gm, err := scanCourseModel(row)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
@@ -62,7 +62,7 @@ func (s *SqliteGradeStore) FindById(ctx context.Context, id int64) (*model.Grade
 	}
 
 	// Cargar docentes aparte
-	err = s.loadTeachersForGrade(ctx, id, gm)
+	err = s.loadTeachersForCourse(ctx, id, gm)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func (s *SqliteGradeStore) FindById(ctx context.Context, id int64) (*model.Grade
 	return gm, nil
 }
 
-func (s *SqliteGradeStore) ListByCareerAndPeriod(ctx context.Context, careerID int64, periodID int64) ([]*model.GradeListItem, error) {
+func (s *SqliteCoursesStore) ListByCareerAndPeriod(ctx context.Context, careerID int64, periodID int64) ([]*model.CourseListItem, error) {
 	rows, err := s.db.QueryContext(ctx, `
 		SELECT 
 			c.id, c.nombre, c.seccion,
@@ -92,9 +92,9 @@ func (s *SqliteGradeStore) ListByCareerAndPeriod(ctx context.Context, careerID i
 	}
 	defer rows.Close()
 
-	var items []*model.GradeListItem
+	var items []*model.CourseListItem
 	for rows.Next() {
-		item := &model.GradeListItem{}
+		item := &model.CourseListItem{}
 		var teachersStr string
 
 		err := rows.Scan(
@@ -109,7 +109,7 @@ func (s *SqliteGradeStore) ListByCareerAndPeriod(ctx context.Context, careerID i
 		}
 
 		if teachersStr != "" {
-			item.TeacherName = strings.Split(teachersStr, ",")[0]
+			item.Teachers = strings.Split(teachersStr, ",")[0]
 		}
 
 		items = append(items, item)
@@ -118,9 +118,9 @@ func (s *SqliteGradeStore) ListByCareerAndPeriod(ctx context.Context, careerID i
 	return items, rows.Err()
 }
 
-func (s *SqliteGradeStore) Upsert(
+func (s *SqliteCoursesStore) Upsert(
 	ctx context.Context,
-	insertFn func(persist func(model.GradeModel) error) error,
+	insertFn func(persist func(model.CourseModel) error) error,
 ) error {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -128,7 +128,7 @@ func (s *SqliteGradeStore) Upsert(
 	}
 	defer tx.Rollback()
 
-	persist := func(grade model.GradeModel) error {
+	persist := func(grade model.CourseModel) error {
 		periodID, err := s.upsertPeriod(tx, ctx, grade.Period)
 		if err != nil {
 			return err
@@ -164,7 +164,7 @@ func (s *SqliteGradeStore) Upsert(
 // ==========================================================
 
 // saves or updates the period and returns its ID
-func (s *SqliteGradeStore) upsertPeriod(tx *sql.Tx, ctx context.Context, p model.Period) (int64, error) {
+func (s *SqliteCoursesStore) upsertPeriod(tx *sql.Tx, ctx context.Context, p model.Period) (int64, error) {
 	var id int64
 	err := tx.QueryRowContext(ctx, `
         INSERT INTO periodos (year, periodo)
@@ -179,7 +179,7 @@ func (s *SqliteGradeStore) upsertPeriod(tx *sql.Tx, ctx context.Context, p model
 }
 
 // saves or updates all teachers and returns their IDs
-func (s *SqliteGradeStore) upsertTeachers(tx *sql.Tx, ctx context.Context, teachers []model.Teacher) ([]int64, error) {
+func (s *SqliteCoursesStore) upsertTeachers(tx *sql.Tx, ctx context.Context, teachers []model.Teacher) ([]int64, error) {
 	ids := make([]int64, 0, len(teachers))
 
 	for _, t := range teachers {
@@ -193,7 +193,7 @@ func (s *SqliteGradeStore) upsertTeachers(tx *sql.Tx, ctx context.Context, teach
 	return ids, nil
 }
 
-func (s *SqliteGradeStore) upsertSingleTeacher(tx *sql.Tx, ctx context.Context, teacher model.Teacher) (int64, error) {
+func (s *SqliteCoursesStore) upsertSingleTeacher(tx *sql.Tx, ctx context.Context, teacher model.Teacher) (int64, error) {
 	// Always try email first (SQLite will handle NULL as an insert error)
 	var id int64
 	err := tx.QueryRowContext(ctx, `
@@ -270,7 +270,7 @@ func (s *SqliteGradeStore) upsertSingleTeacher(tx *sql.Tx, ctx context.Context, 
 	return id, nil
 }
 
-func (s *SqliteGradeStore) upsertCurriculum(tx *sql.Tx, ctx context.Context, c model.Curriculum) (int64, error) {
+func (s *SqliteCoursesStore) upsertCurriculum(tx *sql.Tx, ctx context.Context, c model.Curriculum) (int64, error) {
 	deptID, err := s.upsertDepartment(tx, ctx, c.Subject.Department)
 	if err != nil {
 		return 0, err
@@ -300,7 +300,7 @@ func (s *SqliteGradeStore) upsertCurriculum(tx *sql.Tx, ctx context.Context, c m
 	return mallaID, nil
 }
 
-func (s *SqliteGradeStore) upsertDepartment(tx *sql.Tx, ctx context.Context, siglas string) (int64, error) {
+func (s *SqliteCoursesStore) upsertDepartment(tx *sql.Tx, ctx context.Context, siglas string) (int64, error) {
 	var id int64
 	err := tx.QueryRowContext(ctx, `
         INSERT INTO departamentos (siglas)
@@ -314,7 +314,7 @@ func (s *SqliteGradeStore) upsertDepartment(tx *sql.Tx, ctx context.Context, sig
 	return id, nil
 }
 
-func (s *SqliteGradeStore) upsertSubject(tx *sql.Tx, ctx context.Context, name string, deptID int64) (int64, error) {
+func (s *SqliteCoursesStore) upsertSubject(tx *sql.Tx, ctx context.Context, name string, deptID int64) (int64, error) {
 	var id int64
 	err := tx.QueryRowContext(ctx, `
         INSERT INTO asignaturas (nombre, departamento)
@@ -328,7 +328,7 @@ func (s *SqliteGradeStore) upsertSubject(tx *sql.Tx, ctx context.Context, name s
 	return id, nil
 }
 
-func (s *SqliteGradeStore) upsertCareer(tx *sql.Tx, ctx context.Context, siglas string) (int64, error) {
+func (s *SqliteCoursesStore) upsertCareer(tx *sql.Tx, ctx context.Context, siglas string) (int64, error) {
 	var id int64
 	err := tx.QueryRowContext(ctx, `
         INSERT INTO carreras (siglas)
@@ -343,7 +343,7 @@ func (s *SqliteGradeStore) upsertCareer(tx *sql.Tx, ctx context.Context, siglas 
 }
 
 // upsertCourse saves the course itself and returns its ID
-func (s *SqliteGradeStore) upsertCourse(tx *sql.Tx, ctx context.Context, grade model.GradeModel, mallaID, periodID int64) (int64, error) {
+func (s *SqliteCoursesStore) upsertCourse(tx *sql.Tx, ctx context.Context, grade model.CourseModel, mallaID, periodID int64) (int64, error) {
 	var id int64
 	err := tx.QueryRowContext(ctx, `
         INSERT INTO cursos (
@@ -415,7 +415,7 @@ func (s *SqliteGradeStore) upsertCourse(tx *sql.Tx, ctx context.Context, grade m
             comite_miembro2 = excluded.comite_miembro2
         RETURNING id
     `,
-		mallaID, periodID, grade.Name, grade.Section, grade.GradeType,
+		mallaID, periodID, grade.Name, grade.Section, grade.CourseType,
 		grade.Monday.Start, grade.Monday.End, grade.MondayRoom,
 		grade.Tuesday.Start, grade.Tuesday.End, grade.TuesdayRoom,
 		grade.Wednesday.Start, grade.Wednesday.End, grade.WednesdayRoom,
@@ -437,7 +437,7 @@ func (s *SqliteGradeStore) upsertCourse(tx *sql.Tx, ctx context.Context, grade m
 }
 
 // removes old teachers links and adds new ones
-func (s *SqliteGradeStore) linkTeachersToCourse(tx *sql.Tx, ctx context.Context, courseID int64, teacherIDs []int64) error {
+func (s *SqliteCoursesStore) linkTeachersToCourse(tx *sql.Tx, ctx context.Context, courseID int64, teacherIDs []int64) error {
 	_, err := tx.ExecContext(ctx, `
         DELETE FROM docentes_curso WHERE id_curso = ?
     `, courseID)
@@ -465,15 +465,15 @@ func (s *SqliteGradeStore) linkTeachersToCourse(tx *sql.Tx, ctx context.Context,
 	return nil
 }
 
-// scanGradeModel carga todos los campos del row a GradeModel
-func scanGradeModel(row *sql.Row) (*model.GradeModel, error) {
-	gm := &model.GradeModel{}
+// scanCourseModel carga todos los campos del row a GradeModel
+func scanCourseModel(row *sql.Row) (*model.CourseModel, error) {
+	gm := &model.CourseModel{}
 
 	err := row.Scan(
 		&gm.ID,
 		&gm.Name,
 		&gm.Section,
-		&gm.GradeType,
+		&gm.CourseType,
 		&gm.Period.Year,
 		&gm.Period.Period,
 		&gm.Monday.Start,
@@ -526,8 +526,8 @@ func scanGradeModel(row *sql.Row) (*model.GradeModel, error) {
 	return gm, nil
 }
 
-// loadTeachersForGrade carga los nombres de docentes para un curso
-func (s *SqliteGradeStore) loadTeachersForGrade(ctx context.Context, courseID int64, gm *model.GradeModel) error {
+// loadTeachersForCourse carga los nombres de docentes para un curso
+func (s *SqliteCoursesStore) loadTeachersForCourse(ctx context.Context, courseID int64, gm *model.CourseModel) error {
 	rows, err := s.db.QueryContext(ctx, `
 		SELECT d.nombre
 		FROM docentes_curso dc

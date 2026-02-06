@@ -34,9 +34,10 @@ func main() {
 	services := service.NewServices(
 		sqlite.NewSqliteUserStore(conn.GetConnection()),
 		sqlite.NewSqliteSheetVersionStore(conn.GetConnection()),
-		sqlite.NewSqliteGradeStore(conn.GetConnection()),
+		sqlite.NewSqliteCourseStore(conn.GetConnection()),
 		sqlite.NewSqliteScheduleStore(conn.GetConnection()),
 		sqlite.NewSqliteCareerStore(conn.GetConnection()),
+		sqlite.NewSqlitePeriodStore(conn.GetConnection()),
 		config.Get().Email.APIKey, // what the fuck is this doing here
 	)
 
@@ -46,8 +47,8 @@ func main() {
 
 	r.Route("/", router.NewAuthRouter(services.UserService, services.EmailService))
 	r.Route("/dashboard", router.NewDashboardRouter(services.ScheduleService, services.SheetVersionService))
-	r.Route("/subject", router.NewSubjectRouter(services.SubjectService, services.CareerService))
-	r.Route("/schedule", router.NewSchedulesRouter(services.SubjectService, services.ScheduleService, services.CareerService, services.SheetVersionService))
+	r.Route("/courses", router.NewCourseRouter(services.CoursesService, services.CareerService))
+	r.Route("/schedule", router.NewSchedulesRouter(services.CoursesService, services.ScheduleService, services.CareerService, services.SheetVersionService))
 	r.Route("/user", router.NewUserRouter(services.UserService))
 	r.Route("/excel", router.NewExcelRouter(services.ExcelService))
 	r.Route("/misc", router.NewMiscRouter())

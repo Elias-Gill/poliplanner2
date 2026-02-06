@@ -17,16 +17,16 @@ import (
 
 type ExcelService struct {
 	sheetVersionStorer store.SheetVersionStorer
-	GradeStorer        store.GradeStorer
+	CoursesStorer      store.CourseStorer
 }
 
 func NewExcelService(
 	sheetVersionStorer store.SheetVersionStorer,
-	GradeStorer store.GradeStorer,
+	CoursesStorer store.CourseStorer,
 ) *ExcelService {
 	return &ExcelService{
 		sheetVersionStorer: sheetVersionStorer,
-		GradeStorer:        GradeStorer,
+		CoursesStorer:      CoursesStorer,
 	}
 }
 
@@ -116,9 +116,9 @@ func (s *ExcelService) ParseAndPersistExcelFile(
 
 		// insert every subject, one at a time
 		insertedCount := 0
-		upsertError := s.GradeStorer.Upsert(
+		upsertError := s.CoursesStorer.Upsert(
 			ctx,
-			func(persist func(model.GradeModel) error) error {
+			func(persist func(model.CourseModel) error) error {
 				// Agreggate and persist structs data
 				for _, sub := range result.Subjects {
 					// Resolve all empty metadata first
@@ -131,13 +131,13 @@ func (s *ExcelService) ParseAndPersistExcelFile(
 					}
 
 					// Create the final aggregated data model
-					var grade model.GradeModel
+					var grade model.CourseModel
 
 					grade.Name = sub.RawSubjectName
 
 					grade.Section = sub.Section
 
-					grade.GradeType = sub.GradeType
+					grade.CourseType = sub.CourseType
 
 					grade.Period = model.Period{
 						Year:   source.UploadDate.Year(),

@@ -67,7 +67,7 @@ func (s *ScheduleService) CreateSchedule(
 			Owner:       userID,
 			Name:        name,
 			Description: description,
-			GradeIDs:    gradeIDs,
+			CourseIDs:    gradeIDs,
 		})
 	if err != nil {
 		return -1, fmt.Errorf("error creating schedule: %w", err)

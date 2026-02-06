@@ -10,7 +10,7 @@ type Services struct {
 	ScheduleService     *ScheduleService
 	ExcelService        *ExcelService
 	EmailService        *EmailService
-	SubjectService      *GradeService
+	CoursesService      *CourseService
 	CareerService       *CareerService
 }
 
@@ -18,9 +18,10 @@ type Services struct {
 func NewServices(
 	userStore store.UserStorer,
 	sheetVersionStore store.SheetVersionStorer,
-	gradeStore store.GradeStorer,
+	gradeStore store.CourseStorer,
 	scheduleStore store.ScheduleStorer,
 	careerStore store.CareerStorer,
+	periodStore store.PeriodStore,
 	emailApiKey string,
 ) *Services {
 	return &Services{
@@ -30,6 +31,6 @@ func NewServices(
 		ScheduleService:     NewScheduleService(scheduleStore),
 		CareerService:       NewCareerService(careerStore),
 		EmailService:        NewEmailService(emailApiKey),
-		SubjectService:      NewSubjectService(gradeStore),
+		CoursesService:      NewCourseService(gradeStore, periodStore),
 	}
 }

@@ -15,12 +15,12 @@ type Schedule struct {
 
 type ScheduleDetails struct {
 	Schedule Schedule
-	Courses  []GradeModel
+	Courses  []CourseModel
 }
 
 type ScheduleBasicData struct {
 	Owner       int64
 	Name        string
 	Description string
-	GradeIDs    []int64
+	CourseIDs    []int64
 }
