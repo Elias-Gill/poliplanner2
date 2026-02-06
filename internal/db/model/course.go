@@ -84,7 +84,7 @@ type CourseModel struct {
 	Teachers   []Teacher
 	Curriculum Curriculum
 	Section    string
-	CourseType  int
+	CourseType int
 
 	// First partial
 	Partial1Date *time.Time
@@ -139,6 +139,7 @@ type CourseModel struct {
 // grades
 type CourseListItem struct {
 	ID          int64
+	CourseName  string
 	SubjectName string
 	Section     string
 	Semester    int

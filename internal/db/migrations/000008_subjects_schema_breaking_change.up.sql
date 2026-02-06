@@ -132,8 +132,6 @@ CREATE TABLE cursos (
 -- Evita duplicar el mismo curso (asignatura + seccion + carrerar) en un mismo periodo
     UNIQUE (malla, seccion, periodo)
 );
-
-
 CREATE INDEX idx_cursos_malla_periodo ON cursos(malla, periodo);
 
 -- Tabla con los docentes del curso, porque hay cursos con mas de un docente

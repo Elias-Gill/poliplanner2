@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
+	"github.com/elias-gill/poliplanner2/internal/logger"
 )
 
 type SqlitePeriodStore struct {
@@ -34,7 +35,8 @@ func (s *SqlitePeriodStore) FindByYearPeriod(ctx context.Context, year int, peri
 		&p.Period,
 	)
 	if err == sql.ErrNoRows {
-		return nil, nil // o un error custom si preferís "not found"
+		logger.Debug("No period found", "year", year, "period", period)
+		return nil, err
 	}
 	if err != nil {
 		return nil, err

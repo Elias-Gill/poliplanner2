@@ -19,6 +19,6 @@ CREATE TABLE horarios_detalle (
     curso_id INTEGER NOT NULL,
     PRIMARY KEY (horario_id, curso_id),
 
-    FOREIGN KEY (horario_id) REFERENCES horarios(horario_id) ON DELETE CASCADE,
+    FOREIGN KEY (horario_id) REFERENCES horarios(id) ON DELETE CASCADE,
     FOREIGN KEY (curso_id) REFERENCES cursos(id) ON DELETE CASCADE
 );

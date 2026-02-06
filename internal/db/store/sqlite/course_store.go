@@ -27,7 +27,7 @@ func NewSqliteCourseStore(db *sql.DB) *SqliteCoursesStore {
 func (s *SqliteCoursesStore) FindById(ctx context.Context, id int64) (*model.CourseModel, error) {
 	row := s.db.QueryRowContext(ctx, `
 		SELECT 
-			c.id, c.nombre, c.seccion, c.tipo
+			c.id, c.nombre, c.seccion, c.tipo,
 			p.year, p.periodo,
 			c.lunes_desde, c.lunes_hasta, c.lunes_aula,
 			c.martes_desde, c.martes_hasta, c.martes_aula,
@@ -75,7 +75,7 @@ func (s *SqliteCoursesStore) ListByCareerAndPeriod(ctx context.Context, careerID
 		SELECT 
 			c.id, c.nombre, c.seccion,
 			m.semestre,
-			a.nombre AS subject_name,
+			a.nombre,
 			GROUP_CONCAT(d.nombre) AS teachers
 		FROM cursos c
 		JOIN mallas m ON c.malla = m.id
@@ -99,9 +99,10 @@ func (s *SqliteCoursesStore) ListByCareerAndPeriod(ctx context.Context, careerID
 
 		err := rows.Scan(
 			&item.ID,
-			&item.SubjectName,
+			&item.CourseName,
 			&item.Section,
 			&item.Semester,
+			&item.SubjectName,
 			&teachersStr,
 		)
 		if err != nil {

@@ -21,7 +21,7 @@ func (s SqliteCareerStore) List(ctx context.Context) ([]*model.Career, error) {
 	rows, err := s.db.QueryContext(ctx, `
 		SELECT
 			id,
-			siglas,
+			siglas
 		FROM carreras
 		ORDER BY siglas
 	`)
