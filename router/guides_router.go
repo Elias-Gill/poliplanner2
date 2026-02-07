@@ -7,6 +7,8 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+// REFACTOR: deberia de ver la opcion de listar todas la guias directamente y parsearlas
+// directo. Y de alguna manera tambien generar un robots.txt automatico
 func NewGuidesRouter() func(r chi.Router) {
 	layouts := web.BaseLayout
 

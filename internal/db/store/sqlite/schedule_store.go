@@ -199,6 +199,8 @@ func (s *SqliteScheduleStore) GetByID(ctx context.Context, scheduleID int64) (*m
 		return nil, fmt.Errorf("iterar cursos: %w", err)
 	}
 
+	sched.OwnerID = ownerID
+
 	return &model.ScheduleDetails{
 		Schedule: sched,
 		Courses:  courses,

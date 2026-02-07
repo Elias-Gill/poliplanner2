@@ -10,6 +10,8 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+// REFACTOR: si es que me molesta puedo cambiar, pero de momento me parece aceptable esta
+// porqueria
 func NewUserRouter(userService *service.UserService) func(r chi.Router) {
 	layout := web.BaseLayout
 

@@ -15,7 +15,8 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-// FIX: asignaturas con nombre vacio en el excel a veces aparecen no se por que
+// FIX: que no se pueda crear nuevo horario cuando no se puede resolver el periodo, ver ese flujo
+// TODO: pedir el periodo actual en el endpoint de subida de planillas excel manual
 
 func main() {
 	config.MustLoad()
@@ -46,7 +47,7 @@ func main() {
 	r.Use(auth.SessionMiddleware)
 
 	r.Route("/", router.NewAuthRouter(services.UserService, services.EmailService))
-	r.Route("/dashboard", router.NewDashboardRouter(services.ScheduleService, services.SheetVersionService))
+	r.Route("/dashboard", router.NewDashboardRouter(services.ScheduleService))
 	r.Route("/courses", router.NewCourseRouter(services.CoursesService, services.CareerService))
 	r.Route("/schedule", router.NewSchedulesRouter(services.CoursesService, services.ScheduleService, services.CareerService, services.SheetVersionService))
 	r.Route("/user", router.NewUserRouter(services.UserService))

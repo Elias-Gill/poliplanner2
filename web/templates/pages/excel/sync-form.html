@@ -18,24 +18,71 @@
     <div id="syncResult"></div>
   </section>
   <hr />
-  <section>
-    <h2>Upload file manually</h2>
-    <form id="uploadForm" enctype="multipart/form-data">
-      <label for="uploadKey">Password:</label>
-      <input type="password" id="uploadKey" name="uploadKey" required />
-      <br />
-      <br />
-      <label for="downloadUrl">Download URL (optional):</label>
-      <input type="url" id="downloadUrl" name="downloadUrl" placeholder="https://example.com/file.xlsx" />
-      <br />
-      <br />
-      <label for="fileInput">Choose Excel file:</label>
-      <input type="file" id="fileInput" name="file" accept=".xls,.xlsx" required />
-      <br />
-      <br />
-      <button type="submit">Upload File</button>
-    </form>
-  </section>
+<section>
+  <h2>Upload file manually</h2>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <label for="uploadKey">Password:</label>
+    <input type="password" id="uploadKey" name="uploadKey" required />
+    <br /><br />
+
+    <label for="periodSelect">Periodo:</label>
+    <select id="periodSelect" name="period" required>
+      <option value="" disabled selected>Seleccione periodo</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+    </select>
+    <br /><br />
+
+    <label for="downloadUrl">Download URL (optional):</label>
+    <input type="url" id="downloadUrl" name="downloadUrl" placeholder="https://example.com/file.xlsx" />
+    <br /><br />
+
+    <label for="fileInput">Choose Excel file:</label>
+    <input type="file" id="fileInput" name="file" accept=".xls,.xlsx" required />
+    <br /><br />
+
+    <button type="submit">Upload File</button>
+  </form>
+  <div id="uploadResult"></div>
+</section>
+
+<script>
+  document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const key = document.getElementById('uploadKey').value;
+    const period = document.getElementById('periodSelect').value;
+    const fileInput = document.getElementById('fileInput');
+    const downloadUrl = document.getElementById('downloadUrl').value;
+    const resultEl = document.getElementById('uploadResult');
+
+    if (!period) {
+      resultEl.textContent = 'Por favor seleccioná un período válido.';
+      return;
+    }
+    if (fileInput.files.length === 0) {
+      resultEl.textContent = 'Por favor seleccioná un archivo.';
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    formData.append('downloadUrl', downloadUrl);
+    formData.append('period', period);
+
+    try {
+      const response = await fetch('/excel/sync', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + key },
+        body: formData
+      });
+
+      const text = await response.text();
+      resultEl.innerHTML = text;
+    } catch (err) {
+      resultEl.textContent = `Error: ${err.message}`;
+    }
+  });
+</script>
   <div id="uploadResult"></div>
   <script>
     // Handle sync form submission

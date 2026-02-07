@@ -26,7 +26,6 @@ func (s *ScheduleService) ListByUser(
 	ctx context.Context,
 	userID int64,
 ) ([]*model.Schedule, error) {
-
 	schedules, err := s.scheduleStorer.ListByUserID(ctx, userID)
 	if err != nil {
 		return nil, fmt.Errorf("error searching schedules: %w", err)
@@ -40,14 +39,13 @@ func (s *ScheduleService) FindDetails(
 	userID int64,
 	scheduleID int64,
 ) (*model.ScheduleDetails, error) {
-
 	details, err := s.scheduleStorer.GetByID(ctx, scheduleID)
-	if details.Schedule.OwnerID != userID {
-		return nil, fmt.Errorf("Operation not authorized")
-	}
-
 	if err != nil {
 		return nil, fmt.Errorf("error searching schedules: %w", err)
+	}
+
+	if details.Schedule.OwnerID != userID {
+		return nil, fmt.Errorf("operation not authorized")
 	}
 
 	return details, nil
@@ -60,14 +58,13 @@ func (s *ScheduleService) CreateSchedule(
 	description string,
 	gradeIDs []int64,
 ) (int64, error) {
-
 	scheId, err := s.scheduleStorer.Insert(
 		ctx,
 		&model.ScheduleBasicData{
 			Owner:       userID,
 			Name:        name,
 			Description: description,
-			CourseIDs:    gradeIDs,
+			CourseIDs:   gradeIDs,
 		})
 	if err != nil {
 		return -1, fmt.Errorf("error creating schedule: %w", err)

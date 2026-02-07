@@ -14,7 +14,7 @@ import (
 //
 // If this is the case, then probably the endpoint has not been added to the "protected
 // endpoints" array list in the middleware configuration.
-func extractUserID(r *http.Request) int64 {
+func extractUserIDFromCtx(r *http.Request) int64 {
 	switch id := r.Context().Value("userID").(type) {
 	case int64:
 		return id
@@ -39,11 +39,5 @@ func customRedirect(w http.ResponseWriter, r *http.Request, target string) {
 func execTemplateWithLayout(w http.ResponseWriter, tplPath string, layout *template.Template, data any) error {
 	w.Header().Set("Content-Type", "text/html")
 	tpl := template.Must(template.Must(layout.Clone()).ParseFiles(path.Join(config.Get().Paths.BaseDir, tplPath)))
-	return tpl.Execute(w, data)
-}
-
-func execTemplate(w http.ResponseWriter, tplPath string, data any) error {
-	w.Header().Set("Content-Type", "text/html")
-	tpl := template.Must(template.ParseFiles(path.Join(config.Get().Paths.BaseDir, tplPath)))
 	return tpl.Execute(w, data)
 }
