@@ -16,7 +16,6 @@ import (
 )
 
 // FIX: que no se pueda crear nuevo horario cuando no se puede resolver el periodo, ver ese flujo
-// TODO: pedir el periodo actual en el endpoint de subida de planillas excel manual
 
 func main() {
 	config.MustLoad()

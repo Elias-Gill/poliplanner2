@@ -3,15 +3,13 @@ package router
 import (
 	"context"
 	"fmt"
-	"io"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/config"
-	"github.com/elias-gill/poliplanner2/internal/scraper"
+	"github.com/elias-gill/poliplanner2/internal/excel"
 	"github.com/elias-gill/poliplanner2/internal/service"
 	"github.com/elias-gill/poliplanner2/web"
 	"github.com/go-chi/chi/v5"
@@ -49,6 +47,7 @@ func isAuthorized(authHeader, expected string) bool {
 	return strings.TrimSpace(authHeader) == "Bearer "+expected
 }
 
+// handleUpload creates a manual ExcelSource and passes it to the service
 func handleUpload(w http.ResponseWriter, r *http.Request, svc *service.ExcelService) {
 	r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 	if err := r.ParseMultipartForm(maxUploadSize); err != nil {
@@ -70,31 +69,20 @@ func handleUpload(w http.ResponseWriter, r *http.Request, svc *service.ExcelServ
 		return
 	}
 
-	tmpFile, err := os.CreateTemp("", "excel-upload-*.xlsx")
-	if err != nil {
-		http.Error(w, "Server error", http.StatusInternalServerError)
-		return
-	}
-	defer func() {
-		tmpFile.Close()
-		os.Remove(tmpFile.Name())
-	}()
-
-	if _, err = io.Copy(tmpFile, file); err != nil {
-		http.Error(w, "Failed to save file", http.StatusInternalServerError)
-		return
-	}
-
 	downloadURL := strings.TrimSpace(r.FormValue("downloadUrl"))
 	if downloadURL == "" {
 		downloadURL = "manual-upload"
 	}
 
-	// REFACTOR: porque carajos mi router tiene que manejar modelos del scrapper, que mierda
-	// mi codigo por dios
-	source := scraper.NewExcelDownloadSource(downloadURL, header.Filename, time.Now(), period)
+	// Create a minimal ExcelSource from the uploaded file
+	source := excel.NewExcelSourceFromReader(file, excel.ExcelSourceMetadata{
+		Name:   header.Filename,
+		URI:    downloadURL,
+		Period: period,
+		Date:   time.Now(),
+	})
 
-	if err := svc.ParseAndPersistExcelFile(r.Context(), tmpFile.Name(), source); err != nil {
+	if err := svc.ParseAndPersistNewExcel(r.Context(), source); err != nil {
 		http.Error(w, "Could not process the file: "+err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -114,10 +102,16 @@ func handleSync(w http.ResponseWriter, r *http.Request, svc *service.ExcelServic
 	respondHTML(w, http.StatusOK, "Sync completed successfully")
 }
 
+// REFACTOR: I DONT like this
 func respondHTML(w http.ResponseWriter, status int, msg string) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(status)
-	fmt.Fprintf(w, `<div class="alert %s"><span>%s</span><button onclick="this.parentElement.remove()">×</button></div>`, alertClass(status), msg)
+	fmt.Fprintf(
+		w,
+		`<div class="alert %s"><span>%s</span><button onclick="this.parentElement.remove()">×</button></div>`,
+		alertClass(status),
+		msg,
+	)
 }
 
 func alertClass(status int) string {

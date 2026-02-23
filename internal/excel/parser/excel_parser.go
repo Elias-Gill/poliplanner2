@@ -1,12 +1,13 @@
 package parser
 
 import (
+	"io"
 	"os"
 	"strings"
 	"sync"
 	"unicode"
 
-	"github.com/elias-gill/poliplanner2/internal/excelparser/exceptions"
+	"github.com/elias-gill/poliplanner2/internal/excel/parser/exceptions"
 	"github.com/elias-gill/poliplanner2/internal/utils"
 	"github.com/xuri/excelize/v2"
 )
@@ -37,7 +38,7 @@ type ParsingResult struct {
 }
 
 // NewExcelParser creates a new Excel parser instance
-func NewExcelParser(layoutsDir string, filePath string) (*ExcelParser, error) {
+func NewExcelParser(layoutsDir string, file io.ReadCloser) (*ExcelParser, error) {
 	// Loads the possible known layouts of the excel file
 	loader := NewJsonLayoutLoader(layoutsDir)
 	layouts, err := loader.LoadJsonLayouts()
@@ -55,7 +56,7 @@ func NewExcelParser(layoutsDir string, filePath string) (*ExcelParser, error) {
 	}
 
 	utils.MemUsageStatus("Excel parser loading", func() {
-		err = p.prepareParser(filePath)
+		err = p.prepareParser(file)
 	})
 
 	if err != nil {
@@ -112,13 +113,13 @@ func buildFieldSetters() map[string]func(*SubjectDTO, string) {
 	}
 }
 
-func (ep *ExcelParser) prepareParser(filePath string) error {
+func (ep *ExcelParser) prepareParser(file io.ReadCloser) error {
 	if ep.file != nil {
 		ep.Close()
 	}
 
 	// Use optimized options for better performance
-	f, err := excelize.OpenFile(filePath, excelize.Options{
+	f, err := excelize.OpenReader(file, excelize.Options{
 		// Limit memory usage by restricting unzip size
 		UnzipSizeLimit: 256 << 20, // 256MB limit
 		// Skip loading cell styles we don't need
@@ -126,9 +127,9 @@ func (ep *ExcelParser) prepareParser(filePath string) error {
 	})
 	if err != nil {
 		if os.IsNotExist(err) {
-			return exceptions.NewExcelParserConfigurationException("File not found: "+filePath, err)
+			return exceptions.NewExcelParserConfigurationException("Cannot read source", err)
 		}
-		return exceptions.NewExcelParserInputException("Error reading file: "+filePath, err)
+		return exceptions.NewExcelParserInputException("Error reading source: ", err)
 	}
 
 	ep.file = f

@@ -2,7 +2,6 @@
 ALTER TABLE sheet_version ADD COLUMN processed_sheets INTEGER DEFAULT 0;
 ALTER TABLE sheet_version ADD COLUMN succeeded_sheets INTEGER DEFAULT 0;
 ALTER TABLE sheet_version ADD COLUMN error_count INTEGER DEFAULT 0;
-ALTER TABLE sheet_version ADD COLUMN file_path TEXT;
 
 CREATE TABLE sheet_errors (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

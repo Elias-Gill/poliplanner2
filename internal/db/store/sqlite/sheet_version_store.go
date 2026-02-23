@@ -132,7 +132,6 @@ func (s SqliteSheetVersionStore) SetLastCheckedAt(
 func (s *SqliteSheetVersionStore) Save(
 	ctx context.Context,
 	fileName string,
-	localPath string,
 	url string,
 	processedSheets int,
 	succeededSheets int,
@@ -148,7 +147,6 @@ func (s *SqliteSheetVersionStore) Save(
 	err = tx.QueryRowContext(ctx, `
 		INSERT INTO sheet_version (
 			file_name,
-			file_path,
 			url,
 			parsed_at,
 			processed_sheets,
@@ -158,7 +156,6 @@ func (s *SqliteSheetVersionStore) Save(
 		RETURNING version_id
 	`,
 		fileName,
-		localPath,
 		url,
 		processedSheets,
 		succeededSheets,

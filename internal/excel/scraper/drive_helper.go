@@ -62,7 +62,7 @@ func NewGoogleDriveHelper(apiKey string) *GoogleDriveHelper {
 func (g *GoogleDriveHelper) ListSourcesInURL(
 	ctx context.Context,
 	url string,
-) ([]*ExcelDownloadSource, error) {
+) ([]*ExcelWebSource, error) {
 	log.Info("Listing Google Drive folder sources", "url", url)
 
 	folderID := g.extractFolderID(url)
@@ -75,7 +75,7 @@ func (g *GoogleDriveHelper) ListSourcesInURL(
 		return nil, err
 	}
 
-	sources := make([]*ExcelDownloadSource, 0, len(files))
+	sources := make([]*ExcelWebSource, 0, len(files))
 	for _, file := range files {
 		select {
 		case <-ctx.Done():
@@ -110,7 +110,7 @@ func (g *GoogleDriveHelper) ListSourcesInURL(
 func (g *GoogleDriveHelper) GetSourceFromSpreadsheetLink(
 	ctx context.Context,
 	url string,
-) (*ExcelDownloadSource, error) {
+) (*ExcelWebSource, error) {
 	log.Info("Processing Google Spreadsheet link", "url", url)
 
 	spreadsheetID := g.extractSpreadsheetID(url)

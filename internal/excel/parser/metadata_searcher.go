@@ -15,28 +15,28 @@ import (
 // ======== Data Structures =======
 // ================================
 
-type SubjectMetadata struct {
+type AcademicPlanData struct {
 	Name     string `json:"name"`
 	Semester int    `json:"semester"`
 	Credits  int    `json:"credits"`
 }
 
-type CareerSubjects struct {
-	CareerCode string            `json:"career_code"`
-	CareerName string            `json:"career_name"`
-	Subjects   []SubjectMetadata `json:"subjects"`
+type AcademicPlan struct {
+	CareerCode string             `json:"career_code"`
+	CareerName string             `json:"career_name"`
+	Subjects   []AcademicPlanData `json:"subjects"`
 }
 
-type SubjectMetadataLoader struct {
+type AcademicPlanLoader struct {
 	metadataDir string
 	careerCode  string
-	subjects    []SubjectMetadata
+	subjects    []AcademicPlanData
 
 	// Simple two-element cache for recent searches
 	cachedName1     string
-	cachedMetadata1 *SubjectMetadata
+	cachedMetadata1 *AcademicPlanData
 	cachedName2     string
-	cachedMetadata2 *SubjectMetadata
+	cachedMetadata2 *AcademicPlanData
 	CacheHits       int
 }
 
@@ -44,10 +44,10 @@ type SubjectMetadataLoader struct {
 // =        Public API            =
 // ================================
 
-func NewSubjectMetadataLoader(metadataDir string, careerCode string) (*SubjectMetadataLoader, error) {
+func NewAcademicPlanLoader(metadataDir string, careerCode string) (*AcademicPlanLoader, error) {
 	log.Debug("Creating subject metadata loader", "metadata_dir", metadataDir, "career_code", careerCode)
 
-	loader := &SubjectMetadataLoader{
+	loader := &AcademicPlanLoader{
 		metadataDir: metadataDir,
 		careerCode:  strings.ToLower(careerCode),
 	}
@@ -60,7 +60,7 @@ func NewSubjectMetadataLoader(metadataDir string, careerCode string) (*SubjectMe
 	return loader, nil
 }
 
-func (loader *SubjectMetadataLoader) Find(subjectName string) (*SubjectMetadata, error) {
+func (loader *AcademicPlanLoader) FindSubject(subjectName string) (*AcademicPlanData, error) {
 	if subjectName == "" {
 		return nil, fmt.Errorf("subject name cannot be empty")
 	}
@@ -89,13 +89,13 @@ func (loader *SubjectMetadataLoader) Find(subjectName string) (*SubjectMetadata,
 	}
 
 	normalized := loader.normalizeName(part)
-	found := loader.searchMetadata(normalized)
+	found := loader.searchAcadamicData(normalized)
 
 	// If not found with first part, try with second part
 	if found == nil && dashIndex > 0 {
 		secondPart := subjectName[dashIndex+1:]
 		normalized = loader.normalizeName(secondPart)
-		found = loader.searchMetadata(normalized)
+		found = loader.searchAcadamicData(normalized)
 	}
 
 	loader.updateCache(subjectName, found)
@@ -113,7 +113,7 @@ func (loader *SubjectMetadataLoader) Find(subjectName string) (*SubjectMetadata,
 }
 
 // Just intended for debug
-func (loader *SubjectMetadataLoader) GetSubjects() []SubjectMetadata {
+func (loader *AcademicPlanLoader) GetSubjectsList() []AcademicPlanData {
 	return loader.subjects
 }
 
@@ -121,7 +121,7 @@ func (loader *SubjectMetadataLoader) GetSubjects() []SubjectMetadata {
 // =        Private methods            =
 // =====================================
 
-func (loader *SubjectMetadataLoader) loadSubjects() error {
+func (loader *AcademicPlanLoader) loadSubjects() error {
 	log.Debug("Loading subjects from file", "career", loader.careerCode)
 
 	filePath := filepath.Join(loader.metadataDir, fmt.Sprintf("%s.json", loader.careerCode))
@@ -130,7 +130,7 @@ func (loader *SubjectMetadataLoader) loadSubjects() error {
 		return fmt.Errorf("error reading file %s: %v", filePath, err)
 	}
 
-	var careerSubjects CareerSubjects
+	var careerSubjects AcademicPlan
 	if err := json.Unmarshal(data, &careerSubjects); err != nil {
 		return fmt.Errorf("error parsing JSON file %s: %v", filePath, err)
 	}
@@ -145,7 +145,7 @@ func (loader *SubjectMetadataLoader) loadSubjects() error {
 	return nil
 }
 
-func (loader *SubjectMetadataLoader) searchMetadata(normalizedName string) *SubjectMetadata {
+func (loader *AcademicPlanLoader) searchAcadamicData(normalizedName string) *AcademicPlanData {
 	for _, subject := range loader.subjects {
 		if subject.Name == normalizedName {
 			return &subject
@@ -154,11 +154,11 @@ func (loader *SubjectMetadataLoader) searchMetadata(normalizedName string) *Subj
 	return nil
 }
 
-func (loader *SubjectMetadataLoader) matchesCache(current, cached string) bool {
+func (loader *AcademicPlanLoader) matchesCache(current, cached string) bool {
 	return strings.HasPrefix(cached, current)
 }
 
-func (loader *SubjectMetadataLoader) updateCache(name string, meta *SubjectMetadata) {
+func (loader *AcademicPlanLoader) updateCache(name string, meta *AcademicPlanData) {
 	log.Debug("Updating search cache", "name", name, "found", meta != nil)
 	loader.cachedName2 = loader.cachedName1
 	loader.cachedMetadata2 = loader.cachedMetadata1
@@ -166,7 +166,7 @@ func (loader *SubjectMetadataLoader) updateCache(name string, meta *SubjectMetad
 	loader.cachedMetadata1 = meta
 }
 
-func (loader *SubjectMetadataLoader) swapCacheEntries() {
+func (loader *AcademicPlanLoader) swapCacheEntries() {
 	log.Debug("Swapping cache entries")
 	tempName := loader.cachedName1
 	tempMeta := loader.cachedMetadata1
@@ -176,7 +176,7 @@ func (loader *SubjectMetadataLoader) swapCacheEntries() {
 	loader.cachedMetadata2 = tempMeta
 }
 
-func (loader *SubjectMetadataLoader) normalizeName(raw string) string {
+func (loader *AcademicPlanLoader) normalizeName(raw string) string {
 	if raw == "" {
 		return ""
 	}
@@ -215,7 +215,7 @@ func (loader *SubjectMetadataLoader) normalizeName(raw string) string {
 	return result
 }
 
-func (loader *SubjectMetadataLoader) removeAccent(c rune) rune {
+func (loader *AcademicPlanLoader) removeAccent(c rune) rune {
 	switch c {
 	case 'á':
 		return 'a'

@@ -143,7 +143,7 @@ type CourseListItem struct {
 	SubjectName string
 	Section     string
 	Semester    int
-	Teachers    string
+	Teachers    []Teacher
 }
 
 // ==========================================================

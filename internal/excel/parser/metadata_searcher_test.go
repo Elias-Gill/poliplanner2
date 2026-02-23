@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	metadataDir       = "../../testdata/excelparser/metadata"
+	metadataDir       = "../../../testdata/excelparser/metadata"
 	testCareerCode    = "example_metadata"
 	testSubjectName   = "Algebra Lineal"
 	normalizedSubject = "algebra lineal"
@@ -14,12 +14,12 @@ var (
 )
 
 func TestMetadataLoader_FindSubjectByName(t *testing.T) {
-	loader, err := NewSubjectMetadataLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
 
-	metadata, err := loader.Find(testSubjectName)
+	metadata, err := loader.FindSubject(testSubjectName)
 	if err != nil {
 		t.Fatal("Failed to find subject")
 	}
@@ -36,12 +36,12 @@ func TestMetadataLoader_FindSubjectByName(t *testing.T) {
 }
 
 func TestMetadataLoader_NameNormalization(t *testing.T) {
-	loader, err := NewSubjectMetadataLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
 
-	metadata, err := loader.Find("Álgebra Lineal (*)")
+	metadata, err := loader.FindSubject("Álgebra Lineal (*)")
 	if err != nil {
 		t.Fatal("Failed to find normalized subject")
 	}
@@ -52,12 +52,12 @@ func TestMetadataLoader_NameNormalization(t *testing.T) {
 }
 
 func TestMetadataLoader_DashedNames_FirstPart(t *testing.T) {
-	loader, err := NewSubjectMetadataLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
 
-	metadata, err := loader.Find("Cálculo I - Avanzado")
+	metadata, err := loader.FindSubject("Cálculo I - Avanzado")
 	if err != nil {
 		t.Fatal("Failed to find subject with dash (first part)")
 	}
@@ -68,12 +68,12 @@ func TestMetadataLoader_DashedNames_FirstPart(t *testing.T) {
 }
 
 func TestMetadataLoader_DashedNames_SecondPart(t *testing.T) {
-	loader, err := NewSubjectMetadataLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
 
-	metadata, err := loader.Find("Avanzado - Técnicas de Organización y metodos")
+	metadata, err := loader.FindSubject("Avanzado - Técnicas de Organización y metodos")
 	if err != nil {
 		t.Fatalf("Error finding subject: %v", err)
 	}
@@ -88,7 +88,7 @@ func TestMetadataLoader_DashedNames_SecondPart(t *testing.T) {
 }
 
 func TestMetadataLoader_CacheFunctionality(t *testing.T) {
-	loader, err := NewSubjectMetadataLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -96,13 +96,13 @@ func TestMetadataLoader_CacheFunctionality(t *testing.T) {
 	initialHits := loader.CacheHits
 
 	// First search
-	_, err = loader.Find(testSubjectName)
+	_, err = loader.FindSubject(testSubjectName)
 	if err != nil {
 		t.Fatal("Failed to find subject")
 	}
 
 	// Second search - should hit cache
-	_, err = loader.Find(testSubjectName)
+	_, err = loader.FindSubject(testSubjectName)
 	if err != nil {
 		t.Fatal("Failed to find cached subject")
 	}
@@ -114,24 +114,24 @@ func TestMetadataLoader_CacheFunctionality(t *testing.T) {
 }
 
 func TestMetadataLoader_NonExistentSubject(t *testing.T) {
-	loader, err := NewSubjectMetadataLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
 
-	metadata, err := loader.Find("Materia Inexistente Que No Existe")
+	metadata, err := loader.FindSubject("Materia Inexistente Que No Existe")
 	if err == nil || metadata != nil {
 		t.Error("Expected error for non-existent subject")
 	}
 }
 
 func TestMetadataLoader_CaseAndAccentNormalization(t *testing.T) {
-	loader, err := NewSubjectMetadataLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
 
-	metadata, err := loader.Find("BASE de Datós I")
+	metadata, err := loader.FindSubject("BASE de Datós I")
 	if err != nil {
 		t.Fatal("Failed to find subject with case and accent normalization")
 	}
@@ -142,24 +142,24 @@ func TestMetadataLoader_CaseAndAccentNormalization(t *testing.T) {
 }
 
 func TestMetadataLoader_EmptySubjectName(t *testing.T) {
-	loader, err := NewSubjectMetadataLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
 
-	metadata, err := loader.Find("")
+	metadata, err := loader.FindSubject("")
 	if err == nil || metadata != nil {
 		t.Error("Expected error for empty subject name")
 	}
 }
 
 func TestMetadataLoader_GetAllSubjects(t *testing.T) {
-	loader, err := NewSubjectMetadataLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
 
-	subjects := loader.GetSubjects()
+	subjects := loader.GetSubjectsList()
 	if len(subjects) == 0 {
 		t.Error("Expected subjects for career, got 0")
 	}
@@ -173,12 +173,12 @@ func TestMetadataLoader_GetAllSubjects(t *testing.T) {
 	}
 }
 
-func (loader *SubjectMetadataLoader) normalizeNameForTest(input string) string {
+func (loader *AcademicPlanLoader) normalizeNameForTest(input string) string {
 	return loader.normalizeName(input)
 }
 
 func TestNormalizeName(t *testing.T) {
-	loader, err := NewSubjectMetadataLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -206,7 +206,7 @@ func TestNormalizeName(t *testing.T) {
 
 // Verify constructor error when file does not exists
 func TestMetadataLoader_InvalidCareerCode(t *testing.T) {
-	loader, err := NewSubjectMetadataLoader(metadataDir, "non_existent_career")
+	loader, err := NewAcademicPlanLoader(metadataDir, "non_existent_career")
 	if err == nil {
 		t.Error("Expected error for invalid career code")
 	}

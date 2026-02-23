@@ -1,13 +1,20 @@
 package parser
 
 import (
+	"os"
 	"testing"
 	"time"
 )
 
 func TestParseSheet(t *testing.T) {
-	testExcelPath := "../../testdata/excelparser/testExcel.xlsx"
-	parser, err := NewExcelParser("./layouts", testExcelPath)
+	testExcelPath := "../../../testdata/excelparser/testExcel.xlsx"
+	file, err := os.Open(testExcelPath)
+	if err != nil {
+		t.Fatal("Test file is not present")
+		return
+	}
+
+	parser, err := NewExcelParser("./layouts", file)
 	if err != nil {
 		t.Fatalf("Failed to initialize parser: %v", err)
 	}

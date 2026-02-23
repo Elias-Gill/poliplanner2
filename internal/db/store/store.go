@@ -31,7 +31,6 @@ type SheetVersionStorer interface {
 	Save(
 		ctx context.Context,
 		fileName string,
-		localPath string,
 		url string,
 		processedSheets int,
 		succeededSheets int,
