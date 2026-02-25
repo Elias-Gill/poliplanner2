@@ -30,6 +30,7 @@ var timeBufferPool = sync.Pool{
 }
 
 type TeacherDTO struct {
+	Title     string
 	FirstName string
 	LastName  string
 	Email     string
@@ -44,16 +45,25 @@ type SubjectDTO struct {
 	// General info
 	Department string
 	Semester   int
+	Level      int
 	Section    string
+	// Get career from subject because Villarrica and Oviedo
+	// had different careers in the same sheet.
+	Career string
 
 	// This is used as the name of the table "cursos", which is the final agreggate
 	// with all schedule information of a subject in a specific time period.
 	RawSubjectName string
+
 	// this contains the plaussible real name of the subject. Example:
 	// "Electiva I - Machine Learning" contains: "electiva I"
 	// "Física 2" normalizes to: "fisica II"
 	TentativeRealSubjectName string
-	CourseType               int
+
+	// Course type can be:
+	// - Normal course
+	// - Final exam only
+	CourseType int
 
 	// Teachers info
 	Teachers []TeacherDTO
@@ -116,6 +126,10 @@ func (s *SubjectDTO) SetDepartment(val string) {
 	s.Department = strings.TrimSpace(val)
 }
 
+func (s *SubjectDTO) SetCareer(val string) {
+	s.Career = strings.TrimSpace(val)
+}
+
 func (s *SubjectDTO) SetSubjectName(val string) {
 	s.RawSubjectName = strings.TrimSpace(val)
 	s.TentativeRealSubjectName = normalizeSubjectName(val)
@@ -133,6 +147,10 @@ func (s *SubjectDTO) SetSubjectName(val string) {
 
 func (s *SubjectDTO) SetSemester(val string) {
 	s.Semester = convertStringToNumber(val)
+}
+
+func (s *SubjectDTO) SetLevel(val string) {
+	s.Level = convertStringToNumber(val)
 }
 
 func (s *SubjectDTO) SetSection(val string) {
@@ -154,6 +172,15 @@ func (s *SubjectDTO) SetTeachersLastNames(secondNames string) {
 
 	for i, v := range list {
 		s.Teachers[i].LastName = strings.TrimSpace(v)
+	}
+}
+
+func (s *SubjectDTO) SetTeachersTitles(titles string) {
+	list := strings.Split(titles, "\n")
+	s.ensureTeachersLen(max(len(s.Teachers), len(list)))
+
+	for i, v := range list {
+		s.Teachers[i].Title = strings.TrimSpace(v)
 	}
 }
 

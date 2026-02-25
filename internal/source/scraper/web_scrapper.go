@@ -14,9 +14,9 @@ import (
 
 	"github.com/gocolly/colly/v2"
 
-	"github.com/elias-gill/poliplanner2/internal/excel"
 	"github.com/elias-gill/poliplanner2/internal/logger"
 	log "github.com/elias-gill/poliplanner2/internal/logger"
+	"github.com/elias-gill/poliplanner2/internal/source"
 )
 
 // ==================================
@@ -52,8 +52,8 @@ func (s *ExcelWebSource) GetContent(ctx context.Context) (io.ReadCloser, error) 
 	return resp.Body, nil
 }
 
-func (s *ExcelWebSource) GetMetadata() excel.ExcelSourceMetadata {
-	return excel.ExcelSourceMetadata{
+func (s *ExcelWebSource) GetMetadata() source.ExcelSourceMetadata {
+	return source.ExcelSourceMetadata{
 		Name:   s.Name,
 		URI:    s.URL,
 		Period: s.Period,

@@ -1,11 +1,12 @@
-package parser
+package metadata
 
 import (
+	"path/filepath"
 	"testing"
 )
 
 var (
-	metadataDir       = "../../../testdata/excelparser/metadata"
+	metadataDir       = filepath.Join("..", "..", "..", "test_data", "excel")
 	testCareerCode    = "example_metadata"
 	testSubjectName   = "Algebra Lineal"
 	normalizedSubject = "algebra lineal"

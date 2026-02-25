@@ -48,7 +48,9 @@ CREATE TABLE mallas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     carrera INTEGER NOT NULL REFERENCES carreras(id) ON DELETE CASCADE ON UPDATE CASCADE,
     asignatura INTEGER NOT NULL REFERENCES asignaturas(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    semestre INTEGER NOT NULL,
+    semestre INTEGER NOT NULL DEFAULT 0,
+    nivel INTEGER NOT NULL DEFAULT 0,
+
     -- Asegura que no se repitan asignaturas en la misma carrera
     UNIQUE (carrera, asignatura)
 );

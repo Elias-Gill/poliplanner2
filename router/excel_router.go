@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/config"
-	"github.com/elias-gill/poliplanner2/internal/excel"
 	"github.com/elias-gill/poliplanner2/internal/service"
+	"github.com/elias-gill/poliplanner2/internal/source"
 	"github.com/elias-gill/poliplanner2/web"
 	"github.com/go-chi/chi/v5"
 )
@@ -75,7 +75,7 @@ func handleUpload(w http.ResponseWriter, r *http.Request, svc *service.ExcelServ
 	}
 
 	// Create a minimal ExcelSource from the uploaded file
-	source := excel.NewExcelSourceFromReader(file, excel.ExcelSourceMetadata{
+	source := source.NewExcelSourceFromReader(file, source.ExcelSourceMetadata{
 		Name:   header.Filename,
 		URI:    downloadURL,
 		Period: period,

@@ -100,6 +100,6 @@ func (s *CourseService) ListActiveByCareer(
 	return semesters, nil
 }
 
-func (s *CourseService) GetCourseDetail(ctx context.Context, id int64) (*model.CourseModel, error) {
+func (s *CourseService) GetCourseDetail(ctx context.Context, id int64) (*model.CourseAggregate, error) {
 	return s.courseStore.FindById(ctx, id)
 }

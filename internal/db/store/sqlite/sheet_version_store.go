@@ -132,7 +132,7 @@ func (s SqliteSheetVersionStore) SetLastCheckedAt(
 func (s *SqliteSheetVersionStore) Save(
 	ctx context.Context,
 	fileName string,
-	url string,
+	URI string,
 	processedSheets int,
 	succeededSheets int,
 	errors []error,
@@ -152,11 +152,11 @@ func (s *SqliteSheetVersionStore) Save(
 			processed_sheets,
 			succeeded_sheets,
 			error_count
-		) VALUES (?, ?, ?, datetime('now'), ?, ?, ?)
+		) VALUES (?, ?, ?, datetime('now'), ?, ?)
 		RETURNING version_id
 	`,
 		fileName,
-		url,
+		URI,
 		processedSheets,
 		succeededSheets,
 		len(errors),

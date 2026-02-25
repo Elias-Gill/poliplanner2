@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"strings"
 
 	"github.com/elias-gill/poliplanner2/internal/db/model"
 	"github.com/mattn/go-sqlite3"
@@ -24,7 +23,7 @@ func NewSqliteCourseStore(db *sql.DB) *SqliteCoursesStore {
 // =                     PUBLIC API                         =
 // ==========================================================
 
-func (s *SqliteCoursesStore) FindById(ctx context.Context, id int64) (*model.CourseModel, error) {
+func (s *SqliteCoursesStore) FindById(ctx context.Context, id int64) (*model.CourseAggregate, error) {
 	row := s.db.QueryRowContext(ctx, `
 		SELECT 
 			c.id, c.nombre, c.seccion, c.tipo,
@@ -70,13 +69,22 @@ func (s *SqliteCoursesStore) FindById(ctx context.Context, id int64) (*model.Cou
 	return gm, nil
 }
 
-func (s *SqliteCoursesStore) ListByCareerAndPeriod(ctx context.Context, careerID int64, periodID int64) ([]*model.CourseListItem, error) {
+func (s *SqliteCoursesStore) ListByCareerAndPeriod(
+	ctx context.Context,
+	careerID int64,
+	periodID int64,
+) ([]*model.CourseListItem, error) {
+
 	rows, err := s.db.QueryContext(ctx, `
 		SELECT 
-			c.id, c.nombre, c.seccion,
+			c.id,
+			c.nombre,
+			c.seccion,
 			m.semestre,
 			a.nombre,
-			GROUP_CONCAT(d.nombre) AS teachers
+			d.id,
+			d.nombre,
+			d.correo
 		FROM cursos c
 		JOIN mallas m ON c.malla = m.id
 		JOIN asignaturas a ON m.asignatura = a.id
@@ -84,7 +92,6 @@ func (s *SqliteCoursesStore) ListByCareerAndPeriod(ctx context.Context, careerID
 		LEFT JOIN docentes_curso dc ON c.id = dc.id_curso
 		LEFT JOIN docentes d ON dc.id_docente = d.id
 		WHERE ca.id = ? AND c.periodo = ?
-		GROUP BY c.id
 		ORDER BY m.semestre, c.seccion
 	`, careerID, periodID)
 	if err != nil {
@@ -92,36 +99,73 @@ func (s *SqliteCoursesStore) ListByCareerAndPeriod(ctx context.Context, careerID
 	}
 	defer rows.Close()
 
-	var items []*model.CourseListItem
+	itemsMap := make(map[int64]*model.CourseListItem)
+
 	for rows.Next() {
-		item := &model.CourseListItem{}
-		var teachersStr string
+		var (
+			courseID    int64
+			courseName  string
+			section     string
+			semester    int
+			subjectName string
+
+			teacherID    *int64
+			teacherName  *string
+			teacherEmail *string
+		)
 
 		err := rows.Scan(
-			&item.ID,
-			&item.CourseName,
-			&item.Section,
-			&item.Semester,
-			&item.SubjectName,
-			&teachersStr,
+			&courseID,
+			&courseName,
+			&section,
+			&semester,
+			&subjectName,
+			&teacherID,
+			&teacherName,
+			&teacherEmail,
 		)
 		if err != nil {
 			return nil, err
 		}
 
-		if teachersStr != "" {
-			item.Teachers = strings.Split(teachersStr, ",")[0]
+		item, exists := itemsMap[courseID]
+		if !exists {
+			item = &model.CourseListItem{
+				ID:          courseID,
+				CourseName:  courseName,
+				SubjectName: subjectName,
+				Section:     section,
+				Semester:    semester,
+				Teachers:    []model.Teacher{},
+			}
+			itemsMap[courseID] = item
 		}
 
-		items = append(items, item)
+		// If there is a teacher row (LEFT JOIN may produce NULL)
+		if teacherID != nil {
+			item.Teachers = append(item.Teachers, model.Teacher{
+				Name:  *teacherName,
+				Email: *teacherEmail,
+			})
+		}
 	}
 
-	return items, rows.Err()
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	// Convert map to slice preserving order
+	items := make([]*model.CourseListItem, 0, len(itemsMap))
+	for _, v := range itemsMap {
+		items = append(items, v)
+	}
+
+	return items, nil
 }
 
 func (s *SqliteCoursesStore) Upsert(
 	ctx context.Context,
-	insertFn func(persist func(model.CourseModel) error) error,
+	insertFn func(persist func(model.CourseAggregate) error) error,
 ) error {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -129,7 +173,7 @@ func (s *SqliteCoursesStore) Upsert(
 	}
 	defer tx.Rollback()
 
-	persist := func(grade model.CourseModel) error {
+	persist := func(grade model.CourseAggregate) error {
 		periodID, err := s.upsertPeriod(tx, ctx, grade.Period)
 		if err != nil {
 			return err
@@ -289,11 +333,11 @@ func (s *SqliteCoursesStore) upsertCurriculum(tx *sql.Tx, ctx context.Context, c
 
 	var mallaID int64
 	err = tx.QueryRowContext(ctx, `
-        INSERT INTO mallas (carrera, asignatura, semestre)
-        VALUES (?, ?, ?)
-        ON CONFLICT(carrera, asignatura) DO UPDATE SET semestre = excluded.semestre
+        INSERT INTO mallas (carrera, asignatura, semestre, nivel)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(carrera, asignatura) DO UPDATE SET semestre = excluded.semestre, nivel = excluded.nivel
         RETURNING id
-    `, careerID, subjectID, c.Semester).Scan(&mallaID)
+    `, careerID, subjectID, c.Semester, c.Level).Scan(&mallaID)
 	if err != nil {
 		return 0, fmt.Errorf("upsert malla: %w", err)
 	}
@@ -344,7 +388,7 @@ func (s *SqliteCoursesStore) upsertCareer(tx *sql.Tx, ctx context.Context, sigla
 }
 
 // upsertCourse saves the course itself and returns its ID
-func (s *SqliteCoursesStore) upsertCourse(tx *sql.Tx, ctx context.Context, grade model.CourseModel, mallaID, periodID int64) (int64, error) {
+func (s *SqliteCoursesStore) upsertCourse(tx *sql.Tx, ctx context.Context, grade model.CourseAggregate, mallaID, periodID int64) (int64, error) {
 	var id int64
 	err := tx.QueryRowContext(ctx, `
         INSERT INTO cursos (
@@ -467,8 +511,8 @@ func (s *SqliteCoursesStore) linkTeachersToCourse(tx *sql.Tx, ctx context.Contex
 }
 
 // scanCourseModel carga todos los campos del row a GradeModel
-func scanCourseModel(row *sql.Row) (*model.CourseModel, error) {
-	gm := &model.CourseModel{}
+func scanCourseModel(row *sql.Row) (*model.CourseAggregate, error) {
+	gm := &model.CourseAggregate{}
 
 	err := row.Scan(
 		&gm.ID,
@@ -528,7 +572,7 @@ func scanCourseModel(row *sql.Row) (*model.CourseModel, error) {
 }
 
 // loadTeachersForCourse carga los nombres de docentes para un curso
-func (s *SqliteCoursesStore) loadTeachersForCourse(ctx context.Context, courseID int64, gm *model.CourseModel) error {
+func (s *SqliteCoursesStore) loadTeachersForCourse(ctx context.Context, courseID int64, gm *model.CourseAggregate) error {
 	rows, err := s.db.QueryContext(ctx, `
 		SELECT d.nombre
 		FROM docentes_curso dc

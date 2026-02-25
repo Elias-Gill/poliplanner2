@@ -1,22 +1,9 @@
-package excel
+package source
 
 import (
 	"context"
 	"io"
-	"time"
 )
-
-type ExcelSource interface {
-	GetContent(ctx context.Context) (io.ReadCloser, error)
-	GetMetadata() ExcelSourceMetadata
-}
-
-type ExcelSourceMetadata struct {
-	Name   string
-	URI    string
-	Period int
-	Date   time.Time
-}
 
 // ReaderExcelSource is a basic implementation of the ExcelSource interface.
 // It is intended for manually provided Excel files (e.g., uploaded via a web form)

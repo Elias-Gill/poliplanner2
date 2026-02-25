@@ -24,14 +24,15 @@ var ErrNoSheetVersion = errors.New("no sheet version found")
 type SheetVersionStorer interface {
 	GetNewest(ctx context.Context) (*model.SheetVersion, error)
 	GetLastCheckedAt(ctx context.Context) (*time.Time, error)
-	// BUG: depends if the server is correctly set
+
+	// BUG: date depends if the server is correctly set
 	SetLastCheckedAt(ctx context.Context, t time.Time) error
 
-	// TODO: refactor to use a struct
+	// FUTURE: refactor to use a struct
 	Save(
 		ctx context.Context,
 		fileName string,
-		url string,
+		URI string,
 		processedSheets int,
 		succeededSheets int,
 		errors []error,
@@ -47,8 +48,8 @@ type CourseStorer interface {
 	// use this function to persist each individual CourseModel inside the transaction.
 	//
 	// All inserts run atomically (everything commits or the whole operation rolls back).
-	Upsert(ctx context.Context, insertFn func(persist func(model.CourseModel) error) error) error
-	FindById(ctx context.Context, id int64) (*model.CourseModel, error)
+	Upsert(ctx context.Context, insertFn func(persist func(model.CourseAggregate) error) error) error
+	FindById(ctx context.Context, id int64) (*model.CourseAggregate, error)
 	ListByCareerAndPeriod(ctx context.Context, careerID int64, periodID int64) ([]*model.CourseListItem, error)
 }
 

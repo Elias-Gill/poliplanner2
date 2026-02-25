@@ -61,6 +61,7 @@ type Subject struct {
 
 type Curriculum struct {
 	Semester int
+	Level    int
 	Subject  Subject
 	// acronym of the career, should be all capitalized
 	Career string
@@ -77,7 +78,7 @@ type Period struct {
 	Period int
 }
 
-type CourseModel struct {
+type CourseAggregate struct {
 	ID         int64
 	Name       string
 	Period     Period

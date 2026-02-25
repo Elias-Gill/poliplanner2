@@ -15,7 +15,7 @@ type Schedule struct {
 
 type ScheduleDetails struct {
 	Schedule Schedule
-	Courses  []CourseModel
+	Courses  []CourseAggregate
 }
 
 type ScheduleBasicData struct {

@@ -22,11 +22,11 @@ COPY --from=builder /run-app /usr/local/bin/run-app
 COPY --from=builder /usr/src/app/internal/db/migrations \
     /var/poliplanner/internal/db/migrations
 
-COPY --from=builder /usr/src/app/internal/excelparser/layouts \
-    /var/poliplanner/internal/excelparser/layouts
+COPY --from=builder /usr/src/app/internal/excel/parser/layouts \
+    /var/poliplanner/internal/excel/parser/layouts
 
-COPY --from=builder /usr/src/app/internal/excelparser/metadata \
-    /var/poliplanner/internal/excelparser/metadata
+COPY --from=builder /usr/src/app/internal/excel/parser/metadata \
+    /var/poliplanner/internal/excel/parser/metadata
 
 COPY --from=builder /usr/src/app/web \
     /var/poliplanner/web

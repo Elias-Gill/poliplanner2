@@ -14,9 +14,9 @@ const (
 )
 
 var (
-	testdataPath      = filepath.Join("..", "..", "..", "testdata", "webscrapper")
-	htmlNoDrivePath   = filepath.Join(testdataPath, "page_without_drive_folders.html")
-	htmlWithDrivePath = filepath.Join(testdataPath, "page_with_drive_folders.html")
+	testPath          = filepath.Join("..", "..", "test_data", "excel")
+	htmlNoDrivePath   = filepath.Join(testPath, "page_without_drive_folders.html")
+	htmlWithDrivePath = filepath.Join(testPath, "page_with_drive_folders.html")
 	expectedDirectURL = directDownloadURL
 	expectedDriveURL  = driveDownloadURL
 )

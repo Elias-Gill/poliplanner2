@@ -10,9 +10,10 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/db/model"
 	"github.com/elias-gill/poliplanner2/internal/db/store"
 	"github.com/elias-gill/poliplanner2/internal/excel"
-	parser "github.com/elias-gill/poliplanner2/internal/excel/parser"
-	"github.com/elias-gill/poliplanner2/internal/excel/scraper"
+	"github.com/elias-gill/poliplanner2/internal/excel/metadata"
 	"github.com/elias-gill/poliplanner2/internal/logger"
+	"github.com/elias-gill/poliplanner2/internal/source"
+	"github.com/elias-gill/poliplanner2/internal/source/scraper"
 )
 
 type ExcelService struct {
@@ -53,9 +54,9 @@ func (s *ExcelService) SearchOnStartup(ctx context.Context) {
 // SearchNewestExcel checks for the newest Excel version and triggers parsing/persisting if needed
 func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 	key := config.Get().Excel.GoogleAPIKey
-	scrapper := scraper.NewWebScraper(scraper.NewGoogleDriveHelper(key))
+	scraper := scraper.NewWebScraper(scraper.NewGoogleDriveHelper(key))
 
-	newestSource, err := scrapper.FindLatestDownloadSource(ctx)
+	newestSource, err := scraper.FindLatestDownloadSource(ctx)
 	if err != nil {
 		logger.Info("Scraper failed", "error", err)
 		return fmt.Errorf("error searching for Excel versions: %w", err)
@@ -83,7 +84,7 @@ func (s *ExcelService) SearchNewestExcel(ctx context.Context) error {
 }
 
 // ParseAndPersistNewExcel handles reading, parsing and persisting the Excel source
-func (s *ExcelService) ParseAndPersistNewExcel(ctx context.Context, source excel.ExcelSource) error {
+func (s *ExcelService) ParseAndPersistNewExcel(ctx context.Context, source source.ExcelSource) error {
 	// Get content reader from the Excel source
 	content, err := source.GetContent(ctx)
 	if err != nil {
@@ -113,9 +114,9 @@ func (s *ExcelService) ParseAndPersistNewExcel(ctx context.Context, source excel
 		}
 
 		// Load subject metadata for known careers
-		subjectMeta, err := parser.NewAcademicPlanLoader(config.Get().Paths.SubjectsMetadataDir, sheetResult.Career)
+		subjectMeta, err := metadata.NewAcademicPlanLoader(config.Get().Paths.SubjectsMetadataDir, sheetResult.Name)
 		if err != nil {
-			logger.Info("Cannot load academic plan", "career", sheetResult.Career, "error", err)
+			logger.Info("Cannot load academic plan", "career", sheetResult.Name, "error", err)
 		}
 
 		insertedCount, err := s.persistSheetSubjects(ctx, sheetResult, subjectMeta, excelMeta)
@@ -124,7 +125,7 @@ func (s *ExcelService) ParseAndPersistNewExcel(ctx context.Context, source excel
 			continue
 		}
 
-		logger.Info("Processed sheet", "career", sheetResult.Career, "inserted_subjects", insertedCount)
+		logger.Info("Processed sheet", "career", sheetResult.Name, "inserted_subjects", insertedCount)
 		succeded++
 	}
 
@@ -145,19 +146,23 @@ func (s *ExcelService) ParseAndPersistNewExcel(ctx context.Context, source excel
 // persistSheetSubjects inserts all subjects of a sheet and returns number of inserted subjects
 func (s *ExcelService) persistSheetSubjects(
 	ctx context.Context,
-	sheet *parser.ParsingResult,
-	planLoader *parser.AcademicPlanLoader,
-	excelMeta excel.ExcelSourceMetadata,
+	sheet *parser.ParsedSheet,
+	planLoader *metadata.AcademicPlanLoader,
+	excelMeta source.ExcelSourceMetadata,
 ) (int, error) {
 	inserted := 0
-	err := s.CoursesStorer.Upsert(ctx, func(persist func(model.CourseModel) error) error {
+	err := s.CoursesStorer.Upsert(ctx, func(persist func(model.CourseAggregate) error) error {
 		for _, sub := range sheet.Subjects {
 			if sub.RawSubjectName == "" || sub.TentativeRealSubjectName == "" {
 				// Ignore if any of them are empty
 				continue
 			}
 
-			// Fill semester from academic plan if possible
+			// Fill missing subject data if possible
+			if sub.Career == "" {
+				sub.Career = sheet.Name
+			}
+
 			// FUTURE: raw subject name can be replaced for tentative real subject name
 			if sub.Semester == 0 && planLoader != nil {
 				if m, err := planLoader.FindSubject(sub.RawSubjectName); err == nil {
@@ -166,7 +171,7 @@ func (s *ExcelService) persistSheetSubjects(
 			}
 
 			// Build our final aggregate from SubjectDTO
-			course := buildCourseModel(sub, sheet, excelMeta)
+			course := buildCourseAggregate(sub, excelMeta)
 			if err := persist(course); err != nil {
 				return err
 			}
@@ -181,13 +186,12 @@ func (s *ExcelService) persistSheetSubjects(
 // =           Helpers            =
 // ================================
 
-// buildCourseModel constructs the final CourseModel to persist in DB
-func buildCourseModel(
+// buildCourseAggregate constructs the final CourseModel to persist in DB
+func buildCourseAggregate(
 	sub parser.SubjectDTO,
-	sheet *parser.ParsingResult,
-	excelMeta excel.ExcelSourceMetadata,
-) model.CourseModel {
-	course := model.CourseModel{
+	excelMeta source.ExcelSourceMetadata,
+) model.CourseAggregate {
+	course := model.CourseAggregate{
 		Name:       sub.RawSubjectName,
 		Section:    sub.Section,
 		CourseType: sub.CourseType,
@@ -196,8 +200,9 @@ func buildCourseModel(
 			Period: excelMeta.Period,
 		},
 		Curriculum: model.Curriculum{
-			Career:   sheet.Career,
+			Career:   sub.Career,
 			Semester: sub.Semester,
+			Level:    sub.Level,
 			Subject: model.Subject{
 				Name:       sub.TentativeRealSubjectName,
 				Department: sub.Department,
@@ -240,7 +245,7 @@ func buildCourseModel(
 
 	for i, t := range sub.Teachers {
 		teacher := model.Teacher{
-			Name:  strings.TrimSpace(t.FirstName + " " + t.LastName),
+			Name:  strings.TrimSpace(t.Title + " " + t.FirstName + " " + t.LastName),
 			Email: t.Email,
 		}
 		if err := teacher.GenerateSearchKey(t.FirstName, t.LastName); err == nil {

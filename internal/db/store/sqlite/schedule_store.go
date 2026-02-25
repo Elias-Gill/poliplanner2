@@ -171,9 +171,9 @@ func (s *SqliteScheduleStore) GetByID(ctx context.Context, scheduleID int64) (*m
 	}
 	defer rows.Close()
 
-	var courses []model.CourseModel
+	var courses []model.CourseAggregate
 	for rows.Next() {
-		var gm model.CourseModel
+		var gm model.CourseAggregate
 		err := rows.Scan(
 			&gm.Name,
 			&gm.Section,
