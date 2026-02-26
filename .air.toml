@@ -1,0 +1,14 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+cmd = "go build -o ./tmp/main ."
+bin = "./tmp/main"
+include_ext = ["go", "tmpl", "html"]
+exclude_dir = ["tmp", "static"]
+
+[log]
+main_only = true
+
+[misc]
+clean_on_exit = true
