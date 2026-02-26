@@ -71,7 +71,7 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 				Path:     "/",
 				HttpOnly: true,
 				Secure:   config.Get().Security.SecureHTTP,
-				SameSite: http.SameSiteLaxMode,
+				SameSite: http.SameSiteNoneMode,
 				Expires:  time.Now().Add(30 * time.Minute),
 			})
 

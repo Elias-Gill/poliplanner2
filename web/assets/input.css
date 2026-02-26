@@ -1,0 +1,10 @@
+@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Fuerza escaneo de tus templates Go */
+@source "./web/templates/**/*.html";
+@source "./web/templates/**/*.tmpl";
+@source "./web/templates/**/*.gohtml";
+@source "./web/templates/**/*.gotmpl";

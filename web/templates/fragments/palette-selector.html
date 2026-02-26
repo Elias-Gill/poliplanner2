@@ -1,9 +1,19 @@
 {{define "fragments/palette-selector"}}
-<div id="palette-selector" aria-label="Selector de temas">
-    <button type="button" data-theme="default-theme">Default</button>
-    <button type="button" data-theme="theme-warm">Warm</button>
-    <button type="button" data-theme="theme-forest">Forest</button>
-    <button type="button" data-theme="theme-lavender">Lavender</button>
-    <button type="button" data-theme="theme-pink">Pink</button>
+<div id="palette-selector" class="fixed bottom-20 right-6 z-40 flex flex-col gap-2 bg-white rounded-lg shadow-lg p-3 border border-gray-200 hidden">
+    <button type="button" data-theme="default-theme" class="w-full px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md">
+        Default
+    </button>
+    <button type="button" data-theme="theme-warm" class="w-full px-4 py-2 text-sm font-medium text-amber-800 hover:bg-amber-50 rounded-md">
+        Warm
+    </button>
+    <button type="button" data-theme="theme-forest" class="w-full px-4 py-2 text-sm font-medium text-emerald-800 hover:bg-emerald-50 rounded-md">
+        Forest
+    </button>
+    <button type="button" data-theme="theme-lavender" class="w-full px-4 py-2 text-sm font-medium text-purple-800 hover:bg-purple-50 rounded-md">
+        Lavender
+    </button>
+    <button type="button" data-theme="theme-pink" class="w-full px-4 py-2 text-sm font-medium text-pink-800 hover:bg-pink-50 rounded-md">
+        Pink
+    </button>
 </div>
 {{end}}

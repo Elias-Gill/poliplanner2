@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"net/http"
+	"path"
 
 	"github.com/elias-gill/poliplanner2/internal/auth"
 	"github.com/elias-gill/poliplanner2/internal/config"
@@ -55,10 +56,11 @@ func main() {
 	r.Route("/guides", router.NewGuidesRouter())
 
 	// Static files
-	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./web/static"))))
-	r.Handle("/sitemap.xml", http.FileServer(http.Dir("./web/static")))
-	r.Handle("/robots.txt", http.FileServer(http.Dir("./web/static")))
-	r.Handle("/favicon.ico", http.FileServer(http.Dir("./web/static")))
+	staticDir := http.Dir(path.Join(config.Get().Paths.BaseDir, "web", "static"))
+	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(staticDir)))
+	r.Handle("/sitemap.xml", http.FileServer(staticDir))
+	r.Handle("/robots.txt", http.FileServer(staticDir))
+	r.Handle("/favicon.ico", http.FileServer(staticDir))
 
 	// 404 - Not found
 	r.NotFound(router.NotFoundHandler)

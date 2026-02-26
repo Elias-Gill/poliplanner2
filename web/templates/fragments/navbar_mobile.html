@@ -1,0 +1,23 @@
+{{define "fragments/navbar_mobile"}}
+<!-- Mobile top nav -->
+<nav class="md:hidden fixed top-0 left-0 right-0 z-50 bg-gray-900 text-gray-100 border-b border-gray-700 shadow-sm">
+    <div class="flex items-center justify-between px-4 py-3">
+        <div class="flex items-center gap-3">
+            <img src="/static/favicon.ico" class="w-8 h-8" alt="Logo">
+            <span class="text-lg font-semibold">PoliPlanner</span>
+        </div>
+
+        <!-- Menú hamburguesa (opcional) -->
+        <button type="button" class="text-gray-200 hover:text-white focus:outline-none"
+            onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+            <i class="bi bi-list text-3xl"></i>
+        </button>
+    </div>
+
+    <!-- Menú desplegable mobile -->
+    <div id="mobile-menu" class="hidden px-2 pb-3 space-y-1 bg-gray-900 border-t border-gray-700">
+        {{ template "fragments/nav-links" . }}
+    </div>
+</nav>
+{{end}}
+

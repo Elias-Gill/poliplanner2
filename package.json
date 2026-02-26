@@ -1,0 +1,32 @@
+{
+  "name": "poliplanner2",
+  "version": "1.0.0",
+  "description": "Poliplanner es un servicio web para la creación y gestión de horarios académicos. Está desarrollado íntegramente en **Go**.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build:css": "tailwindcss -i ./web/assets/input.css -o ./web/static/styles.css --minify",
+    "watch:css": "tailwindcss -i ./web/assets/input.css -o ./web/static/styles.css --watch",
+    "dev:css": "npm run watch:css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elias-gill/poliplanner2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/elias-gill/poliplanner2/issues"
+  },
+  "homepage": "https://github.com/elias-gill/poliplanner2#readme",
+  "devDependencies": {
+    "tailwindcss": "^4.2.1"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.2.1"
+  }
+}
