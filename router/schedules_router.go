@@ -13,6 +13,7 @@ func NewSchedulesRouter(
 	careerService *service.CareerService,
 	sheetVersionService *service.SheetVersionService,
 ) func(r chi.Router) {
+	// GET endpoints are ment to just render the condition 
 	return func(r chi.Router) {
 		// ================= STEP 1 =================
 		// Career selection + schedule metadata (name and description)

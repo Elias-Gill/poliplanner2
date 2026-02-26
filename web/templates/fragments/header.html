@@ -1,0 +1,42 @@
+{{define "fragments/header"}}
+<header role="banner">
+    <nav role="navigation" aria-label="Principal">
+        <div class="nav-top">
+            <a
+                href="/"
+                class="contrast logo"
+                style="font-weight: var(--font-weight-bold)" >
+                <span class="icon"><i class="bi bi-calendar3"></i></span> PoliPlanner
+            </a>
+        </div>
+
+        <ul class="nav-links">
+            <li class="right-menu-item">
+                <a href="/misc/calculator">
+                    <span class="icon"><i class="bi bi-calculator"></i></span>
+                    Calculadora
+                </a>
+            </li>
+            <li class="right-menu-item">
+                <a href="/misc/">
+                    <span class="icon"><i class="bi bi-wrench"></i></span> Herramientas
+                </a>
+            </li>
+            <li class="right-menu-item">
+                <a href="/guides">
+                    <span class="icon"><i class="bi bi-journal-text"></i></span> Guías
+                </a>
+            </li>
+            <li class="right-menu-item">
+                <a href="/user">
+                    <span class="icon"><i class="bi bi-gear"></i></span> Configuracion
+                </a>
+            </li>
+        </ul>
+
+        <button class="burguer" aria-label="Menú" type="button">
+            <i class="bi bi-list"></i>
+        </button>
+    </nav>
+</header>
+{{end}}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -11,7 +12,6 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/service"
 	"github.com/elias-gill/poliplanner2/internal/source"
-	"github.com/elias-gill/poliplanner2/web"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -19,12 +19,16 @@ const maxUploadSize = 8 << 20 // 8 MiB
 
 func NewExcelRouter(excelService *service.ExcelService) func(r chi.Router) {
 	cfg := config.Get()
-	layout := web.BaseLayout
+
 	updateKey := cfg.Security.UpdateKey
+	baseDir := path.Join(cfg.Paths.BaseDir, "web", "templates", "pages")
+
+	syncFormPath := path.Join(baseDir, "excel", "sync-form.html")
+	syncFormTemplate := parseTemplateWithBaseLayout(syncFormPath)
 
 	return func(r chi.Router) {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			execTemplateWithLayout(w, "web/templates/pages/excel/sync-form.html", layout, nil)
+			syncFormTemplate.Execute(w, nil)
 		})
 
 		r.Post("/sync", func(w http.ResponseWriter, r *http.Request) {

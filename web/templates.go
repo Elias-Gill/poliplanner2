@@ -9,9 +9,17 @@ import (
 
 // NOTE: made like this so the main layouts are parsed only one time on startup
 var (
-	BaseLayout = template.Must(
-		template.ParseGlob(
-			path.Join(
-				config.Get().Paths.BaseDir,
-				"web/templates/layout/base_layout.html")))
+	BaseLayout = parseTemplates()
 )
+
+func parseTemplates() *template.Template {
+	tPath := path.Join(config.Get().Paths.BaseDir, "web", "templates")
+	fragPattern := path.Join(tPath, "fragments", "*.html")
+	layout := path.Join(tPath, "layouts", "base_layout.html")
+
+	tmpl := template.New("base").Funcs(template.FuncMap{ /* custom functions here */ })
+	tmpl = template.Must(tmpl.ParseGlob(fragPattern))
+	tmpl = template.Must(tmpl.ParseFiles(layout))
+
+	return tmpl
+}

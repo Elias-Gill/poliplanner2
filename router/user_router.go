@@ -2,22 +2,23 @@ package router
 
 import (
 	"net/http"
+	"path"
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/service"
-	"github.com/elias-gill/poliplanner2/web"
 	"github.com/go-chi/chi/v5"
 )
 
-// REFACTOR: si es que me molesta puedo cambiar, pero de momento me parece aceptable esta
-// porqueria
+// REFACTOR: si es que me molesta puedo cambiar el nombre y locacion de los endpoints,
+// pero de momento me parece aceptable esta porqueria
 func NewUserRouter(userService *service.UserService) func(r chi.Router) {
-	layout := web.BaseLayout
+	p := path.Join(config.Get().Paths.BaseDir, "web", "templates", "pages", "user", "index.html")
+	tpl := parseTemplateWithBaseLayout(p)
 
 	return func(r chi.Router) {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			execTemplateWithLayout(w, "web/templates/pages/user/index.html", layout, nil)
+			tpl.Execute(w, nil)
 		})
 
 		// FIX: This just invalidates the cookie, proper JWT token invalidation and blacklist

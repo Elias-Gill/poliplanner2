@@ -2,8 +2,8 @@ package router
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
+	"path"
 	"strings"
 	"time"
 
@@ -11,12 +11,25 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/logger"
 	"github.com/elias-gill/poliplanner2/internal/service"
-	"github.com/elias-gill/poliplanner2/web"
 	"github.com/go-chi/chi/v5"
 )
 
 func NewAuthRouter(userService *service.UserService, emailService *service.EmailService) func(r chi.Router) {
-	layouts := web.BaseLayout
+	baseDir := path.Join(config.Get().Paths.BaseDir, "web", "templates", "pages")
+
+	// templates paths
+	template500Path := path.Join(baseDir, "500.html")
+	templateLoginPath := path.Join(baseDir, "auth", "login.html")
+	templateSignupPath := path.Join(baseDir, "auth", "signup.html")
+	templateRecoveryPath := path.Join(baseDir, "auth", "password-recovery.html")
+	templateRecoveryCommitPath := path.Join(baseDir, "auth", "password-recovery-commit.html")
+
+	// parse templates
+	pages500Template := parseTemplateWithBaseLayout(template500Path)
+	loginTemplate := parseTemplateWithBaseLayout(templateLoginPath)
+	signupTemplate := parseTemplateWithBaseLayout(templateSignupPath)
+	recoveryTemplate := parseTemplateWithBaseLayout(templateRecoveryPath)
+	recoveryCommitTemplate := parseTemplateWithBaseLayout(templateRecoveryCommitPath)
 
 	return func(r chi.Router) {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -24,12 +37,13 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 		})
 
 		r.Get("/500", func(w http.ResponseWriter, r *http.Request) {
-			execTemplateWithLayout(w, "web/templates/pages/500.html", layouts, nil)
+			w.Header().Set("Content-Type", "text/html")
+			pages500Template.Execute(w, nil)
 		})
 
 		r.Get("/login", func(w http.ResponseWriter, r *http.Request) {
 			data := map[string]any{"Redirect": r.URL.Query().Get("redirect")}
-			execTemplateWithLayout(w, "web/templates/pages/auth/login.html", layouts, data)
+			loginTemplate.Execute(w, data)
 		})
 
 		r.Post("/login", func(w http.ResponseWriter, r *http.Request) {
@@ -70,7 +84,7 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 		})
 
 		r.Get("/signup", func(w http.ResponseWriter, r *http.Request) {
-			execTemplateWithLayout(w, "web/templates/pages/auth/signup.html", layouts, nil)
+			signupTemplate.Execute(w, nil)
 		})
 
 		r.Post("/signup", func(w http.ResponseWriter, r *http.Request) {
@@ -116,7 +130,7 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 		})
 
 		r.Get("/password-recovery", func(w http.ResponseWriter, r *http.Request) {
-			execTemplateWithLayout(w, "web/templates/pages/auth/password-recovery.html", layouts, nil)
+			recoveryTemplate.Execute(w, nil)
 		})
 
 		r.Post("/password-recovery", func(w http.ResponseWriter, r *http.Request) {
@@ -160,7 +174,7 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 				return
 			}
 			data := map[string]any{"Token": token}
-			execTemplateWithLayout(w, "web/templates/pages/auth/password-recovery-commit.html", layouts, data)
+			recoveryCommitTemplate.Execute(w, data)
 		})
 
 		r.Post("/password-recovery/{token}", func(w http.ResponseWriter, r *http.Request) {
@@ -200,31 +214,4 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 			w.Write([]byte(newSuccessFragment("Password updated successfully")))
 		})
 	}
-}
-
-// Helpers (actualizados para soportar errores por campo)
-func newErrorFragment(msg string) string {
-	return `
-	<section role="alert" class="error">
-		<span>` + msg + `</span>
-		<button type="button" onclick="this.parentElement.remove()" aria-label="Close">×</button>
-	</section>
-	`
-}
-
-func newSuccessFragment(msg string) string {
-	return `
-	<section role="alert" class="success">
-		<span>` + msg + `</span>
-		<button type="button" onclick="this.parentElement.remove()" aria-label="Close">×</button>
-	</section>
-	`
-}
-
-func newFieldErrorFragment(field, msg string) string {
-	return fmt.Sprintf(`
-		<div class="field-error" data-field="%s">
-			<span>%s</span>
-		</div>
-	`, field, msg)
 }

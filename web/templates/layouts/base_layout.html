@@ -1,0 +1,47 @@
+{{ define "base" }}
+<!DOCTYPE html>
+<html lang="es" class="default-theme">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- styles -->
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="stylesheet" href="/static/palette.css" />
+
+    <!-- htmx -->
+    <script src="/static/js/htmx.min.js"></script>
+
+    <!-- Fonts and icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="/static/js/theme_bootstrap.js"></script>
+
+    {{ block "page_title" . }} {{ end }}
+    <title>PoliPlanner</title>
+  </head>
+
+  <body hx-boost="true">
+    {{ template "fragments/header" . }}
+    {{ template "fragments/mobile-modal" . }}
+
+    {{ block "content" . }}{{ end }}
+
+    {{ template "fragments/theme-toggle" . }}
+    {{ template "fragments/palette-selector" . }}
+    {{ template "fragments/footer" . }}
+
+    <script src="/static/js/main_script.js"></script>
+    <script src="/static/js/theme_hint.js"></script>
+  </body>
+</html>
+{{ end }}

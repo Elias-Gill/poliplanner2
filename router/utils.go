@@ -1,11 +1,11 @@
 package router
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
-	"path"
 
-	"github.com/elias-gill/poliplanner2/internal/config"
+	"github.com/elias-gill/poliplanner2/web"
 )
 
 // This function should never fail or panic if the session middleware is functioning correctly.
@@ -36,8 +36,37 @@ func customRedirect(w http.ResponseWriter, r *http.Request, target string) {
 	}
 }
 
-func execTemplateWithLayout(w http.ResponseWriter, tplPath string, layout *template.Template, data any) error {
-	w.Header().Set("Content-Type", "text/html")
-	tpl := template.Must(template.Must(layout.Clone()).ParseFiles(path.Join(config.Get().Paths.BaseDir, tplPath)))
-	return tpl.Execute(w, data)
+func parseTemplateWithBaseLayout(path string) *template.Template {
+	layouts := web.BaseLayout
+	return template.Must(template.Must(layouts.Clone()).ParseFiles(path))
+}
+
+// REFACTOR: no deberia de ir este codigo aca, ademas de que tengo que mudar todo a tailwind de
+// ser posible.
+
+// Helpers (actualizados para soportar errores por campo)
+func newErrorFragment(msg string) string {
+	return `
+	<section role="alert" class="error">
+	<span>` + msg + `</span>
+	<button type="button" onclick="this.parentElement.remove()" aria-label="Close">×</button>
+	</section>
+	`
+}
+
+func newSuccessFragment(msg string) string {
+	return `
+	<section role="alert" class="success">
+	<span>` + msg + `</span>
+	<button type="button" onclick="this.parentElement.remove()" aria-label="Close">×</button>
+	</section>
+	`
+}
+
+func newFieldErrorFragment(field, msg string) string {
+	return fmt.Sprintf(`
+		<div class="field-error" data-field="%s">
+		<span>%s</span>
+		</div>
+		`, field, msg)
 }
