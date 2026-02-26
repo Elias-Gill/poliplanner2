@@ -12,7 +12,7 @@ func TestParseSubjects_ByCareerSheets(t *testing.T) {
 		panic(err)
 	}
 
-	parser, err := NewExcelParser("./layout/layouts/", file)
+	parser, err := NewExcelParser(file)
 	if err != nil {
 		t.Fatalf("cannot create parser: %v", err)
 	}
@@ -554,7 +554,6 @@ func withGeneral(dept string, semester int, section, career, raw string) func(*S
 		s.Department = dept
 		s.Semester = semester
 		s.Section = section
-		s.Career = career
 		s.RawSubjectName = raw
 	}
 }
@@ -584,9 +583,6 @@ func assertSubjectEqual(t *testing.T, got, want SubjectDTO) {
 	}
 	if got.Section != want.Section {
 		t.Fatalf("Section: got %q want %q", got.Section, want.Section)
-	}
-	if got.Career != want.Career {
-		t.Fatalf("Career: got %q want %q", got.Career, want.Career)
 	}
 	if got.RawSubjectName != want.RawSubjectName {
 		t.Fatalf("RawSubjectName: got %q want %q", got.RawSubjectName, want.RawSubjectName)

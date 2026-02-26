@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"unicode"
 
+	"github.com/elias-gill/poliplanner2/internal/config"
 	log "github.com/elias-gill/poliplanner2/internal/logger"
 )
 
@@ -44,7 +46,8 @@ type AcademicPlanLoader struct {
 // =        Public API            =
 // ================================
 
-func NewAcademicPlanLoader(metadataDir string, careerCode string) (*AcademicPlanLoader, error) {
+func NewAcademicPlanLoader(careerCode string) (*AcademicPlanLoader, error) {
+	metadataDir := path.Join(config.Get().Paths.BaseDir, "internal", "excel", "metadata", "curriculums")
 	log.Debug("Creating subject metadata loader", "metadata_dir", metadataDir, "career_code", careerCode)
 
 	loader := &AcademicPlanLoader{

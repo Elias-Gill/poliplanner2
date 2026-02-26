@@ -47,9 +47,6 @@ type SubjectDTO struct {
 	Semester   int
 	Level      int
 	Section    string
-	// Get career from subject because Villarrica and Oviedo
-	// had different careers in the same sheet.
-	Career string
 
 	// This is used as the name of the table "cursos", which is the final agreggate
 	// with all schedule information of a subject in a specific time period.
@@ -124,10 +121,6 @@ type SubjectDTO struct {
 // -----------------------------
 func (s *SubjectDTO) SetDepartment(val string) {
 	s.Department = strings.TrimSpace(val)
-}
-
-func (s *SubjectDTO) SetCareer(val string) {
-	s.Career = strings.TrimSpace(val)
 }
 
 func (s *SubjectDTO) SetSubjectName(val string) {

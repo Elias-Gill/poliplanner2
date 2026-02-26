@@ -43,6 +43,9 @@ func (s *ExcelService) SearchOnStartup(ctx context.Context) {
 	logger.Info("Automatic Excel sync started")
 	s.sheetVersionStorer.SetLastCheckedAt(ctx, time.Now())
 
+	ctx, cancel := context.WithTimeout(ctx, time.Second*15)
+	defer cancel()
+
 	if err := s.SearchNewestExcel(ctx); err != nil {
 		logger.Error("Error on automatic version sync", "error", err)
 		return
@@ -94,9 +97,7 @@ func (s *ExcelService) ParseAndPersistNewExcel(ctx context.Context, source sourc
 
 	excelMeta := source.GetMetadata()
 
-	// Create Excel parser
-	// REFACTOR: think about keeping the API passing the layout path or encapsulating more
-	parserExcel, err := parser.NewExcelParser(config.Get().Paths.ExcelParsingLayoutsDir, content)
+	parserExcel, err := parser.NewExcelParser(content)
 	if err != nil {
 		return fmt.Errorf("error creating Excel parser: %w", err)
 	}
@@ -114,7 +115,7 @@ func (s *ExcelService) ParseAndPersistNewExcel(ctx context.Context, source sourc
 		}
 
 		// Load subject metadata for known careers
-		subjectMeta, err := metadata.NewAcademicPlanLoader(config.Get().Paths.SubjectsMetadataDir, sheetResult.Name)
+		subjectMeta, err := metadata.NewAcademicPlanLoader(sheetResult.Name)
 		if err != nil {
 			logger.Info("Cannot load academic plan", "career", sheetResult.Name, "error", err)
 		}
@@ -158,11 +159,6 @@ func (s *ExcelService) persistSheetSubjects(
 				continue
 			}
 
-			// Fill missing subject data if possible
-			if sub.Career == "" {
-				sub.Career = sheet.Name
-			}
-
 			// FUTURE: raw subject name can be replaced for tentative real subject name
 			if sub.Semester == 0 && planLoader != nil {
 				if m, err := planLoader.FindSubject(sub.RawSubjectName); err == nil {
@@ -200,7 +196,9 @@ func buildCourseAggregate(
 			Period: excelMeta.Period,
 		},
 		Curriculum: model.Curriculum{
-			Career:   sub.Career,
+			// The sheet name represents the "career". In Villarrica and Oviedo, well,
+			// they are not even using this, so ... XD
+			Career:   excelMeta.Name,
 			Semester: sub.Semester,
 			Level:    sub.Level,
 			Subject: model.Subject{

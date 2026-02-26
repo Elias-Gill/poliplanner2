@@ -40,9 +40,9 @@ type ParsedSheet struct {
 
 // NewExcelParser creates a new Excel parser instance
 // REFACTOR: no quiero que se le tenga que pasar el layout, medio estupido es
-func NewExcelParser(layoutsDir string, file io.ReadCloser) (*ExcelParser, error) {
+func NewExcelParser(file io.ReadCloser) (*ExcelParser, error) {
 	// Loads the possible known layouts of the excel file
-	loader := layout.NewJsonLayoutLoader(layoutsDir)
+	loader := layout.NewJsonLayoutLoader()
 	layouts, err := loader.LoadJsonLayouts()
 	if err != nil {
 		return nil, exceptions.NewExcelParserConfigurationException("Failed to load layouts", err)
@@ -355,7 +355,6 @@ func buildFieldSetters() map[string]func(*SubjectDTO, string) {
 		"apellido":           func(d *SubjectDTO, v string) { d.SetTeachersLastNames(v) },
 		"nombre":             func(d *SubjectDTO, v string) { d.SetTeachersFirtNames(v) },
 		"correo":             func(d *SubjectDTO, v string) { d.SetTeachersEmails(v) },
-		"carrera":            func(d *SubjectDTO, v string) { d.SetCareer(v) },
 		"diaParcial1":        func(d *SubjectDTO, v string) { d.SetPartial1Date(v) },
 		"horaParcial1":       func(d *SubjectDTO, v string) { d.SetPartial1Time(v) },
 		"aulaParcial1":       func(d *SubjectDTO, v string) { d.SetPartial1Room(v) },

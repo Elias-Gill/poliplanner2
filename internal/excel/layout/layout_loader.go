@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 
+	"github.com/elias-gill/poliplanner2/internal/config"
 	log "github.com/elias-gill/poliplanner2/internal/logger"
 )
 
@@ -19,7 +21,8 @@ type JsonLayoutLoader struct {
 	layoutsDir string
 }
 
-func NewJsonLayoutLoader(layoutsDir string) *JsonLayoutLoader {
+func NewJsonLayoutLoader() *JsonLayoutLoader {
+	layoutsDir := path.Join(config.Get().Paths.BaseDir, "internal", "excel", "layout", "layouts")
 	log.Debug("Creating JSON layout loader", "layouts_dir", layoutsDir)
 	return &JsonLayoutLoader{
 		layoutsDir: layoutsDir,

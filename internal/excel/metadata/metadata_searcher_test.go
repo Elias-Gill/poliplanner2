@@ -15,7 +15,7 @@ var (
 )
 
 func TestMetadataLoader_FindSubjectByName(t *testing.T) {
-	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -37,7 +37,7 @@ func TestMetadataLoader_FindSubjectByName(t *testing.T) {
 }
 
 func TestMetadataLoader_NameNormalization(t *testing.T) {
-	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -53,7 +53,7 @@ func TestMetadataLoader_NameNormalization(t *testing.T) {
 }
 
 func TestMetadataLoader_DashedNames_FirstPart(t *testing.T) {
-	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -69,7 +69,7 @@ func TestMetadataLoader_DashedNames_FirstPart(t *testing.T) {
 }
 
 func TestMetadataLoader_DashedNames_SecondPart(t *testing.T) {
-	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -89,7 +89,7 @@ func TestMetadataLoader_DashedNames_SecondPart(t *testing.T) {
 }
 
 func TestMetadataLoader_CacheFunctionality(t *testing.T) {
-	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -115,7 +115,7 @@ func TestMetadataLoader_CacheFunctionality(t *testing.T) {
 }
 
 func TestMetadataLoader_NonExistentSubject(t *testing.T) {
-	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -127,7 +127,7 @@ func TestMetadataLoader_NonExistentSubject(t *testing.T) {
 }
 
 func TestMetadataLoader_CaseAndAccentNormalization(t *testing.T) {
-	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -143,7 +143,7 @@ func TestMetadataLoader_CaseAndAccentNormalization(t *testing.T) {
 }
 
 func TestMetadataLoader_EmptySubjectName(t *testing.T) {
-	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -155,7 +155,7 @@ func TestMetadataLoader_EmptySubjectName(t *testing.T) {
 }
 
 func TestMetadataLoader_GetAllSubjects(t *testing.T) {
-	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -179,7 +179,7 @@ func (loader *AcademicPlanLoader) normalizeNameForTest(input string) string {
 }
 
 func TestNormalizeName(t *testing.T) {
-	loader, err := NewAcademicPlanLoader(metadataDir, testCareerCode)
+	loader, err := NewAcademicPlanLoader(testCareerCode)
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -207,7 +207,7 @@ func TestNormalizeName(t *testing.T) {
 
 // Verify constructor error when file does not exists
 func TestMetadataLoader_InvalidCareerCode(t *testing.T) {
-	loader, err := NewAcademicPlanLoader(metadataDir, "non_existent_career")
+	loader, err := NewAcademicPlanLoader("non_existent_career")
 	if err == nil {
 		t.Error("Expected error for invalid career code")
 	}
