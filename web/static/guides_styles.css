@@ -53,12 +53,12 @@ GUIDE ARTICLE SCOPE
 /* Links */
 
 .guide_article a {
-    color: #2563eb;
+    color: #3f638a;
     text-decoration: underline;
 }
 
 .guide_article a:hover {
-    text-decoration: none;
+    color: #2f4c6d;
 }
 
 /* Lists */
@@ -91,11 +91,11 @@ GUIDE ARTICLE SCOPE
 
 /* table scrollable */
 .guide_article .table-container {
+  border-radius: 0.2rem; /* opcional, si querés bordes redondeados */
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: auto;
   margin: 1.5rem 0;
-  border-radius: 0.5rem; /* opcional, si querés bordes redondeados */
 }
 
 .guide_article .table-container table {
@@ -110,7 +110,7 @@ GUIDE ARTICLE SCOPE
 
 .guide_article th,
 .guide_article td {
-  border: 1px solid #e5e7eb;
+  border: 1px solid #dfe3e8;
   padding: 0.6rem 0.8rem;
   text-align: left;
 }

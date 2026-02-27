@@ -123,12 +123,14 @@ func (s *UserService) StartPasswordRecovery(ctx context.Context, email string) (
 	token := newRecoveryToken()
 	expiration := time.Now().Add(15 * time.Minute)
 
-	err = s.userStorer.Update(ctx, user.ID, func(u *model.User) error {
-		u.RecoveryTokenHash = &token
-		u.RecoveryTokenExpiration = &expiration
-		u.RecoveryTokenUsed = false
-		return nil
-	})
+	err = s.userStorer.Update(
+		ctx, user.ID,
+		func(u *model.User) error {
+			u.RecoveryTokenHash = &token
+			u.RecoveryTokenExpiration = &expiration
+			u.RecoveryTokenUsed = false
+			return nil
+		})
 	if err != nil {
 		return "", err
 	}

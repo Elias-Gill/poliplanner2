@@ -1,10 +1,10 @@
 package router
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
 
+	"github.com/elias-gill/poliplanner2/internal/logger"
 	"github.com/elias-gill/poliplanner2/web"
 )
 
@@ -41,32 +41,14 @@ func parseTemplateWithBaseLayout(path string) *template.Template {
 	return template.Must(template.Must(layouts.Clone()).ParseFiles(path))
 }
 
-// REFACTOR: no deberia de ir este codigo aca, ademas de que tengo que mudar todo a tailwind de
-// ser posible.
-
-// Helpers (actualizados para soportar errores por campo)
-func newErrorFragment(msg string) string {
-	return `
-	<section role="alert" class="error">
-	<span>` + msg + `</span>
-	<button type="button" onclick="this.parentElement.remove()" aria-label="Close">×</button>
-	</section>
-	`
+func parseComponentTemplate(path string) *template.Template {
+	return template.Must(template.ParseFiles(path))
 }
 
-func newSuccessFragment(msg string) string {
-	return `
-	<section role="alert" class="success">
-	<span>` + msg + `</span>
-	<button type="button" onclick="this.parentElement.remove()" aria-label="Close">×</button>
-	</section>
-	`
-}
-
-func newFieldErrorFragment(field, msg string) string {
-	return fmt.Sprintf(`
-		<div class="field-error" data-field="%s">
-		<span>%s</span>
-		</div>
-		`, field, msg)
+func executeFragment(w http.ResponseWriter, fragment string, data any) {
+	w.Header().Set("Content-Type", "text/html")
+	err := web.Fragments.ExecuteTemplate(w, fragment, data)
+	if err != nil {
+		logger.Debug("Error executing fragment", "error", err)
+	}
 }

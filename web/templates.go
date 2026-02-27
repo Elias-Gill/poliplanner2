@@ -9,17 +9,33 @@ import (
 
 // NOTE: made like this so the main layouts are parsed only one time on startup
 var (
-	BaseLayout = parseTemplates()
+	// Complete layouts to render full pages.
+	BaseLayout = parseBaseLayout()
+
+	// Reusable components like buttons, lists, messages, modals, etc., use with
+	// HTMX.
+	Fragments  = parseFragments()
 )
 
-func parseTemplates() *template.Template {
-	tPath := path.Join(config.Get().Paths.BaseDir, "web", "templates")
+// Parses the layotus and the layout fragments (navbar, sidebar, etc)
+func parseBaseLayout() *template.Template {
+	tPath := path.Join(config.Get().Paths.BaseDir, "web", "templates", "layouts")
 	fragPattern := path.Join(tPath, "fragments", "*.html")
-	layout := path.Join(tPath, "layouts", "base_layout.html")
+	layout := path.Join(tPath, "base_layout.html")
 
 	tmpl := template.New("base").Funcs(template.FuncMap{ /* custom functions here */ })
 	tmpl = template.Must(tmpl.ParseGlob(fragPattern))
 	tmpl = template.Must(tmpl.ParseFiles(layout))
+
+	return tmpl
+}
+
+// Parses reusable components like messages, buttons, etc
+func parseFragments() *template.Template {
+	fragPattern := path.Join(config.Get().Paths.BaseDir, "web", "templates", "fragments", "**", "*.html")
+
+	tmpl := template.New("base").Funcs(template.FuncMap{ /* custom functions here */ })
+	tmpl = template.Must(tmpl.ParseGlob(fragPattern))
 
 	return tmpl
 }

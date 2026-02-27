@@ -1,0 +1,23 @@
+{{define "dashboard/subjects_section"}}
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  {{range .}}
+    <div class="bg-white rounded-xl shadow p-4 hover:shadow-md transition">
+      <!-- Nombre de la materia -->
+      <h3 class="text-lg font-semibold text-gray-900">{{.Name}}</h3>
+
+      <!-- Docentes -->
+      {{if .Teachers}}
+        <p class="mt-1 text-sm text-gray-600">
+          {{range $i, $t := .Teachers}}{{if $i}}, {{end}}{{$t.Name}} ({{$t.Email}}){{end}}
+        </p>
+      {{end}}
+
+      <!-- Sección y semestre -->
+      <p class="mt-1 text-sm text-gray-500">
+        Sección: <span class="font-medium">{{.Section}}</span><br>
+        Semestre: <span class="font-medium">{{.Semester}}</span>
+      </p>
+    </div>
+  {{end}}
+</div>
+{{end}}

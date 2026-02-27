@@ -21,9 +21,7 @@ func NewSchedulesRouter(
 		// GET:
 		//   - Renders the initial wizard page.
 		//   - Loads available careers from the service layer.
-		//   - Returns full page (layout) for normal navigation.
-		//   - Returns only the form fragment if the request is HTMX.
-		//
+		//   - Returns full page layout.
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 
 		})
@@ -47,7 +45,6 @@ func NewSchedulesRouter(
 		//   - Loads curricula (mallas) and subjects for the selected career.
 		//   - Displays selectable subject list.
 		//   - Returns fragment or full page depending on HTMX.
-		//
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 
 		})

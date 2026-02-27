@@ -48,6 +48,13 @@ func NewToolsRouter() func(r chi.Router) {
 // realmente).
 func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
 	baseDir := path.Join(config.Get().Paths.BaseDir, "web", "templates", "pages")
-	parseTemplateWithBaseLayout(path.Join(baseDir, "404.html")).Execute(w, nil)
 	w.Header().Set("Content-Type", "text/html")
+
+	if isHtmx(r) {
+		parseComponentTemplate(path.Join(baseDir, "404.html")).Execute(w, nil)
+	} else {
+		parseTemplateWithBaseLayout(
+			path.Join(baseDir, "404.html"),
+		).Execute(w, nil)
+	}
 }

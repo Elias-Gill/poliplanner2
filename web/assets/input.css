@@ -21,3 +21,11 @@
   --color-primary-800: #1f3550;
   --color-primary-900: #142536;
 }
+
+.htmx-request {
+    display: flex;
+}
+
+.htmx-indicator {
+    display: hidden;
+}

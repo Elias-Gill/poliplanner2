@@ -75,7 +75,6 @@ func SessionMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		logger.Debug("User already authenticated")
 		ctx := context.WithValue(r.Context(), "userID", session.UserID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

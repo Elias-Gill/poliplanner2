@@ -57,8 +57,7 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 
 			user, err := userService.AuthenticateUser(r.Context(), username, password)
 			if err != nil {
-				w.Header().Set("Content-Type", "text/html")
-				w.Write([]byte(newErrorFragment("Invalid username or password")))
+				executeFragment(w, "messages/error_message", "Invalid username or password")
 				return
 			}
 
@@ -71,7 +70,7 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 				Path:     "/",
 				HttpOnly: true,
 				Secure:   config.Get().Security.SecureHTTP,
-				SameSite: http.SameSiteNoneMode,
+				SameSite: http.SameSiteLaxMode,
 				Expires:  time.Now().Add(30 * time.Minute),
 			})
 
@@ -117,11 +116,9 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 				}
 
 				if field != "" {
-					w.Header().Set("Content-Type", "text/html")
-					w.Write([]byte(newFieldErrorFragment(field, msg)))
+					executeFragment(w, "messages/error_message", field+": "+msg)
 				} else {
-					w.Header().Set("Content-Type", "text/html")
-					w.Write([]byte(newErrorFragment("Failed to create account")))
+					executeFragment(w, "messages/error_message", "Failed to create account")
 				}
 				return
 			}
@@ -135,7 +132,7 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 
 		r.Post("/password-recovery", func(w http.ResponseWriter, r *http.Request) {
 			if err := r.ParseForm(); err != nil {
-				w.Write([]byte(newErrorFragment("Failed to process form")))
+				executeFragment(w, "messages/error_message", "Failed to process form")
 				return
 			}
 
@@ -149,12 +146,14 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 				} else {
 					msg = "If the email exists, a recovery link has been sent."
 				}
-				w.Write([]byte(newSuccessFragment(msg)))
+				executeFragment(w, "messages/success_message", msg)
 				return
 			}
 
+			// User does not exists
 			if token == "" {
-				w.Write([]byte(newSuccessFragment("If the email exists, a recovery link has been sent.")))
+				executeFragment(w, "messages/success_message",
+					"If the email exists, a recovery link has been sent.")
 				return
 			}
 
@@ -164,7 +163,8 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 				return
 			}
 
-			w.Write([]byte(newSuccessFragment("If the email exists, a recovery link has been sent.")))
+			executeFragment(w, "messages/success_message",
+				"If the email exists, a recovery link has been sent.")
 		})
 
 		r.Get("/password-recovery/{token}", func(w http.ResponseWriter, r *http.Request) {
@@ -180,12 +180,12 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 		r.Post("/password-recovery/{token}", func(w http.ResponseWriter, r *http.Request) {
 			token := chi.URLParam(r, "token")
 			if token == "" {
-				w.Write([]byte(newErrorFragment("Invalid token")))
+				executeFragment(w, "messages/error_message", "Invalid Token")
 				return
 			}
 
 			if err := r.ParseForm(); err != nil {
-				w.Write([]byte(newErrorFragment("Failed to process form")))
+				executeFragment(w, "messages/error_message", "Failed to parse form")
 				return
 			}
 
@@ -204,14 +204,14 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 				}
 
 				if field != "" {
-					w.Write([]byte(newFieldErrorFragment(field, msg)))
+					executeFragment(w, "messages/error_message", field+": "+msg)
 				} else {
-					w.Write([]byte(newErrorFragment(msg)))
+					executeFragment(w, "messages/error_message", msg)
 				}
 				return
 			}
 
-			w.Write([]byte(newSuccessFragment("Password updated successfully")))
+			executeFragment(w, "messages/success_message", "Password updated successfully")
 		})
 	}
 }
