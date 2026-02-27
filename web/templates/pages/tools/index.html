@@ -1,13 +1,16 @@
+{{define "custom_head"}}
+<link rel="stylesheet" href="/static/guides_styles.css" />
+{{end}}
+
 {{define "content"}}
-<main>
-  <h1>Herramientas</h1>
+<div class="guide_article">
+  <h1>Herramientas disponibles</h1>
   <p>
     Accede a distintas herramientas pensadas para ayudarte a obtener información
     académica de forma rápida y simple, sin necesidad de iniciar sesión ni
     configurar nada.
   </p>
   <section>
-    <h2>Herramientas disponibles</h2>
     <ul>
       <li>
         <a href="/tools/calculator">Calculadora de notas</a>
@@ -26,7 +29,28 @@
           ni iniciar sesión.
         </small>
       </li>
+      <li>
+        <a href="/tools/interactive_graph">Mallas curriculares interactivas</a>
+        <br>
+        <small>
+          Consulta información sobre las mallas universitarias vigentes. Visualizá las materias
+          organizadas por semestre, incluyendo correlatividades, cantidad
+          de créditos y otros datos relevantes. Todo ello mediante un grafo interactivo que te
+          muestra las relaciones entre las materias.
+
+          <div class="img">
+            <img src="https://github.com/elias-gill.png" alt="Foto de perfil de GitHub" width="100">
+          </div>
+        </small>
+      </li>
     </ul>
   </section>
-</main>
+
+    <style>
+    .img {
+        text-align: center;
+        margin: 2rem auto;
+    }
+    </style>
+</div>
 {{end}}

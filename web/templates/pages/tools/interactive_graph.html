@@ -1,0 +1,31 @@
+{{ define "custom_head" }}
+<script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<title>Malla Curricular - PoliPlanner</title>
+{{ end }}
+
+{{ define "content" }}
+<div class="relative w-full h-screen bg-gray-100 overflow-hidden">
+  
+  <!-- Contenedor del grafo full-screen -->
+  <div id="graph-container" class="absolute inset-0 bg-white touch-none"></div>
+
+  <!-- Loading overlay -->
+  <div id="loading" class="fixed inset-0 flex items-center justify-center bg-white z-30 transition-opacity">
+    <div class="w-10 h-10 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+  </div>
+
+  <!-- Error message -->
+  <div id="error" class="fixed bottom-5 left-5 right-5 bg-red-500 text-white p-4 rounded-xl text-center font-medium shadow-lg z-40 hidden">
+    Error al cargar la malla. Intentá de nuevo.
+  </div>
+
+  <!-- Mini guía táctil flotante -->
+  <div class="touch-guide fixed bottom-5 right-5 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded-full flex items-center gap-1 text-xs z-15 pointer-events-none opacity-70 border border-white/20 sm:text-sm sm:bottom-3 sm:right-3 hidden">
+    <span>👆</span> Arrastrá • Presioná
+  </div>
+
+</div>
+
+<script src="/static/js/interactive_graph.js"></script>
+<script src="/static/js/interactive_graph_load.js"></script>
+{{ end }}

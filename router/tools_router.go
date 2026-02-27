@@ -8,15 +8,17 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func NewMiscRouter() func(r chi.Router) {
-	baseDir := path.Join(config.Get().Paths.BaseDir, "web", "templates", "pages", "misc")
+func NewToolsRouter() func(r chi.Router) {
+	baseDir := path.Join(config.Get().Paths.BaseDir, "web", "templates", "pages", "tools")
 
 	// templates paths
 	indexPath := path.Join(baseDir, "index.html")
 	calculatorPath := path.Join(baseDir, "calculator.html")
+	interactiveGraphPath := path.Join(baseDir, "interactive_graph.html")
 
 	indexTemplate := parseTemplateWithBaseLayout(indexPath)
 	calculatorTemplate := parseTemplateWithBaseLayout(calculatorPath)
+	interactiveGraphTemplate := parseTemplateWithBaseLayout(interactiveGraphPath)
 
 	return func(r chi.Router) {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -27,6 +29,11 @@ func NewMiscRouter() func(r chi.Router) {
 		r.Get("/calculator", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "text/html")
 			calculatorTemplate.Execute(w, nil)
+		})
+
+		r.Get("/interactive_graph", func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "text/html")
+			interactiveGraphTemplate.Execute(w, nil)
 		})
 	}
 }
