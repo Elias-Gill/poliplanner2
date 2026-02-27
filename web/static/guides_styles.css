@@ -1,0 +1,178 @@
+/* ==============================
+GUIDE ARTICLE SCOPE
+============================== */
+
+.guide_article {
+    max-width: 900px;
+    margin: 4rem auto;
+    line-height: 1.7;
+    font-size: 1rem;
+    color: #1f2937; /* gray-800 */
+}
+
+/* Headings */
+
+.guide_article h1,
+.guide_article h2,
+.guide_article h3,
+.guide_article h4,
+.guide_article h5,
+.guide_article h6 {
+    font-weight: 700;
+    line-height: 1.3;
+    margin-top: 2.2rem;
+    margin-bottom: 1rem;
+    color: #111827; /* gray-900 */
+}
+
+.guide_article h1 {
+    font-size: 2rem;
+    margin-top: 0;
+}
+
+.guide_article h2 {
+    font-size: 1.6rem;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 0.4rem;
+}
+
+.guide_article h3 {
+    font-size: 1.3rem;
+}
+
+.guide_article h4 {
+    font-size: 1.1rem;
+}
+
+/* Paragraphs */
+
+.guide_article p {
+    margin-bottom: 1.2rem;
+}
+
+/* Links */
+
+.guide_article a {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
+.guide_article a:hover {
+    text-decoration: none;
+}
+
+/* Lists */
+
+.guide_article ul,
+.guide_article ol {
+    margin: 1rem 0 1.2rem 1.5rem;
+}
+
+.guide_article li {
+    margin-bottom: 0.4rem;
+}
+
+.guide_article ul {
+    list-style-type: disc;
+}
+
+.guide_article ol {
+    list-style-type: decimal;
+}
+
+/* Nested lists */
+
+.guide_article li ul,
+.guide_article li ol {
+    margin-top: 0.4rem;
+}
+
+/* Tables */
+
+/* table scrollable */
+.guide_article .table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: auto;
+  margin: 1.5rem 0;
+  border-radius: 0.5rem; /* opcional, si querés bordes redondeados */
+}
+
+.guide_article .table-container table {
+  width: 100%;          /* hace que la tabla use todo el contenedor */
+  min-width: 600px;     /* evita que colapse en mobile */
+  border-collapse: collapse;
+}
+
+.guide_article thead {
+  background-color: #f3f4f6;
+}
+
+.guide_article th,
+.guide_article td {
+  border: 1px solid #e5e7eb;
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+}
+
+.guide_article th {
+  font-weight: 600;
+}
+
+/* Images */
+
+.guide_article img {
+    max-width: 100%;
+    height: auto;
+    margin: 1.5rem auto;
+    display: block;
+    border-radius: 0.5rem;
+}
+
+/* Blockquote */
+
+.guide_article blockquote {
+    border-left: 4px solid #2563eb;
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    color: #374151;
+    font-style: italic;
+    background: #f9fafb;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+}
+
+/* Inline code */
+
+.guide_article code {
+    background: #f3f4f6;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Code blocks */
+
+.guide_article pre {
+    background: #111827;
+    color: #f9fafb;
+    padding: 1rem;
+    overflow-x: auto;
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+}
+
+.guide_article pre code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+}
+
+/* Horizontal rule */
+
+.guide_article hr {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 2rem 0;
+}
