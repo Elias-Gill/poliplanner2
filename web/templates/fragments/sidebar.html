@@ -1,28 +1,31 @@
 {{define "fragments/sidebar"}}
     <!-- Sidebar desktop -->
-    <aside class="hidden md:flex md:flex-col md:w-1/4 lg:w-1/5 bg-gray-900 text-gray-100 border-r border-gray-800">
-        <div class="p-6 border-b border-gray-700">
+    <aside class="hidden md:flex md:flex-col md:w-64 lg:w-72 bg-gray-900 text-gray-100 border-r border-gray-800">
+        <!-- Header con logo y título -->
+        <div class="p-5 border-b border-gray-700">
             <div class="flex items-center gap-3">
-                <img src="/static/favicon.ico" class="w-9 h-9" alt="Logo">
+                <img src="/static/favicon.ico" class="w-8 h-8" alt="Logo">
                 <span class="text-xl font-semibold">PoliPlanner</span>
             </div>
-        </div>
-
-        <nav class="flex-1 px-3 py-6 space-y-1.5">
-            {{ template "fragments/nav-links" . }}
-        </nav>
-
-        <div class="border-t border-gray-700 p-5 space-y-4 text-sm">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
-                    <i class="bi bi-person-fill"></i>
-                </div>
-                <span class="font-medium">{{ .Username }}</span>
-            </div>
-            <div class="text-xs text-gray-400">
+            <div class="mt-1 text-xs text-gray-400">
                 <a href="/guides/about" class="hover:text-gray-200">
                     Versión {{ .Version }}
                 </a>
+            </div>
+        </div>
+
+        <!-- Navegación más compacta -->
+        <nav class="flex-1 px-3 py-4 space-y-1">
+            {{ template "fragments/nav-links" . }}
+        </nav>
+
+        <!-- Zona inferior usuario -->
+        <div class="border-t border-gray-700 p-5 space-y-3 text-sm">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full bg-gray-700 flex items-center justify-center">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <span class="font-medium truncate">{{ .Username }}</span>
             </div>
         </div>
     </aside>

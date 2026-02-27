@@ -52,7 +52,7 @@ func main() {
 	r.Route("/schedule", router.NewSchedulesRouter(services.CoursesService, services.ScheduleService, services.CareerService, services.SheetVersionService))
 	r.Route("/user", router.NewUserRouter(services.UserService))
 	r.Route("/excel", router.NewExcelRouter(services.ExcelService))
-	r.Route("/misc", router.NewMiscRouter())
+	r.Route("/tools", router.NewMiscRouter())
 	r.Route("/guides", router.NewGuidesRouter())
 
 	// Static files

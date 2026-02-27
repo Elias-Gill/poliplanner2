@@ -9,11 +9,11 @@ import (
 )
 
 func NewMiscRouter() func(r chi.Router) {
-	baseDir := path.Join(config.Get().Paths.BaseDir, "web", "templates", "pages")
+	baseDir := path.Join(config.Get().Paths.BaseDir, "web", "templates", "pages", "misc")
 
 	// templates paths
-	indexPath := path.Join(baseDir, "misc", "index.html")
-	calculatorPath := path.Join(baseDir, "misc", "calculator.html")
+	indexPath := path.Join(baseDir, "index.html")
+	calculatorPath := path.Join(baseDir, "calculator.html")
 
 	indexTemplate := parseTemplateWithBaseLayout(indexPath)
 	calculatorTemplate := parseTemplateWithBaseLayout(calculatorPath)
