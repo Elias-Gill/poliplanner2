@@ -1,80 +1,60 @@
-{{define "custom_head"}}
-<link rel="stylesheet" href="/static/guides_styles.css" />
-{{end}}
-
 {{define "content"}}
-<div class="guide_article">
-    <h1>Herramientas disponibles</h1>
-    <p>
-        Accede a distintas herramientas pensadas para ayudarte a obtener información
-        académica de forma rápida y simple, sin necesidad de iniciar sesión ni
-        configurar nada.
-    </p>
-    <section>
-        <ul>
-            <li>
-                <a href="/tools/calculator">Calculadora de notas</a>
-                <br>
-                <small>
-                    Nuestro Policalc integrado. Calcula la escala de notas para tus examenes
-                    finales y visualiza con cuantos puntos puedes aprobar el curso.
-                </small>
-                <div class="img">
-                    <img src="/static/images/calculator_1.png" alt="Foto de calculadora">
-                </div>
-            </li>
-            <li>
-                <a href="/tools/interactive_graph">Mallas curriculares interactivas</a>
-                <br>
-                <small>
-                    Consulta información sobre las mallas universitarias vigentes. Visualizá las materias
-                    organizadas por semestre, incluyendo correlatividades, cantidad
-                    de créditos y otros datos relevantes. Todo ello mediante un grafo interactivo que te
-                    muestra las relaciones entre las materias.
 
-                </small>
-                <div class="img">
-                    <img src="/static/images/graph_1.png" alt="Foto de herramienta de grafos">
-                </div>
-            </li>
-        </ul>
+<div class="md:ml-10">
+    <div class="mt-12 max-w-3xl">
+        <h1 class="text-4xl font-bold tracking-tight text-gray-900">
+            Herramientas académicas
+        </h1>
+        <p class="mt-4 text-lg text-gray-600 leading-relaxed">
+            Aquí encontrarás un conjunto de herramientas desarrolladas por y para estudiantes,
+            pensadas para facilitar la vida académica y el acceso a información relevante.
+            Todas están disponibles sin necesidad de iniciar sesion.
+        </p>
+    </div>
+
+    <section class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+
+        <!-- Card 1 -->
+        <a href="/tools/calculator"
+            class="group block bg-white rounded-sm border border-gray-200 shadow-sm hover:shadow-lg transition duration-200 overflow-hidden">
+
+            <div class="aspect-[4/3] overflow-hidden bg-gray-100">
+                <img src="/static/images/calculator_1.png"
+                    alt="Foto de calculadora"
+                    class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+            </div>
+
+            <div class="p-5">
+                <h3 class="text-xl font-semibold text-gray-900 group-hover:text-primary-600 transition">
+                    Calculadora de notas
+                </h3>
+                <p class="mt-3 text-sm text-gray-600 leading-relaxed">
+                    Calcula la escala de notas para exámenes finales y determina cuántos puntos necesitas para aprobar la materia.
+                </p>
+            </div>
+        </a>
+
+        <!-- Card 2 -->
+        <a href="/tools/interactive_graph"
+            class="group block bg-white rounded-sm border border-gray-200 shadow-sm hover:shadow-lg transition duration-200 overflow-hidden">
+
+            <div class="aspect-[4/3] overflow-hidden bg-gray-100">
+                <img src="/static/images/graph_1.png"
+                    alt="Foto de herramienta de grafos"
+                    class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+            </div>
+
+            <div class="p-5">
+                <h3 class="text-xl font-semibold text-gray-900 group-hover:text-primary-600 transition">
+                    Mallas curriculares interactivas
+                </h3>
+                <p class="mt-3 text-sm text-gray-600 leading-relaxed">
+                    Explora materias por semestre, correlatividades y créditos mediante un grafo interactivo.
+                </p>
+            </div>
+        </a>
+
     </section>
 
-    <style>
-.guide_article .img {
-    display: flex;
-    justify-content: center;
-    gap: 0rem;     /* mínimo espacio entre imágenes */
-    margin: 1rem 0;
-    flex-wrap: wrap;
-}
-
-.guide_article .img img {
-    height: 300px;
-    width: auto;
-    max-width: 400px;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    object-fit: fit;
-}
-
-/* Para móviles */
-@media (max-width: 600px) {
-    .guide_article .img img {
-        height: 150px;
-    }
-}
-
-/* Para móviles muy pequeños */
-@media (max-width: 400px) {
-    .guide_article .img {
-        gap: 0.15rem;
-    }
-    
-    .guide_article .img img {
-        height: 150px;
-    }
-}
-</style>
 </div>
 {{end}}

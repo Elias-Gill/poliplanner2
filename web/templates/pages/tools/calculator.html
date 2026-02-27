@@ -13,7 +13,7 @@
 
 
   <!-- OPCIÓN A -->
-  <article class="bg-white shadow rounded-lg p-6 mb-6">
+  <article class="bg-white shadow rounded-sm p-6 mb-6">
     <h2 class="text-xl font-semibold mb-3">A) Ya tengo mi promedio ponderado</h2>
     <p class="mb-4">
       Ingresa tu promedio ponderado y calcula qué puntaje necesitas en el examen final.
@@ -22,10 +22,10 @@
       <div class="flex flex-col">
         <label for="inputPonderado" class="mb-1 font-medium">Promedio ponderado (40–100)</label>
         <input type="number" id="inputPonderado" min="0" max="100" step="1"
-               class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"/>
+               class="border border-gray-300 rounded-sm px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"/>
       </div>
 <button id="btnPonderado"
-        class="w-full bg-gray-700 text-white py-2.5 rounded-lg font-semibold hover:bg-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        class="w-full bg-gray-700 text-white py-2.5 rounded-sm font-semibold hover:bg-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none">
   Calcular
 </button>
 
@@ -33,63 +33,63 @@
   </article>
 
   <!-- OPCIÓN B -->
-  <article class="bg-white shadow rounded-lg p-6 mb-6">
+  <article class="bg-white shadow rounded-sm p-6 mb-6">
     <h2 class="text-xl font-semibold mb-3">B) Armar tu promedio ponderado</h2>
     <p class="mb-4">Los pesos deben sumar 100%.</p>
     <form onsubmit="return false;" class="space-y-5">
 
-      <fieldset class="border border-gray-200 rounded-lg p-4 space-y-4">
+      <fieldset class="border border-gray-200 rounded-sm p-4 space-y-4">
         <legend class="font-semibold px-2">Parciales</legend>
         <div class="flex flex-wrap gap-4">
           <div class="flex flex-col flex-1 min-w-[140px]">
             <label class="mb-1 font-medium">Parcial 1</label>
             <input type="number" id="notaP1" min="0" max="100"
-                   class="border border-gray-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"/>
+                   class="border border-gray-300 rounded-sm px-2 py-1 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"/>
           </div>
           <div class="flex flex-col flex-1 min-w-[140px]">
             <label class="mb-1 font-medium">Parcial 2</label>
             <input type="number" id="notaP2" min="0" max="100"
-                   class="border border-gray-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"/>
+                   class="border border-gray-300 rounded-sm px-2 py-1 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"/>
           </div>
           <div class="flex flex-col flex-1 min-w-[140px]">
             <label class="mb-1 font-medium">Peso (%)</label>
             <input type="number" id="pesoParciales" min="0" max="100"
-                   class="border border-gray-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"/>
+                   class="border border-gray-300 rounded-sm px-2 py-1 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"/>
           </div>
         </div>
       </fieldset>
 
-      <fieldset class="border border-gray-200 rounded-lg p-4 space-y-4">
+      <fieldset class="border border-gray-200 rounded-sm p-4 space-y-4">
         <legend class="font-semibold px-2">Otras evaluaciones</legend>
         <div class="flex flex-wrap gap-4">
           <div class="flex flex-col flex-1 min-w-[140px]">
             <label class="mb-1 font-medium">Tareas / Trabajos</label>
             <input type="number" id="notaT" min="0" max="100"
-                   class="border border-gray-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"/>
+                   class="border border-gray-300 rounded-sm px-2 py-1 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"/>
           </div>
           <div class="flex flex-col flex-1 min-w-[140px]">
             <label class="mb-1 font-medium">Peso (%)</label>
             <input type="number" id="pesoT" min="0" max="100"
-                   class="border border-gray-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"/>
+                   class="border border-gray-300 rounded-sm px-2 py-1 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"/>
           </div>
         </div>
         <div class="flex flex-wrap gap-4">
           <div class="flex flex-col flex-1 min-w-[140px]">
             <label class="mb-1 font-medium">Laboratorio</label>
             <input type="number" id="notaL" min="0" max="100"
-                   class="border border-gray-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"/>
+                   class="border border-gray-300 rounded-sm px-2 py-1 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"/>
           </div>
           <div class="flex flex-col flex-1 min-w-[140px]">
             <label class="mb-1 font-medium">Peso (%)</label>
             <input type="number" id="pesoL" min="0" max="100"
-                   class="border border-gray-300 rounded-lg px-2 py-1 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"/>
+                   class="border border-gray-300 rounded-sm px-2 py-1 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"/>
           </div>
         </div>
       </fieldset>
 
             <!-- Y para el otro botón -->
             <button type="button" id="btnComponentes"
-                class="w-full bg-gray-700 text-white py-2.5 rounded-lg font-semibold
+                class="w-full bg-gray-700 text-white py-2.5 rounded-sm font-semibold
                 hover:bg-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none">
                 Calcular
             </button>
@@ -97,7 +97,7 @@
   </article>
 
   <!-- RESULTADOS -->
-  <article id="resultados" class="bg-white shadow rounded-lg p-6 mb-6">
+  <article id="resultados" class="bg-white shadow rounded-sm p-6 mb-6">
     <h2 class="text-xl font-semibold mb-4">Puntajes mínimos requeridos</h2>
     <div class="table_container">
       <table class="min-w-full border border-gray-300 text-center">
