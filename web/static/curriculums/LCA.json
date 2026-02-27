@@ -1,0 +1,462 @@
+{
+  "career": {
+    "id": "LCA",
+    "name": "Licenciatura en Ciencias Atmosféricas",
+    "totalSemesters": 8,
+    "totalCredits": 226
+  },
+  "subjects": {
+    "algebra": {
+      "name": "Álgebra",
+      "semester": 1,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": []
+    },
+    "calculo I": {
+      "name": "Cálculo I",
+      "semester": 1,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": []
+    },
+    "geometria analitica y vectores": {
+      "name": "Geometría Analítica y Vectores",
+      "semester": 1,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": []
+    },
+    "introduccion a las ciencias atmosfericas": {
+      "name": "Introducción a las Ciencias Atmosféricas",
+      "semester": 1,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": []
+    },
+    "quimica": {
+      "name": "Química",
+      "semester": 1,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": []
+    },
+    "calculo II": {
+      "name": "Cálculo II",
+      "semester": 2,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "calculo I"
+      ]
+    },
+    "fisica I": {
+      "name": "Física I",
+      "semester": 2,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "calculo I"
+      ]
+    },
+    "fisica II": {
+      "name": "Física II",
+      "semester": 2,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "calculo I"
+      ]
+    },
+    "instrumentos meteorologicos y metodos de observacion": {
+      "name": "Instrumentos Meteorológicos y Métodos de Observación",
+      "semester": 2,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "introduccion a las ciencias atmosfericas"
+      ]
+    },
+    "programacion": {
+      "name": "Programación",
+      "semester": 2,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": []
+    },
+    "calculo III ecuaciones diferenciales": {
+      "name": "Cálculo III (Ecuaciones Diferenciales)",
+      "semester": 3,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "calculo II"
+      ]
+    },
+    "calculo IV vectorial": {
+      "name": "Cálculo IV (Vectorial)",
+      "semester": 3,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "calculo II"
+      ]
+    },
+    "fisica III optica ondas": {
+      "name": "Física III (Óptica - Ondas)",
+      "semester": 3,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "calculo II",
+        "fisica I"
+      ]
+    },
+    "fisica IV calor": {
+      "name": "Física IV (Calor)",
+      "semester": 3,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "calculo II",
+        "fisica I"
+      ]
+    },
+    "probabilidad y estadistica": {
+      "name": "Probabilidad y Estadística",
+      "semester": 3,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "algebra",
+        "calculo II"
+      ]
+    },
+    "calculo V variable compleja": {
+      "name": "Cálculo V (Variable Compleja)",
+      "semester": 4,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "calculo IV vectorial"
+      ]
+    },
+    "climatologia I": {
+      "name": "Climatología I",
+      "semester": 4,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "instrumentos meteorologicos y metodos de observacion",
+        "probabilidad y estadistica"
+      ]
+    },
+    "fisica de la atmosfera I": {
+      "name": "Física de la Atmósfera I",
+      "semester": 4,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "fisica IV calor",
+        "introduccion a las ciencias atmosfericas"
+      ]
+    },
+    "fisica V electromagnetismo": {
+      "name": "Física V (Electromagnetismo)",
+      "semester": 4,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "fisica II"
+      ]
+    },
+    "mecanica de fluidos": {
+      "name": "Mecánica de Fluidos",
+      "semester": 4,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "calculo IV vectorial",
+        "fisica IV calor"
+      ]
+    },
+    "calculo VI": {
+      "name": "Cálculo VI",
+      "semester": 5,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "calculo V variable compleja"
+      ]
+    },
+    "dinamica de la atmosfera I": {
+      "name": "Dinámica de la Atmósfera I",
+      "semester": 5,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "fisica I",
+        "fisica de la atmosfera I"
+      ]
+    },
+    "fisica de la atmosfera II": {
+      "name": "Física de la Atmósfera II",
+      "semester": 5,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "fisica II",
+        "fisica III optica ondas",
+        "fisica de la atmosfera I"
+      ]
+    },
+    "metodos estadisticos en ciencias atmosfericas": {
+      "name": "Métodos Estadísticos en Ciencias Atmosféricas",
+      "semester": 5,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "probabilidad y estadistica",
+        "climatologia I"
+      ]
+    },
+    "sensores remotos": {
+      "name": "Sensores Remotos",
+      "semester": 5,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "fisica V electromagnetismo"
+      ]
+    },
+    "climatologia II": {
+      "name": "Climatología II",
+      "semester": 6,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "climatologia I",
+        "dinamica de la atmosfera I"
+      ]
+    },
+    "meteorologia sinoptica I": {
+      "name": "Meteorología Sinóptica I",
+      "semester": 6,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "fisica de la atmosfera I",
+        "dinamica de la atmosfera I"
+      ]
+    },
+    "metodos numericos en ciencias de la atmosfera": {
+      "name": "Métodos Numéricos en Ciencias de la Atmósfera",
+      "semester": 6,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "programacion",
+        "dinamica de la atmosfera I"
+      ]
+    },
+    "optativa 1": {
+      "name": "Optativa 1",
+      "semester": 6,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": []
+    },
+    "optativa 2": {
+      "name": "Optativa 2",
+      "semester": 6,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "climatologia I"
+      ]
+    },
+    "circulacion general de la atmosfera": {
+      "name": "Circulación General de la Atmósfera",
+      "semester": 7,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "climatologia I",
+        "meteorologia sinoptica I"
+      ]
+    },
+    "laboratorio sinoptico": {
+      "name": "Laboratorio Sinóptico",
+      "semester": 7,
+      "credits": 0,
+      "required_credits": 0,
+      "weekly_hours": 0,
+      "desc": "",
+      "prerequisites": [
+        "sensores remotos",
+        "meteorologia sinoptica I"
+      ]
+    },
+    "micrometeorologia I": {
+      "name": "Micrometeorología I",
+      "semester": 7,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "mecanica de fluidos",
+        "calculo VI"
+      ]
+    },
+    "optativa 3": {
+      "name": "Optativa 3",
+      "semester": 7,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": []
+    },
+    "optativa 4": {
+      "name": "Optativa 4",
+      "semester": 7,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "sensores remotos",
+        "meteorologia sinoptica I"
+      ]
+    },
+    "meteorologia tropical": {
+      "name": "Meteorología Tropical",
+      "semester": 8,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "laboratorio sinoptico"
+      ]
+    },
+    "optativa 5": {
+      "name": "Optativa 5",
+      "semester": 8,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": []
+    },
+    "optativa 6": {
+      "name": "Optativa 6",
+      "semester": 8,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": []
+    },
+    "quimica de la atmosfera": {
+      "name": "Química de la Atmósfera",
+      "semester": 8,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "quimica",
+        "fisica de la atmosfera II"
+      ]
+    },
+    "trabajo de grado": {
+      "name": "Trabajo de Grado",
+      "semester": 8,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "calculo III ecuaciones diferenciales",
+        "circulacion general de la atmosfera",
+        "climatologia II",
+        "geometria analitica y vectores",
+        "meteorologia tropical",
+        "metodos estadisticos en ciencias atmosfericas",
+        "metodos numericos en ciencias de la atmosfera",
+        "micrometeorologia I",
+        "optativa 1",
+        "optativa 2",
+        "optativa 3",
+        "optativa 4",
+        "optativa 5",
+        "optativa 6",
+        "quimica de la atmosfera"
+      ]
+    }
+  }
+}

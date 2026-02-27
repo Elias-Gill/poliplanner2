@@ -1,15 +1,16 @@
 (function () {
   const loadingEl = document.getElementById("loading");
   const errorEl = document.getElementById("error");
+  const subjectSelect = document.getElementById("subject-select"); // tu select manual
 
-  async function loadGraph() {
+  async function loadGraph(subjectFile = "IIN.json") {
     try {
       loadingEl.classList.remove("hidden");
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-      const response = await fetch("/static/curriculums/IIN.json", {
+      const response = await fetch(`/static/curriculums/${subjectFile}`, {
         signal: controller.signal,
       });
       clearTimeout(timeoutId);
@@ -37,8 +38,16 @@
     }
   }
 
+  // Escucha cambios en el selector de materias
+  if (subjectSelect) {
+    subjectSelect.addEventListener("change", () => {
+      const selectedFile = subjectSelect.value;
+      loadGraph(selectedFile);
+    });
+  }
+
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", loadGraph);
+    document.addEventListener("DOMContentLoaded", () => loadGraph());
   } else {
     loadGraph();
   }

@@ -1,0 +1,593 @@
+{
+  "career": {
+    "id": "IEN",
+    "name": "Ingeniería en Energía",
+    "totalSemesters": 10,
+    "totalCredits": 315
+  },
+  "subjects": {
+    "calculo I": {
+      "name": "Cálculo I",
+      "semester": 1,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "Inecuaciones, Límites, Cálculo diferencial",
+      "prerequisites": []
+    },
+    "algebra lineal": {
+      "name": "Álgebra Lineal",
+      "semester": 1,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "Matrices, espacios vectoriales, transformaciones lineales",
+      "prerequisites": []
+    },
+    "geometria analitica y vectores": {
+      "name": "Geometría Analítica y Vectores",
+      "semester": 1,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Circunferencias, cónicas, superficies",
+      "prerequisites": []
+    },
+    "quimica": {
+      "name": "Química",
+      "semester": 1,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Conceptos elementales de química",
+      "prerequisites": []
+    },
+    "dibujo tecnico": {
+      "name": "Dibujo Técnico",
+      "semester": 1,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "Estudio del dibujo como medio de expresión",
+      "prerequisites": []
+    },
+    "prevision y seguridad en el trabajo": {
+      "name": "Previsión y Seguridad en el Trabajo",
+      "semester": 1,
+      "credits": 3,
+      "required_credits": 0,
+      "weekly_hours": 3,
+      "desc": "Seguridad en el trabajo, técnicas de previsión, accidentes, equipos de prevención",
+      "prerequisites": []
+    },
+    "algoritmo": {
+      "name": "Algoritmo",
+      "semester": 2,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Resolución de problemas con algoritmos de computadora",
+      "prerequisites": ["algebra lineal"]
+    },
+    "calculo II": {
+      "name": "Cálculo II",
+      "semester": 2,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "Cálculo Integral, Series y Cálculo Multivariable",
+      "prerequisites": ["calculo I", "geometria analitica y vectores"]
+    },
+    "fisica I": {
+      "name": "Física I",
+      "semester": 2,
+      "credits": 8,
+      "required_credits": 0,
+      "weekly_hours": 8,
+      "desc": "Mecánica: Cinemática, Dinámica, Trabajo, Energía y Potencia",
+      "prerequisites": ["calculo I"]
+    },
+    "fisica II": {
+      "name": "Física II",
+      "semester": 2,
+      "credits": 8,
+      "required_credits": 0,
+      "weekly_hours": 8,
+      "desc": "Electromagnetismo",
+      "prerequisites": ["calculo I"]
+    },
+    "electrotecnia": {
+      "name": "Electrotecnia",
+      "semester": 2,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Conceptos básicos de la Electricidad",
+      "prerequisites": ["algebra lineal"]
+    },
+    "diseño asistido por computadoras": {
+      "name": "Diseño Asistido por Computadoras",
+      "semester": 2,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Elaboración de dibujos técnicos con herramientas informáticas",
+      "prerequisites": ["dibujo tecnico"]
+    },
+    "calculo III": {
+      "name": "Cálculo III",
+      "semester": 3,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "Ecuaciones Diferenciales",
+      "prerequisites": ["calculo II"]
+    },
+    "calculo IV": {
+      "name": "Cálculo IV",
+      "semester": 3,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "Cálculo Vectorial",
+      "prerequisites": ["calculo II"]
+    },
+    "teoria de circuitos": {
+      "name": "Teoría de Circuitos",
+      "semester": 3,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Modelos y elementos circuitales eléctricos a través de sus realizaciones",
+      "prerequisites": ["calculo II", "fisica II", "electrotecnia"]
+    },
+    "energia y medioambiente": {
+      "name": "Energía y Medioambiente",
+      "semester": 3,
+      "credits": 4,
+      "required_credits": 0,
+      "weekly_hours": 4,
+      "desc": "Geopolítica de la hidroenergía, energía, generación convencional y no convecional de la energía, desarrollo sostenible",
+      "prerequisites": ["quimica", "fisica I", "fisica II"]
+    },
+    "fisica III": {
+      "name": "Física III",
+      "semester": 3,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Oscilaciones y ondas",
+      "prerequisites": ["calculo II", "fisica II"]
+    },
+    "tecnologia de los materiales": {
+      "name": "Tecnología de los Materiales",
+      "semester": 3,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "Estructura, propiedades y procesamiento de los materiales",
+      "prerequisites": ["fisica I"]
+    },
+    "programacion": {
+      "name": "Programación",
+      "semester": 3,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Programacion en lenguaje C",
+      "prerequisites": ["algoritmo"]
+    },
+    "calculo V": {
+      "name": "Cálculo V",
+      "semester": 4,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "Variable compleja",
+      "prerequisites": ["calculo IV"]
+    },
+    "probabilidad y estadistica": {
+      "name": "Probabilidad y Estadística",
+      "semester": 4,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Estadística descriptiva, probabilidad",
+      "prerequisites": ["calculo III"]
+    },
+    "fisica IV": {
+      "name": "Física IV",
+      "semester": 4,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Hidrostática, calorimetría",
+      "prerequisites": ["fisica III", "calculo IV"]
+    },
+    "fisica V": {
+      "name": "Física V",
+      "semester": 4,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Mecánica cuántica",
+      "prerequisites": ["fisica III"]
+    },
+    "electronica instrumentacion y control": {
+      "name": "Electrónica, Instrumentación y Control",
+      "semester": 4,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Fundamentos acerca de diversos tipos de sensores y del área de instrumentación",
+      "prerequisites": ["teoria de circuitos"]
+    },
+    "investigacion de operaciones": {
+      "name": "Investigación de Operaciones",
+      "semester": 4,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "Optimización los distintos procesos de asignación de los recursos, buscando apoyar de forma eficiente la toma de decisiones.",
+      "prerequisites": ["calculo IV"]
+    },
+    "calculo VI": {
+      "name": "Cálculo VI",
+      "semester": 5,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "Transformadas de Laplace y Series de Fourier",
+      "prerequisites": ["calculo V"]
+    },
+    "fisica VI": {
+      "name": "Física VI",
+      "semester": 5,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Mecánica de particulas",
+      "prerequisites": ["fisica IV"]
+    },
+    "modelizacion y analisis numerico": {
+      "name": "Modelización y Análisis Numérico",
+      "semester": 5,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Teoría de errores, regresión e interpolación numérica",
+      "prerequisites": ["programacion", "investigacion de operaciones"]
+    },
+    "transporte y distribucion de energia I": {
+      "name": "Transporte y Distribución de Energía I",
+      "semester": 5,
+      "credits": 4,
+      "required_credits": 0,
+      "weekly_hours": 4,
+      "desc": "Características de los sistemas de transporte y distribución de sistema eléctrico",
+      "prerequisites": [
+        "energia y medioambiente",
+        "electronica instrumentacion y control"
+      ]
+    },
+    "conversion de energia electrica I": {
+      "name": "Conversión de Energía Eléctrica I",
+      "semester": 5,
+      "credits": 7,
+      "required_credits": 0,
+      "weekly_hours": 7,
+      "desc": "Circuitos magnéticos, transformadores, principios de conversión de energía electromecánica",
+      "prerequisites": ["fisica II"]
+    },
+    "economia y finanzas": {
+      "name": "Economía y Finanzas",
+      "semester": 5,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Introducción a la economía, oferta y demanda, producto y renta nacional",
+      "prerequisites": ["energia y medioambiente"]
+    },
+    "sistemas de control I": {
+      "name": "Sistemas de Control I",
+      "semester": 6,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Introduccion al análisis de los sistemas de control",
+      "prerequisites": ["calculo VI"]
+    },
+    "fisica VII": {
+      "name": "Física VII",
+      "semester": 6,
+      "credits": 8,
+      "required_credits": 0,
+      "weekly_hours": 8,
+      "desc": "Campos eléctricos",
+      "prerequisites": ["fisica VI"]
+    },
+    "fisica VIII": {
+      "name": "Física VIII",
+      "semester": 6,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "Hidrodinámica",
+      "prerequisites": ["fisica VI"]
+    },
+    "generacion de energia electrica": {
+      "name": "Generación de Energía Eléctrica",
+      "semester": 6,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "Fuentes de energía, centrales de generación",
+      "prerequisites": ["fisica VI", "conversion de energia electrica I"]
+    },
+    "conversion de energia electrica II": {
+      "name": "Conversión de Energía Eléctrica II",
+      "semester": 6,
+      "credits": 7,
+      "required_credits": 0,
+      "weekly_hours": 7,
+      "desc": "Maquinas rotatorias, síncronas, asíncronas y a conmutador de corriente continua",
+      "prerequisites": ["conversion de energia electrica I"]
+    },
+    "maquinas termicas": {
+      "name": "Máquinas Térmicas",
+      "semester": 7,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "Generalidades de máquinas y motores térmicos",
+      "prerequisites": [
+        "sistemas de control I",
+        "fisica VII",
+        "conversion de energia electrica II"
+      ]
+    },
+    "maquinas hidraulicas": {
+      "name": "Máquinas Hidráulicas",
+      "semester": 7,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "Generalidades de máquinas hidráulicas",
+      "prerequisites": [
+        "sistemas de control I",
+        "fisica VIII",
+        "conversion de energia electrica II"
+      ]
+    },
+    "transporte y distribucion de energia II": {
+      "name": "Transporte y Distribución de Energía II",
+      "semester": 7,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Transporte de hidrocarburos",
+      "prerequisites": ["transporte y distribucion de energia I", "fisica VII"]
+    },
+    "calor y frio industrial": {
+      "name": "Calor y Frío Industrial",
+      "semester": 7,
+      "credits": 4,
+      "required_credits": 0,
+      "weekly_hours": 4,
+      "desc": "Balances térmicos",
+      "prerequisites": ["sistemas de control I", "fisica VII"]
+    },
+    "tecnicas de operacion y mantenimiento": {
+      "name": "Técnicas de Operación y Mantenimiento",
+      "semester": 7,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Objetivos, organización, técnicas, costos del mantenimiento, ",
+      "prerequisites": ["sistemas de control I"]
+    },
+    "refino": {
+      "name": "Refino",
+      "semester": 7,
+      "credits": 4,
+      "required_credits": 0,
+      "weekly_hours": 4,
+      "desc": "Perspectivas mundiales, combustibles fósiles, refino del crudo",
+      "prerequisites": ["transporte y distribucion de energia I"]
+    },
+    "energias renovables": {
+      "name": "Energías Renovables",
+      "semester": 7,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Energía solar, biomasa, eólica, hidráulica",
+      "prerequisites": [
+        "transporte y distribucion de energia I",
+        "generacion de energia electrica"
+      ]
+    },
+    "mercado logistica y distribucion de combustibles": {
+      "name": "Mercado, Logística y Distribución de Combustibles",
+      "semester": 8,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Mercados energéticos, transporte de combustibles",
+      "prerequisites": ["refino"]
+    },
+    "economia de las energias renovables": {
+      "name": "Economía de las Energías Renovables",
+      "semester": 8,
+      "credits": 4,
+      "required_credits": 0,
+      "weekly_hours": 4,
+      "desc": "Introducción a las energías renovables, metodología para el análisis energético",
+      "prerequisites": ["economia y finanzas", "energias renovables"]
+    },
+    "mercado y transporte de la energia electrica": {
+      "name": "Mercado y Transporte de la Energía Eléctrica",
+      "semester": 8,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Conceptos básicos de economía, mercados de energía eléctrica",
+      "prerequisites": [
+        "economia y finanzas",
+        "transporte y distribucion de energia II",
+        "energias renovables"
+      ]
+    },
+    "eficiencia y ahorro energetico": {
+      "name": "Eficiencia y Ahorro Energético",
+      "semester": 8,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Introducción a la eficiencia y ahorro energético, consumo energético",
+      "prerequisites": [
+        "transporte y distribucion de energia II",
+        "energias renovables"
+      ]
+    },
+    "tecnologia nuclear": {
+      "name": "Tecnología Nuclear",
+      "semester": 8,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Introducción a la energía nuclear, núcleo atómico y radioactividad",
+      "prerequisites": ["maquinas termicas"]
+    },
+    "macroeconomia y finanzas publicas": {
+      "name": "Macroeconomía y Finanzas Públicas",
+      "semester": 8,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Contabilidad nacional, inflación y empleo, crecimiento económico",
+      "prerequisites": ["economia y finanzas"]
+    },
+    "gerenciamiento de proyectos energeticos": {
+      "name": "Gerenciamiento de Proyectos Energéticos",
+      "semester": 8,
+      "credits": 4,
+      "required_credits": 0,
+      "weekly_hours": 4,
+      "desc": "Dirección de proyectos, métodos numéricos",
+      "prerequisites": ["economia y finanzas"]
+    },
+    "almacenamiento de energia": {
+      "name": "Almacenamiento de Energía",
+      "semester": 9,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Mercado, logística y distribución de combustibles",
+      "prerequisites": [
+        "mercado logistica y distribucion de combustibles",
+        "economia de las energias renovables"
+      ]
+    },
+    "politica energetica": {
+      "name": "Política Energética",
+      "semester": 9,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Economía de las energías renovables",
+      "prerequisites": [
+        "economia de las energias renovables",
+        "mercado y transporte de la energia electrica",
+        "macroeconomia y finanzas publicas"
+      ]
+    },
+    "sustentabilidad mundial y regional": {
+      "name": "Sustentabilidad Mundial y Regional",
+      "semester": 9,
+      "credits": 4,
+      "required_credits": 0,
+      "weekly_hours": 4,
+      "desc": "Energía y sostenibilidad, indicadores energéticos",
+      "prerequisites": ["macroeconomia y finanzas publicas"]
+    },
+    "administracion y recursos humanos": {
+      "name": "Administración y Recursos Humanos",
+      "semester": 9,
+      "credits": 3,
+      "required_credits": 0,
+      "weekly_hours": 3,
+      "desc": "Matemática financiera, ingeniería económica",
+      "prerequisites": ["prevision y seguridad en el trabajo"]
+    },
+    "costos e ingenieria economica": {
+      "name": "Costos e Ingeniería Económica",
+      "semester": 9,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Supervivencia y productividad, planeamiento estratégico",
+      "prerequisites": ["gerenciamiento de proyectos energeticos"]
+    },
+    "normalizacion y calidad industrial": {
+      "name": "Normalización y Calidad Industrial",
+      "semester": 9,
+      "credits": 3,
+      "required_credits": 0,
+      "weekly_hours": 3,
+      "desc": "Comportamiento organizacional, administración de recursos humanos",
+      "prerequisites": []
+    },
+    "planificacion energetica": {
+      "name": "Planificación Energética",
+      "semester": 10,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "El proceso de planificación, gestión de la información",
+      "prerequisites": [
+        "politica energetica",
+        "sustentabilidad mundial y regional"
+      ]
+    },
+    "integracion de sistemas": {
+      "name": "Integración de Sistemas",
+      "semester": 10,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Integración de energías renovables en el sistema energético actual",
+      "prerequisites": [
+        "politica energetica",
+        "sustentabilidad mundial y regional"
+      ]
+    },
+    "aspectos juridicos de la energia": {
+      "name": "Aspectos Jurídicos de la Energía",
+      "semester": 10,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "Marco normativo jurídico",
+      "prerequisites": ["administracion y recursos humanos"]
+    },
+    "emprendedorismo": {
+      "name": "Emprendedorismo",
+      "semester": 10,
+      "credits": 2,
+      "required_credits": 0,
+      "weekly_hours": 2,
+      "desc": "Creatividad e innovación, el emprendedor, plan de negocio",
+      "prerequisites": []
+    },
+    "trabajo final de grado": {
+      "name": "Trabajo Final de Grado",
+      "semester": 10,
+      "credits": 3,
+      "required_credits": 0,
+      "weekly_hours": 3,
+      "desc": "Fundamentos de la investigación y elección del tema, definición de problemas y alcance, revisión de la literatura",
+      "prerequisites": ["politica energetica"]
+    }
+  }
+}

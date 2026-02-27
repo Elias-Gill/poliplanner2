@@ -1,13 +1,14 @@
-{{define "custom_head"}}
-<head>
-    <title>Página no encontrada</title>
-</head>
-{{end}}
+{{ define "custom_head" }}
+<title>Error 404 - PoliPlanner</title>
+{{ end }}
 
-{{define "content"}}
-<main>
-    <h1>Error 404 - Página no encontrada</h1>
-    <p>La página que estás buscando no existe o ha sido movida.</p>
-    <p>Revisá la dirección o volvé a la <a href="/dashboard">página principal</a>.</p>
-</main>
-{{end}}
+{{ define "content" }}
+<div class="flex flex-col items-center justify-center min-h-screen px-4 text-center bg-gray-50">
+  <h1 class="text-4xl font-bold text-gray-900 mb-4">Error 404</h1>
+  <p class="text-lg text-gray-700 mb-2">La página que estás buscando no existe o ha sido movida.</p>
+  <p class="text-gray-600">
+    Revisá la dirección o volvé a la
+    <a href="/dashboard" class="text-primary-600 hover:text-primary-700 font-medium">página principal</a>.
+  </p>
+</div>
+{{ end }}

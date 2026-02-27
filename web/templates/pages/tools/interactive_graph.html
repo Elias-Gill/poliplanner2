@@ -5,7 +5,18 @@
 
 {{ define "content" }}
 <div class="relative w-full h-screen bg-gray-100 overflow-hidden">
-  
+
+  <!-- Selector de materias -->
+  <div class="absolute top-4 left-4 z-50 bg-white shadow rounded-lg px-3 py-2">
+    <label for="subject-select" class="text-sm font-medium mr-2">Materia:</label>
+    <select id="subject-select" class="border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+      <option value="IIN.json">IIN</option>
+      <option value="LCA.json">LCA</option>
+      <option value="IEN.json">IEN</option>
+      <!-- FUTURE: agregá las demás que tengas -->
+    </select>
+  </div>
+
   <!-- Contenedor del grafo full-screen -->
   <div id="graph-container" class="absolute inset-0 bg-white touch-none"></div>
 
