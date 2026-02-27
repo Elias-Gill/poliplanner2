@@ -4,11 +4,11 @@
 {{ end }}
 
 {{ define "content" }}
-<div class="relative w-full h-screen bg-gray-100 overflow-hidden">
+<div class="relative w-full h-full bg-gray-100 overflow-hidden">
 
   <!-- Selector de materias -->
-  <div class="absolute top-4 left-4 z-50 bg-white shadow rounded-lg px-3 py-2">
-    <label for="subject-select" class="text-sm font-medium mr-2">Materia:</label>
+  <div class="absolute top-4 left-4 z-50 bg-white shadow rounded-lg px-3 py-2 flex items-center gap-2">
+    <label for="subject-select" class="text-sm font-medium">Materia:</label>
     <select id="subject-select" class="border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
       <option value="IIN.json">IIN</option>
       <option value="LCA.json">LCA</option>
@@ -16,6 +16,13 @@
       <!-- FUTURE: agregá las demás que tengas -->
     </select>
   </div>
+
+    <!-- Mini guía táctil flotante -->
+    <div class="absolute bottom-4 right-4 z-50">
+      <div class="bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded-full flex items-center gap-1 text-xs pointer-events-none opacity-70 border border-white/20 sm:text-sm">
+        <span>🖱️</span> Hover o click • <span>👆</span>Tocar o mantener
+      </div>
+    </div>
 
   <!-- Contenedor del grafo full-screen -->
   <div id="graph-container" class="absolute inset-0 bg-white touch-none"></div>
@@ -28,11 +35,6 @@
   <!-- Error message -->
   <div id="error" class="fixed bottom-5 left-5 right-5 bg-red-500 text-white p-4 rounded-xl text-center font-medium shadow-lg z-40 hidden">
     Error al cargar la malla. Intentá de nuevo.
-  </div>
-
-  <!-- Mini guía táctil flotante -->
-  <div class="touch-guide fixed bottom-5 right-5 bg-black/60 backdrop-blur-sm text-white px-2 py-1 rounded-full flex items-center gap-1 text-xs z-15 pointer-events-none opacity-70 border border-white/20 sm:text-sm sm:bottom-3 sm:right-3 hidden">
-    <span>👆</span> Arrastrá • Presioná
   </div>
 
 </div>

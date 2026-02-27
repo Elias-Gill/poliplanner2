@@ -4,53 +4,77 @@
 
 {{define "content"}}
 <div class="guide_article">
-  <h1>Herramientas disponibles</h1>
-  <p>
-    Accede a distintas herramientas pensadas para ayudarte a obtener información
-    académica de forma rápida y simple, sin necesidad de iniciar sesión ni
-    configurar nada.
-  </p>
-  <section>
-    <ul>
-      <li>
-        <a href="/tools/calculator">Calculadora de notas</a>
-        <br>
-        <small>
-          Nuestro Policalc integrado. Calcula tus calificaciones finales y la escala de notas a partir de tu promedio ponderado
-          o usando las notas de parciales y trabajos prácticos.
-        </small>
-      </li>
-      <li>
-        <a href="/subject">Buscar una materia</a>
-        <br>
-        <small>
-          Consulta información detallada de una materia específica, como
-          departamento, semestre y sección, sin necesidad de crear un horario
-          ni iniciar sesión.
-        </small>
-      </li>
-      <li>
-        <a href="/tools/interactive_graph">Mallas curriculares interactivas</a>
-        <br>
-        <small>
-          Consulta información sobre las mallas universitarias vigentes. Visualizá las materias
-          organizadas por semestre, incluyendo correlatividades, cantidad
-          de créditos y otros datos relevantes. Todo ello mediante un grafo interactivo que te
-          muestra las relaciones entre las materias.
+    <h1>Herramientas disponibles</h1>
+    <p>
+        Accede a distintas herramientas pensadas para ayudarte a obtener información
+        académica de forma rápida y simple, sin necesidad de iniciar sesión ni
+        configurar nada.
+    </p>
+    <section>
+        <ul>
+            <li>
+                <a href="/tools/calculator">Calculadora de notas</a>
+                <br>
+                <small>
+                    Nuestro Policalc integrado. Calcula la escala de notas para tus examenes
+                    finales y visualiza con cuantos puntos puedes aprobar el curso.
+                </small>
+                <div class="img">
+                    <img src="/static/images/calculator_1.png" alt="Foto de calculadora">
+                </div>
+            </li>
+            <li>
+                <a href="/tools/interactive_graph">Mallas curriculares interactivas</a>
+                <br>
+                <small>
+                    Consulta información sobre las mallas universitarias vigentes. Visualizá las materias
+                    organizadas por semestre, incluyendo correlatividades, cantidad
+                    de créditos y otros datos relevantes. Todo ello mediante un grafo interactivo que te
+                    muestra las relaciones entre las materias.
 
-          <div class="img">
-            <img src="https://github.com/elias-gill.png" alt="Foto de perfil de GitHub" width="100">
-          </div>
-        </small>
-      </li>
-    </ul>
-  </section>
+                </small>
+                <div class="img">
+                    <img src="/static/images/graph_1.png" alt="Foto de herramienta de grafos">
+                </div>
+            </li>
+        </ul>
+    </section>
 
     <style>
-    .img {
-        text-align: center;
-        margin: 2rem auto;
+.guide_article .img {
+    display: flex;
+    justify-content: center;
+    gap: 0rem;     /* mínimo espacio entre imágenes */
+    margin: 1rem 0;
+    flex-wrap: wrap;
+}
+
+.guide_article .img img {
+    height: 300px;
+    width: auto;
+    max-width: 400px;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    object-fit: fit;
+}
+
+/* Para móviles */
+@media (max-width: 600px) {
+    .guide_article .img img {
+        height: 150px;
     }
-    </style>
+}
+
+/* Para móviles muy pequeños */
+@media (max-width: 400px) {
+    .guide_article .img {
+        gap: 0.15rem;
+    }
+    
+    .guide_article .img img {
+        height: 150px;
+    }
+}
+</style>
 </div>
 {{end}}

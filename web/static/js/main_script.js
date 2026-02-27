@@ -1,29 +1,15 @@
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu');
+    menu.classList.toggle('hidden');
+    if (!menu.classList.contains('hidden')) {
+        // Scroll al top para que el menú sea visible inmediatamente
+        menu.scrollTop = 0;
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const root = document.documentElement;
   let paletteTimeout = null;
-
-  /* mobile menu */
-  const burger = document.querySelector(".burguer");
-  const modal = document.getElementById("mobile-menu-modal");
-  const closeBtn = document.getElementById("mobile-menu-close");
-
-  if (burger) {
-    burger.addEventListener("click", () => {
-      modal.classList.add("open");
-    });
-  }
-
-  if (closeBtn) {
-    closeBtn.addEventListener("click", () => {
-      modal.classList.remove("open");
-    });
-  }
-
-  window.addEventListener("resize", () => {
-    if (window.innerWidth > 768 && modal.classList.contains("open")) {
-      modal.classList.remove("open");
-    }
-  });
 
   /* dark / light toggle */
   const themeToggle = document.getElementById("theme-toggle");
