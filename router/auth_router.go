@@ -57,7 +57,7 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 
 			user, err := userService.AuthenticateUser(r.Context(), username, password)
 			if err != nil {
-				executeFragment(w, "messages/error_message", "Invalid username or password")
+				executeFragment(w, r, "messages/error_message", "Invalid username or password")
 				return
 			}
 
@@ -116,9 +116,9 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 				}
 
 				if field != "" {
-					executeFragment(w, "messages/error_message", field+": "+msg)
+					executeFragment(w, r, "messages/error_message", field+": "+msg)
 				} else {
-					executeFragment(w, "messages/error_message", "Failed to create account")
+					executeFragment(w, r, "messages/error_message", "Failed to create account")
 				}
 				return
 			}
@@ -132,7 +132,7 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 
 		r.Post("/password-recovery", func(w http.ResponseWriter, r *http.Request) {
 			if err := r.ParseForm(); err != nil {
-				executeFragment(w, "messages/error_message", "Failed to process form")
+				executeFragment(w, r, "messages/error_message", "Failed to process form")
 				return
 			}
 
@@ -146,13 +146,13 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 				} else {
 					msg = "If the email exists, a recovery link has been sent."
 				}
-				executeFragment(w, "messages/success_message", msg)
+				executeFragment(w, r, "messages/success_message", msg)
 				return
 			}
 
 			// User does not exists
 			if token == "" {
-				executeFragment(w, "messages/success_message",
+				executeFragment(w, r, "messages/success_message",
 					"If the email exists, a recovery link has been sent.")
 				return
 			}
@@ -163,7 +163,7 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 				return
 			}
 
-			executeFragment(w, "messages/success_message",
+			executeFragment(w, r, "messages/success_message",
 				"If the email exists, a recovery link has been sent.")
 		})
 
@@ -180,12 +180,12 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 		r.Post("/password-recovery/{token}", func(w http.ResponseWriter, r *http.Request) {
 			token := chi.URLParam(r, "token")
 			if token == "" {
-				executeFragment(w, "messages/error_message", "Invalid Token")
+				executeFragment(w, r, "messages/error_message", "Invalid Token")
 				return
 			}
 
 			if err := r.ParseForm(); err != nil {
-				executeFragment(w, "messages/error_message", "Failed to parse form")
+				executeFragment(w, r, "messages/error_message", "Failed to parse form")
 				return
 			}
 
@@ -204,14 +204,14 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 				}
 
 				if field != "" {
-					executeFragment(w, "messages/error_message", field+": "+msg)
+					executeFragment(w, r, "messages/error_message", field+": "+msg)
 				} else {
-					executeFragment(w, "messages/error_message", msg)
+					executeFragment(w, r, "messages/error_message", msg)
 				}
 				return
 			}
 
-			executeFragment(w, "messages/success_message", "Password updated successfully")
+			executeFragment(w, r, "messages/success_message", "Password updated successfully")
 		})
 	}
 }

@@ -25,7 +25,7 @@ func NewDashboardRouter(
 		})
 
 		r.Get("/sections", func(w http.ResponseWriter, r *http.Request) {
-			executeFragment(w, "dashboard/subjects_section", nil)
+			executeFragment(w, r, "dashboard/subjects_section", nil)
 		})
 	}
 }

@@ -68,3 +68,7 @@ type CareerStorer interface {
 type PeriodStore interface {
 	FindByYearPeriod(ctx context.Context, year int, period int) (*model.Period, error)
 }
+
+type AcademicPlanStore interface {
+	GetByCareerID(ctx context.Context, career int64) (*model.AcademicPlan, error)
+}

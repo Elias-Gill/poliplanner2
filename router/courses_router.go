@@ -10,6 +10,6 @@ func NewCourseRouter(
 	careerSvc *service.CareerService,
 ) func(r chi.Router) {
 	return func(r chi.Router) {
-		// TODO: implement
+		// TODO: complete
 	}
 }

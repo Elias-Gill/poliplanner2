@@ -8,17 +8,17 @@ import (
 )
 
 type CareerService struct {
-	careerStorer store.CareerStorer
+	carreerStorer store.CareerStorer
 }
 
 func NewCareerService(
 	careerStorer store.CareerStorer,
 ) *CareerService {
 	return &CareerService{
-		careerStorer: careerStorer,
+		carreerStorer: careerStorer,
 	}
 }
 
 func (s *CareerService) List(ctx context.Context) ([]*model.Career, error) {
-	return s.careerStorer.List(ctx)
+	return s.carreerStorer.List(ctx)
 }

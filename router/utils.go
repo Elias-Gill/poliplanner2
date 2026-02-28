@@ -37,18 +37,19 @@ func customRedirect(w http.ResponseWriter, r *http.Request, target string) {
 }
 
 func parseTemplateWithBaseLayout(path string) *template.Template {
-	layouts := web.BaseLayout
-	return template.Must(template.Must(layouts.Clone()).ParseFiles(path))
+	layout := template.Must(web.BaseLayout.Clone())
+	return template.Must(layout.ParseFiles(path))
 }
 
 func parseComponentTemplate(path string) *template.Template {
 	return template.Must(template.ParseFiles(path))
 }
 
-func executeFragment(w http.ResponseWriter, fragment string, data any) {
+func executeFragment(w http.ResponseWriter, r *http.Request, fragment string, data any) {
 	w.Header().Set("Content-Type", "text/html")
 	err := web.Fragments.ExecuteTemplate(w, fragment, data)
 	if err != nil {
+		customRedirect(w, r, "/500")
 		logger.Debug("Error executing fragment", "error", err)
 	}
 }

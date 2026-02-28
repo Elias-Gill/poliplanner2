@@ -16,14 +16,14 @@
   {{ end }}
 </head>
 
-<body class="h-full bg-gray-100 text-gray-900">
+<body class="h-full bg-gray-100 text-gray-900" hx-boost="true">
 
   {{ template "fragments/navbar_mobile" }}
 
   <div class="flex h-screen overflow-hidden">
     {{ template "fragments/sidebar" . }}
     <!-- Contenido principal -->
-    <main class="flex-1 overflow-y-auto px-6 pb-8 pt-16 md:pt-0">
+    <main class="flex-1 overflow-y-auto px-6 pb-8 pt-16 md:pt-8">
       {{ block "content" . }}{{ end }}
     </main>
   </div>

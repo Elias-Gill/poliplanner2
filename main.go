@@ -38,6 +38,7 @@ func main() {
 		sqlite.NewSqliteCourseStore(conn.GetConnection()),
 		sqlite.NewSqliteScheduleStore(conn.GetConnection()),
 		sqlite.NewSqliteCareerStore(conn.GetConnection()),
+		sqlite.NewSqliteAcademicPlanStore(conn.GetConnection()),
 		sqlite.NewSqlitePeriodStore(conn.GetConnection()),
 		config.Get().Email.APIKey, // what the fuck is this doing here
 	)
@@ -49,7 +50,7 @@ func main() {
 	r.Route("/", router.NewAuthRouter(services.UserService, services.EmailService))
 	r.Route("/dashboard", router.NewDashboardRouter(services.ScheduleService))
 	r.Route("/courses", router.NewCourseRouter(services.CoursesService, services.CareerService))
-	r.Route("/schedule", router.NewSchedulesRouter(services.CoursesService, services.ScheduleService, services.CareerService, services.SheetVersionService))
+	r.Route("/schedule", router.NewSchedulesRouter(services.CoursesService, services.ScheduleService, services.CareerService, services.AcademicPlanService))
 	r.Route("/user", router.NewUserRouter(services.UserService))
 	r.Route("/excel", router.NewExcelRouter(services.ExcelService))
 	r.Route("/tools", router.NewToolsRouter())
