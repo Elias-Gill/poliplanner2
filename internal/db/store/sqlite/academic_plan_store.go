@@ -42,68 +42,58 @@ func (s SqliteAcademicPlanStore) GetByCareerID(
 	}
 	defer rows.Close()
 
-	plan := &model.AcademicPlan{
-		ID:        careerID,
-		Semesters: []model.Semester{},
-	}
-
-	var (
-		currentSemesterNumber int
-		currentSemester       *model.Semester
-		firstRow              = true
-	)
+	var plan *model.AcademicPlan
+	var currentSemesterNumber int
 
 	for rows.Next() {
 		var (
-			semester   int
-			level      int
-			assignment model.Assignment
-			name       string
-			dept       string
+			semester int
+			level    int
+			id       int64
+			name     string
+			dept     string
 		)
 
-		if err := rows.Scan(
-			&semester,
-			&level,
-			&assignment.ID,
-			&name,
-			&dept,
-		); err != nil {
+		// read row values
+		if err := rows.Scan(&semester, &level, &id, &name, &dept); err != nil {
 			return nil, err
 		}
 
-		assignment.Semester = semester
-		assignment.Level = level
-		assignment.Name = name
-		assignment.Department = dept
-
-		if firstRow || semester != currentSemesterNumber {
-			if currentSemester != nil {
-				plan.Semesters = append(plan.Semesters, *currentSemester)
+		// Initialize plan if not exists
+		if plan == nil {
+			plan = &model.AcademicPlan{
+				ID:        careerID,
+				Semesters: make([]model.Semester, 0),
 			}
-
-			currentSemesterNumber = semester
-			currentSemester = &model.Semester{
-				Number:      semester,
-				Assignments: []model.Assignment{},
-			}
-			firstRow = false
 		}
 
-		currentSemester.Assignments = append(currentSemester.Assignments, assignment)
+		// Create a new semester if necesary
+		if len(plan.Semesters) == 0 || semester != currentSemesterNumber {
+			plan.Semesters = append(plan.Semesters, model.Semester{
+				Number:      semester,
+				Assignments: make([]model.Assignment, 0),
+			})
+			currentSemesterNumber = semester
+		}
+
+		// Append semester
+		lastIdx := len(plan.Semesters) - 1
+		plan.Semesters[lastIdx].Assignments = append(
+			plan.Semesters[lastIdx].Assignments,
+			model.Assignment{
+				ID:         id,
+				Name:       name,
+				Semester:   semester,
+				Level:      level,
+				Department: dept,
+			},
+		)
 	}
 
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
 
-	if currentSemester != nil {
-		plan.Semesters = append(plan.Semesters, *currentSemester)
-	}
-
-	if len(plan.Semesters) == 0 {
-		return nil, nil
-	}
-
+	// if there is no plan, then this returns "nil", "nil"
 	return plan, nil
 }

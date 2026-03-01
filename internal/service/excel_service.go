@@ -167,7 +167,9 @@ func (s *ExcelService) persistSheetSubjects(
 			}
 
 			// Build our final aggregate from SubjectDTO
-			course := buildCourseAggregate(sub, excelMeta)
+			// NOTE: for now we get the career from the sheet name. This is because it may
+			// collide with "Oviedo" and "Villarrica".
+			course := buildCourseAggregate(sub, sheet.Name, excelMeta)
 			if err := persist(course); err != nil {
 				return err
 			}
@@ -185,6 +187,7 @@ func (s *ExcelService) persistSheetSubjects(
 // buildCourseAggregate constructs the final CourseModel to persist in DB
 func buildCourseAggregate(
 	sub parser.SubjectDTO,
+	career string,
 	excelMeta source.ExcelSourceMetadata,
 ) model.CourseAggregate {
 	course := model.CourseAggregate{
@@ -198,7 +201,7 @@ func buildCourseAggregate(
 		Curriculum: model.Curriculum{
 			// The sheet name represents the "career". In Villarrica and Oviedo, well,
 			// they are not even using this, so ... XD
-			Career:   excelMeta.Name,
+			Career:   career,
 			Semester: sub.Semester,
 			Level:    sub.Level,
 			Subject: model.Subject{

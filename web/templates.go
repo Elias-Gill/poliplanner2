@@ -2,7 +2,10 @@ package web
 
 import (
 	"html/template"
+	"io/fs"
 	"path"
+	"path/filepath"
+	"strings"
 
 	"github.com/elias-gill/poliplanner2/internal/config"
 )
@@ -14,7 +17,7 @@ var (
 
 	// Reusable components like buttons, lists, messages, modals, etc., use with
 	// HTMX.
-	Fragments  = parseFragments()
+	Fragments = parseFragments()
 )
 
 // Parses the layotus and the layout fragments (navbar, sidebar, etc)
@@ -32,10 +35,24 @@ func parseBaseLayout() *template.Template {
 
 // Parses reusable components like messages, buttons, etc
 func parseFragments() *template.Template {
-	fragPattern := path.Join(config.Get().Paths.BaseDir, "web", "templates", "fragments", "**", "*.html")
+	baseDir := path.Join(config.Get().Paths.BaseDir, "web", "templates", "fragments")
+	tmpl := template.New("base").Funcs(template.FuncMap{})
 
-	tmpl := template.New("base").Funcs(template.FuncMap{ /* custom functions here */ })
-	tmpl = template.Must(tmpl.ParseGlob(fragPattern))
+	err := filepath.Walk(baseDir, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() && strings.HasSuffix(info.Name(), ".html") {
+			_, err := tmpl.ParseFiles(path)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
 
 	return tmpl
 }

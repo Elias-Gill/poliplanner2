@@ -1,0 +1,45 @@
+{{define "content"}}
+<form method="POST" action="/schedule/step3" class="space-y-6">
+    <input type="hidden" name="title" value="{{ .Title }}">
+
+    <!-- Iterar por cada grupo de secciones (Assignment) -->
+    {{ range .Sections }}
+    <div class="bg-white rounded-sm shadow p-4 mb-4 border border-gray-300">
+        <h3 class="text-lg font-semibold mb-3">{{ .Assignment }}</h3>
+
+        <!-- Iterar por las secciones de la materia -->
+        {{ range .Sections }}
+        <label class="flex items-center gap-3 p-2 rounded-sm hover:bg-gray-50 cursor-pointer border border-gray-200 mb-2">
+            <input
+                type="checkbox"
+                name="assignment_ids"
+                value="{{ .ID }}"
+                class="w-4 h-4"
+            >
+            <div class="flex-1">
+                <div class="font-medium">{{ .Name }}</div>
+                <div class="text-sm text-gray-500">
+                    Sección: {{ .Section }} <br>
+                    Tipo: 
+                    <span class="{{ if eq .Type 0 }}text-primary-600{{ else }}text-red-400{{ end }}">
+                        {{ if eq .Type 0 }}Curso normal{{ else }}Solo examen final{{ end }}
+                    </span> <br>
+                    Profesor: {{ .Professor }}
+                </div>
+            </div>
+        </label>
+        {{ end }}
+    </div>
+    {{ end }}
+
+    <div class="flex justify-end">
+        <button
+            type="submit"
+            class="px-6 py-2 bg-primary-600 text-white rounded-sm hover:bg-primary-700"
+        >
+            Continuar
+        </button>
+    </div>
+
+</form>
+{{end}}
