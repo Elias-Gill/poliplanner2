@@ -3,38 +3,48 @@
 {{end}}
 
 {{define "content"}}
-<div class="p-6 md:p-10 space-y-8">
+<div class="md:p-10 space-y-8">
+<!-- Header con selector y toggle -->
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-10 md:gap-4">
+  <div>
+    <h1 class="text-3xl font-bold text-gray-900">Tu Dashboard</h1>
+    <p class="text-gray-600 mt-1">Ve aquí la información de tus horarios</p>
+  </div>
 
-  <!-- Header con selector y toggle -->
-  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-    <div>
-      <h1 class="text-3xl font-bold text-gray-900">Tu Dashboard</h1>
-      <p class="text-gray-600 mt-1">Ve aquí la información de tus horarios</p>
+  <div class="flex flex-col gap-4">
+    <div class="flex flex-col w-full md:w-auto">
+      <label for="schedule-select" class="block text-sm font-medium text-gray-700 mb-1">
+        Horario actual
+      </label>
+
+      <!-- Selector -->
+      <select id="schedule-select"
+        title="Seleccionar horario"
+        class="border border-gray-300 rounded-sm px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 w-full">
+        <option value="1">Horario 1</option>
+        <option value="2">Horario 2</option>
+      </select>
+
+      <!-- Botón + debajo, mismo ancho que el selector -->
+      <a href="/schedule/"
+         class="mt-2 inline-flex items-center justify-center w-full bg-primary-600 text-white rounded-sm px-3 py-2 font-medium shadow hover:bg-primary-700 transition-colors"
+         title="Crear horario">
+        <i class="bi bi-calendar-plus mr-2"></i> Nuevo horario
+      </a>
     </div>
+  </div>
+</div>
 
-    <div class="flex flex-col md:flex-row md:items-center gap-4">
-      <div>
-        <label for="schedule-select" class="block text-sm font-medium text-gray-700 mb-1">
-          Horario actual
-        </label>
-        <select id="schedule-select"
-          class="border border-gray-300 rounded-sm px-3 py-2 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900">
-          <option value="1">Horario 1</option>
-          <option value="2">Horario 2</option>
-        </select>
-      </div>
-
-      <div class="inline-flex bg-gray-200 rounded-full p-1 mt-2 md:mt-0">
-        <button class="px-4 py-2 bg-white rounded-full text-gray-900 font-medium shadow-sm"
-          data-view="overview">
-          Overview
-        </button>
-        <button class="px-4 py-2 text-gray-600 font-medium"
-          data-view="calendar">
-          Calendario
-        </button>
-      </div>
-    </div>
+  <!-- Selector tipo de vista -->
+  <div class="inline-flex bg-gray-200 rounded-full p-1 mt-2 md:mt-0">
+    <button class="px-4 py-2 bg-white rounded-full text-gray-900 font-medium shadow-sm"
+        data-view="overview">
+        Overview
+    </button>
+    <button class="px-4 py-2 text-gray-600 font-medium"
+        data-view="calendar">
+        Calendario
+      </button>
   </div>
 
   <!-- Sección: Horario semanal -->
