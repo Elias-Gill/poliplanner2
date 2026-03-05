@@ -7,9 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "build:css": "tailwindcss -i ./web/assets/input.css -o ./web/static/styles.css --minify",
-    "watch:css": "tailwindcss -i ./web/assets/input.css -o ./web/static/styles.css --watch",
-    "dev:css": "npm run watch:css"
+    "build:css": "tailwindcss -i ./web/static/css/styles.css -o ./web/static/output.css --minify",
+    "watch:css": "tailwindcss -i ./web/static/css/styles.css -o ./web/static/output.css --watch"
   },
   "repository": {
     "type": "git",

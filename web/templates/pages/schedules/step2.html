@@ -3,7 +3,7 @@
     <input type="hidden" name="title" value="{{ .Title }}">
 
     {{ range .Plan.Semesters }}
-    <details class="bg-white rounded-sm shadow">
+    <details class="bg-white rounded-sm shadow border border-gray-300">
         <summary class="text-lg font-semibold mb-3 cursor-pointer select-none p-4 border-b border-gray-300">
             Semestre {{ .Number }}
         </summary>
