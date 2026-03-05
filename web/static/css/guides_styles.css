@@ -32,7 +32,7 @@ GUIDE ARTICLE SCOPE
 
 .guide_article h2 {
     font-size: 1.6rem;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #d5e7eb;
     padding-bottom: 0.4rem;
 }
 
@@ -122,11 +122,19 @@ GUIDE ARTICLE SCOPE
 /* Images */
 
 .guide_article img {
+    width: 100%;
     max-width: 100%;
     height: auto;
     margin: 1.5rem auto;
     display: block;
-    border-radius: 0.5rem;
+    border-radius: 0.25rem;
+}
+
+@media (min-width: 1024px) {
+    .guide_article img {
+        width: 80%;
+        max-width: 80%;
+    }
 }
 
 /* Blockquote */
