@@ -1,13 +1,15 @@
 {{define "fragments/navbar_mobile"}}
 <!-- Mobile top title con theme toggle -->
-<div class="md:hidden fixed top-0 left-0 right-0 z-50 bg-gray-900 text-gray-100 border-b
-    border-gray-700 shadow-sm px-4 py-1 flex items-center justify-between h-10">
-    <div class="flex items-center gap-2">
-        <img src="/static/favicon.ico" class="w-5 h-5" alt="Logo">
-        <span class="text-base font-semibold">PoliPlanner</span>
+<a href="/">
+    <div class="md:hidden fixed top-0 left-0 right-0 z-50 bg-gray-900 text-gray-100 border-b
+        border-gray-700 shadow-sm px-4 py-1 flex items-center justify-between h-10">
+        <div class="flex items-center gap-2">
+            <img src="/static/favicon.ico" class="w-5 h-5" alt="Logo">
+            <span class="text-base font-semibold">PoliPlanner</span>
+        </div>
+        {{ template "fragments/theme-toggle" }}
     </div>
-    {{ template "fragments/theme-toggle" }}
-</div>
+</a>
 
 <!-- Mobile bottom nav -->
 <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-gray-900 text-gray-100 border-t border-gray-700 shadow-t h-14">

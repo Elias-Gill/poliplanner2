@@ -33,7 +33,7 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 
 	return func(r chi.Router) {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			http.Redirect(w, r, "/dashboard", http.StatusFound)
+			customRedirect(w, r, "/dashboard")
 		})
 
 		r.Get("/500", func(w http.ResponseWriter, r *http.Request) {
@@ -79,7 +79,7 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 				redirectTo = "/dashboard"
 			}
 
-			w.Header().Set("HX-Redirect", redirectTo)
+			customRedirect(w, r, redirectTo)
 		})
 
 		r.Get("/signup", func(w http.ResponseWriter, r *http.Request) {
@@ -123,7 +123,7 @@ func NewAuthRouter(userService *service.UserService, emailService *service.Email
 				return
 			}
 
-			w.Header().Set("HX-Redirect", "/login")
+			customRedirect(w, r, "/login")
 		})
 
 		r.Get("/password-recovery", func(w http.ResponseWriter, r *http.Request) {

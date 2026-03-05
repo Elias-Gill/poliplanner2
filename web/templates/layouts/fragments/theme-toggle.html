@@ -1,4 +1,6 @@
 {{define "fragments/theme-toggle"}}
+<script src="/static/js/theme_toggle.js"></script>
+
 <!-- Desktop: botón flotante abajo -->
 <div class="hidden md:flex fixed bottom-6 right-6 z-50 flex-col items-end gap-2">
     <button
@@ -22,7 +24,7 @@
         aria-label="Cambiar modo y tema"
         type="button"
     >
-        <i class="bi bi-moon text-lg"></i>
+        <i class="bi bi-moon text-md"></i>
     </button>
 </div>
 {{end}}
