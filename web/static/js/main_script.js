@@ -1,115 +1,59 @@
 function toggleMobileMenu() {
-    const menu = document.getElementById('mobile-menu');
-    menu.classList.toggle('hidden');
-    if (!menu.classList.contains('hidden')) {
-        // Scroll al top para que el menú sea visible inmediatamente
-        menu.scrollTop = 0;
-    }
+  const menu = document.getElementById('mobile-menu');
+  menu.classList.toggle('hidden');
+  if (!menu.classList.contains('hidden')) {
+    menu.scrollTop = 0; // Asegura que el menú esté visible
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   const root = document.documentElement;
-  let paletteTimeout = null;
 
-  /* dark / light toggle */
-  const themeToggle = document.getElementById("theme-toggle");
-  const paletteSelector = document.getElementById("palette-selector");
+  // Botones desktop y mobile
+  const desktopToggle = document.getElementById("theme-toggle-desktop");
+  const mobileToggle = document.getElementById("theme-toggle-mobile");
 
+  // Función para actualizar el ícono según modo
   const updateToggleIcon = () => {
-    themeToggle.innerHTML = root.classList.contains("dark-mode")
-      ? '<i class="bi bi-sun"></i>'
-      : '<i class="bi bi-moon"></i>';
+    if (desktopToggle) {
+      desktopToggle.innerHTML = root.classList.contains("dark-mode")
+        ? '<i class="bi bi-sun text-xl"></i>'
+        : '<i class="bi bi-moon text-xl"></i>';
+    }
+    if (mobileToggle) {
+      mobileToggle.innerHTML = root.classList.contains("dark-mode")
+        ? '<i class="bi bi-sun text-lg"></i>'
+        : '<i class="bi bi-moon text-lg"></i>';
+    }
   };
 
+  // Inicializar según localStorage
+  const storedMode = localStorage.getItem("mode");
+  if (storedMode === "dark") {
+    root.classList.add("dark-mode");
+  } else {
+    root.classList.remove("dark-mode");
+  }
   updateToggleIcon();
 
-  // Alterna modo claro / oscuro con click normal
-  themeToggle.addEventListener("click", (e) => {
-    // Solo alternar si no estamos mostrando la paleta
-    if (!paletteSelector.classList.contains("visible")) {
-      const isDark = root.classList.toggle("dark-mode");
-      localStorage.setItem("mode", isDark ? "dark" : "light");
-      updateToggleIcon();
-    }
-  });
-
-  // Función para ocultar la paleta
-  const hidePalette = () => {
-    paletteSelector.classList.remove("visible");
-    clearTimeout(paletteTimeout);
+  // Función para alternar modo
+  const toggleTheme = () => {
+    const isDark = root.classList.toggle("dark-mode");
+    localStorage.setItem("mode", isDark ? "dark" : "light");
+    updateToggleIcon();
   };
 
-  // Mostrar paleta al mantener presionado (móvil y desktop)
-  themeToggle.addEventListener("mousedown", () => {
-    paletteTimeout = setTimeout(() => {
-      paletteSelector.classList.add("visible");
-    }, 500); // 500ms para evitar activaciones accidentales
+  // Agregar listeners a ambos botones
+  [desktopToggle, mobileToggle].forEach(btn => {
+    if (!btn) return;
+
+    // Click normal alterna modo
+    btn.addEventListener("click", toggleTheme);
+
+    // Opcional: mantener presionado podría abrir paleta si la agregas
+    // btn.addEventListener("mousedown", ...);
+    // btn.addEventListener("mouseup", ...);
+    // btn.addEventListener("touchstart", ...);
+    // btn.addEventListener("touchend", ...);
   });
-
-  themeToggle.addEventListener("mouseup", () => {
-    clearTimeout(paletteTimeout);
-  });
-
-  themeToggle.addEventListener("mouseleave", () => {
-    clearTimeout(paletteTimeout);
-  });
-
-  // También para touch devices
-  themeToggle.addEventListener("touchstart", () => {
-    paletteTimeout = setTimeout(() => {
-      paletteSelector.classList.add("visible");
-    }, 500);
-  });
-
-  themeToggle.addEventListener("touchend", () => {
-    clearTimeout(paletteTimeout);
-  });
-
-  // Ocultar paleta al hacer clic fuera
-  document.addEventListener("click", (e) => {
-    if (
-      !themeToggle.contains(e.target) &&
-      !paletteSelector.contains(e.target)
-    ) {
-      hidePalette();
-    }
-  });
-
-  // Ocultar paleta en móvil al hacer scroll
-  window.addEventListener("scroll", () => {
-    if (window.innerWidth <= 768) {
-      hidePalette();
-    }
-  });
-
-  // Selección de tema
-  paletteSelector.addEventListener("click", (e) => {
-    if (e.target.tagName === "BUTTON") {
-      const theme = e.target.dataset.theme;
-
-      root.classList.remove(
-        "default-theme",
-        "theme-warm",
-        "theme-forest",
-        "theme-lavender",
-        "theme-pink",
-      );
-      root.classList.add(theme);
-      localStorage.setItem("theme", theme);
-
-      hidePalette();
-    }
-  });
-
-  /* duplicate menu for mobile */
-  const desktopMenu = document.querySelector(".nav-links");
-  const mobileMenuContent = document.getElementById("mobile-menu-content");
-
-  if (desktopMenu && mobileMenuContent) {
-    mobileMenuContent.innerHTML = "";
-    const links = desktopMenu.querySelectorAll("li.right-menu-item > a");
-    links.forEach((link) => {
-      mobileMenuContent.appendChild(link.cloneNode(true));
-    });
-  }
 });

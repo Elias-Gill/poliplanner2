@@ -1,22 +1,31 @@
 {{define "fragments/navbar_mobile"}}
-<!-- Mobile top nav -->
-<nav class="md:hidden fixed top-0 left-0 right-0 z-50 bg-gray-900 text-gray-100 border-b border-gray-700 shadow-sm">
-    <div class="flex items-center justify-between px-4 py-2">
-        <div class="flex items-center gap-3">
-            <img src="/static/favicon.ico" class="w-6 h-6" alt="Logo">
-            <span class="text-lg font-semibold">PoliPlanner</span>
-        </div>
-
-        <!-- Menú hamburguesa -->
-        <button type="button" class="text-gray-200 hover:text-white focus:outline-none"
-            onclick="toggleMobileMenu()">
-            <i class="bi bi-list text-3xl"></i>
-        </button>
+<!-- Mobile top title con theme toggle -->
+<div class="md:hidden fixed top-0 left-0 right-0 z-50 bg-gray-900 text-gray-100 border-b
+    border-gray-700 shadow-sm px-4 py-1 flex items-center justify-between h-10">
+    <div class="flex items-center gap-2">
+        <img src="/static/favicon.ico" class="w-5 h-5" alt="Logo">
+        <span class="text-base font-semibold">PoliPlanner</span>
     </div>
+    {{ template "fragments/theme-toggle" }}
+</div>
 
-    <!-- Menú desplegable mobile -->
-    <div id="mobile-menu" class="hidden bg-gray-900 border-t border-gray-700 max-h-[70vh] overflow-auto px-2 pb-3 space-y-1">
-        {{ template "fragments/nav-links" . }}
+<!-- Mobile bottom nav -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-gray-900 text-gray-100 border-t border-gray-700 shadow-t h-14">
+    <div class="grid grid-cols-3 text-center py-1">
+        <a href="/dashboard" class="flex flex-col items-center justify-center text-xs hover:text-white">
+            <i class="bi bi-speedometer2 text-xl"></i>
+            <span class="mt-0.5">Dashboard</span>
+        </a>
+
+        <a href="/guides" class="flex flex-col items-center justify-center text-xs hover:text-white">
+            <i class="bi bi-book text-xl"></i>
+            <span class="mt-0.5">Guías</span>
+        </a>
+
+        <a href="/tools" class="flex flex-col items-center justify-center text-xs hover:text-white">
+            <i class="bi bi-tools text-xl"></i>
+            <span class="mt-0.5">Herramientas</span>
+        </a>
     </div>
 </nav>
 {{end}}

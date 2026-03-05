@@ -1,8 +1,9 @@
 {{define "fragments/theme-toggle"}}
-<div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
+<!-- Desktop: botón flotante abajo -->
+<div class="hidden md:flex fixed bottom-6 right-6 z-50 flex-col items-end gap-2">
     <button
-        id="theme-toggle"
-        class="theme-toggle-btn flex items-center justify-center w-12 h-12 bg-gray-900 text-white rounded-full shadow-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-200"
+        id="theme-toggle-desktop"
+        class="theme-toggle-btn flex items-center justify-center w-12 h-12 bg-gray-900 text-white rounded-full shadow-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500"
         aria-label="Cambiar modo y tema"
         type="button"
     >
@@ -11,5 +12,17 @@
     <small id="theme-hint" class="text-xs text-gray-600 bg-white px-3 py-1 rounded-md shadow opacity-0 transition-opacity duration-300 pointer-events-none">
         Manten presionado para cambiar de tema
     </small>
+</div>
+
+<!-- Mobile: botón junto al título -->
+<div class="flex md:hidden items-center gap-2">
+    <button
+        id="theme-toggle-mobile"
+        class="theme-toggle-btn flex items-center justify-center w-8 h-8 bg-gray-800 text-white rounded-full shadow hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+        aria-label="Cambiar modo y tema"
+        type="button"
+    >
+        <i class="bi bi-moon text-lg"></i>
+    </button>
 </div>
 {{end}}

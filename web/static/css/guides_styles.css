@@ -4,10 +4,16 @@ GUIDE ARTICLE SCOPE
 
 .guide_article {
     max-width: 900px;
-    margin: 4rem auto;
+    margin: 0 auto;
     line-height: 1.7;
     font-size: 1rem;
     color: #1f2937; /* gray-800 */
+}
+
+@media (min-width: 1024px) {
+    .guide_article {
+        margin: 3rem auto;
+    }
 }
 
 /* Headings */

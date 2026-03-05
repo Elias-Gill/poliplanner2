@@ -18,19 +18,16 @@
 
 <body class="h-full bg-gray-100 text-gray-900" hx-boost="true">
 
-  {{ template "fragments/navbar_mobile" }}
-
   <div class="flex h-screen overflow-hidden">
     {{ template "fragments/sidebar" . }}
     <!-- Contenido principal -->
-    <main class="flex-1 overflow-y-auto px-6 pb-8 pt-16 md:pt-8">
+    <main class="flex-1 overflow-y-auto px-6 pb-18 pt-16 md:pt-8 md:pb-8">
       {{ block "content" . }}{{ end }}
     </main>
   </div>
 
   {{ template "fragments/mobile-modal" . }}
-  {{ template "fragments/theme-toggle" . }}
-  {{ template "fragments/palette-selector" . }}
+  {{ template "fragments/navbar_mobile" }}
 
   <script src="/static/js/main_script.js"></script>
   <script src="/static/js/theme_hint.js"></script>
