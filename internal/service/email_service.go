@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/elias-gill/poliplanner2/internal/logger"
+	"github.com/elias-gill/poliplanner2/logger"
 	brevo "github.com/getbrevo/brevo-go/lib"
 )
 

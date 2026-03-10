@@ -10,9 +10,7 @@ type Services struct {
 	ScheduleService     *ScheduleService
 	ExcelService        *ExcelService
 	EmailService        *EmailService
-	CoursesService      *CourseService
 	AcademicPlanService *AcademicPlanService
-	CareerService       *CareerService
 }
 
 // Convenience function to instantiate all the services in one call
@@ -31,9 +29,7 @@ func NewServices(
 		SheetVersionService: NewSheetVersionService(sheetVersionStore),
 		ExcelService:        NewExcelService(sheetVersionStore, courseStore),
 		ScheduleService:     NewScheduleService(scheduleStore),
-		CareerService:       NewCareerService(careerStore),
 		AcademicPlanService: NewAcademicPlanService(academicPlanStore),
 		EmailService:        NewEmailService(emailApiKey),
-		CoursesService:      NewCourseService(courseStore, periodStore),
 	}
 }

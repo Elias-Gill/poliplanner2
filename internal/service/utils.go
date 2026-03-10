@@ -1,14 +1,17 @@
 package service
 
-import "time"
+import (
+	"time"
 
-func calculateCurrentPeriod() int {
-	// Determine on which period we currently are
-	period := 2 // January -> July
+	"github.com/elias-gill/poliplanner2/internal/domain/period"
+)
+
+// Determine on which academic period we currently are
+func calculateCurrentSemester() period.Semester {
 	now := time.Now()
 	if now.Month() > 6 {
-		period = 1 // August -> December
+		return period.FirstSemester // August -> December
+	} else {
+		return period.SecondSemester // January -> July
 	}
-
-	return period
 }

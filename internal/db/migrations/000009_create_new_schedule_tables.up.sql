@@ -3,8 +3,7 @@
 CREATE TABLE horarios (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     usuario_id INTEGER NOT NULL,
-    nombre TEXT NOT NULL DEFAULT 'Mi horario',
-    descripcion TEXT,
+    descripcion TEXT NOT NULL DEFAULT 'Mi horario',
     periodo_id INTEGER NOT NULL,
     creado_en DATETIME DEFAULT (datetime('now')),
 

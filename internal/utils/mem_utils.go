@@ -3,7 +3,7 @@ package utils
 import (
 	"runtime"
 
-	"github.com/elias-gill/poliplanner2/internal/logger"
+	"github.com/elias-gill/poliplanner2/logger"
 )
 
 func MemUsageStatus(label string, do func()) {

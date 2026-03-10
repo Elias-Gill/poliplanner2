@@ -3,27 +3,28 @@ package service
 import (
 	"context"
 
-	"github.com/elias-gill/poliplanner2/internal/db/model"
-	"github.com/elias-gill/poliplanner2/internal/db/store"
+	"github.com/elias-gill/poliplanner2/internal/domain/academicPlan"
 )
 
 type AcademicPlanService struct {
-	planStorer store.AcademicPlanStore
+	planStorer    academicPlan.AcademicPlanStorer
+	planReadStore academicPlan.AcademicPlanReadStore
 }
 
 func NewAcademicPlanService(
-	planStorer store.AcademicPlanStore,
+	planStorer academicPlan.AcademicPlanStorer,
+	planReadStore academicPlan.AcademicPlanReadStore,
 ) *AcademicPlanService {
 	return &AcademicPlanService{
-		planStorer: planStorer,
+		planStorer:    planStorer,
+		planReadStore: planReadStore,
 	}
 }
 
-// (*AcademicPlan, nil) = existe plan
-//
-// (nil, nil) = no existe plan para esa carrera
-//
-// (nil, err) = error en la DB
-func (s *AcademicPlanService) GetByCareerID(ctx context.Context, careerID int64) (*model.AcademicPlan, error) {
-	return s.planStorer.GetByCareerID(ctx, careerID)
+func (s *AcademicPlanService) GetPlanByCareerID(ctx context.Context, careerID int64) (*academicPlan.AcademicPlan, error) {
+	return s.planReadStore.GetPlanByCareerID(ctx, careerID)
+}
+
+func (s *AcademicPlanService) ListCareers(ctx context.Context) ([]*academicPlan.CareerReadModel, error) {
+	return s.planReadStore.ListCareers(ctx)
 }

@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	log "github.com/elias-gill/poliplanner2/internal/logger"
+	log "github.com/elias-gill/poliplanner2/logger"
 )
 
 // ================================

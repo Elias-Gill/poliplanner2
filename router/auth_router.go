@@ -9,7 +9,7 @@ import (
 
 	"github.com/elias-gill/poliplanner2/internal/auth"
 	"github.com/elias-gill/poliplanner2/internal/config"
-	"github.com/elias-gill/poliplanner2/internal/logger"
+	"github.com/elias-gill/poliplanner2/logger"
 	"github.com/elias-gill/poliplanner2/internal/service"
 	"github.com/go-chi/chi/v5"
 )

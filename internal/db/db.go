@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/elias-gill/poliplanner2/internal/config"
-	log "github.com/elias-gill/poliplanner2/internal/logger"
+	log "github.com/elias-gill/poliplanner2/logger"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/sqlite3"
