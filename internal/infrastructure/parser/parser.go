@@ -7,11 +7,12 @@ import (
 	"sync"
 	"unicode"
 
-	"github.com/elias-gill/poliplanner2/internal/parser/exceptions"
-	"github.com/elias-gill/poliplanner2/internal/parser/layout"
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/exceptions"
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/layout"
 	"github.com/elias-gill/poliplanner2/internal/utils"
 	"github.com/xuri/excelize/v2"
 )
+
 // For reusing SubjectDTO objects to reduce allocations
 var dtoPool = sync.Pool{
 	New: func() any {

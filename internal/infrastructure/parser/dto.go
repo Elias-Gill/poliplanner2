@@ -79,7 +79,7 @@ type SubjectDTO struct {
 
 	// This is used as the name of the table "cursos", which is the final aggregate
 	// with all schedule information of a subject in a specific time period.
-	SubjectName string
+	RawSubjectName string
 
 	// Course type can be:
 	// - Normal course
@@ -145,7 +145,7 @@ func (s *SubjectDTO) SetDepartment(val string) {
 }
 
 func (s *SubjectDTO) SetSubjectName(val string) {
-	s.SubjectName = strings.TrimSpace(val)
+	s.RawSubjectName = strings.TrimSpace(val)
 
 	// Set course type based on the name
 	s.CourseType = NormalCourse

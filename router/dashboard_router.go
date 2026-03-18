@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"path"
 
+	"github.com/elias-gill/poliplanner2/internal/app/schedule"
 	"github.com/elias-gill/poliplanner2/internal/config"
-	"github.com/elias-gill/poliplanner2/internal/domain/schedule"
 	"github.com/go-chi/chi/v5"
 )
 

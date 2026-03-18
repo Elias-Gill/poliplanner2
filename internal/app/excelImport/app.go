@@ -9,10 +9,10 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/config/timezone"
 	"github.com/elias-gill/poliplanner2/internal/domain/period"
 	sheetversion "github.com/elias-gill/poliplanner2/internal/domain/sheetVersion"
-	"github.com/elias-gill/poliplanner2/internal/parser"
-	"github.com/elias-gill/poliplanner2/internal/parser/metadata"
-	"github.com/elias-gill/poliplanner2/internal/scraper"
-	"github.com/elias-gill/poliplanner2/internal/source"
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser"
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/metadata"
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/scraper"
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/source"
 	"github.com/elias-gill/poliplanner2/logger"
 )
 
@@ -178,7 +178,7 @@ func (s *ImportService) persistSheetSubjects(
 	for _, sub := range sheet.Subjects {
 		offering := buildOfferingFromDTO(sheet.Name, periodID, sub, planLoader)
 		if err := writter.SaveCourseOffering(offering); err != nil {
-			return fmt.Errorf("cannot save course offering for subject %q: %w", sub.SubjectName, err)
+			return fmt.Errorf("cannot save course offering for subject %q: %w", sub.RawSubjectName, err)
 		}
 	}
 

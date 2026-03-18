@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/elias-gill/poliplanner2/internal/domain/period"
-	"github.com/elias-gill/poliplanner2/internal/source"
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/source"
 )
 
 type ImportStorer interface {

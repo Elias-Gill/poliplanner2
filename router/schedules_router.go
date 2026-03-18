@@ -8,16 +8,16 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/elias-gill/poliplanner2/internal/app/academicPlan"
+	"github.com/elias-gill/poliplanner2/internal/app/schedule"
 	"github.com/elias-gill/poliplanner2/internal/config"
-	"github.com/elias-gill/poliplanner2/internal/domain/academicPlan"
+	planModel "github.com/elias-gill/poliplanner2/internal/domain/academicPlan"
 	"github.com/elias-gill/poliplanner2/internal/domain/courseOffering"
-	"github.com/elias-gill/poliplanner2/internal/domain/schedule"
 	"github.com/elias-gill/poliplanner2/logger"
 	"github.com/go-chi/chi/v5"
 )
 
 func NewSchedulesRouter(
-	courseService *courseOffering.CourseService,
 	scheduleService *schedule.ScheduleService,
 	planService *academicPlan.AcademicPlanService,
 ) func(r chi.Router) {
@@ -43,7 +43,7 @@ func NewSchedulesRouter(
 			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*200)
 			defer cancel()
 
-			careers, err := careerService.List(ctx)
+			careers, err := planService.ListCareers(ctx)
 			if err != nil {
 				logger.Error("Error listing careers", "error", err)
 				customRedirect(w, r, "/500")
@@ -117,7 +117,7 @@ func NewSchedulesRouter(
 			defer cancel()
 
 			// REFACTOR: differentiate "plan form career not exists" and DB errors
-			plan, err := planService.GetByCareerID(ctx, careerID)
+			plan, err := planService.GetCareerPlan(ctx, planModel.CareerID(careerID))
 			if err != nil {
 				customRedirect(w, r, "/500")
 				return
@@ -208,44 +208,26 @@ func NewSchedulesRouter(
 			}
 
 			// Validate ids
+			var courses = make([]courseOffering.CourseOfferingID, len(assignmentIDs))
 			for _, idStr := range assignmentIDs {
 				id, err := strconv.ParseInt(idStr, 10, 64)
 				if err != nil || id <= 0 {
 					executeFragment(w, r, "messages/error_message", "invalid assignment id")
 					return
 				}
+				courses = append(courses, courseOffering.CourseOfferingID(id))
 			}
 
-			// TODO: get the data
-			// ctx, cancel := context.WithTimeout(r.Context(), 300*time.Millisecond)
-			// defer cancel()
+			// TODO: get the data from forms
+			ctx, cancel := context.WithTimeout(r.Context(), 300*time.Millisecond)
+			defer cancel()
 
-			// Datos de prueba para la plantilla
-			fakeSections := []courseOffering.SectionsList{
-				{
-					Assignment: "Cálculo I",
-					Sections: []courseOffering.Section{
-						{ID: 1, Section: "TQ", Name: "Cálculo I", Professor: "Dr. Pérez", Type: 0},
-						{ID: 2, Section: "MI", Name: "Cálculo I", Professor: "Dra. Sánchez", Type: 0},
-					},
-				},
-				{
-					Assignment: "Física I",
-					Sections: []courseOffering.Section{
-						{ID: 3, Section: "TR", Name: "Física I", Professor: "Ing. Gómez", Type: 0},
-					},
-				},
-				{
-					Assignment: "Química Final",
-					Sections: []courseOffering.Section{
-						{ID: 4, Section: "TR", Name: "Química Final (*)", Professor: "Dra. López", Type: 1},
-					},
-				},
-			}
+			// FIX: error handling
+			sections, _ := planService.ListOffering(ctx, courses)
 
 			// Ejecutar la plantilla
 			step3.Execute(w, map[string]any{
-				"Sections": fakeSections,
+				"Sections": sections,
 				"Title":    "Horario de prueba",
 			})
 		})
@@ -260,7 +242,7 @@ func NewSchedulesRouter(
 		//       * Re-renders Step 3 with errors.
 		r.Post("/step3", func(w http.ResponseWriter, r *http.Request) {
 			// TODO: support this
-			customRedirect(w, r, "/schedule")
+			customRedirect(w, r, "/step4")
 		})
 
 		// ================= STEP 4 =================

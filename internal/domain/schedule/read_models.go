@@ -7,7 +7,12 @@ import (
 
 type ScheduleBasicData struct {
 	Owner       user.UserID
-	Name        string
 	Description string
-	CourseIDs   []courseOffering.CourseOfferingID
+	CoursesIDs  []courseOffering.CourseOfferingID
+}
+
+type ScheduleDetails struct {
+	Owner       user.UserID
+	Description string
+	Courses     []courseOffering.CourseOffering
 }

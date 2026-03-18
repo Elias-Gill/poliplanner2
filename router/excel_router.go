@@ -12,7 +12,7 @@ import (
 	excelimport "github.com/elias-gill/poliplanner2/internal/app/excelImport"
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/config/timezone"
-	"github.com/elias-gill/poliplanner2/internal/source"
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/source"
 	"github.com/go-chi/chi/v5"
 )
 

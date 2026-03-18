@@ -9,15 +9,15 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/config/timezone"
 	"github.com/elias-gill/poliplanner2/internal/domain/courseOffering"
 	"github.com/elias-gill/poliplanner2/internal/domain/period"
-	"github.com/elias-gill/poliplanner2/internal/parser"
-	"github.com/elias-gill/poliplanner2/internal/parser/metadata"
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser"
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/metadata"
 )
 
 func buildOfferingFromDTO(career string, periodID period.PeriodID, data parser.SubjectDTO, planLoader *metadata.AcademicPlanLoader) Offering {
 	// Complete metadata if possible
 	if planLoader != nil {
 		if data.Semester == 0 {
-			if m, err := planLoader.FindSubject(data.SubjectName); err == nil {
+			if m, err := planLoader.FindSubject(data.RawSubjectName); err == nil {
 				data.Semester = m.Semester
 			}
 		}
@@ -25,7 +25,7 @@ func buildOfferingFromDTO(career string, periodID period.PeriodID, data parser.S
 
 	subject := subject{
 		Career:     strings.ToUpper(strings.TrimSpace(career)),
-		Name:       normalizeSubjectName(data.SubjectName),
+		Name:       normalizeSubjectName(data.RawSubjectName),
 		Department: data.Department,
 		Level:      data.Level,
 		Semester:   data.Semester,
@@ -46,7 +46,7 @@ func buildOfferingFromDTO(career string, periodID period.PeriodID, data parser.S
 	}
 
 	offer := Offering{
-		CourseName: data.SubjectName,
+		CourseName: data.RawSubjectName,
 		Period:     periodID,
 		Teachers:   teachers,
 		Subject:    subject,

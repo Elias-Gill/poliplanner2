@@ -8,8 +8,8 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/app"
 	"github.com/elias-gill/poliplanner2/internal/auth"
 	"github.com/elias-gill/poliplanner2/internal/config"
-	"github.com/elias-gill/poliplanner2/internal/db"
-	"github.com/elias-gill/poliplanner2/internal/db/sqlite"
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/persistence"
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/persistence/sqlite"
 	log "github.com/elias-gill/poliplanner2/logger"
 	"github.com/elias-gill/poliplanner2/router"
 
@@ -26,7 +26,7 @@ func main() {
 	log.Info("Loading env configuraion")
 
 	log.Debug("Initializing db")
-	conn, err := db.InitDB()
+	conn, err := persistence.InitDB()
 	if err != nil {
 		panic(err)
 	}

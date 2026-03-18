@@ -59,17 +59,17 @@ func (s *SqliteScheduleStore) Insert(ctx context.Context, data *schedule.Schedul
 
 	var scheduleID int64
 	err = tx.QueryRowContext(ctx, `
-		INSERT INTO horarios (usuario_id, nombre, descripcion, periodo_id)
+		INSERT INTO horarios (usuario_id, descripcion, periodo_id)
 		VALUES (?, ?, ?, ?)
 		RETURNING id
-		`, data.Owner, data.Name, data.Description, 1).
+		`, data.Owner, data.Description, 1).
 		Scan(&scheduleID)
 	if err != nil {
 		return 0, err
 	}
 
 	// Vincular cursos
-	for _, courseID := range data.CourseIDs {
+	for _, courseID := range data.CoursesIDs {
 		_, err = tx.ExecContext(ctx, `
 			INSERT INTO horarios_detalle (horario_id, curso_id)
 			VALUES (?, ?)
