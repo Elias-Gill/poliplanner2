@@ -5,17 +5,16 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/elias-gill/poliplanner2/internal/db/model"
-	"github.com/elias-gill/poliplanner2/internal/db/store"
+	sheetversion "github.com/elias-gill/poliplanner2/internal/domain/sheetVersion"
 )
 
 type SheetVersionService struct {
 	db                 *sql.DB
-	sheetVersionStorer store.SheetVersionStorer
+	sheetVersionStorer sheetversion.SheetVersionStorer
 }
 
 func NewSheetVersionService(
-	sheetVersionStorer store.SheetVersionStorer,
+	sheetVersionStorer sheetversion.SheetVersionStorer,
 ) *SheetVersionService {
 	return &SheetVersionService{
 		sheetVersionStorer: sheetVersionStorer,
@@ -24,7 +23,7 @@ func NewSheetVersionService(
 
 func (s *SheetVersionService) FindLatestSheetVersion(
 	ctx context.Context,
-) (*model.SheetVersion, error) {
+) (*sheetversion.SheetVersion, error) {
 	version, err := s.sheetVersionStorer.GetNewest(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("error searching latest schedule: %w", err)

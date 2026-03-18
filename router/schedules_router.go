@@ -9,16 +9,17 @@ import (
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/config"
-	"github.com/elias-gill/poliplanner2/internal/service"
+	"github.com/elias-gill/poliplanner2/internal/domain/academicPlan"
+	"github.com/elias-gill/poliplanner2/internal/domain/courseOffering"
+	"github.com/elias-gill/poliplanner2/internal/domain/schedule"
 	"github.com/elias-gill/poliplanner2/logger"
 	"github.com/go-chi/chi/v5"
 )
 
 func NewSchedulesRouter(
-	courseService *service.CourseService,
-	scheduleService *service.ScheduleService,
-	careerService *service.CareerService,
-	planService *service.AcademicPlanService,
+	courseService *courseOffering.CourseService,
+	scheduleService *schedule.ScheduleService,
+	planService *academicPlan.AcademicPlanService,
 ) func(r chi.Router) {
 	basePath := path.Join(
 		config.Get().Paths.BaseDir,
@@ -220,23 +221,23 @@ func NewSchedulesRouter(
 			// defer cancel()
 
 			// Datos de prueba para la plantilla
-			fakeSections := []model.SectionsList{
+			fakeSections := []courseOffering.SectionsList{
 				{
 					Assignment: "Cálculo I",
-					Sections: []model.Section{
+					Sections: []courseOffering.Section{
 						{ID: 1, Section: "TQ", Name: "Cálculo I", Professor: "Dr. Pérez", Type: 0},
 						{ID: 2, Section: "MI", Name: "Cálculo I", Professor: "Dra. Sánchez", Type: 0},
 					},
 				},
 				{
 					Assignment: "Física I",
-					Sections: []model.Section{
+					Sections: []courseOffering.Section{
 						{ID: 3, Section: "TR", Name: "Física I", Professor: "Ing. Gómez", Type: 0},
 					},
 				},
 				{
 					Assignment: "Química Final",
-					Sections: []model.Section{
+					Sections: []courseOffering.Section{
 						{ID: 4, Section: "TR", Name: "Química Final (*)", Professor: "Dra. López", Type: 1},
 					},
 				},

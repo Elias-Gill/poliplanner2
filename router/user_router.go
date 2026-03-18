@@ -5,14 +5,14 @@ import (
 	"path"
 	"time"
 
+	"github.com/elias-gill/poliplanner2/internal/app/user"
 	"github.com/elias-gill/poliplanner2/internal/config"
-	"github.com/elias-gill/poliplanner2/internal/service"
 	"github.com/go-chi/chi/v5"
 )
 
 // REFACTOR: si es que me molesta puedo cambiar el nombre y locacion de los endpoints,
 // pero de momento me parece aceptable esta porqueria
-func NewUserRouter(userService *service.UserService) func(r chi.Router) {
+func NewUserRouter(userService *user.UserService) func(r chi.Router) {
 	p := path.Join(config.Get().Paths.BaseDir, "web", "templates", "pages", "user", "index.html")
 	tpl := parseTemplateWithBaseLayout(p)
 

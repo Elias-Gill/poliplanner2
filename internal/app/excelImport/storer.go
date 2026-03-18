@@ -17,12 +17,12 @@ type ImportStorer interface {
 		meta source.ExcelSourceMetadata,
 		success bool,
 		errorMsg error,
-	) (error)
+	) error
 }
 
 type ImportWriter interface {
 	// Creates a new period. If the period already exists, returns its ID
-	EnsurePeriod(period.Period) (period.PeriodID, error)
+	EnsurePeriod(p period.Period) (period.PeriodID, error)
 
 	// Saves our course bundle. First inserts the subjet, ensures that the academic plan is
 	// created for the current career. Creates career entries, teachers and finally persists the

@@ -5,14 +5,14 @@ import (
 	"path"
 
 	"github.com/elias-gill/poliplanner2/internal/config"
-	"github.com/elias-gill/poliplanner2/internal/service"
+	"github.com/elias-gill/poliplanner2/internal/domain/schedule"
 	"github.com/go-chi/chi/v5"
 )
 
 const latestSelectionCookie = "latestScheduleSelection"
 
 func NewDashboardRouter(
-	scheduleService *service.ScheduleService,
+	scheduleService *schedule.ScheduleService,
 ) func(r chi.Router) {
 	baseDir := path.Join(config.Get().Paths.BaseDir, "web", "templates", "pages", "dashboard")
 

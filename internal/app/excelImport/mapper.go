@@ -1,7 +1,6 @@
 package excelimport
 
 import (
-	"errors"
 	"regexp"
 	"strconv"
 	"strings"
@@ -202,20 +201,22 @@ func applySchedule(
 	}
 }
 
-func generateSearchKey(firstName, lastName string) (string, error) {
+func generateSearchKey(firstName, lastName string) string {
 	first := ""
 	if fields := strings.Fields(firstName); len(fields) > 0 {
 		first = strings.ToLower(fields[0])
 	} else {
-		return "", errors.New("first name is empty")
+		// first name is empty
+		return ""
 	}
 
 	last := ""
 	if fields := strings.Fields(lastName); len(fields) > 0 {
 		last = strings.ToLower(fields[0])
 	} else {
-		return "", errors.New("last name is empty")
+		// last name is empty
+		return ""
 	}
 
-	return strings.Join([]string{first, last}, "_"), nil
+	return strings.Join([]string{first, last}, "_")
 }

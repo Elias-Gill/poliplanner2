@@ -96,7 +96,7 @@ func (s *ImportService) PersistSource(ctx context.Context, src source.ExcelSourc
 			}
 
 			// Persist the sheet data
-			err = s.persistSheetSubjects(ctx, sheetResult, periodID, writter)
+			err = s.persistSheetSubjects(sheetResult, periodID, writter)
 			if err != nil {
 				logger.Error("Sheet persistence error", "career", sourceMeta.Name, "error", err)
 				return err
@@ -165,7 +165,6 @@ func (s *ImportService) syncNewestVersion(ctx context.Context) error {
 // writes are executed in a transaction so that the entire excel update either
 // succeeds or is rolled back.
 func (s *ImportService) persistSheetSubjects(
-	ctx context.Context,
 	sheet *parser.ParsedSheet,
 	periodID period.PeriodID,
 	writter ImportWriter,

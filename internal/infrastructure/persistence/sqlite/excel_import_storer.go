@@ -329,21 +329,21 @@ func (w sqliteExcelImportWritter) upsertCourse(
 	// Helpers
 	// =========================
 
-	formatDate := func(t *time.Time) interface{} {
+	formatDate := func(t *time.Time) any {
 		if t == nil {
 			return nil
 		}
 		return t.Format("2006-01-02")
 	}
 
-	formatTime := func(t *time.Time) interface{} {
+	formatTime := func(t *time.Time) any {
 		if t == nil {
 			return nil
 		}
 		return t.Format("15:04")
 	}
 
-	getDay := func(day courseOffering.WeekDay) (desde, hasta, aula interface{}) {
+	getDay := func(day courseOffering.WeekDay) (desde, hasta, aula any) {
 		d, ok := off.Schedule[day]
 		if !ok {
 			return nil, nil, nil
