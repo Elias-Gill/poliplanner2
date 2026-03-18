@@ -1,0 +1,31 @@
+package excelimport
+
+import (
+	"context"
+
+	"github.com/elias-gill/poliplanner2/internal/domain/period"
+	"github.com/elias-gill/poliplanner2/internal/source"
+)
+
+type ImportStorer interface {
+	RunImport(ctx context.Context, fn func(ImportWriter) error) error
+
+	// SaveAudit records a new audit entry for an Excel import, capturing metadata,
+	// whether the import succeeded, and any errors encountered during parsing.
+	SaveAudit(
+		ctx context.Context,
+		meta source.ExcelSourceMetadata,
+		success bool,
+		errorMsg error,
+	) (error)
+}
+
+type ImportWriter interface {
+	// Creates a new period. If the period already exists, returns its ID
+	EnsurePeriod(period.Period) (period.PeriodID, error)
+
+	// Saves our course bundle. First inserts the subjet, ensures that the academic plan is
+	// created for the current career. Creates career entries, teachers and finally persists the
+	// final course information.
+	SaveCourseOffering(off Offering) error
+}

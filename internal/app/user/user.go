@@ -1,4 +1,4 @@
-package service
+package user
 
 import (
 	"context"
@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/elias-gill/poliplanner2/internal/db/model"
-	"github.com/elias-gill/poliplanner2/internal/db/store"
+	"github.com/elias-gill/poliplanner2/internal/config/timezone"
+	"github.com/elias-gill/poliplanner2/internal/domain/user"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -36,14 +36,14 @@ func (e ValidationError) Error() string {
 }
 
 type UserService struct {
-	userStorer store.UserStorer
+	userStorer user.UserStorer
 }
 
-func NewUserService(userStorer store.UserStorer) *UserService {
+func NewUserService(userStorer user.UserStorer) *UserService {
 	return &UserService{userStorer: userStorer}
 }
 
-func (s *UserService) AuthenticateUser(ctx context.Context, login string, rawPassword string) (*model.User, error) {
+func (s *UserService) AuthenticateUser(ctx context.Context, login string, rawPassword string) (*user.User, error) {
 	login = strings.ToLower(strings.TrimSpace(login))
 
 	user, err := s.userStorer.GetByUsername(ctx, login)
@@ -100,7 +100,7 @@ func (s *UserService) CreateUser(ctx context.Context, username, email, rawPasswo
 		return fmt.Errorf("hash password: %w", err)
 	}
 
-	return s.userStorer.Insert(ctx, &model.User{
+	return s.userStorer.Insert(ctx, &user.User{
 		Username: username,
 		Password: string(hashed),
 		Email:    email,
@@ -114,18 +114,18 @@ func (s *UserService) StartPasswordRecovery(ctx context.Context, email string) (
 		return "", ValidationError{Field: "email", Message: "invalid email format"}
 	}
 
-	user, err := s.userStorer.GetByEmail(ctx, email)
+	u, err := s.userStorer.GetByEmail(ctx, email)
 	if err != nil {
 		// No leak existence
 		return "", nil
 	}
 
 	token := newRecoveryToken()
-	expiration := time.Now().Add(15 * time.Minute)
+	expiration := time.Now().In(timezone.ParaguayTZ).Add(15 * time.Minute)
 
 	err = s.userStorer.Update(
-		ctx, user.ID,
-		func(u *model.User) error {
+		ctx, u.ID,
+		func(u *user.User) error {
 			u.RecoveryTokenHash = &token
 			u.RecoveryTokenExpiration = &expiration
 			u.RecoveryTokenUsed = false
@@ -147,12 +147,12 @@ func (s *UserService) CommitPasswordRecovery(ctx context.Context, token, newPass
 		return ValidationError{Field: "password", Message: "must be at least 6 characters"}
 	}
 
-	user, err := s.userStorer.GetByRecoveryToken(ctx, token)
+	u, err := s.userStorer.GetByRecoveryToken(ctx, token)
 	if err != nil {
 		return ErrInvalidToken
 	}
 
-	if user.RecoveryTokenUsed || user.RecoveryTokenExpiration.Before(time.Now()) {
+	if u.RecoveryTokenUsed || u.RecoveryTokenExpiration.Before(time.Now().In(timezone.ParaguayTZ)) {
 		return ErrInvalidToken
 	}
 
@@ -161,7 +161,7 @@ func (s *UserService) CommitPasswordRecovery(ctx context.Context, token, newPass
 		return fmt.Errorf("hash new password: %w", err)
 	}
 
-	return s.userStorer.Update(ctx, user.ID, func(u *model.User) error {
+	return s.userStorer.Update(ctx, u.ID, func(u *user.User) error {
 		u.Password = string(hashed)
 		u.RecoveryTokenUsed = true
 		u.RecoveryTokenHash = nil

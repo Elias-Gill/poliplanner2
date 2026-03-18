@@ -8,31 +8,15 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/domain/teacher"
 )
 
+// ============================================================
+// Identifiers
+// ============================================================
+
 type CourseOfferingID int64
 
-type timeSlot struct {
-	Start *time.Time
-	End   *time.Time
-}
-
-type examData struct {
-	date *time.Time
-	time *time.Time
-	room string
-}
-
-func NewExamData(date *time.Time, examTime *time.Time, room string) examData {
-	return examData{
-		date: date,
-		time: examTime,
-		room: room,
-	}
-}
-
-type weekDayData struct {
-	room string
-	time timeSlot
-}
+// ============================================================
+// Enums
+// ============================================================
 
 type WeekDay int
 
@@ -50,9 +34,79 @@ type CourseType int
 const (
 	Normal CourseType = iota
 	ExamOnly
-	// FUTURE: si alguna vez se consigue sacar los hroarios de laboratorio, entonces podria ir
-	// agregar aca
+	// FUTURE: if laboratory schedules are ever available,
+	// they could be represented as a new type here.
 )
+
+// ============================================================
+// Value Objects
+// ============================================================
+
+type timeSlot struct {
+	Start *time.Time
+	End   *time.Time
+}
+
+type weekDayData struct {
+	room string
+	time timeSlot
+}
+
+// ============================================================
+// Exam Data
+// ============================================================
+
+type ExamData struct {
+	date     *time.Time
+	revision *time.Time
+	room     string
+}
+
+func NewExamData(date *time.Time, revDate *time.Time, room string) ExamData {
+	return ExamData{
+		date:     date,
+		revision: revDate,
+		room:     room,
+	}
+}
+
+// ------------------------------------------------------------
+// Exam convenience methods
+// ------------------------------------------------------------
+
+func (e ExamData) HasDate() bool {
+	return e.date != nil
+}
+
+func (e ExamData) HasRevisionDate() bool {
+	return e.revision != nil
+}
+
+func (e ExamData) HasHour() bool {
+	if e.date == nil {
+		return false
+	}
+	return !(e.date.Hour() == 0 && e.date.Minute() == 0)
+}
+
+func (e ExamData) HasRevHour() bool {
+	if e.revision == nil {
+		return false
+	}
+	return !(e.revision.Hour() == 0 && e.revision.Minute() == 0)
+}
+
+func (e ExamData) Date() *time.Time {
+	return e.date
+}
+
+func (e ExamData) Revision() *time.Time {
+	return e.revision
+}
+
+// ============================================================
+// Aggregate: CourseOffering
+// ============================================================
 
 type CourseOffering struct {
 	ID         CourseOfferingID
@@ -63,33 +117,26 @@ type CourseOffering struct {
 	Section    string
 	CourseType CourseType
 
-	// First partial
-	Partial1 examData
-	Partial2 examData
+	// Partial exams
+	Partial1 ExamData
+	Partial2 ExamData
 
-	Final1 examData
-	Final2 examData
+	// Final exams
+	Final1 ExamData
+	Final2 ExamData
 
 	// Weekly course schedule
 	Schedule map[WeekDay]weekDayData
 
+	// Special saturday sessions (raw representation)
 	SaturdayDates string
 
+	// Exam committee
 	CommitteeMember1   string
 	CommitteeMember2   string
 	CommitteePresident string
 }
 
-func (c *CourseOffering) AddTeacher(id teacher.TeacherID) {
-	c.Teachers = append(c.Teachers, id)
-}
-
-func (c *CourseOffering) AddSchedule(day WeekDay, start *time.Time, end *time.Time, room string) {
-	c.Schedule[day] = weekDayData{
-		room: room,
-		time: timeSlot{
-			Start: start,
-			End:   end,
-		},
-	}
-}
+// ------------------------------------------------------------
+// Aggregate behavior
+// ------------------------------------------------------------

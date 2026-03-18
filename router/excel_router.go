@@ -9,15 +9,16 @@ import (
 	"strings"
 	"time"
 
+	excelimport "github.com/elias-gill/poliplanner2/internal/app/excelImport"
 	"github.com/elias-gill/poliplanner2/internal/config"
-	"github.com/elias-gill/poliplanner2/internal/service"
+	"github.com/elias-gill/poliplanner2/internal/config/timezone"
 	"github.com/elias-gill/poliplanner2/internal/source"
 	"github.com/go-chi/chi/v5"
 )
 
 const maxUploadSize = 8 << 20 // 8 MiB
 
-func NewExcelRouter(excelService *service.ExcelService) func(r chi.Router) {
+func NewExcelRouter(excelService *excelimport.ImportService) func(r chi.Router) {
 	cfg := config.Get()
 
 	updateKey := cfg.Security.UpdateKey
@@ -52,7 +53,7 @@ func isAuthorized(authHeader, expected string) bool {
 }
 
 // handleUpload creates a manual ExcelSource and passes it to the service
-func handleUpload(w http.ResponseWriter, r *http.Request, svc *service.ExcelService) {
+func handleUpload(w http.ResponseWriter, r *http.Request, svc *excelimport.ImportService) {
 	r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 	if err := r.ParseMultipartForm(maxUploadSize); err != nil {
 		http.Error(w, "Invalid form data", http.StatusBadRequest)
@@ -83,10 +84,10 @@ func handleUpload(w http.ResponseWriter, r *http.Request, svc *service.ExcelServ
 		Name:   header.Filename,
 		URI:    downloadURL,
 		Period: period,
-		Date:   time.Now(),
+		Date:   time.Now().In(timezone.ParaguayTZ),
 	})
 
-	if err := svc.ParseAndPersistNewExcel(r.Context(), source); err != nil {
+	if err := svc.PersistSource(r.Context(), source); err != nil {
 		http.Error(w, "Could not process the file: "+err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -94,11 +95,11 @@ func handleUpload(w http.ResponseWriter, r *http.Request, svc *service.ExcelServ
 	respondHTML(w, http.StatusOK, "File processed successfully")
 }
 
-func handleSync(w http.ResponseWriter, r *http.Request, svc *service.ExcelService, timeout time.Duration) {
+func handleSync(w http.ResponseWriter, r *http.Request, svc *excelimport.ImportService, timeout time.Duration) {
 	ctx, cancel := context.WithTimeout(r.Context(), timeout)
 	defer cancel()
 
-	if err := svc.SearchNewestExcel(ctx); err != nil {
+	if err := svc.Sync(ctx); err != nil {
 		http.Error(w, "Sync failed: "+err.Error(), http.StatusBadRequest)
 		return
 	}

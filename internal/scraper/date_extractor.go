@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/elias-gill/poliplanner2/internal/config/timezone"
 )
 
 func extractDateFromFilename(filename string) (time.Time, error) {
@@ -60,7 +62,7 @@ func extractDateFromFilename(filename string) (time.Time, error) {
 			// Basic date validation
 			if year >= 2000 && year <= 2100 && month >= 1 && month <= 12 && day >= 1 && day <= 31 {
 				// return parsed date in UTC
-				return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC), nil
+				return time.Date(year, time.Month(month), day, 0, 0, 0, 0, timezone.ParaguayTZ), nil
 			}
 		}
 	}
@@ -84,7 +86,7 @@ func extractPeriodFromFilename(filename string) int {
 	}
 
 	// If not found anything, then use the local date
-	now := time.Now()
+	now := time.Now().In(timezone.ParaguayTZ)
 	month := now.Month()
 
 	if month >= time.August {

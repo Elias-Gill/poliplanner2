@@ -7,9 +7,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/elias-gill/poliplanner2/internal/db/model"
-	"github.com/elias-gill/poliplanner2/internal/db/store"
-	"github.com/elias-gill/poliplanner2/internal/logger"
+	sheetversion "github.com/elias-gill/poliplanner2/internal/domain/sheetVersion"
+	"github.com/elias-gill/poliplanner2/logger"
 )
 
 const last_check_entry_const_id = 1
@@ -24,7 +23,7 @@ func NewSqliteSheetVersionStore(db *sql.DB) *SqliteSheetVersionStore {
 	}
 }
 
-func (s SqliteSheetVersionStore) Insert(ctx context.Context, sv *model.SheetVersion) error {
+func (s SqliteSheetVersionStore) Insert(ctx context.Context, sv *sheetversion.SheetVersion) error {
 	query := `
 	INSERT INTO sheet_version (file_name, url)
 	VALUES (?, ?)
@@ -37,12 +36,12 @@ func (s SqliteSheetVersionStore) Insert(ctx context.Context, sv *model.SheetVers
 	if err != nil {
 		return err
 	}
-	sv.ID = id
+	sv.ID = sheetversion.SheetVersionID(id)
 	return nil
 }
 
-func (s SqliteSheetVersionStore) GetNewest(ctx context.Context) (*model.SheetVersion, error) {
-	sv := &model.SheetVersion{}
+func (s SqliteSheetVersionStore) GetNewest(ctx context.Context) (*sheetversion.SheetVersion, error) {
+	sv := &sheetversion.SheetVersion{}
 	err := s.db.QueryRowContext(ctx, `
 		SELECT version_id, file_name, url, parsed_at
 		FROM sheet_version
@@ -51,7 +50,7 @@ func (s SqliteSheetVersionStore) GetNewest(ctx context.Context) (*model.SheetVer
 	`).Scan(&sv.ID, &sv.FileName, &sv.URL, &sv.ParsedAt)
 
 	if err == sql.ErrNoRows {
-		return nil, store.ErrNoSheetVersion
+		return nil, sheetversion.ErrNoSheetVersion
 	}
 	if err != nil {
 		return nil, fmt.Errorf("database error fetching newest sheet version: %w", err)

@@ -5,7 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/elias-gill/poliplanner2/internal/db/model"
+	"github.com/elias-gill/poliplanner2/internal/domain/schedule"
+	"github.com/elias-gill/poliplanner2/internal/domain/user"
 )
 
 type SqliteScheduleStore struct {
@@ -18,9 +19,9 @@ func NewSqliteScheduleStore(db *sql.DB) *SqliteScheduleStore {
 	}
 }
 
-func (s *SqliteScheduleStore) ListByUserID(ctx context.Context, userID int64) ([]*model.Schedule, error) {
+func (s *SqliteScheduleStore) ListByUserID(ctx context.Context, userID int64) ([]*schedule.Schedule, error) {
 	rows, err := s.db.QueryContext(ctx, `
-		SELECT id, nombre, descripcion, periodo_id, creado_en
+		SELECT id, descripcion, periodo_id, creado_en
 		FROM horarios
 		WHERE usuario_id = ?
 		ORDER BY creado_en DESC
@@ -30,12 +31,11 @@ func (s *SqliteScheduleStore) ListByUserID(ctx context.Context, userID int64) ([
 	}
 	defer rows.Close()
 
-	var schedules []*model.Schedule
+	var schedules []*schedule.Schedule
 	for rows.Next() {
-		sched := &model.Schedule{}
+		sched := &schedule.Schedule{}
 		err := rows.Scan(
 			&sched.ID,
-			&sched.Name,
 			&sched.Description,
 			&sched.PeriodID,
 			&sched.CreatedAt,
@@ -43,14 +43,14 @@ func (s *SqliteScheduleStore) ListByUserID(ctx context.Context, userID int64) ([
 		if err != nil {
 			return nil, err
 		}
-		sched.OwnerID = userID // ya filtramos por userID
+		sched.Owner = user.UserID(userID) // ya filtramos por userID
 		schedules = append(schedules, sched)
 	}
 
 	return schedules, rows.Err()
 }
 
-func (s *SqliteScheduleStore) Insert(ctx context.Context, data *model.ScheduleBasicData) (int64, error) {
+func (s *SqliteScheduleStore) Insert(ctx context.Context, data *schedule.ScheduleBasicData) (int64, error) {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return 0, err
@@ -89,9 +89,9 @@ func (s *SqliteScheduleStore) Delete(ctx context.Context, scheduleID int64) erro
 	return err
 }
 
-func (s *SqliteScheduleStore) GetByUserID(ctx context.Context, userID int64) ([]*model.Schedule, error) {
+func (s *SqliteScheduleStore) GetByUserID(ctx context.Context, userID int64) ([]*schedule.Schedule, error) {
 	rows, err := s.db.QueryContext(ctx, `
-		SELECT id, creado_en, nombre, descripcion, periodo_id
+		SELECT id, creado_en, descripcion, periodo_id
 		FROM horarios
 		WHERE usuario_id = ?
 		ORDER BY creado_en DESC`, userID)
@@ -100,13 +100,12 @@ func (s *SqliteScheduleStore) GetByUserID(ctx context.Context, userID int64) ([]
 	}
 	defer rows.Close()
 
-	var schedules []*model.Schedule
+	var schedules []*schedule.Schedule
 	for rows.Next() {
-		var sched model.Schedule
+		var sched schedule.Schedule
 		err := rows.Scan(
 			&sched.ID,
 			&sched.CreatedAt,
-			&sched.Name,
 			&sched.Description,
 			&sched.PeriodID,
 		)
@@ -123,86 +122,87 @@ func (s *SqliteScheduleStore) GetByUserID(ctx context.Context, userID int64) ([]
 	return schedules, nil
 }
 
-func (s *SqliteScheduleStore) GetByID(ctx context.Context, scheduleID int64) (*model.ScheduleDetails, error) {
-	var sched model.Schedule
-	var ownerID int64
-
-	err := s.db.QueryRowContext(ctx, `
-        SELECT id, creado_en, usuario_id, nombre, descripcion, periodo_id
-        FROM horarios
-        WHERE id = ?`,
-		scheduleID,
-	).Scan(
-		&sched.ID,
-		&sched.CreatedAt,
-		&ownerID,
-		&sched.Name,
-		&sched.Description,
-		&sched.PeriodID,
-	)
-	if err == sql.ErrNoRows {
-		return nil, fmt.Errorf("schedule not found")
-	}
-	if err != nil {
-		return nil, fmt.Errorf("error finding schedule: %w", err)
-	}
-
-	rows, err := s.db.QueryContext(ctx, `
-        SELECT 
-            c.nombre, c.seccion,
-            c.lunes_desde, c.lunes_hasta, c.lunes_aula,
-            c.martes_desde, c.martes_hasta, c.martes_aula,
-            c.miercoles_desde, c.miercoles_hasta, c.miercoles_aula,
-            c.jueves_desde, c.jueves_hasta, c.jueves_aula,
-            c.viernes_desde, c.viernes_hasta, c.viernes_aula,
-            c.sabado_desde, c.sabado_hasta, c.sabado_aula, c.sabado_night_fechas,
-            c.partial1_fecha, c.partial1_hora, c.partial1_aula,
-            c.partial2_fecha, c.partial2_hora, c.partial2_aula,
-            c.final1_fecha, c.final1_hora, c.final1_aula, c.final1_fecha_revision, c.final1_hora_revision,
-            c.final2_fecha, c.final2_hora, c.final2_aula, c.final2_fecha_revision, c.final2_hora_revision,
-            c.comite_presidente, c.comite_miembro1, c.comite_miembro2
-        FROM horarios_detalle hd
-        JOIN cursos c ON hd.curso_id = c.id
-        WHERE hd.horario_id = ?`,
-		scheduleID,
-	)
-	if err != nil {
-		return nil, fmt.Errorf("obtener cursos: %w", err)
-	}
-	defer rows.Close()
-
-	var courses []model.CourseAggregate
-	for rows.Next() {
-		var gm model.CourseAggregate
-		err := rows.Scan(
-			&gm.Name,
-			&gm.Section,
-			&gm.Monday.Start, &gm.Monday.End, &gm.MondayRoom,
-			&gm.Tuesday.Start, &gm.Tuesday.End, &gm.TuesdayRoom,
-			&gm.Wednesday.Start, &gm.Wednesday.End, &gm.WednesdayRoom,
-			&gm.Thursday.Start, &gm.Thursday.End, &gm.ThursdayRoom,
-			&gm.Friday.Start, &gm.Friday.End, &gm.FridayRoom,
-			&gm.Saturday.Start, &gm.Saturday.End, &gm.SaturdayRoom, &gm.SaturdayDates,
-			&gm.Partial1Date, &gm.Partial1Time, &gm.Partial1Room,
-			&gm.Partial2Date, &gm.Partial2Time, &gm.Partial2Room,
-			&gm.Final1Date, &gm.Final1Time, &gm.Final1Room, &gm.Final1RevDate, &gm.Final1RevTime,
-			&gm.Final2Date, &gm.Final2Time, &gm.Final2Room, &gm.Final2RevDate, &gm.Final2RevTime,
-			&gm.CommitteePresident, &gm.CommitteeMember1, &gm.CommitteeMember2,
-		)
-		if err != nil {
-			return nil, fmt.Errorf("scan curso: %w", err)
-		}
-		courses = append(courses, gm)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("iterar cursos: %w", err)
-	}
-
-	sched.OwnerID = ownerID
-
-	return &model.ScheduleDetails{
-		Schedule: sched,
-		Courses:  courses,
-	}, nil
+func (s *SqliteScheduleStore) GetByID(ctx context.Context, scheduleID int64) (*schedule.ScheduleDetails, error) {
+	// TODO: implement
+	return nil, nil
+	// var sched schedule.Schedule
+	// var ownerID int64
+	//
+	// err := s.db.QueryRowContext(ctx, `
+	//        SELECT id, creado_en, usuario_id, descripcion, periodo_id
+	//        FROM horarios
+	//        WHERE id = ?`,
+	// 	scheduleID,
+	// ).Scan(
+	// 	&sched.ID,
+	// 	&sched.CreatedAt,
+	// 	&ownerID,
+	// 	&sched.Description,
+	// 	&sched.PeriodID,
+	// )
+	// if err == sql.ErrNoRows {
+	// 	return nil, fmt.Errorf("schedule not found")
+	// }
+	// if err != nil {
+	// 	return nil, fmt.Errorf("error finding schedule: %w", err)
+	// }
+	//
+	// rows, err := s.db.QueryContext(ctx, `
+	//        SELECT
+	//            c.nombre, c.seccion,
+	//            c.lunes_desde, c.lunes_hasta, c.lunes_aula,
+	//            c.martes_desde, c.martes_hasta, c.martes_aula,
+	//            c.miercoles_desde, c.miercoles_hasta, c.miercoles_aula,
+	//            c.jueves_desde, c.jueves_hasta, c.jueves_aula,
+	//            c.viernes_desde, c.viernes_hasta, c.viernes_aula,
+	//            c.sabado_desde, c.sabado_hasta, c.sabado_aula, c.sabado_night_fechas,
+	//            c.partial1_fecha, c.partial1_hora, c.partial1_aula,
+	//            c.partial2_fecha, c.partial2_hora, c.partial2_aula,
+	//            c.final1_fecha, c.final1_hora, c.final1_aula, c.final1_fecha_revision, c.final1_hora_revision,
+	//            c.final2_fecha, c.final2_hora, c.final2_aula, c.final2_fecha_revision, c.final2_hora_revision,
+	//            c.comite_presidente, c.comite_miembro1, c.comite_miembro2
+	//        FROM horarios_detalle hd
+	//        JOIN cursos c ON hd.curso_id = c.id
+	//        WHERE hd.horario_id = ?`,
+	// 	scheduleID,
+	// )
+	// if err != nil {
+	// 	return nil, fmt.Errorf("obtener cursos: %w", err)
+	// }
+	// defer rows.Close()
+	//
+	// var courses []model.CourseAggregate
+	// for rows.Next() {
+	// 	var gm model.CourseAggregate
+	// 	err := rows.Scan(
+	// 		&gm.Name,
+	// 		&gm.Section,
+	// 		&gm.Monday.Start, &gm.Monday.End, &gm.MondayRoom,
+	// 		&gm.Tuesday.Start, &gm.Tuesday.End, &gm.TuesdayRoom,
+	// 		&gm.Wednesday.Start, &gm.Wednesday.End, &gm.WednesdayRoom,
+	// 		&gm.Thursday.Start, &gm.Thursday.End, &gm.ThursdayRoom,
+	// 		&gm.Friday.Start, &gm.Friday.End, &gm.FridayRoom,
+	// 		&gm.Saturday.Start, &gm.Saturday.End, &gm.SaturdayRoom, &gm.SaturdayDates,
+	// 		&gm.Partial1Date, &gm.Partial1Time, &gm.Partial1Room,
+	// 		&gm.Partial2Date, &gm.Partial2Time, &gm.Partial2Room,
+	// 		&gm.Final1Date, &gm.Final1Time, &gm.Final1Room, &gm.Final1RevDate, &gm.Final1RevTime,
+	// 		&gm.Final2Date, &gm.Final2Time, &gm.Final2Room, &gm.Final2RevDate, &gm.Final2RevTime,
+	// 		&gm.CommitteePresident, &gm.CommitteeMember1, &gm.CommitteeMember2,
+	// 	)
+	// 	if err != nil {
+	// 		return nil, fmt.Errorf("scan curso: %w", err)
+	// 	}
+	// 	courses = append(courses, gm)
+	// }
+	//
+	// if err := rows.Err(); err != nil {
+	// 	return nil, fmt.Errorf("iterar cursos: %w", err)
+	// }
+	//
+	// sched.OwnerID = ownerID
+	//
+	// return &model.ScheduleDetails{
+	// 	Schedule: sched,
+	// 	Courses:  courses,
+	// }, nil
 }

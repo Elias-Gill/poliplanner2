@@ -5,5 +5,5 @@ import (
 )
 
 type PeriodStore interface {
-	FindByYearSemester(ctx context.Context, year int, periodNum Semester) (*Period, error)
+	Save(ctx context.Context, p Period) (PeriodID, error)
 }

@@ -5,8 +5,8 @@ import (
 )
 
 type AcademicPlanStorer interface {
-	GetOrCreateByCareer(ctx context.Context, career string) (AcademicPlanID, error)
-	AddSubject(ctx context.Context, planID AcademicPlanID, sub subject)
+	GetOrCreateByCareer(ctx context.Context, career string) (PlanID, error)
+	AddSubject(ctx context.Context, planID PlanID, sub Subject) (SubjectID, error)
 }
 
 type AcademicPlanReadStore interface {

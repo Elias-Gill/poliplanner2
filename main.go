@@ -5,12 +5,12 @@ import (
 	"net/http"
 	"path"
 
+	"github.com/elias-gill/poliplanner2/internal/app"
 	"github.com/elias-gill/poliplanner2/internal/auth"
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/db"
 	"github.com/elias-gill/poliplanner2/internal/db/sqlite"
 	log "github.com/elias-gill/poliplanner2/logger"
-	"github.com/elias-gill/poliplanner2/internal/service"
 	"github.com/elias-gill/poliplanner2/router"
 
 	"github.com/go-chi/chi/v5"
@@ -35,12 +35,8 @@ func main() {
 	services := service.NewServices(
 		sqlite.NewSqliteUserStore(conn.GetConnection()),
 		sqlite.NewSqliteSheetVersionStore(conn.GetConnection()),
-		sqlite.NewSqliteCourseStore(conn.GetConnection()),
+		sqlite.NewSqliteExcelImportStorer(conn.GetConnection()),
 		sqlite.NewSqliteScheduleStore(conn.GetConnection()),
-		sqlite.NewSqliteCareerStore(conn.GetConnection()),
-		sqlite.NewSqliteAcademicPlanStore(conn.GetConnection()),
-		sqlite.NewSqlitePeriodStore(conn.GetConnection()),
-		config.Get().Email.APIKey, // what the fuck is this doing here
 	)
 
 	// Configure http server
@@ -48,11 +44,11 @@ func main() {
 	r.Use(auth.SessionMiddleware)
 
 	r.Route("/", router.NewAuthRouter(services.UserService, services.EmailService))
-	r.Route("/dashboard", router.NewDashboardRouter(services.ScheduleService))
-	r.Route("/courses", router.NewCourseRouter(services.CoursesService, services.CareerService))
-	r.Route("/schedule", router.NewSchedulesRouter(services.CoursesService, services.ScheduleService, services.CareerService, services.AcademicPlanService))
+	// r.Route("/dashboard", router.NewDashboardRouter(services.ScheduleService))
+	// r.Route("/courses", router.NewCourseRouter(services.CoursesService, services.CareerService))
+	// r.Route("/schedule", router.NewSchedulesRouter(services.CoursesService, services.ScheduleService, services.CareerService, services.AcademicPlanService))
 	r.Route("/user", router.NewUserRouter(services.UserService))
-	r.Route("/excel", router.NewExcelRouter(services.ExcelService))
+	r.Route("/excel", router.NewExcelRouter(services.ImportService))
 	r.Route("/tools", router.NewToolsRouter())
 	r.Route("/guides", router.NewGuidesRouter())
 
@@ -71,7 +67,7 @@ func main() {
 		ctx, cancel := context.WithTimeout(context.Background(), config.Get().Excel.ScraperTimeout)
 		defer cancel()
 		// The result of this operation is irrelevant
-		services.ExcelService.SearchOnStartup(ctx)
+		services.ImportService.AutoSync(ctx)
 	}()
 
 	// Start Server

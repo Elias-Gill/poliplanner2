@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/config"
+	"github.com/elias-gill/poliplanner2/internal/config/timezone"
+	"github.com/elias-gill/poliplanner2/internal/domain/user"
 	"github.com/elias-gill/poliplanner2/logger"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -81,14 +83,14 @@ func SessionMiddleware(next http.Handler) http.Handler {
 }
 
 // CreateSession generates a JWT token containing the userID and expiration time
-func CreateSession(userID int64) string {
-	expirationTime := time.Now().Add(30 * time.Minute)
+func CreateSession(userID user.UserID) string {
+	expirationTime := time.Now().In(timezone.ParaguayTZ).Add(30 * time.Minute)
 
 	claims := &Claims{
-		UserID: userID,
+		UserID: int64(userID),
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			IssuedAt:  jwt.NewNumericDate(time.Now().In(timezone.ParaguayTZ)),
 		},
 	}
 

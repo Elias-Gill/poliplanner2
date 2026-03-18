@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 )
 
 // Global compiled patterns
@@ -23,22 +22,23 @@ var (
 // Cleaning helper functions
 // ----------------------------------------
 
-// Updated cleanTime function with performance improvements
-func cleanTime(timeStr string) string {
+// Updated parseTime function with performance improvements
+func parseTime(timeStr string) *Hour {
 	if timeStr == "" {
-		return ""
+		return nil
 	}
 
 	// Check cache first
 	if cached, found := timeCache.Load(timeStr); found {
-		return cached.(string)
+		return cached.(*Hour)
 	}
 
 	// Remove non-numeric characters (except : and .)
 	cleaned := nonTimeChars.ReplaceAllString(timeStr, "")
 	cleaned = strings.TrimSpace(cleaned)
 
-	var result string
+	var result *Hour = nil
+
 	if strings.Contains(cleaned, ":") {
 		// Parse as hh:mm format
 		segments := strings.Split(cleaned, ":")
@@ -61,22 +61,10 @@ func cleanTime(timeStr string) string {
 					minutes = 59
 				}
 
-				// Use buffer for string building
-				buf := timeBufferPool.Get().([]byte)
-				buf = buf[:0]
-
-				if hours < 10 {
-					buf = append(buf, '0')
+				result = &Hour{
+					Minute: minutes,
+					Hour:   hours,
 				}
-				buf = strconv.AppendInt(buf, int64(hours), 10)
-				buf = append(buf, ':')
-				if minutes < 10 {
-					buf = append(buf, '0')
-				}
-				buf = strconv.AppendInt(buf, int64(minutes), 10)
-
-				result = string(buf)
-				timeBufferPool.Put(buf)
 			}
 		}
 	} else {
@@ -87,57 +75,23 @@ func cleanTime(timeStr string) string {
 			hours := (totalMinutes / 60) % 24
 			minutes := totalMinutes % 60
 
-			// Use buffer for string building
-			buf := timeBufferPool.Get().([]byte)
-			buf = buf[:0]
-
-			if hours < 10 {
-				buf = append(buf, '0')
+			result = &Hour{
+				Minute: minutes,
+				Hour:   hours,
 			}
-			buf = strconv.AppendInt(buf, int64(hours), 10)
-			buf = append(buf, ':')
-			if minutes < 10 {
-				buf = append(buf, '0')
-			}
-			buf = strconv.AppendInt(buf, int64(minutes), 10)
-
-			result = string(buf)
-			timeBufferPool.Put(buf)
 		}
 	}
 
 	// Cache the result if valid
-	if result != "" {
+	if result != nil {
 		timeCache.Store(timeStr, result)
 	}
 
 	return result
 }
 
-// Updated convertStringToNumber with regex performance
-func convertStringToNumber(str string) int {
-	if str == "" {
-		return 0
-	}
-
-	// Remove non-numeric characters and replace commas with dots
-	cleaned := nonNumeric.ReplaceAllString(str, "")
-	cleaned = strings.ReplaceAll(cleaned, ",", ".")
-
-	if cleaned == "" || cleaned == "-" || cleaned == "." {
-		return 0
-	}
-
-	value, err := strconv.ParseFloat(cleaned, 64)
-	if err != nil {
-		return 0
-	}
-
-	return int(value + 0.5)
-}
-
 // Updated parseDate function with caching and direct time construction
-func parseDate(value string) *time.Time {
+func parseDate(value string) *Date {
 	value = strings.TrimSpace(value)
 	if value == "" {
 		return nil
@@ -145,7 +99,7 @@ func parseDate(value string) *time.Time {
 
 	// Check cache first
 	if cached, found := dateCache.Load(value); found {
-		return cached.(*time.Time)
+		return cached.(*Date)
 	}
 
 	matches := datePattern.FindStringSubmatch(value)
@@ -172,16 +126,65 @@ func parseDate(value string) *time.Time {
 	}
 
 	// Create time directly
-	var t *time.Time
+	var t *Date
 	if isValidDate(day, month, year) {
-		date := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
-		t = &date
+		t = &Date{year, month, day}
 
 		// Cache the result
 		dateCache.Store(value, t)
 	}
 
 	return t
+}
+
+func parseTimeSlot(val string) TimeSlot {
+	val = strings.TrimSpace(val)
+	if val == "" {
+		return TimeSlot{}
+	}
+
+	// Quitar sufijos comunes como "hs", "h", "."
+	val = strings.TrimRight(strings.ToLower(val), "hs h.")
+	val = strings.TrimSpace(val)
+
+	parts := strings.Split(val, "-")
+	if len(parts) != 2 {
+		return TimeSlot{}
+	}
+
+	start := parseTime(strings.TrimSpace(parts[0]))
+	end := parseTime(strings.TrimSpace(parts[1]))
+
+	if start == nil || end == nil {
+		return TimeSlot{}
+	}
+
+	return TimeSlot{
+		Start: start,
+		End:   end,
+	}
+}
+
+// Updated convertStringToNumber with regex performance
+func convertStringToNumber(str string) int {
+	if str == "" {
+		return 0
+	}
+
+	// Remove non-numeric characters and replace commas with dots
+	cleaned := nonNumeric.ReplaceAllString(str, "")
+	cleaned = strings.ReplaceAll(cleaned, ",", ".")
+
+	if cleaned == "" || cleaned == "-" || cleaned == "." {
+		return 0
+	}
+
+	value, err := strconv.ParseFloat(cleaned, 64)
+	if err != nil {
+		return 0
+	}
+
+	return int(value + 0.5)
 }
 
 // Helper function to validate date components
@@ -203,32 +206,4 @@ func isValidDate(day, month, year int) bool {
 	}
 
 	return day <= daysInMonth
-}
-
-func convertIntoTimeSlot(val string) TimeSlot {
-	val = strings.TrimSpace(val)
-	if val == "" {
-		return TimeSlot{}
-	}
-
-	// Quitar sufijos comunes como "hs", "h", "."
-	val = strings.TrimRight(strings.ToLower(val), "hs h.")
-	val = strings.TrimSpace(val)
-
-	parts := strings.Split(val, "-")
-	if len(parts) != 2 {
-		return TimeSlot{}
-	}
-
-	start := cleanTime(strings.TrimSpace(parts[0]))
-	end := cleanTime(strings.TrimSpace(parts[1]))
-
-	if start == "" || end == "" {
-		return TimeSlot{}
-	}
-
-	return TimeSlot{
-		Start: start,
-		End:   end,
-	}
 }

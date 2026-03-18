@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/elias-gill/poliplanner2/internal/db/model"
-	"github.com/elias-gill/poliplanner2/internal/logger"
+	"github.com/elias-gill/poliplanner2/internal/domain/user"
+	"github.com/elias-gill/poliplanner2/logger"
 )
 
 type SqliteUserStore struct {
@@ -19,7 +19,7 @@ func NewSqliteUserStore(db *sql.DB) *SqliteUserStore {
 	}
 }
 
-func (s SqliteUserStore) Insert(ctx context.Context, u *model.User) error {
+func (s SqliteUserStore) Insert(ctx context.Context, u *user.User) error {
 	query := `
 		INSERT INTO users (username, password, email)
 		VALUES (?, ?, ?)
@@ -32,18 +32,18 @@ func (s SqliteUserStore) Insert(ctx context.Context, u *model.User) error {
 	if err != nil {
 		return err
 	}
-	u.ID = id
+	u.ID = user.UserID(id)
 	return nil
 }
 
-func (s *SqliteUserStore) Update(ctx context.Context, userID int64, updateFn func(user *model.User) error) error {
+func (s *SqliteUserStore) Update(ctx context.Context, userID user.UserID, updateFn func(user *user.User) error) error {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("begin tx: %w", err)
 	}
 	defer tx.Rollback()
 
-	var user model.User
+	var user user.User
 	err = tx.QueryRowContext(ctx, `
 		SELECT user_id, username, password, email, recovery_token_hash,
 		       recovery_token_expiration, recovery_token_used
@@ -84,7 +84,7 @@ func (s *SqliteUserStore) Update(ctx context.Context, userID int64, updateFn fun
 	return tx.Commit()
 }
 
-func (s SqliteUserStore) Delete(ctx context.Context, userID int64) error {
+func (s SqliteUserStore) Delete(ctx context.Context, userID user.UserID) error {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("begin tx: %w", err)
@@ -96,8 +96,8 @@ func (s SqliteUserStore) Delete(ctx context.Context, userID int64) error {
 	return tx.Commit()
 }
 
-func (s SqliteUserStore) GetByID(ctx context.Context, userID int64) (*model.User, error) {
-	u := &model.User{}
+func (s SqliteUserStore) GetByID(ctx context.Context, userID user.UserID) (*user.User, error) {
+	u := &user.User{}
 	err := s.db.QueryRowContext(ctx, `
 		SELECT user_id, username, password, email,
 		       recovery_token_hash, recovery_token_expiration, recovery_token_used
@@ -115,8 +115,8 @@ func (s SqliteUserStore) GetByID(ctx context.Context, userID int64) (*model.User
 	return u, nil
 }
 
-func (s SqliteUserStore) GetByUsername(ctx context.Context, username string) (*model.User, error) {
-	u := &model.User{}
+func (s SqliteUserStore) GetByUsername(ctx context.Context, username string) (*user.User, error) {
+	u := &user.User{}
 	err := s.db.QueryRowContext(ctx, `
 		SELECT u.user_id, u.username, u.password, u.email,
 		       u.recovery_token_hash, u.recovery_token_expiration, u.recovery_token_used
@@ -134,8 +134,8 @@ func (s SqliteUserStore) GetByUsername(ctx context.Context, username string) (*m
 	return u, nil
 }
 
-func (s SqliteUserStore) GetByEmail(ctx context.Context, email string) (*model.User, error) {
-	u := &model.User{}
+func (s SqliteUserStore) GetByEmail(ctx context.Context, email string) (*user.User, error) {
+	u := &user.User{}
 	err := s.db.QueryRowContext(ctx, `
 		SELECT user_id, username, password, email,
 		       recovery_token_hash, recovery_token_expiration, recovery_token_used
@@ -153,8 +153,8 @@ func (s SqliteUserStore) GetByEmail(ctx context.Context, email string) (*model.U
 	return u, nil
 }
 
-func (s SqliteUserStore) GetByRecoveryToken(ctx context.Context, token string) (*model.User, error) {
-	u := &model.User{}
+func (s SqliteUserStore) GetByRecoveryToken(ctx context.Context, token string) (*user.User, error) {
+	u := &user.User{}
 	err := s.db.QueryRowContext(ctx, `
 		SELECT user_id, username, password, email,
 		recovery_token_hash, recovery_token_expiration, recovery_token_used

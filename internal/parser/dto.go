@@ -2,33 +2,18 @@ package parser
 
 import (
 	"strings"
-	"sync"
-	"time"
 )
+
+// ============================================================
+// Enums
+// ============================================================
 
 type CourseType int
 
-const ExamOnlyCourse CourseType = 1
-const NormalCourse CourseType = 0
-
-// Buffer pool for time formatting
-var timeBufferPool = sync.Pool{
-	New: func() any {
-		return make([]byte, 0, 10)
-	},
-}
-
-type TeacherDTO struct {
-	Title     string
-	FirstName string
-	LastName  string
-	Email     string
-}
-
-type weekDayData struct {
-	Room string
-	Time TimeSlot
-}
+const (
+	NormalCourse   CourseType = 0
+	ExamOnlyCourse CourseType = 1
+)
 
 type WeekDay int
 
@@ -41,78 +26,130 @@ const (
 	Saturday
 )
 
-type TimeSlot struct {
-	Start string
-	End   string
+// ============================================================
+// Time primitives
+// ============================================================
+
+type Hour struct {
+	Hour   int
+	Minute int
 }
 
+type Date struct {
+	Year  int
+	Month int
+	Day   int
+}
+
+type TimeSlot struct {
+	Start *Hour
+	End   *Hour
+}
+
+// ============================================================
+// Supporting DTOs
+// ============================================================
+
+type TeacherDTO struct {
+	Title     string
+	FirstName string
+	LastName  string
+	Email     string
+}
+
+type WeekDayData struct {
+	Room string
+	Time TimeSlot
+}
+
+// ============================================================
+// Main DTO: SubjectDTO
+// ============================================================
+
 type SubjectDTO struct {
-	// General info
+
+	// --------------------------------------------------------
+	// General course information
+	// --------------------------------------------------------
+
 	Department string
 	Semester   int
 	Level      int
 	Section    string
 
-	// This is used as the name of the table "cursos", which is the final agreggate
+	// This is used as the name of the table "cursos", which is the final aggregate
 	// with all schedule information of a subject in a specific time period.
-	RawSubjectName string
+	SubjectName string
 
 	// Course type can be:
 	// - Normal course
 	// - Final exam only
 	CourseType CourseType
 
-	// Teachers info
+	// --------------------------------------------------------
+	// Teachers
+	// --------------------------------------------------------
+
 	Teachers []TeacherDTO
 
+	// --------------------------------------------------------
 	// Exams
+	// --------------------------------------------------------
+
 	// First partial
-	Partial1Date *time.Time
-	Partial1Time *time.Time
+	Partial1Date *Date
+	Partial1Time *Hour
 	Partial1Room string
 
 	// Second partial
-	Partial2Date *time.Time
-	Partial2Time *time.Time
+	Partial2Date *Date
+	Partial2Time *Hour
 	Partial2Room string
 
 	// First final
-	Final1Date    *time.Time
-	Final1Time    *time.Time
+	Final1Date    *Date
+	Final1Time    *Hour
 	Final1Room    string
-	Final1RevDate *time.Time
-	Final1RevTime *time.Time
+	Final1RevDate *Date
+	Final1RevTime *Hour
 
 	// Second final
-	Final2Date    *time.Time
-	Final2Time    *time.Time
+	Final2Date    *Date
+	Final2Time    *Hour
 	Final2Room    string
-	Final2RevDate *time.Time
-	Final2RevTime *time.Time
+	Final2RevDate *Date
+	Final2RevTime *Hour
 
+	// --------------------------------------------------------
 	// Weekly schedule
-	Schedule      map[WeekDay]weekDayData
+	// --------------------------------------------------------
+
+	Schedule      map[WeekDay]WeekDayData
 	SaturdayDates string
 
-	// Committee
+	// --------------------------------------------------------
+	// Exam committee
+	// --------------------------------------------------------
+
 	CommitteePresident string
 	CommitteeMember1   string
 	CommitteeMember2   string
 }
 
-// -----------------------------
+// ============================================================
 // Setters with cleaning methods
-// -----------------------------
+// ============================================================
 
 func (s *SubjectDTO) SetDepartment(val string) {
-	s.Department = strings.TrimSpace(val)
+	s.Department = strings.ToUpper(strings.TrimSpace(val))
 }
 
 func (s *SubjectDTO) SetSubjectName(val string) {
-	s.RawSubjectName = strings.TrimSpace(val)
+	s.SubjectName = strings.TrimSpace(val)
 
 	// Set course type based on the name
 	s.CourseType = NormalCourse
+
 	// If contains a (*) it is a closed grade with only final exam
 	for i := len(val) - 1; i >= 0; i-- {
 		if rune(val[i]) == '*' {
@@ -133,6 +170,10 @@ func (s *SubjectDTO) SetLevel(val string) {
 func (s *SubjectDTO) SetSection(val string) {
 	s.Section = strings.TrimSpace(val)
 }
+
+// ============================================================
+// Teacher setters
+// ============================================================
 
 func (s *SubjectDTO) SetTeachersFirtNames(firstNames string) {
 	list := strings.Split(firstNames, "\n")
@@ -176,12 +217,16 @@ func (s *SubjectDTO) ensureTeachersLen(n int) {
 	}
 }
 
+// ============================================================
+// Exam setters
+// ============================================================
+
 func (s *SubjectDTO) SetPartial1Date(val string) {
 	s.Partial1Date = parseDate(val)
 }
 
 func (s *SubjectDTO) SetPartial1Time(val string) {
-	s.Partial1Time = cleanTime(val)
+	s.Partial1Time = parseTime(val)
 }
 
 func (s *SubjectDTO) SetPartial1Room(val string) {
@@ -193,7 +238,7 @@ func (s *SubjectDTO) SetPartial2Date(val string) {
 }
 
 func (s *SubjectDTO) SetPartial2Time(val string) {
-	s.Partial2Time = cleanTime(val)
+	s.Partial2Time = parseTime(val)
 }
 
 func (s *SubjectDTO) SetPartial2Room(val string) {
@@ -205,7 +250,7 @@ func (s *SubjectDTO) SetFinal1Date(val string) {
 }
 
 func (s *SubjectDTO) SetFinal1Time(val string) {
-	s.Final1Time = cleanTime(val)
+	s.Final1Time = parseTime(val)
 }
 
 func (s *SubjectDTO) SetFinal1Room(val string) {
@@ -217,7 +262,7 @@ func (s *SubjectDTO) SetFinal1RevDate(val string) {
 }
 
 func (s *SubjectDTO) SetFinal1RevTime(val string) {
-	s.Final1RevTime = cleanTime(val)
+	s.Final1RevTime = parseTime(val)
 }
 
 func (s *SubjectDTO) SetFinal2Date(val string) {
@@ -225,7 +270,7 @@ func (s *SubjectDTO) SetFinal2Date(val string) {
 }
 
 func (s *SubjectDTO) SetFinal2Time(val string) {
-	s.Final2Time = cleanTime(val)
+	s.Final2Time = parseTime(val)
 }
 
 func (s *SubjectDTO) SetFinal2Room(val string) {
@@ -237,8 +282,34 @@ func (s *SubjectDTO) SetFinal2RevDate(val string) {
 }
 
 func (s *SubjectDTO) SetFinal2RevTime(val string) {
-	s.Final2RevTime = cleanTime(val)
+	s.Final2RevTime = parseTime(val)
 }
+
+// ============================================================
+// Schedule setters
+// ============================================================
+
+func (s *SubjectDTO) SetDayTime(day WeekDay, val string) {
+	s.Schedule[day] = WeekDayData{
+		Room: s.Schedule[day].Room,
+		Time: parseTimeSlot(val),
+	}
+}
+
+func (s *SubjectDTO) SetDayRoom(day WeekDay, room string) {
+	s.Schedule[day] = WeekDayData{
+		Room: strings.TrimSpace(room),
+		Time: s.Schedule[day].Time,
+	}
+}
+
+func (s *SubjectDTO) SetSaturdayDates(dates string) {
+	s.SaturdayDates = dates
+}
+
+// ============================================================
+// Committee setters
+// ============================================================
 
 func (s *SubjectDTO) SetCommitteePresident(val string) {
 	s.CommitteePresident = val
@@ -252,26 +323,12 @@ func (s *SubjectDTO) SetCommitteeMember2(val string) {
 	s.CommitteeMember2 = val
 }
 
-func (s *SubjectDTO) SetSaturdayDates(dates string) {
-	s.SaturdayDates = dates
-}
-
-func (s *SubjectDTO) SetDayTime(day WeekDay, val string) {
-	s.Schedule[day] = weekDayData{
-		Room: s.Schedule[day].Room,
-		Time: convertIntoTimeSlot(val),
-	}
-}
-
-func (s *SubjectDTO) SetDayRoom(day WeekDay, room string) {
-	s.Schedule[day] = weekDayData{
-		Room: strings.TrimSpace(room),
-		Time: s.Schedule[day].Time,
-	}
-}
+// ============================================================
+// Lifecycle helpers
+// ============================================================
 
 func (d *SubjectDTO) Reset() {
 	*d = SubjectDTO{}
-	d.Schedule = make(map[WeekDay]weekDayData, 6) // pre-initialize map
-	d.Teachers = d.Teachers[:0]                   // reutilize the memmory slice
+	d.Schedule = make(map[WeekDay]WeekDayData, 6) // pre-initialize map
+	d.Teachers = d.Teachers[:0]                   // reuse slice memory
 }

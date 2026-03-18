@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/elias-gill/poliplanner2/internal/db/model"
+	"github.com/elias-gill/poliplanner2/internal/domain/period"
 	"github.com/elias-gill/poliplanner2/logger"
 )
 
@@ -18,7 +18,7 @@ func NewSqlitePeriodStore(db *sql.DB) *SqlitePeriodStore {
 	}
 }
 
-func (s *SqlitePeriodStore) FindByYearPeriod(ctx context.Context, year int, period int) (*model.Period, error) {
+func (s *SqlitePeriodStore) FindByYearPeriod(ctx context.Context, year int, p int) (*period.Period, error) {
 	row := s.db.QueryRowContext(ctx, `
 		SELECT
 		id,
@@ -26,13 +26,13 @@ func (s *SqlitePeriodStore) FindByYearPeriod(ctx context.Context, year int, peri
 		periodo
 		FROM periodos
 		WHERE year = ? AND periodo = ?
-		`, year, period)
+		`, year, p)
 
-	var p model.Period
+	var auxP period.Period
 	err := row.Scan(
-		&p.ID,
-		&p.Year,
-		&p.Period,
+		&auxP.ID,
+		&auxP.Year,
+		&auxP.Period,
 	)
 	if err == sql.ErrNoRows {
 		logger.Debug("No period found", "year", year, "period", period)

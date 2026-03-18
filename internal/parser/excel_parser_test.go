@@ -554,7 +554,7 @@ func withGeneral(dept string, semester int, section, career, raw string) func(*S
 		s.Department = dept
 		s.Semester = semester
 		s.Section = section
-		s.RawSubjectName = raw
+		s.SubjectName = raw
 	}
 }
 
@@ -584,8 +584,8 @@ func assertSubjectEqual(t *testing.T, got, want SubjectDTO) {
 	if got.Section != want.Section {
 		t.Fatalf("Section: got %q want %q", got.Section, want.Section)
 	}
-	if got.RawSubjectName != want.RawSubjectName {
-		t.Fatalf("RawSubjectName: got %q want %q", got.RawSubjectName, want.RawSubjectName)
+	if got.SubjectName != want.SubjectName {
+		t.Fatalf("RawSubjectName: got %q want %q", got.SubjectName, want.SubjectName)
 	}
 
 	if len(got.Teachers) != len(want.Teachers) {
