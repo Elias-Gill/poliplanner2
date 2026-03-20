@@ -55,17 +55,25 @@ func runMigrations(migrationsDir, databaseURL string) error {
 	if err != nil {
 		return fmt.Errorf("error creating 'migrate' instance: %v", err)
 	}
-	log.Info("Applying database migrations")
+	defer m.Close()
 
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		return fmt.Errorf("migration failed: %v", err)
+	for {
+		if err := m.Steps(1); err != nil {
+			if err == migrate.ErrNoChange {
+				log.Info("No more migrations to apply, database is up to date")
+				break
+			}
+			return fmt.Errorf("migration failed: %v", err)
+		}
+
+		// Log migration info
+		version, _, verr := m.Version()
+		if verr != nil {
+			return fmt.Errorf("failed to get migration version: %v", verr)
+		}
+		log.Info("Applied migration", "version", version)
 	}
 
-	if err == migrate.ErrNoChange {
-		log.Info("No migrations applied - database is up to date")
-	} else {
-		log.Info("Migrations applied successfully")
-	}
 	return nil
 }
 

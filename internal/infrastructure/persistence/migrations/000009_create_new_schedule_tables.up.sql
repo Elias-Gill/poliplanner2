@@ -9,7 +9,7 @@ CREATE TABLE horarios (
 
     FOREIGN KEY (usuario_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (periodo_id) REFERENCES periodos(id) ON DELETE CASCADE,
-    UNIQUE (usuario_id, nombre)
+    UNIQUE (usuario_id, descripcion)
 );
 
 -- Detalle de cursos en cada horario
