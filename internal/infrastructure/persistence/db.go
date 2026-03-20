@@ -51,27 +51,40 @@ func InitDB() (*DbConnection, error) {
 
 func runMigrations(migrationsDir, databaseURL string) error {
 	log.Debug("Creating migration instance", "source", "file://"+migrationsDir)
+
 	m, err := migrate.New("file://"+migrationsDir, databaseURL)
 	if err != nil {
 		return fmt.Errorf("error creating 'migrate' instance: %v", err)
 	}
 	defer m.Close()
 
-	for {
-		if err := m.Steps(1); err != nil {
-			if err == migrate.ErrNoChange {
-				log.Info("No more migrations to apply, database is up to date")
-				break
-			}
-			return fmt.Errorf("migration failed: %v", err)
-		}
+	// Get current version (before applying)
+	prevVersion, _, err := m.Version()
+	if err != nil && err != migrate.ErrNilVersion {
+		return fmt.Errorf("failed to get current migration version: %v", err)
+	}
 
-		// Log migration info
-		version, _, verr := m.Version()
-		if verr != nil {
-			return fmt.Errorf("failed to get migration version: %v", verr)
+	// Apply all pending migrations
+	upErr := m.Up()
+
+	// Get version after Up() (even if Up() returned error)
+	newVersion, _, verr := m.Version()
+	if verr != nil && verr != migrate.ErrNilVersion {
+		return fmt.Errorf("failed to get migration version after Up(): %v", verr)
+	}
+
+	// Log all applied migrations step by step
+	if newVersion > prevVersion {
+		for v := prevVersion + 1; v <= newVersion; v++ {
+			log.Info("Applied migration", "version", v)
 		}
-		log.Info("Applied migration", "version", version)
+	} else {
+		log.Info("No migrations applied - database is up to date")
+	}
+
+	// If Up() returned error, report it now
+	if upErr != nil && upErr != migrate.ErrNoChange {
+		return fmt.Errorf("migration failed after applying version %d: %w", newVersion, upErr)
 	}
 
 	return nil
