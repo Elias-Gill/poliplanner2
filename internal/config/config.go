@@ -146,13 +146,13 @@ func MustLoad() {
 
 		Database: DatabaseConfig{
 			URL:           resolvePath(baseDir, "DATABASE_URL", "poliplanner.db"),
-			MigrationsDir: filepath.Join(baseDir, filepath.Join("internal", "db", "migrations")),
+			MigrationsDir: filepath.Join(baseDir, filepath.Join("internal", "infrastructure", "persistence", "migrations")),
 		},
 
 		Paths: PathsConfig{
 			BaseDir:                baseDir,
-			ExcelParsingLayoutsDir: filepath.Join(baseDir, "internal", "excel", "parser", "layouts"),
-			SubjectsMetadataDir:    filepath.Join(baseDir, "internal", "excel", "parser", "metadata"),
+			ExcelParsingLayoutsDir: filepath.Join(baseDir, "internal", "infrastructure", "parser", "layouts"),
+			SubjectsMetadataDir:    filepath.Join(baseDir, "internal", "infrastructure", "parser", "metadata"),
 			DownloadsDir:           resolvePath(baseDir, "DOWNLOADS_DIR", filepath.Join("tmp", "poliplanner")),
 		},
 

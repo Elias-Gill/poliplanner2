@@ -1,23 +1,5 @@
 package excelimport
 
-// Package excelimport contains internal data structures used exclusively during
-// the Excel import process.
-//
-// The types defined in this file are NOT part of the domain model. They do not
-// represent domain aggregates, entities, or value objects. Instead, they are
-// temporary persistence-oriented structures used to bridge the gap between the
-// parsed Excel data and the database layer.
-//
-// Their purpose is to hold the raw or partially transformed information extracted
-// from the Excel sheets in a shape that is convenient for batch persistence
-// operations. These structures should be treated as import DTOs tailored for the
-// storage process, not as representations of the business domain.
-//
-// In particular, they mirror the column layout of the Excel source and may contain
-// denormalized or redundant fields that would not exist in the domain model.
-// Any domain logic or invariants must remain implemented in the domain layer,
-// not in these types.
-
 import (
 	"strings"
 	"time"
@@ -25,6 +7,10 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/domain/courseOffering"
 	"github.com/elias-gill/poliplanner2/internal/domain/period"
 )
+
+// ============================================================
+// Core structs
+// ============================================================
 
 type subject struct {
 	Career     string
@@ -35,27 +21,44 @@ type subject struct {
 }
 
 type teacher struct {
-	Name      string
+	FirstName string
+	LastName  string
 	Email     string
 	SearchKey string
 }
 
 func (t *teacher) IsSimilar(other string) bool {
-	a := normalize(t.Name)
+	a := normalize(t.FullName())
 	b := normalize(other)
 
-	// Exact match
 	if a == b {
 		return true
 	}
 
-	// Apply Levenshtein only with exact distance
 	if len(a) != len(b) {
 		return false
 	}
 
-	dist := levenshtein(a, b)
-	return dist <= 2
+	return levenshtein(a, b) <= 2
+}
+
+func (t teacher) FullName() string {
+	if t.FirstName == "" {
+		return t.LastName
+	}
+	if t.LastName == "" {
+		return t.FirstName
+	}
+	return t.FirstName + " " + t.LastName
+}
+
+func newTeacher(firstName, lastName, email string) teacher {
+	return teacher{
+		FirstName: firstName,
+		LastName:  lastName,
+		Email:     email,
+		SearchKey: generateSearchKey(firstName, lastName),
+	}
 }
 
 type Offering struct {
@@ -66,71 +69,62 @@ type Offering struct {
 	Section    string
 	CourseType courseOffering.CourseType
 
-	// Partial exams
-	Partial1 examData
-	Partial2 examData
+	// Normalized collections
+	Exams    []Exam
+	Schedule []ScheduleEntry
 
-	// Final exams
-	Final1 examData
-	Final2 examData
-
-	// Weekly course schedule
-	Schedule map[courseOffering.WeekDay]WeekDayData
-
-	// Special saturday sessions (raw representation)
+	// Raw extras
 	SaturdayDates string
 
-	// Exam committee
+	// Committee
 	CommitteeMember1   string
 	CommitteeMember2   string
 	CommitteePresident string
 }
 
 // ============================================================
-// Value Objects
+// Value Objects (flat, DB-friendly)
 // ============================================================
 
-type timeSlot struct {
+type ScheduleEntry struct {
+	Day   courseOffering.WeekDay
 	Start *time.Time
 	End   *time.Time
+	Room  string
 }
 
-type WeekDayData struct {
-	Room string
-	Time timeSlot
-}
-
-type examData struct {
+type Exam struct {
+	Type     courseOffering.ExamType
+	Instance courseOffering.ExamInstance
 	Date     *time.Time
-	Revision *time.Time
 	Room     string
+	Revision *time.Time
 }
 
-func newExamData(date *time.Time, revDate *time.Time, room string) examData {
-	return examData{
-		Date:     date,
-		Revision: revDate,
-		Room:     room,
-	}
+// ============================================================
+// Mutators (simple, no hidden logic)
+// ============================================================
+
+func (o *Offering) AddSchedule(
+	day courseOffering.WeekDay,
+	start *time.Time,
+	end *time.Time,
+	room string,
+) {
+	o.Schedule = append(o.Schedule, ScheduleEntry{
+		Day:   day,
+		Start: start,
+		End:   end,
+		Room:  room,
+	})
 }
 
-func (c *Offering) AddSchedule(day courseOffering.WeekDay, start *time.Time, end *time.Time, room string) {
-	c.Schedule[day] = WeekDayData{
-		Room: room,
-		Time: timeSlot{
-			Start: start,
-			End:   end,
-		},
-	}
-}
-
-// ==========================================================
-// =                        UTILS                           =
-// ==========================================================
+// ============================================================
+// Utils
+// ============================================================
 
 func normalize(name string) string {
-	name = strings.ToLower(name)
-	name = strings.TrimSpace(name)
+	name = strings.ToLower(strings.TrimSpace(name))
 
 	name = strings.Map(func(r rune) rune {
 		switch r {
@@ -147,7 +141,6 @@ func normalize(name string) string {
 		case 'ñ':
 			return 'n'
 		case '.', ',', '-', '_':
-			// delete this char
 			return -1
 		}
 		return r
@@ -179,13 +172,31 @@ func levenshtein(s1 string, s2 string) int {
 				cost = 1
 			}
 			curr[j+1] = min(
-				prev[j+1]+1,  // delete
-				curr[j]+1,    // insert
-				prev[j]+cost, // substitute
+				prev[j+1]+1,
+				curr[j]+1,
+				prev[j]+cost,
 			)
 		}
 		prev, curr = curr, prev
 	}
 
 	return prev[len(s2)]
+}
+
+func generateSearchKey(firstName, lastName string) string {
+	first := ""
+	if fields := strings.Fields(firstName); len(fields) > 0 {
+		first = strings.ToLower(fields[0])
+	} else {
+		return ""
+	}
+
+	last := ""
+	if fields := strings.Fields(lastName); len(fields) > 0 {
+		last = strings.ToLower(fields[0])
+	} else {
+		return ""
+	}
+
+	return first + "_" + last
 }

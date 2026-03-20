@@ -13,51 +13,27 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/metadata"
 )
 
-func buildOfferingFromDTO(career string, periodID period.PeriodID, data parser.SubjectDTO, planLoader *metadata.AcademicPlanLoader) Offering {
-	// Complete metadata if possible
-	if planLoader != nil {
-		if data.Semester == 0 {
-			if m, err := planLoader.FindSubject(data.RawSubjectName); err == nil {
-				data.Semester = m.Semester
-			}
-		}
-	}
+// ============================================================
+// Entry point
+// ============================================================
 
-	subject := subject{
-		Career:     strings.ToUpper(strings.TrimSpace(career)),
-		Name:       normalizeSubjectName(data.RawSubjectName),
-		Department: data.Department,
-		Level:      data.Level,
-		Semester:   data.Semester,
-	}
-
-	teachers := make([]teacher, 0, len(data.Teachers))
-	for _, t := range data.Teachers {
-		teachers = append(teachers, teacher{
-			Name:      t.FirstName + " " + t.LastName,
-			Email:     t.Email,
-			SearchKey: generateSearchKey(t.FirstName, t.LastName),
-		})
-	}
-
-	cType := courseOffering.Normal
-	if data.CourseType == parser.ExamOnlyCourse {
-		cType = courseOffering.ExamOnly
-	}
+func buildOfferingFromDTO(
+	career string,
+	periodID period.PeriodID,
+	data parser.SubjectDTO,
+	planLoader *metadata.AcademicPlanLoader,
+) Offering {
+	enrichDTO(&data, planLoader)
 
 	offer := Offering{
 		CourseName: data.RawSubjectName,
 		Period:     periodID,
-		Teachers:   teachers,
-		Subject:    subject,
+		Teachers:   buildTeachers(data.Teachers),
+		Subject:    buildSubject(career, data),
 		Section:    data.Section,
-		CourseType: cType,
+		CourseType: mapCourseType(data.CourseType),
 
-		Partial1: convertToExamData(data.Partial1Date, data.Partial1Time, nil, nil, data.Partial1Room),
-		Partial2: convertToExamData(data.Partial2Date, data.Partial2Time, nil, nil, data.Partial2Room),
-
-		Final1: convertToExamData(data.Final1Date, data.Final1Time, data.Final1RevDate, data.Final1RevTime, data.Final1Room),
-		Final2: convertToExamData(data.Final2Date, data.Final2Time, data.Final2RevDate, data.Final2RevTime, data.Final2Room),
+		Exams: buildExams(data),
 
 		CommitteePresident: data.CommitteePresident,
 		CommitteeMember1:   data.CommitteeMember1,
@@ -69,84 +45,130 @@ func buildOfferingFromDTO(career string, periodID period.PeriodID, data parser.S
 	return offer
 }
 
-// ---------------------------------------
-// -    Utils and conversion methods     -
-// ---------------------------------------
+// ============================================================
+// Enrichment (with known metadata)
+// ============================================================
 
-func convertToExamData(
-	date *parser.Date,
-	hour *parser.Hour,
-	revDate *parser.Date,
-	revTime *parser.Hour,
-	room string,
-) examData {
-	exam := combineDateHour(date, hour)
-	revision := combineDateHour(revDate, revTime)
-
-	return newExamData(exam, revision, room)
-}
-
-// The max amount of roman numbers we have is normally 10, but just to prevent any
-// potential errors
-var roman = [...]string{
-	"", "I", "II", "III", "IV", "V",
-	"VI", "VII", "VIII", "IX", "X",
-	"XI", "XII", "XIII", "XIV", "XV",
-	"XVI", "XVII", "XVIII", "XIX", "XX",
-}
-
-var romanToInt = map[string]int{
-	"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5,
-	"VI": 6, "VII": 7, "VIII": 8, "IX": 9, "X": 10,
-	"XI": 11, "XII": 12, "XIII": 13, "XIV": 14, "XV": 15,
-	"XVI": 16, "XVII": 17, "XVIII": 18, "XIX": 19, "XX": 20,
-}
-
-var accents = strings.NewReplacer(
-	"á", "a", "Á", "A",
-	"é", "e", "É", "E",
-	"í", "i", "Í", "I",
-	"ó", "o", "Ó", "O",
-	"ú", "u", "Ú", "U",
-)
-
-func normalizeSubjectName(val string) string {
-	// Parte antes del -
-	if i := strings.IndexByte(val, '-'); i >= 0 {
-		val = val[:i]
-	}
-	val = strings.TrimSpace(val)
-
-	// delete perenthesis (), (*), (**)
-	val = regexp.MustCompile(`\s*\([^()]*\)`).ReplaceAllString(val, "")
-
-	fields := strings.Fields(val)
-	if len(fields) == 0 {
-		return ""
+func enrichDTO(data *parser.SubjectDTO, loader *metadata.AcademicPlanLoader) {
+	if loader == nil {
+		return
 	}
 
-	// Normalize arabic to roman numbers
-	for i := range fields {
-		f := fields[i]
+	if data.Semester != 0 {
+		return
+	}
 
-		if n, err := strconv.Atoi(f); err == nil && n >= 1 && n <= 20 {
-			fields[i] = roman[n]
+	if m, err := loader.FindSubject(data.RawSubjectName); err == nil {
+		data.Semester = m.Semester
+	}
+}
+
+// ============================================================
+// Builders
+// ============================================================
+
+func buildSubject(career string, data parser.SubjectDTO) subject {
+	return subject{
+		Career:     strings.ToUpper(strings.TrimSpace(career)),
+		Name:       normalizeSubjectName(data.RawSubjectName),
+		Department: data.Department,
+		Level:      data.Level,
+		Semester:   data.Semester,
+	}
+}
+
+func buildTeachers(src []parser.TeacherDTO) []teacher {
+	teachers := make([]teacher, 0, len(src))
+
+	for _, t := range src {
+		teachers = append(teachers, newTeacher(
+			t.FirstName,
+			t.LastName,
+			t.Email,
+		))
+	}
+
+	return teachers
+}
+
+func mapCourseType(t parser.CourseType) courseOffering.CourseType {
+	if t == parser.ExamOnlyCourse {
+		return courseOffering.ExamOnly
+	}
+	return courseOffering.Normal
+}
+
+// ============================================================
+// Exams
+// ============================================================
+
+type examInput struct {
+	t       courseOffering.ExamType
+	i       courseOffering.ExamInstance
+	date    *parser.Date
+	hour    *parser.Hour
+	revDate *parser.Date
+	revHour *parser.Hour
+	room    string
+}
+
+func buildExams(data parser.SubjectDTO) []Exam {
+	inputs := []examInput{
+		{courseOffering.ExamPartial, 1, data.Partial1Date, data.Partial1Time, nil, nil, data.Partial1Room},
+		{courseOffering.ExamPartial, 2, data.Partial2Date, data.Partial2Time, nil, nil, data.Partial2Room},
+		{courseOffering.ExamFinal, 1, data.Final1Date, data.Final1Time, data.Final1RevDate, data.Final1RevTime, data.Final1Room},
+		{courseOffering.ExamFinal, 2, data.Final2Date, data.Final2Time, data.Final2RevDate, data.Final2RevTime, data.Final2Room},
+	}
+
+	exams := make([]Exam, 0, 4)
+
+	for _, in := range inputs {
+		date := combineDateHour(in.date, in.hour)
+		if date == nil {
 			continue
 		}
 
-		// Uppercase roman numbers
-		up := strings.ToUpper(f)
-		if _, ok := romanToInt[up]; ok {
-			fields[i] = up
+		exams = append(exams, Exam{
+			Type:     in.t,
+			Instance: in.i,
+			Date:     date,
+			Room:     in.room,
+			Revision: combineDateHour(in.revDate, in.revHour),
+		})
+	}
+
+	return exams
+}
+
+// ============================================================
+// Schedule
+// ============================================================
+
+func applySchedule(
+	c *Offering,
+	s map[parser.WeekDay]parser.WeekDayData,
+) {
+	for day, data := range s {
+		start := hourToTime(data.Time.Start)
+		end := hourToTime(data.Time.End)
+
+		// evita ruido
+		if start == nil && end == nil && data.Room == "" {
 			continue
 		}
 
-		// Delete accents and lowercase all non roman number fields
-		fields[i] = strings.ToLower(accents.Replace(f))
+		c.AddSchedule(
+			courseOffering.WeekDay(day),
+			start,
+			end,
+			data.Room,
+		)
 	}
-
-	return strings.Join(fields, " ")
 }
+
+// ============================================================
+// Time utils
+// ============================================================
 
 func combineDateHour(d *parser.Date, h *parser.Hour) *time.Time {
 	if d == nil {
@@ -161,7 +183,16 @@ func combineDateHour(d *parser.Date, h *parser.Hour) *time.Time {
 		min = h.Minute
 	}
 
-	t := time.Date(d.Year, time.Month(d.Month), d.Day, hour, min, 0, 0, timezone.ParaguayTZ)
+	t := time.Date(
+		d.Year,
+		time.Month(d.Month),
+		d.Day,
+		hour,
+		min,
+		0,
+		0,
+		timezone.ParaguayTZ,
+	)
 
 	return &t
 }
@@ -185,38 +216,63 @@ func hourToTime(h *parser.Hour) *time.Time {
 	return &t
 }
 
-func applySchedule(
-	c *Offering,
-	s map[parser.WeekDay]parser.WeekDayData,
-) {
-	for day, data := range s {
-		start := hourToTime(data.Time.Start)
-		end := hourToTime(data.Time.End)
+// ============================================================
+// Normalization utils
+// ============================================================
 
-		c.AddSchedule(
-			courseOffering.WeekDay(day),
-			start,
-			end,
-			data.Room)
-	}
+var roman = [...]string{
+	"", "I", "II", "III", "IV", "V",
+	"VI", "VII", "VIII", "IX", "X",
+	"XI", "XII", "XIII", "XIV", "XV",
+	"XVI", "XVII", "XVIII", "XIX", "XX",
 }
 
-func generateSearchKey(firstName, lastName string) string {
-	first := ""
-	if fields := strings.Fields(firstName); len(fields) > 0 {
-		first = strings.ToLower(fields[0])
-	} else {
-		// first name is empty
+var romanToInt = map[string]int{
+	"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5,
+	"VI": 6, "VII": 7, "VIII": 8, "IX": 9, "X": 10,
+	"XI": 11, "XII": 12, "XIII": 13, "XIV": 14, "XV": 15,
+	"XVI": 16, "XVII": 17, "XVIII": 18, "XIX": 19, "XX": 20,
+}
+
+var accents = strings.NewReplacer(
+	"á", "a", "Á", "A",
+	"é", "e", "É", "E",
+	"í", "i", "Í", "I",
+	"ó", "o", "Ó", "O",
+	"ú", "u", "Ú", "U",
+)
+
+var parenRegex = regexp.MustCompile(`\s*\([^()]*\)`)
+
+func normalizeSubjectName(val string) string {
+	if i := strings.IndexByte(val, '-'); i >= 0 {
+		val = val[:i]
+	}
+	val = strings.TrimSpace(val)
+
+	val = parenRegex.ReplaceAllString(val, "")
+
+	fields := strings.Fields(val)
+	if len(fields) == 0 {
 		return ""
 	}
 
-	last := ""
-	if fields := strings.Fields(lastName); len(fields) > 0 {
-		last = strings.ToLower(fields[0])
-	} else {
-		// last name is empty
-		return ""
+	for i := range fields {
+		f := fields[i]
+
+		if n, err := strconv.Atoi(f); err == nil && n >= 1 && n <= 20 {
+			fields[i] = roman[n]
+			continue
+		}
+
+		up := strings.ToUpper(f)
+		if _, ok := romanToInt[up]; ok {
+			fields[i] = up
+			continue
+		}
+
+		fields[i] = strings.ToLower(accents.Replace(f))
 	}
 
-	return strings.Join([]string{first, last}, "_")
+	return strings.Join(fields, " ")
 }

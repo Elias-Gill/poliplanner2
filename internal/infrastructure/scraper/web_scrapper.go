@@ -14,9 +14,9 @@ import (
 
 	"github.com/gocolly/colly/v2"
 
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/source"
 	"github.com/elias-gill/poliplanner2/logger"
 	log "github.com/elias-gill/poliplanner2/logger"
-	"github.com/elias-gill/poliplanner2/internal/infrastructure/source"
 )
 
 // ==================================
@@ -135,6 +135,8 @@ func (ws *WebScrapper) FindLatestDownloadSource(
 			latest = s
 		}
 	}
+
+	log.Info("Latest source found", "url", latest.GetMetadata().URI)
 
 	return latest, nil
 }

@@ -47,7 +47,7 @@ type AcademicPlanLoader struct {
 // ================================
 
 func NewAcademicPlanLoader(careerCode string) (*AcademicPlanLoader, error) {
-	metadataDir := path.Join(config.Get().Paths.BaseDir, "internal", "excel", "metadata", "curriculums")
+	metadataDir := path.Join(config.Get().Paths.BaseDir, "internal", "infrastructure", "parser", "metadata", "curriculums")
 	log.Debug("Creating subject metadata loader", "metadata_dir", metadataDir, "career_code", careerCode)
 
 	loader := &AcademicPlanLoader{

@@ -56,17 +56,35 @@ type weekDayData struct {
 // Exam Data
 // ============================================================
 
+type ExamType string
+
+const (
+	ExamPartial ExamType = "partial"
+	ExamFinal   ExamType = "final"
+)
+
+type ExamInstance int
+
+const (
+	Instance1 ExamInstance = 1
+	Instance2 ExamInstance = 2
+)
+
 type ExamData struct {
 	date     *time.Time
 	revision *time.Time
 	room     string
+	examType ExamType
+	instance ExamInstance
 }
 
-func NewExamData(date *time.Time, revDate *time.Time, room string) ExamData {
+func NewExamData(date *time.Time, revDate *time.Time, room string, examType ExamType, instance ExamInstance) ExamData {
 	return ExamData{
 		date:     date,
 		revision: revDate,
 		room:     room,
+		examType: examType,
+		instance: instance,
 	}
 }
 

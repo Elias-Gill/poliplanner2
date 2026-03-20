@@ -22,8 +22,7 @@ type JsonLayoutLoader struct {
 }
 
 func NewJsonLayoutLoader() *JsonLayoutLoader {
-	layoutsDir := path.Join(config.Get().Paths.BaseDir, "internal", "excel", "layout", "layouts")
-	log.Debug("Creating JSON layout loader", "layouts_dir", layoutsDir)
+	layoutsDir := path.Join(config.Get().Paths.BaseDir, "internal", "infrastructure", "parser", "layout", "layouts")
 	return &JsonLayoutLoader{
 		layoutsDir: layoutsDir,
 	}
@@ -37,75 +36,71 @@ type jsonLayoutFile struct {
 }
 
 func (l *JsonLayoutLoader) LoadJsonLayouts() ([]Layout, error) {
-	log.Debug("Loading JSON layouts", "directory", l.layoutsDir)
-	var layouts []Layout
-
 	files, err := filepath.Glob(filepath.Join(l.layoutsDir, "*.json"))
 	if err != nil {
-		return nil, fmt.Errorf("error reading layout directory: %v", err)
+		log.Error("Failed to read layouts directory", "dir", l.layoutsDir, "error", err)
+		return nil, fmt.Errorf("error reading layout directory: %w", err)
 	}
 
-	log.Debug("Found JSON files", "count", len(files), "files", files)
-
 	if len(files) == 0 {
+		log.Error("No layout files found", "dir", l.layoutsDir)
 		return nil, fmt.Errorf("no JSON files found in: %s", l.layoutsDir)
 	}
 
-	loadedCount := 0
+	var layouts []Layout
+	var errorsCount int
+
 	for _, file := range files {
 		layout, err := l.loadSingleLayout(file)
 		if err != nil {
-			log.Warn("Error loading layout file", "file", file, "error", err)
+			log.Warn("Skipping invalid layout file", "file", filepath.Base(file), "error", err)
+			errorsCount++
 			continue
 		}
 		layouts = append(layouts, *layout)
-		loadedCount++
-		log.Debug("Successfully loaded layout", "file", file, "headers_count", len(layout.Headers))
 	}
-
-	log.Info("Layout loading completed", "loaded", loadedCount, "total_files", len(files))
 
 	if len(layouts) == 0 {
-		return nil, fmt.Errorf("no valid layouts could be loaded")
+		log.Error("No valid layouts could be loaded", "files_checked", len(files), "errors", errorsCount)
+		return nil, fmt.Errorf("no valid layouts could be loaded from %d files", len(files))
 	}
+
+	log.Info("Layouts loaded successfully",
+		"count", len(layouts),
+		"files_checked", len(files),
+		"invalid_files", errorsCount,
+	)
 
 	return layouts, nil
 }
 
 func (l *JsonLayoutLoader) loadSingleLayout(filePath string) (*Layout, error) {
-	log.Debug("Loading single layout", "file", filePath)
-
 	data, err := os.ReadFile(filePath)
 	if err != nil {
-		return nil, fmt.Errorf("cannot read file: %v", err)
+		return nil, fmt.Errorf("cannot read file %s: %w", filepath.Base(filePath), err)
 	}
 
 	var jsonData jsonLayoutFile
 	if err := json.Unmarshal(data, &jsonData); err != nil {
-		return nil, fmt.Errorf("invalid JSON format: %v", err)
+		return nil, fmt.Errorf("invalid JSON format in %s: %w", filepath.Base(filePath), err)
 	}
 
 	if len(jsonData.List) == 0 {
-		return nil, fmt.Errorf("empty 'lista' in JSON file")
+		return nil, fmt.Errorf("empty 'lista' array in %s", filepath.Base(filePath))
 	}
 
 	headers := make([]string, 0, len(jsonData.List))
 	patterns := make(map[string][]string)
 
-	for _, entry := range jsonData.List {
+	for i, entry := range jsonData.List {
 		if entry.Header == "" {
-			return nil, fmt.Errorf("empty header in JSON file")
+			return nil, fmt.Errorf("empty header found at index %d in %s", i, filepath.Base(filePath))
 		}
 		headers = append(headers, entry.Header)
 		if len(entry.Patterns) > 0 {
 			patterns[entry.Header] = entry.Patterns
 		}
 	}
-
-	log.Debug("Layout parsed successfully",
-		"file", filepath.Base(filePath),
-		"headers_count", len(headers),
-		"patterns_count", len(patterns))
 
 	return &Layout{
 		FileName: filepath.Base(filePath),

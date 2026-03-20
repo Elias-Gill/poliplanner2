@@ -119,9 +119,9 @@ func (ep *ExcelParser) prepareParser(file io.ReadCloser) error {
 	// Use optimized options for better performance
 	f, err := excelize.OpenReader(file, excelize.Options{
 		// Limit memory usage by restricting unzip size
-		UnzipSizeLimit: 8 << 20, // 12MB limit
+		UnzipSizeLimit: 16 << 20, // 16MB limit
 		// Skip loading cell styles we don't need
-		UnzipXMLSizeLimit: 16 << 20, // 32MB per XML file
+		UnzipXMLSizeLimit: 8 << 20, // 8MB per XML file
 	})
 	if err != nil {
 		if os.IsNotExist(err) {
