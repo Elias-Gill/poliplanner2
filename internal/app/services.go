@@ -3,6 +3,7 @@ package service
 import (
 	email "github.com/elias-gill/poliplanner2/internal/app/email"
 	excelimport "github.com/elias-gill/poliplanner2/internal/app/excelImport"
+	sApp "github.com/elias-gill/poliplanner2/internal/app/schedule"
 	svApp "github.com/elias-gill/poliplanner2/internal/app/sheetVersion"
 	uApp "github.com/elias-gill/poliplanner2/internal/app/user"
 
@@ -16,9 +17,9 @@ import (
 type Services struct {
 	UserService         *uApp.UserService
 	SheetVersionService *svApp.SheetVersionService
-	// ScheduleService     *ScheduleService
-	ImportService *excelimport.ImportService
-	EmailService  *email.EmailService
+	ScheduleService     *sApp.ScheduleService
+	ImportService       *excelimport.ImportService
+	EmailService        *email.EmailService
 }
 
 // Convenience function to instantiate all the services in one call
@@ -33,6 +34,6 @@ func NewServices(
 		SheetVersionService: svApp.NewSheetVersionService(sheetVersionStore),
 		ImportService:       excelimport.NewExcelImportService(importStorer, sheetVersionStore),
 		EmailService:        email.NewEmailService(config.Get().Email.APIKey),
-		// ScheduleService:     NewScheduleService(scheduleStore),
+		ScheduleService:     sApp.NewScheduleService(scheduleStore),
 	}
 }

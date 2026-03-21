@@ -44,7 +44,7 @@ func main() {
 	r.Use(auth.SessionMiddleware)
 
 	r.Route("/", router.NewAuthRouter(services.UserService, services.EmailService))
-	// r.Route("/dashboard", router.NewDashboardRouter(services.ScheduleService))
+	r.Route("/dashboard", router.NewDashboardRouter(services.ScheduleService))
 	// r.Route("/courses", router.NewCourseRouter(services.CoursesService, services.CareerService))
 	// r.Route("/schedule", router.NewSchedulesRouter(services.CoursesService, services.ScheduleService, services.CareerService, services.AcademicPlanService))
 	r.Route("/user", router.NewUserRouter(services.UserService))

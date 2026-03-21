@@ -1,11 +1,14 @@
 package schedule
 
-import "context"
+import (
+	"context"
+
+	"github.com/elias-gill/poliplanner2/internal/domain/user"
+)
 
 type ScheduleStorer interface {
-	Insert(ctx context.Context, s *ScheduleBasicData) (int64, error)
-	Delete(ctx context.Context, scheduleID int64) error
+	Save(ctx context.Context, s Schedule) (ScheduleID, error)
+	Delete(ctx context.Context, scheduleID ScheduleID) error
 
-	ListByUserID(ctx context.Context, userID int64) ([]*Schedule, error)
-	GetByID(ctx context.Context, scheduleID int64) (*ScheduleDetails, error)
+	ListByUser(ctx context.Context, userID user.UserID) ([]Schedule, error)
 }
