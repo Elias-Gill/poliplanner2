@@ -21,6 +21,7 @@ func NewAuthRouter(userService *user.UserService, emailService *email.EmailServi
 
 	// templates paths
 	template500Path := path.Join(baseDir, "500.html")
+	templateBadFormPath := path.Join(baseDir, "bad_form.html")
 	templateLoginPath := path.Join(baseDir, "auth", "login.html")
 	templateSignupPath := path.Join(baseDir, "auth", "signup.html")
 	templateRecoveryPath := path.Join(baseDir, "auth", "password-recovery.html")
@@ -28,6 +29,7 @@ func NewAuthRouter(userService *user.UserService, emailService *email.EmailServi
 
 	// parse templates
 	pages500Template := parseTemplateWithBaseLayout(template500Path)
+	pagesBadFormTemplate := parseTemplateWithBaseLayout(templateBadFormPath)
 	loginTemplate := parseTemplateWithBaseLayout(templateLoginPath)
 	signupTemplate := parseTemplateWithBaseLayout(templateSignupPath)
 	recoveryTemplate := parseTemplateWithBaseLayout(templateRecoveryPath)
@@ -41,6 +43,11 @@ func NewAuthRouter(userService *user.UserService, emailService *email.EmailServi
 		r.Get("/500", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "text/html")
 			pages500Template.Execute(w, nil)
+		})
+
+		r.Get("/bad_form", func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "text/html")
+			pagesBadFormTemplate.Execute(w, nil)
 		})
 
 		r.Get("/login", func(w http.ResponseWriter, r *http.Request) {

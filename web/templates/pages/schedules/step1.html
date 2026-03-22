@@ -13,6 +13,12 @@
             </p>
         </div>
 
+        {{if .Error}}
+        <div class="mb-4 p-3 border border-red-300 bg-red-50 text-red-700 rounded-sm text-sm">
+            {{.Error}}
+        </div>
+        {{end}}
+
         <form
             method="post"
             action="/schedule/"
@@ -30,6 +36,7 @@
                     name="title"
                     required
                     placeholder="Ej: Horario 2026 - 1er Semestre"
+                    value="{{.Title}}"
                     class="block w-full px-3 py-2.5 border border-gray-300 rounded-sm
                     focus:ring-2 focus:ring-primary-500
                     focus:border-primary-500 text-gray-900"
@@ -49,10 +56,11 @@
                     focus:ring-2 focus:ring-primary-500
                     focus:border-primary-500 text-gray-900"
                 >
-                    <option value="" disabled selected>
+                    <option value="" disabled {{if not .Career}}selected{{end}}>
                         Selecciona una carrera
                     </option>
-                    {{range .}}
+
+                    {{range .Careers}}
                     <option value="{{.ID}}">
                         {{.Name}}
                     </option>
@@ -60,7 +68,6 @@
                 </select>
             </div>
 
-            <!-- Botón -->
             <button
                 type="submit"
                 class="w-full bg-primary-600 text-white py-3 rounded-sm
@@ -70,9 +77,6 @@
             >
                 Continuar
             </button>
-
-            <!-- Mensajes -->
-            <div id="form-messages" class="text-sm text-center pt-2"></div>
 
         </form>
 

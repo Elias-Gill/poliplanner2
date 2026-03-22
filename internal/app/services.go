@@ -12,6 +12,8 @@ import (
 	// Domain layer
 	// "github.com/elias-gill/poliplanner2/internal/domain/academicPlan"
 	// "github.com/elias-gill/poliplanner2/internal/domain/courseOffering"
+	"github.com/elias-gill/poliplanner2/internal/domain/academicPlan"
+	"github.com/elias-gill/poliplanner2/internal/domain/courseOffering"
 	"github.com/elias-gill/poliplanner2/internal/domain/schedule"
 	"github.com/elias-gill/poliplanner2/internal/domain/sheetVersion"
 	"github.com/elias-gill/poliplanner2/internal/domain/user"
@@ -34,8 +36,8 @@ func NewServices(
 	sheetVersionStore sheetVersion.SheetVersionStorer,
 	importStorer excelApp.ImportStorer,
 	scheduleStore schedule.ScheduleStorer,
-	// planStorer academicPlan.AcademicPlanStorer,
-	// courseStorer courseOffering.CourseStorer,
+	planStorer academicPlan.AcademicPlanStorer,
+	courseStorer courseOffering.CourseStorer,
 ) *Services {
 	return &Services{
 		UserService:         userApp.NewUserService(userStore),
@@ -43,6 +45,6 @@ func NewServices(
 		ImportService:       excelApp.NewExcelImportService(importStorer, sheetVersionStore),
 		EmailService:        emailApp.NewEmailService(config.Get().Email.APIKey),
 		ScheduleService:     scheduleApp.NewScheduleService(scheduleStore),
-		// AcademicPlanService: apApp.NewAcademicPlanService(planStorer, courseStorer),
+		AcademicPlanService: apApp.NewAcademicPlanService(planStorer, courseStorer),
 	}
 }

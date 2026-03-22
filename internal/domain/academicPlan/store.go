@@ -5,6 +5,6 @@ import (
 )
 
 type AcademicPlanStorer interface {
-	GetPlanByCareerID(ctx context.Context, career int64) (*AcademicPlan, error)
+	GetPlanByCareerID(ctx context.Context, career CareerID) (*AcademicPlan, error)
 	ListCareers(ctx context.Context) ([]*Career, error)
 }

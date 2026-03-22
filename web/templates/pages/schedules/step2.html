@@ -1,10 +1,18 @@
 {{define "content"}}
 <form method="POST" action="/schedule/step2" class="space-y-6">
+
     <input type="hidden" name="title" value="{{ .Title }}">
+    <input type="hidden" name="career_id" value="{{ .CareerID }}">
+
+    {{if .Error}}
+    <div class="p-3 border border-red-300 bg-red-50 text-red-700 rounded-sm text-sm">
+        {{.Error}}
+    </div>
+    {{end}}
 
     {{ range .Plan.Semesters }}
     <details class="bg-white rounded-sm shadow border border-gray-300">
-        <summary class="text-lg font-semibold mb-3 cursor-pointer select-none p-4 border-b border-gray-300">
+        <summary class="text-lg font-semibold cursor-pointer select-none p-4 border-b border-gray-300">
             Semestre {{ .Semester }}
         </summary>
 

@@ -6,8 +6,6 @@ import (
 	"path"
 
 	"github.com/elias-gill/poliplanner2/internal/app"
-	"github.com/elias-gill/poliplanner2/internal/app/academicPlan"
-	"github.com/elias-gill/poliplanner2/internal/app/schedule"
 	"github.com/elias-gill/poliplanner2/internal/auth"
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/persistence"
@@ -39,21 +37,30 @@ func main() {
 		sqlite.NewSqliteSheetVersionStore(conn.GetConnection()),
 		sqlite.NewSqliteExcelImportStorer(conn.GetConnection()),
 		sqlite.NewSqliteScheduleStore(conn.GetConnection()),
+		sqlite.NewSqliteAcademicPlanStorer(conn.GetConnection()),
+		nil,
 	)
 
 	// Configure http server
 	r := chi.NewRouter()
 	r.Use(auth.SessionMiddleware)
 
+	// login, special pages and auth router (REFACTOR)
 	r.Route("/", router.NewAuthRouter(services.UserService, services.EmailService))
+
 	r.Route("/dashboard", router.NewDashboardRouter(services.ScheduleService))
-	r.Route("/schedule", router.NewSchedulesRouter(&schedule.ScheduleService{}, &academicPlan.AcademicPlanService{}))
-	// r.Route("/schedule", router.NewSchedulesRouter(services.ScheduleService, services.AcademicPlanService))
-	// r.Route("/courses", router.NewCourseRouter(services.CoursesService, services.CareerService))
+	r.Route("/schedule", router.NewSchedulesRouter(services.ScheduleService, services.AcademicPlanService))
+
+	// User administration router
 	r.Route("/user", router.NewUserRouter(services.UserService))
-	r.Route("/excel", router.NewExcelRouter(services.ImportService))
+
+	// Misc routers
 	r.Route("/tools", router.NewToolsRouter())
 	r.Route("/guides", router.NewGuidesRouter())
+	// r.Route("/courses", router.NewCourseRouter(services.CoursesService, services.CareerService))
+
+	// Admin routers
+	r.Route("/excel", router.NewExcelRouter(services.ImportService))
 
 	// Static files
 	staticDir := http.Dir(path.Join(config.Get().Paths.BaseDir, "web", "static"))
