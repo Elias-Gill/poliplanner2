@@ -6,6 +6,8 @@ import (
 	"path"
 
 	"github.com/elias-gill/poliplanner2/internal/app"
+	"github.com/elias-gill/poliplanner2/internal/app/academicPlan"
+	"github.com/elias-gill/poliplanner2/internal/app/schedule"
 	"github.com/elias-gill/poliplanner2/internal/auth"
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/persistence"
@@ -45,8 +47,9 @@ func main() {
 
 	r.Route("/", router.NewAuthRouter(services.UserService, services.EmailService))
 	r.Route("/dashboard", router.NewDashboardRouter(services.ScheduleService))
+	r.Route("/schedule", router.NewSchedulesRouter(&schedule.ScheduleService{}, &academicPlan.AcademicPlanService{}))
+	// r.Route("/schedule", router.NewSchedulesRouter(services.ScheduleService, services.AcademicPlanService))
 	// r.Route("/courses", router.NewCourseRouter(services.CoursesService, services.CareerService))
-	// r.Route("/schedule", router.NewSchedulesRouter(services.CoursesService, services.ScheduleService, services.CareerService, services.AcademicPlanService))
 	r.Route("/user", router.NewUserRouter(services.UserService))
 	r.Route("/excel", router.NewExcelRouter(services.ImportService))
 	r.Route("/tools", router.NewToolsRouter())

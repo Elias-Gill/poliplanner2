@@ -134,6 +134,7 @@ GUIDE ARTICLE SCOPE
     margin: 1.5rem auto;
     display: block;
     border-radius: 0.25rem;
+    cursor: pointer;
 }
 
 @media (min-width: 1024px) {

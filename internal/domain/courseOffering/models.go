@@ -154,7 +154,3 @@ type CourseOffering struct {
 	CommitteeMember2   string
 	CommitteePresident string
 }
-
-// ------------------------------------------------------------
-// Aggregate behavior
-// ------------------------------------------------------------

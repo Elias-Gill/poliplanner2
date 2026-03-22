@@ -12,7 +12,6 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/app/schedule"
 	"github.com/elias-gill/poliplanner2/internal/config"
 	planModel "github.com/elias-gill/poliplanner2/internal/domain/academicPlan"
-	"github.com/elias-gill/poliplanner2/internal/domain/courseOffering"
 	"github.com/elias-gill/poliplanner2/logger"
 	"github.com/go-chi/chi/v5"
 )
@@ -116,7 +115,7 @@ func NewSchedulesRouter(
 			ctx, cancel := context.WithTimeout(r.Context(), 300*time.Millisecond)
 			defer cancel()
 
-			// REFACTOR: differentiate "plan form career not exists" and DB errors
+			// REFACTOR: differentiate "plan from career not exists" and DB errors
 			plan, err := planService.GetCareerPlan(ctx, planModel.CareerID(careerID))
 			if err != nil {
 				customRedirect(w, r, "/500")
@@ -208,14 +207,14 @@ func NewSchedulesRouter(
 			}
 
 			// Validate ids
-			var courses = make([]courseOffering.CourseOfferingID, len(assignmentIDs))
+			var courses = make([]planModel.SubjectID, len(assignmentIDs))
 			for _, idStr := range assignmentIDs {
 				id, err := strconv.ParseInt(idStr, 10, 64)
 				if err != nil || id <= 0 {
 					executeFragment(w, r, "messages/error_message", "invalid assignment id")
 					return
 				}
-				courses = append(courses, courseOffering.CourseOfferingID(id))
+				courses = append(courses, planModel.SubjectID(id))
 			}
 
 			// TODO: get the data from forms
@@ -236,42 +235,12 @@ func NewSchedulesRouter(
 		//   - Validates consistency with prior selections.
 		//   - Stores final selection into wizard state.
 		//   - On success:
-		//       * HTMX = returns Step 4 fragment (review & confirmation).
-		//       * Non-HTMX = redirect to Step 4 route.
+		//       * prints confirmation modal and redirects to dashboard
 		//   - On validation error:
 		//       * Re-renders Step 3 with errors.
 		r.Post("/step3", func(w http.ResponseWriter, r *http.Request) {
 			// TODO: support this
-			customRedirect(w, r, "/step4")
-		})
-
-		// ================= STEP 4 =================
-		// Final review and confirmation
-		//
-		// GET:
-		//   - Aggregates all previously collected wizard data.
-		//   - Displays:
-		//       * Career
-		//       * Schedule metadata
-		//       * Selected subjects
-		//       * Selected sections
-		//   - Allows user to confirm before persistence.
-		//
-		r.Get("/step4", func(w http.ResponseWriter, r *http.Request) {
-
-		})
-		// POST:
-		//   - Performs final validation and invariants check.
-		//   - Calls application service to create the Schedule aggregate.
-		//   - Clears temporary wizard state.
-		//   - On success:
-		//       * HTMX = returns success fragment or redirect trigger.
-		//       * Non-HTMX = redirect to schedule detail page.
-		//   - On failure:
-		//       * Re-renders review step with error message.
-		r.Post("/step4", func(w http.ResponseWriter, r *http.Request) {
-			// TODO: support this
-			customRedirect(w, r, "/schedule")
+			customRedirect(w, r, "/dashboard")
 		})
 	}
 }
