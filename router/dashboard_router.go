@@ -21,10 +21,20 @@ func NewDashboardRouter(
 
 	return func(r chi.Router) {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+			// TODO: get user selected schedule from cookie
+			// TODO: get current selected schedule
+			// TODO: fetch schedule data
+			// TODO: load models into data
+			// TODO: render data models
 			base.Execute(w, nil)
 		})
 
-		r.Get("/sections", func(w http.ResponseWriter, r *http.Request) {
+		r.Get("/calendar", func(w http.ResponseWriter, r *http.Request) {
+			// TODO: get user selected schedule from cookie
+			// TODO: get current selected schedule
+			// TODO: fetch schedule data
+			// TODO: load models into calendar data
+			// TODO: render calendar
 			executeFragment(w, r, "dashboard/subjects_section", nil)
 		})
 	}

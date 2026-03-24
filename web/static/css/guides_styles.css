@@ -3,17 +3,10 @@ GUIDE ARTICLE SCOPE
 ============================== */
 
 .guide_article {
-    max-width: 900px;
-    margin: 0 auto;
+    max-width: 1000px;
     line-height: 1.7;
     font-size: 1rem;
     color: #1f2937; /* gray-800 */
-}
-
-@media (min-width: 1024px) {
-    .guide_article {
-        margin: 3rem auto;
-    }
 }
 
 /* Headings */
@@ -128,8 +121,8 @@ GUIDE ARTICLE SCOPE
 /* Images */
 
 .guide_article img {
-    width: 100%;
-    max-width: 100%;
+    width: 80%;
+    max-width: 80%;
     height: auto;
     margin: 1.5rem auto;
     display: block;
@@ -139,8 +132,8 @@ GUIDE ARTICLE SCOPE
 
 @media (min-width: 1024px) {
     .guide_article img {
-        width: 80%;
-        max-width: 80%;
+        width: 65%;
+        max-width: 65%;
     }
 }
 
