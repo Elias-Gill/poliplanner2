@@ -1,19 +1,21 @@
 {{define "fragments/sidebar"}}
     <!-- Sidebar desktop -->
     <aside class="hidden md:flex md:flex-col md:w-64 bg-primary-900 text-gray-100 border-r border-gray-800">
-            <!-- Header con logo y título -->
-        <div class="p-5 border-b border-gray-700 hover:bg-primary-800 transition-colors">
-            <a href="/guides/about">
-                <div class="flex items-center gap-3">
-                  <img src="/static/favicon.ico" class="w-8 h-8" alt="Logo">
-                  <span class="text-xl font-semibold">PoliPlanner</span>
+         <!-- Header -->
+            <div class="p-5 border-b border-gray-700 hover:bg-primary-800 transition-colors">
+                <div class="flex items-start justify-between">
+
+                    <a href="/guides/about">
+                        <div class="flex items-center gap-3">
+                            <img src="/static/favicon.ico" class="w-8 h-8" alt="Logo">
+                            <span class="text-xl font-semibold">PoliPlanner</span>
+                        </div>
+                        <div class="mt-1 text-xs text-gray-400">
+                            Por estudiantes y para estudiantes
+                        </div>
+                    </a>
                 </div>
-                <div class="mt-1 text-xs text-gray-400">
-                    Por estudiantes y para estudiantes
-                </div>
-            </a>
-        </div>
-        {{ template "fragments/theme-toggle" }}
+            </div>
 
         <!-- Navegación más compacta -->
         <nav class="flex-1 px-3 py-4 space-y-1">
@@ -35,9 +37,18 @@
             <span>Herramientas</span>
           </a>
         </nav>
-        <!-- Zona inferior usuario -->
-        <div class="p-5 space-y-3 text-sm">
-          <span class="mt-1 text-xs text-gray-400">Parte de la Iniciativa PoliPlanner</span>
+
+<!-- Zona inferior -->
+    <div class="p-5 border-t border-gray-700 space-y-4">
+
+        <div class="flex justify-center">
+            {{ template "fragments/theme-toggle" }}
         </div>
+
+        <div class="text-xs text-gray-400 text-center">
+            Parte de la Iniciativa PoliPlanner
+        </div>
+
+    </div>
     </aside>
 {{end}}

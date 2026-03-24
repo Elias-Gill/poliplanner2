@@ -10,6 +10,7 @@
 
   <script src="/static/js/htmx.min.js"></script>
   <script src="/static/js/theme_bootstrap.js"></script>
+  <script src="/static/js/theme_toggle.js"></script>
 
   {{ block "custom_head" . }}
     <title>PoliPlanner</title>
@@ -20,14 +21,19 @@
 
   <div class="flex h-screen overflow-hidden">
     {{ template "fragments/sidebar" . }}
-    <!-- Contenido principal -->
-    <main class="flex-1 overflow-y-auto px-6 pb-18 pt-16 md:pt-8 md:pb-8">
-      {{ block "content" . }}{{ end }}
-    </main>
+
+    <div class="flex flex-col flex-1 overflow-hidden">
+      
+      {{ template "fragments/navbar_mobile" . }}
+
+      <main class="flex-1 overflow-y-auto p-6 pb-20 md:pb-8 md:pt-8">
+        {{ block "content" . }}{{ end }}
+      </main>
+
+    </div>
   </div>
 
   {{ template "fragments/mobile-modal" . }}
-  {{ template "fragments/navbar_mobile" }}
 
   <script src="/static/js/medium_zoom.js"></script>
 </body>
