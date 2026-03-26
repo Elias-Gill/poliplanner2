@@ -4,10 +4,8 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
-	"errors"
 	"fmt"
 	"net/mail"
-	"regexp"
 	"strings"
 	"time"
 
@@ -15,25 +13,6 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/domain/user"
 	"golang.org/x/crypto/bcrypt"
 )
-
-var (
-	ErrUserNotFound       = errors.New("user not found")
-	ErrInvalidCredentials = errors.New("invalid credentials")
-	ErrUsernameTaken      = errors.New("username already taken")
-	ErrEmailTaken         = errors.New("email already taken")
-	ErrShortPassword      = errors.New("password too short")
-	ErrPasswordsMismatch  = errors.New("passwords do not match")
-	ErrInvalidToken       = errors.New("invalid or expired token")
-)
-
-type ValidationError struct {
-	Field   string
-	Message string
-}
-
-func (e ValidationError) Error() string {
-	return fmt.Sprintf("%s: %s", e.Field, e.Message)
-}
 
 type UserService struct {
 	userStorer user.UserStorer
@@ -46,72 +25,64 @@ func NewUserService(userStorer user.UserStorer) *UserService {
 func (s *UserService) AuthenticateUser(ctx context.Context, login string, rawPassword string) (*user.User, error) {
 	login = strings.ToLower(strings.TrimSpace(login))
 
-	user, err := s.userStorer.GetByUsername(ctx, login)
+	u, err := s.userStorer.GetByUsername(ctx, login)
 	if err != nil {
-		user, err = s.userStorer.GetByEmail(ctx, login)
+		u, err = s.userStorer.GetByEmail(ctx, login)
 		if err != nil {
-			return nil, ErrInvalidCredentials
+			return nil, user.ErrInvalidCredentials
 		}
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(rawPassword)); err != nil {
-		return nil, ErrInvalidCredentials
+	if err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(rawPassword)); err != nil {
+		return nil, user.ErrInvalidCredentials
 	}
 
-	return user, nil
+	return u, nil
 }
 
-func (s *UserService) CreateUser(ctx context.Context, username, email, rawPassword, confirmPassword string) error {
-	username = strings.ToLower(strings.TrimSpace(username))
-	email = strings.ToLower(strings.TrimSpace(email))
+func (s *UserService) CreateUser(
+	ctx context.Context,
+	username,
+	email,
+	rawPassword,
+	confirmPassword string,
+) error {
 
-	if len(username) < 3 {
-		return ValidationError{Field: "username", Message: "must be at least 3 characters"}
-	}
-
-	if !isAlphanumeric(username) {
-		return ValidationError{Field: "username", Message: "only letters, numbers, -, _ allowed"}
-	}
-
-	if !isValidEmail(email) {
-		return ValidationError{Field: "email", Message: "invalid email format"}
-	}
-
-	if len(rawPassword) < 6 {
-		return ValidationError{Field: "password", Message: "must be at least 6 characters"}
-	}
-
-	if rawPassword != confirmPassword {
-		return ValidationError{Field: "confirm_password", Message: "passwords do not match"}
-	}
-
-	// Check uniqueness
-	_, err := s.userStorer.GetByUsername(ctx, username)
-	if err == nil {
-		return ErrUsernameTaken
-	}
-	_, err = s.userStorer.GetByEmail(ctx, email)
-	if err == nil {
-		return ErrEmailTaken
-	}
-
-	hashed, err := bcrypt.GenerateFromPassword([]byte(rawPassword), bcrypt.DefaultCost)
+	u, err := user.NewUser(username, email, rawPassword, confirmPassword)
 	if err != nil {
-		return fmt.Errorf("hash password: %w", err)
+		return err
 	}
 
-	return s.userStorer.Insert(ctx, &user.User{
-		Username: username,
-		Password: string(hashed),
-		Email:    email,
-	})
+	// Check if username is already taken
+	_, err = s.userStorer.GetByUsername(ctx, u.Username)
+	if err == nil {
+		return user.ErrUsernameTaken
+	}
+
+	// Check if email is already taken
+	_, err = s.userStorer.GetByEmail(ctx, u.Email)
+	if err == nil {
+		return user.ErrEmailTaken
+	}
+
+	hashed, err := bcrypt.GenerateFromPassword(
+		[]byte(rawPassword),
+		bcrypt.DefaultCost,
+	)
+	if err != nil {
+		return err
+	}
+
+	u.SetPasswordHash(string(hashed))
+
+	return s.userStorer.Insert(ctx, u)
 }
 
 func (s *UserService) StartPasswordRecovery(ctx context.Context, email string) (string, error) {
 	email = strings.ToLower(strings.TrimSpace(email))
 
 	if !isValidEmail(email) {
-		return "", ValidationError{Field: "email", Message: "invalid email format"}
+		return "", user.ValidationError{Field: "email", Message: "invalid email format"}
 	}
 
 	u, err := s.userStorer.GetByEmail(ctx, email)
@@ -140,20 +111,20 @@ func (s *UserService) StartPasswordRecovery(ctx context.Context, email string) (
 
 func (s *UserService) CommitPasswordRecovery(ctx context.Context, token, newPassword, confirmPassword string) error {
 	if newPassword != confirmPassword {
-		return ValidationError{Field: "confirm_password", Message: "passwords do not match"}
+		return user.ValidationError{Field: "confirm_password", Message: "passwords do not match"}
 	}
 
 	if len(newPassword) < 6 {
-		return ValidationError{Field: "password", Message: "must be at least 6 characters"}
+		return user.ValidationError{Field: "password", Message: "must be at least 6 characters"}
 	}
 
 	u, err := s.userStorer.GetByRecoveryToken(ctx, token)
 	if err != nil {
-		return ErrInvalidToken
+		return user.ErrInvalidToken
 	}
 
 	if u.RecoveryTokenUsed || u.RecoveryTokenExpiration.Before(time.Now().In(timezone.ParaguayTZ)) {
-		return ErrInvalidToken
+		return user.ErrInvalidToken
 	}
 
 	hashed, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
@@ -179,9 +150,4 @@ func newRecoveryToken() string {
 func isValidEmail(email string) bool {
 	_, err := mail.ParseAddress(email)
 	return err == nil
-}
-
-func isAlphanumeric(str string) bool {
-	re := regexp.MustCompile(`^[A-Za-z0-9_-]+$`)
-	return re.MatchString(str)
 }

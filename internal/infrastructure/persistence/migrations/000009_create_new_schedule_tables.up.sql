@@ -4,7 +4,6 @@ CREATE TABLE horarios (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     usuario_id INTEGER NOT NULL,
     descripcion TEXT NOT NULL DEFAULT 'Mi horario',
-    periodo_id INTEGER NOT NULL,
     creado_en DATETIME DEFAULT (datetime('now')),
 
     FOREIGN KEY (usuario_id) REFERENCES users(user_id) ON DELETE CASCADE,

@@ -10,5 +10,6 @@ type ScheduleStorer interface {
 	Save(ctx context.Context, s Schedule) (ScheduleID, error)
 	Delete(ctx context.Context, scheduleID ScheduleID) error
 
-	ListByUser(ctx context.Context, userID user.UserID) ([]Schedule, error)
+	ListByUserID(ctx context.Context, userID user.UserID) ([]ScheduleBasicData, error)
+	GetDetailsByID(ctx context.Context, ID ScheduleID) (*Schedule, error)
 }

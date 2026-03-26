@@ -38,7 +38,7 @@ func main() {
 		sqlite.NewSqliteExcelImportStorer(conn.GetConnection()),
 		sqlite.NewSqliteScheduleStore(conn.GetConnection()),
 		sqlite.NewSqliteAcademicPlanStorer(conn.GetConnection()),
-		nil,
+		sqlite.NewSqliteCourseOfferingStore(conn.GetConnection()),
 	)
 
 	// Configure http server
@@ -48,7 +48,7 @@ func main() {
 	// login, special pages and auth router (REFACTOR)
 	r.Route("/", router.NewAuthRouter(services.UserService, services.EmailService))
 
-	r.Route("/dashboard", router.NewDashboardRouter(services.ScheduleService))
+	r.Route("/dashboard", router.NewDashboardRouter(services.ScheduleService, services.AcademicPlanService))
 	r.Route("/schedule", router.NewSchedulesRouter(services.ScheduleService, services.AcademicPlanService))
 
 	// User administration router

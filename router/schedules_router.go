@@ -13,6 +13,8 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/config"
 	planModel "github.com/elias-gill/poliplanner2/internal/domain/academicPlan"
 	"github.com/elias-gill/poliplanner2/internal/domain/courseOffering"
+	scheduleModel "github.com/elias-gill/poliplanner2/internal/domain/schedule"
+	"github.com/elias-gill/poliplanner2/internal/domain/user"
 	"github.com/elias-gill/poliplanner2/logger"
 	"github.com/go-chi/chi/v5"
 )
@@ -38,89 +40,103 @@ type Step3View struct {
 	Error         string
 }
 
+// ---------- router ----------
+
 func NewSchedulesRouter(
 	scheduleService *schedule.ScheduleService,
 	planService *academicPlan.AcademicPlanService,
 ) func(r chi.Router) {
+
 	basePath := path.Join(
 		config.Get().Paths.BaseDir,
-		"web", "templates", "pages", "schedules")
+		"web", "templates", "pages", "schedules",
+	)
 
 	step1 := parseTemplateWithBaseLayout(path.Join(basePath, "step1.html"))
 	step2 := parseTemplateWithBaseLayout(path.Join(basePath, "step2.html"))
 	step3 := parseTemplateWithBaseLayout(path.Join(basePath, "step3.html"))
 
-	// GET endpoints are ment to just render the condition
 	return func(r chi.Router) {
 
 		// ================= STEP 1 =================
-		// Career selection + schedule description
 
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+
 			ctx, cancel := context.WithTimeout(r.Context(), time.Second)
 			defer cancel()
 
 			careers, err := planService.ListCareers(ctx)
 			if err != nil {
-				logger.Error("Cannot list careers for /schedule/", "error", err)
+				logger.Error("cannot list careers", "error", err)
 				customRedirect(w, r, "/500")
 				return
 			}
 
-			step1.Execute(w, Step1View{
+			view := Step1View{
 				Careers: careers,
-			})
+			}
+
+			if err := step1.Execute(w, view); err != nil {
+				logger.Error("step1 template error", "error", err)
+			}
 		})
 
 		r.Post("/", func(w http.ResponseWriter, r *http.Request) {
+
 			if err := r.ParseForm(); err != nil {
-				customRedirect(w, r, "/schedule")
+				customRedirect(w, r, "/bad_form")
 				return
 			}
-
-			title := r.Form.Get("title")
-			careerID := r.Form.Get("career_id")
 
 			ctx, cancel := context.WithTimeout(r.Context(), time.Second)
 			defer cancel()
 
-			// Print error messages for step 1
 			careers, err := planService.ListCareers(ctx)
 			if err != nil {
-				logger.Error("Cannot list careers for /schedule/", "error", err)
+				logger.Error("cannot list careers", "error", err)
 				customRedirect(w, r, "/500")
+				return
 			}
 
-			// FIX: que muestre cual es el field que falta
-			if title == "" || careerID == "" {
-				step1.Execute(w, Step1View{
-					Careers: careers,
-					Title:   title,
-					Career:  careerID,
-					Error:   "Missing required fields",
-				})
+			view := Step1View{
+				Careers: careers,
+				Title:   r.Form.Get("title"),
+				Career:  r.Form.Get("career_id"),
+			}
+
+			title, err := requiredString(view.Title)
+			if err != nil {
+				view.Error = "title is required"
+				step1.Execute(w, view)
+				return
+			}
+
+			careerID, err := parseID(view.Career)
+			if err != nil {
+				view.Error = "invalid career selected"
+				step1.Execute(w, view)
 				return
 			}
 
 			q := url.Values{}
 			q.Set("title", title)
-			q.Set("career_id", careerID)
+			q.Set("career_id", strconv.FormatInt(careerID, 10))
 
 			customRedirect(w, r, "/schedule/step2?"+q.Encode())
 		})
 
 		// ================= STEP 2 =================
-		r.Get("/step2", func(w http.ResponseWriter, r *http.Request) {
-			careerIDStr := r.URL.Query().Get("career_id")
-			title := r.URL.Query().Get("title")
 
-			if title == "" || careerIDStr == "" {
+		r.Get("/step2", func(w http.ResponseWriter, r *http.Request) {
+
+			title, err := requiredString(r.URL.Query().Get("title"))
+			if err != nil {
 				customRedirect(w, r, "/bad_form")
 				return
 			}
 
-			careerID, err := strconv.ParseInt(careerIDStr, 10, 64)
-			if err != nil || careerID <= 0 {
+			careerID, err := parseID(r.URL.Query().Get("career_id"))
+			if err != nil {
 				customRedirect(w, r, "/bad_form")
 				return
 			}
@@ -129,16 +145,14 @@ func NewSchedulesRouter(
 			defer cancel()
 
 			plan, err := planService.GetCareerPlan(ctx, planModel.CareerID(careerID))
-			if err != nil { // DB error
+			if err != nil {
+				logger.Error("cannot get career plan", "error", err)
 				customRedirect(w, r, "/500")
 				return
 			}
 
-			// Plan or career does not exists
-			// FIX: seria bueno que el usuario pueda saber cuando un plan para carrera esta mal o
-			// directamente no existe la carrera
 			if plan == nil {
-				customRedirect(w, r, "/bad_form")
+				customRedirect(w, r, "/404")
 				return
 			}
 
@@ -149,28 +163,25 @@ func NewSchedulesRouter(
 			}
 
 			if err := step2.Execute(w, view); err != nil {
-				logger.Error("Error executing step2 template", "error", err)
+				logger.Error("step2 template error", "error", err)
 			}
 		})
 
 		r.Post("/step2", func(w http.ResponseWriter, r *http.Request) {
+
 			if err := r.ParseForm(); err != nil {
 				customRedirect(w, r, "/bad_form")
 				return
 			}
 
-			// Retrieve the acculumated data
-			title := r.Form.Get("title")
-			careerIDStr := r.Form.Get("career_id")
-			assignmentIDs := r.Form["assignment_ids"]
-
-			if title == "" || careerIDStr == "" {
+			title, err := requiredString(r.Form.Get("title"))
+			if err != nil {
 				customRedirect(w, r, "/bad_form")
 				return
 			}
 
-			careerID, err := strconv.ParseInt(careerIDStr, 10, 64)
-			if err != nil || careerID <= 0 {
+			careerID, err := parseID(r.Form.Get("career_id"))
+			if err != nil {
 				customRedirect(w, r, "/bad_form")
 				return
 			}
@@ -178,43 +189,41 @@ func NewSchedulesRouter(
 			ctx, cancel := context.WithTimeout(r.Context(), 300*time.Millisecond)
 			defer cancel()
 
-			// Show errors if exists
-			if len(assignmentIDs) == 0 {
-				// FIX: seria bueno que el usuario pueda saber cuando un plan para carrera esta mal o
-				plan, err := planService.GetCareerPlan(ctx, planModel.CareerID(careerID))
-				if err != nil {
-					customRedirect(w, r, "/500")
-					return
-				}
+			plan, err := planService.GetCareerPlan(ctx, planModel.CareerID(careerID))
+			if err != nil {
+				logger.Error("cannot get career plan", "error", err)
+				customRedirect(w, r, "/500")
+				return
+			}
 
-				if plan == nil {
-					customRedirect(w, r, "/404")
-					return
-				}
-				view := Step2View{
-					Title:    title,
-					CareerID: careerID,
-					Plan:     plan,
-					Error:    "select at least one assignment",
-				}
+			if plan == nil {
+				customRedirect(w, r, "/404")
+				return
+			}
 
+			view := Step2View{
+				Title:    title,
+				CareerID: careerID,
+				Plan:     plan,
+			}
+
+			assignments := r.Form["assignment_ids"]
+
+			if len(assignments) == 0 {
+				view.Error = "select at least one assignment"
 				step2.Execute(w, view)
 				return
 			}
 
-			for _, idStr := range assignmentIDs {
-				id, err := strconv.ParseInt(idStr, 10, 64)
-				if err != nil || id <= 0 {
-					// FIX: no se estan mostrando en los bad form el motivo.
-					// TODO: Agregar mas tarde el motivo del bad form
-					customRedirect(w, r, "/bad_form")
-				}
+			if _, err := parseIDList(assignments); err != nil {
+				customRedirect(w, r, "/bad_form")
+				return
 			}
 
 			q := url.Values{}
 			q.Set("title", title)
 
-			for _, id := range assignmentIDs {
+			for _, id := range assignments {
 				q.Add("assignment_ids", id)
 			}
 
@@ -222,50 +231,113 @@ func NewSchedulesRouter(
 		})
 
 		// ================= STEP 3 =================
-		r.Get("/step3", func(w http.ResponseWriter, r *http.Request) {
-			assignmentIDs := r.URL.Query()["assignment_ids"]
-			title := r.URL.Query().Get("title")
 
-			if title == "" || len(assignmentIDs) == 0 {
+		r.Get("/step3", func(w http.ResponseWriter, r *http.Request) {
+
+			title, err := requiredString(r.URL.Query().Get("title"))
+			if err != nil {
 				customRedirect(w, r, "/bad_form")
 				return
 			}
 
-			// Validate ids
-			courses := make([]planModel.SubjectID, len(assignmentIDs))
-			for i, idStr := range assignmentIDs {
-				id, err := strconv.ParseInt(idStr, 10, 64)
-				if err != nil || id <= 0 {
-					customRedirect(w, r, "/bad_form")
-					return
-				}
-				courses[i] = planModel.SubjectID(id)
+			assignments := r.URL.Query()["assignment_ids"]
+
+			ids, err := parseIDList(assignments)
+			if err != nil || len(ids) == 0 {
+				customRedirect(w, r, "/bad_form")
+				return
+			}
+
+			subjects := make([]planModel.SubjectID, len(ids))
+			for i, id := range ids {
+				subjects[i] = planModel.SubjectID(id)
 			}
 
 			ctx, cancel := context.WithTimeout(r.Context(), 300*time.Millisecond)
 			defer cancel()
 
-			// FIX: error handling
-			sections, err := planService.ListOffering(ctx, courses)
+			sections, err := planService.ListOffering(ctx, subjects)
 			if err != nil {
+				logger.Error("cannot list offerings", "error", err)
 				customRedirect(w, r, "/500")
 				return
 			}
 
 			view := Step3View{
 				Title:         title,
-				AssignmentIDs: assignmentIDs,
+				AssignmentIDs: assignments,
 				Sections:      sections,
 			}
 
 			if err := step3.Execute(w, view); err != nil {
-				logger.Error("Error executing step3 template", "error", err)
+				logger.Error("step3 template error", "error", err)
 			}
 		})
 
-		// POST
 		r.Post("/step3", func(w http.ResponseWriter, r *http.Request) {
-			// TODO: support this
+
+			userID := extractUserID(r)
+			if userID == 0 {
+				customRedirect(w, r, "/login")
+				return
+			}
+
+			if err := r.ParseForm(); err != nil {
+				customRedirect(w, r, "/bad_form")
+				return
+			}
+
+			title, err := requiredString(r.Form.Get("title"))
+			if err != nil {
+				customRedirect(w, r, "/bad_form")
+				return
+			}
+
+			sectionIDs := r.Form["section_ids"]
+
+			ids, err := parseIDList(sectionIDs)
+			if err != nil || len(ids) == 0 {
+				customRedirect(w, r, "/bad_form")
+				return
+			}
+
+			courses := make([]courseOffering.CourseOfferingID, len(ids))
+			for i, id := range ids {
+				courses[i] = courseOffering.CourseOfferingID(id)
+			}
+
+			ctx, cancel := context.WithTimeout(r.Context(), 300*time.Millisecond)
+			defer cancel()
+
+			schedule, err := scheduleModel.NewSchedule(
+				user.UserID(userID),
+				title,
+				courses,
+			)
+			if err != nil {
+				logger.Error("cannot create schedule", "error", err)
+				customRedirect(w, r, "/bad_form")
+				return
+			}
+
+			scheduleID, err := scheduleService.Save(ctx, *schedule)
+			if err != nil {
+				logger.Error("cannot save schedule", "error", err)
+				customRedirect(w, r, "/500")
+				return
+			}
+
+			// set this id into a cookie
+			http.SetCookie(w, &http.Cookie{
+				Name:     latestSelectionCookie,
+				Value:    strconv.FormatInt(int64(scheduleID), 64),
+				Path:     "/",
+				HttpOnly: true,
+				Secure:   config.Get().Security.SecureHTTP,
+				SameSite: http.SameSiteLaxMode,
+				Expires:  time.Unix(0, 0),
+			})
+
 			customRedirect(w, r, "/dashboard")
 		})
 	}

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/app/user"
+	"github.com/elias-gill/poliplanner2/internal/auth"
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/go-chi/chi/v5"
 )
@@ -25,7 +26,7 @@ func NewUserRouter(userService *user.UserService) func(r chi.Router) {
 		// is not implemented.
 		r.Get("/logout", func(w http.ResponseWriter, r *http.Request) {
 			http.SetCookie(w, &http.Cookie{
-				Name:     "session_id",
+				Name:     auth.SessionIdCookie,
 				Value:    "",
 				Path:     "/",
 				HttpOnly: true,

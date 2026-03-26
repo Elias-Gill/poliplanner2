@@ -14,6 +14,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+const SessionIdCookie = "session_id"
+
 type Claims struct {
 	UserID int64 `json:"user_id"`
 	jwt.RegisteredClaims
@@ -63,7 +65,7 @@ func SessionMiddleware(next http.Handler) http.Handler {
 		loginPage := "/login?redirect=" + url.QueryEscape(r.URL.RequestURI())
 
 		// Validate session. If invalid, redirects to the login page.
-		cookie, err := r.Cookie("session_id")
+		cookie, err := r.Cookie(SessionIdCookie)
 		if err != nil {
 			logger.Debug("Session middleware redirection", "cause", "cookie not present")
 			customRedirect(w, r, loginPage)

@@ -8,15 +8,16 @@ import (
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/app/email"
-	"github.com/elias-gill/poliplanner2/internal/app/user"
+	userApp "github.com/elias-gill/poliplanner2/internal/app/user"
 	"github.com/elias-gill/poliplanner2/internal/auth"
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/config/timezone"
+	userDomain "github.com/elias-gill/poliplanner2/internal/domain/user"
 	"github.com/elias-gill/poliplanner2/logger"
 	"github.com/go-chi/chi/v5"
 )
 
-func NewAuthRouter(userService *user.UserService, emailService *email.EmailService) func(r chi.Router) {
+func NewAuthRouter(userService *userApp.UserService, emailService *email.EmailService) func(r chi.Router) {
 	baseDir := path.Join(config.Get().Paths.BaseDir, "web", "templates", "pages")
 
 	// templates paths
@@ -74,7 +75,7 @@ func NewAuthRouter(userService *user.UserService, emailService *email.EmailServi
 
 			// set session cookie
 			http.SetCookie(w, &http.Cookie{
-				Name:     "session_id",
+				Name:     auth.SessionIdCookie,
 				Value:    sessionID,
 				Path:     "/",
 				HttpOnly: true,
@@ -111,13 +112,13 @@ func NewAuthRouter(userService *user.UserService, emailService *email.EmailServi
 				var field, msg string
 
 				switch e := err.(type) {
-				case user.ValidationError:
+				case userDomain.ValidationError:
 					field, msg = e.Field, e.Message
 				case error:
 					switch {
-					case errors.Is(err, user.ErrUsernameTaken):
+					case errors.Is(err, userDomain.ErrUsernameTaken):
 						field, msg = "username", "Username already taken"
-					case errors.Is(err, user.ErrEmailTaken):
+					case errors.Is(err, userDomain.ErrEmailTaken):
 						field, msg = "email", "Email already in use"
 					default:
 						field, msg = "", "Unexpected error"
@@ -150,7 +151,7 @@ func NewAuthRouter(userService *user.UserService, emailService *email.EmailServi
 			token, err := userService.StartPasswordRecovery(r.Context(), email)
 			if err != nil {
 				var msg string
-				if ve, ok := err.(user.ValidationError); ok && ve.Field == "email" {
+				if ve, ok := err.(userDomain.ValidationError); ok && ve.Field == "email" {
 					msg = ve.Message
 				} else {
 					msg = "If the email exists, a recovery link has been sent."
@@ -204,9 +205,9 @@ func NewAuthRouter(userService *user.UserService, emailService *email.EmailServi
 			err := userService.CommitPasswordRecovery(r.Context(), token, password, confirm)
 			if err != nil {
 				var field, msg string
-				if ve, ok := err.(user.ValidationError); ok {
+				if ve, ok := err.(userDomain.ValidationError); ok {
 					field, msg = ve.Field, ve.Message
-				} else if errors.Is(err, user.ErrInvalidToken) {
+				} else if errors.Is(err, userDomain.ErrInvalidToken) {
 					msg = "Invalid or expired token"
 				} else {
 					msg = "Failed to update password"
