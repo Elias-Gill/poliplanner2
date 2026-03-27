@@ -23,20 +23,18 @@ type OfferList struct {
 
 // =========================
 
-type ExamListItem struct {
+type ExamClass struct {
 	CourseName string
-	Section    string
-
-	Date     *time.Time
-	Revision *time.Time
-	Room     string
-
-	Instance ExamInstance
+	Room       string
+	Date       time.Time
+	Revision   *time.Time
 }
 
-type ExamList struct {
-	Type  ExamType
-	Items []ExamListItem
+type ExamsScheduleView struct {
+	Partial1 []ExamClass
+	Partial2 []ExamClass
+	Final1   []ExamClass
+	Final2   []ExamClass
 }
 
 // =========================

@@ -7,7 +7,6 @@ CREATE TABLE horarios (
     creado_en DATETIME DEFAULT (datetime('now')),
 
     FOREIGN KEY (usuario_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (periodo_id) REFERENCES periodos(id) ON DELETE CASCADE,
     UNIQUE (usuario_id, descripcion)
 );
 

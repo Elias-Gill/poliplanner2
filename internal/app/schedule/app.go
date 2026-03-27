@@ -3,7 +3,9 @@ package schedule
 import (
 	"context"
 	"errors"
+	"time"
 
+	"github.com/elias-gill/poliplanner2/internal/domain/courseOffering"
 	"github.com/elias-gill/poliplanner2/internal/domain/schedule"
 	"github.com/elias-gill/poliplanner2/internal/domain/user"
 )
@@ -27,16 +29,24 @@ func (s ScheduleService) ListUserSchedules(ctx context.Context, userID user.User
 }
 
 func (s ScheduleService) GetSchedule(ctx context.Context, userID user.UserID, scheduleID schedule.ScheduleID) (*schedule.Schedule, error) {
-	sche, err := s.storer.GetDetailsByID(ctx, scheduleID)
-	if err != nil {
-		return nil, err
-	}
-
-	if sche.Owner != userID {
-		return nil, ErrPermissionDenied
-	}
-
-	return sche, nil
+	// TODO: implementar
+	return &schedule.Schedule{
+		ID:          1,
+		Owner:       1,
+		Description: "Nada nuevo",
+		CreatedAt:   time.Now(),
+		Courses:     []courseOffering.CourseOfferingID{1, 2},
+	}, nil
+	// sche, err := s.storer.GetDetailsByID(ctx, scheduleID)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	//
+	// if sche.Owner != userID {
+	// 	return nil, ErrPermissionDenied
+	// }
+	//
+	// return sche, nil
 }
 
 func (s ScheduleService) Save(ctx context.Context, sche schedule.Schedule) (schedule.ScheduleID, error) {

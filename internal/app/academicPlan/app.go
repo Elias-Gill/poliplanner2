@@ -107,53 +107,48 @@ func mockSubjectName(id academicPlan.SubjectID) string {
 func (a AcademicPlanService) ListCoursesExams(
 	ctx context.Context,
 	courses []courseOffering.CourseOfferingID,
-) ([]courseOffering.ExamList, error) {
+) (courseOffering.ExamsScheduleView, error) {
 
 	now := time.Now()
 	later := now.Add(48 * time.Hour)
 
-	return []courseOffering.ExamList{
-		{
-			Type: courseOffering.ExamPartial,
-			Items: []courseOffering.ExamListItem{
-				{
-					CourseName: "Matematica 1",
-					Section:    "A",
-					Date:       &now,
-					Revision:   nil,
-					Room:       "A52",
-					Instance:   courseOffering.Instance1,
-				},
-				{
-					CourseName: "Fisica 1",
-					Section:    "B",
-					Date:       &later,
-					Revision:   nil,
-					Room:       "B12",
-					Instance:   courseOffering.Instance2,
-				},
+	return courseOffering.ExamsScheduleView{
+		Partial1: []courseOffering.ExamClass{
+			{
+				CourseName: "Matematica 1",
+				Date:       now,
+				Revision:   nil,
+				Room:       "A52",
+			},
+			{
+				CourseName: "Fisica 1",
+				Date:       later,
+				Revision:   nil,
+				Room:       "B12",
 			},
 		},
-
-		{
-			Type: courseOffering.ExamFinal,
-			Items: []courseOffering.ExamListItem{
-				{
-					CourseName: "Matematica 1",
-					Section:    "A",
-					Date:       &later,
-					Revision:   &now,
-					Room:       "A52",
-					Instance:   courseOffering.Instance1,
-				},
-				{
-					CourseName: "Programacion 1",
-					Section:    "A",
-					Date:       &now,
-					Revision:   nil,
-					Room:       "Lab 2",
-					Instance:   courseOffering.Instance2,
-				},
+		Partial2: []courseOffering.ExamClass{
+			{
+				CourseName: "Programacion 1",
+				Date:       later,
+				Revision:   nil,
+				Room:       "Lab 2",
+			},
+		},
+		Final1: []courseOffering.ExamClass{
+			{
+				CourseName: "Matematica 1",
+				Date:       later,
+				Revision:   &now,
+				Room:       "A52",
+			},
+		},
+		Final2: []courseOffering.ExamClass{
+			{
+				CourseName: "Programacion 1",
+				Date:       now,
+				Revision:   nil,
+				Room:       "Lab 2",
 			},
 		},
 	}, nil
@@ -167,6 +162,20 @@ func (a AcademicPlanService) ListCoursesSchedule(
 	now := time.Now()
 	view := &courseOffering.CoursesScheduleView{
 		Monday: []courseOffering.CourseClass{
+			{
+				CourseID: 1,
+				Name:     "Matematica 1",
+				Room:     "Aula 3",
+				Start:    now.Add(2 * time.Hour),
+				End:      now.Add(4 * time.Hour),
+			},
+			{
+				CourseID: 2,
+				Name:     "Fisica 1",
+				Room:     "Laboratorio",
+				Start:    now.Add(5 * time.Hour),
+				End:      now.Add(7 * time.Hour),
+			},
 			{
 				CourseID: 1,
 				Name:     "Matematica 1",
@@ -220,7 +229,7 @@ func (a AcademicPlanService) ListCoursesInfo(
 					Email: "maria.gomez@politecnica.edu.py",
 				},
 			},
-			Section:    "A",
+			Section:    "TQ",
 			CourseType: courseOffering.Normal,
 
 			SaturdayDates: "10/05, 24/05",

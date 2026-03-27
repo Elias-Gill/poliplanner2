@@ -21,17 +21,17 @@ const latestSelectionCookie = "latestScheduleSelection"
 type overviewData struct {
 	Info   []courseOffering.CourseSummary
 	Weekly courseOffering.CoursesScheduleView
-	Exams  []courseOffering.ExamList
+	Exams  courseOffering.ExamsScheduleView
 }
 
 func NewDashboardRouter(
 	scheduleService *schedule.ScheduleService,
 	planService *academicPlan.AcademicPlanService,
 ) func(r chi.Router) {
-	baseDir := path.Join(config.Get().Paths.BaseDir, "web", "templates", "pages", "dashboard")
+	templateDir := path.Join(config.Get().Paths.BaseDir, "web", "templates", "pages", "dashboard")
 
 	// Main page
-	base := parseTemplateWithBaseLayout(path.Join(baseDir, "index.html"))
+	dashboardTemplate := parseTemplateWithBaseLayout(path.Join(templateDir, "index.html"))
 
 	return func(r chi.Router) {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -78,6 +78,10 @@ func NewDashboardRouter(
 			// TODO: fetch selected schedule data
 			// FIX: error handling
 			schedule, _ := scheduleService.GetSchedule(ctx, user.UserID(userID), selectedID)
+			// if err != nil {
+			// 	customRedirect(w, r, "/500")
+			// 	return
+			// }
 
 			// TODO: load models into data
 			weekly, _ := planService.ListCoursesSchedule(ctx, schedule.Courses)
@@ -85,7 +89,7 @@ func NewDashboardRouter(
 			info, _ := planService.ListCoursesInfo(ctx, schedule.Courses)
 
 			// TODO: render data models
-			base.Execute(w, overviewData{info, *weekly, exams})
+			dashboardTemplate.Execute(w, overviewData{info, *weekly, exams})
 		})
 
 		r.Get("/calendar", func(w http.ResponseWriter, r *http.Request) {

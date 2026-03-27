@@ -1,15 +1,61 @@
 {{define "fragments/theme-toggle"}}
 <button
-    id="theme-toggle"
-    class="theme-toggle-btn flex items-center justify-center
-           w-9 h-9 md:w-12 md:h-12
-           bg-gray-800 text-white rounded-full
-           hover:bg-gray-700 transition-colors
-           focus:outline-none focus:ring-2 focus:ring-gray-500
-           shadow-md"
-    aria-label="Cambiar modo y tema"
+    id="{{.}}"
     type="button"
+    class="theme-toggle relative w-14 h-7 flex items-center
+           bg-white border border-gray-300
+           rounded-full transition-colors duration-300 shadow-sm"
 >
-    <i class="bi bi-moon text-xl md:text-2xl"></i>
+    <!-- Luna -->
+    <span class="absolute right-2 text-black flex items-center">
+        <i class="bi bi-moon-fill text-sm"></i>
+    </span>
+
+    <!-- Sol -->
+    <span class="absolute left-2 text-white flex items-center">
+        <i class="bi bi-sun-fill text-sm"></i>
+    </span>
+
+    <!-- Thumb -->
+    <span
+        class="theme-thumb absolute left-1
+               w-5 h-5 bg-gray-800
+               rounded-full
+               transition-all duration-300"
+    ></span>
 </button>
+<style>
+.theme-toggle {
+    background-color: white;
+}
+
+/* modo oscuro */
+.dark-mode .theme-toggle {
+    background-color: black;
+    border-color: #1f2937;
+}
+
+/* mover thumb */
+.dark-mode .theme-thumb {
+    transform: translateX(28px);
+    background-color: white;
+}
+
+/* iconos */
+.theme-toggle .bi-moon-fill {
+    opacity: 1;
+}
+
+.theme-toggle .bi-sun-fill {
+    opacity: 0.35;
+}
+
+.dark-mode .bi-moon-fill {
+    opacity: 0.35;
+}
+
+.dark-mode .bi-sun-fill {
+    opacity: 1;
+}
+</style>
 {{end}}
