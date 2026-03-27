@@ -1,114 +1,117 @@
-{{define "custom_head"}}
-<title>Registrarse - PoliPlanner</title>
-{{end}}
-
-{{define "content"}}
-<div class="md:h-full md:justify-center md:items-center flex">
-  <div class="w-full max-w-md bg-white rounded-sm shadow-lg p-6 md:p-10">
-
-    <div class="text-center mb-5 md:mb-6">
-      <img src="/static/logo.svg" alt="Logo PoliPlanner" class="mx-auto h-16 w-auto md:h-20" />
-      <h2 class="mt-4 text-2xl font-bold text-gray-900">Crear cuenta</h2>
+{{ define "custom_head" }}
+  <title>Registrarse - PoliPlanner</title>
+{{ end }}
+{{ define "content" }}
+  <div class="md:h-full md:justify-center md:items-center flex">
+    <div class="w-full max-w-md bg-white rounded-sm shadow-lg p-6 md:p-10">
+      <div class="text-center mb-5 md:mb-6">
+        <img
+          src="/static/logo.svg"
+          alt="Logo PoliPlanner"
+          class="mx-auto h-16 w-auto md:h-20" />
+        <h2 class="mt-4 text-2xl font-bold text-gray-900">Crear cuenta</h2>
+      </div>
+      <form
+        id="signup-form"
+        hx-post="/signup"
+        hx-target="#messages"
+        hx-swap="innerHTML"
+        method="post"
+        class="space-y-4 md:space-y-5">
+        <div>
+          <label
+            for="username"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Nombre de usuario</label
+          >
+          <input
+            type="text"
+            id="username"
+            name="username"
+            style="text-transform: lowercase"
+            required
+            autofocus
+            placeholder="Nombre de usuario"
+            class="block w-full px-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 placeholder-gray-400 transition-colors" />
+        </div>
+        <div>
+          <label
+            for="email"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Correo electrónico</label
+          >
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            placeholder="Correo electrónico"
+            class="block w-full px-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 placeholder-gray-400 transition-colors" />
+        </div>
+        <div>
+          <label
+            for="password"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Contraseña (mínimo 6 caracteres)</label
+          >
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            placeholder="Contraseña"
+            class="block w-full px-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 placeholder-gray-400 transition-colors" />
+        </div>
+        <div>
+          <label
+            for="confirm_password"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Confirmar contraseña</label
+          >
+          <input
+            type="password"
+            id="confirm_password"
+            name="confirm_password"
+            required
+            placeholder="Confirmar contraseña"
+            class="block w-full px-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 placeholder-gray-400 transition-colors" />
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-primary-600 text-white py-3 rounded-sm font-semibold hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors mt-1">
+          Crear cuenta
+        </button>
+        <div id="messages" class="text-center text-sm pt-1"></div>
+      </form>
+      <div class="text-center text-sm text-gray-600">
+        ¿Ya tenés cuenta?
+        <a
+          href="/login"
+          class="font-medium text-primary-600 hover:text-primary-700 transition-colors"
+          >Iniciar sesión</a
+        >
+      </div>
+      <div class="mt-4 md:mt-6 border-t border-gray-200 pt-4 md:pt-6">
+        <h3 class="text-sm font-semibold text-gray-800 mb-2">
+          Consideraciones
+        </h3>
+        <ul class="text-xs text-gray-600 space-y-2 list-disc list-inside">
+          <li>
+            Los nombres de usuario
+            <strong
+              >solo permiten letras minúsculas, números, guion (-) y guion bajo
+              (_)</strong
+            >.
+          </li>
+          <li>
+            Las contraseñas deben tener al menos <strong>6 caracteres</strong>.
+          </li>
+          <li>
+            Recomendamos elegir un nombre fácil de recordar y usar contraseñas
+            seguras y únicas. Las contraseñas se almacenan en forma encriptada.
+          </li>
+        </ul>
+      </div>
     </div>
-
-    <form id="signup-form"
-          hx-post="/signup"
-          hx-target="#messages"
-          hx-swap="innerHTML"
-          method="post"
-          class="space-y-4 md:space-y-5">
-
-      <div>
-        <label for="username" class="block text-sm font-medium text-gray-700 mb-1">
-          Nombre de usuario
-        </label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          style="text-transform: lowercase;"
-          required
-          autofocus
-          placeholder="Nombre de usuario"
-          class="block w-full px-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 placeholder-gray-400 transition-colors"
-        />
-      </div>
-
-      <div>
-        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-          Correo electrónico
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          required
-          placeholder="Correo electrónico"
-          class="block w-full px-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 placeholder-gray-400 transition-colors"
-        />
-      </div>
-
-      <div>
-        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
-          Contraseña (mínimo 6 caracteres)
-        </label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          required
-          placeholder="Contraseña"
-          class="block w-full px-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 placeholder-gray-400 transition-colors"
-        />
-      </div>
-
-      <div>
-        <label for="confirm_password" class="block text-sm font-medium text-gray-700 mb-1">
-          Confirmar contraseña
-        </label>
-        <input
-          type="password"
-          id="confirm_password"
-          name="confirm_password"
-          required
-          placeholder="Confirmar contraseña"
-          class="block w-full px-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 placeholder-gray-400 transition-colors"
-        />
-      </div>
-
-      <button
-        type="submit"
-        class="w-full bg-primary-600 text-white py-3 rounded-sm font-semibold hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors mt-1"
-      >
-        Crear cuenta
-      </button>
-
-      <div id="messages" class="text-center text-sm pt-1"></div>
-    </form>
-
-    <div class="text-center text-sm text-gray-600">
-      ¿Ya tenés cuenta?
-      <a href="/login" class="font-medium text-primary-600 hover:text-primary-700 transition-colors">
-        Iniciar sesión
-      </a>
-    </div>
-
-    <div class="mt-4 md:mt-6 border-t border-gray-200 pt-4 md:pt-6">
-      <h3 class="text-sm font-semibold text-gray-800 mb-2">Consideraciones</h3>
-      <ul class="text-xs text-gray-600 space-y-2 list-disc list-inside">
-        <li>
-          Los nombres de usuario <strong>solo permiten letras minúsculas, números, guion (-) y guion bajo (_)</strong>.
-        </li>
-        <li>
-          Las contraseñas deben tener al menos <strong>6 caracteres</strong>.
-        </li>
-        <li>
-          Recomendamos elegir un nombre fácil de recordar y usar contraseñas seguras y únicas.
-          Las contraseñas se almacenan en forma encriptada.
-        </li>
-      </ul>
-    </div>
-
   </div>
-</div>
-{{end}}
+{{ end }}

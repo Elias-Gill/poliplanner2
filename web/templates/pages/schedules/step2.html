@@ -1,48 +1,44 @@
-{{define "content"}}
-<form method="POST" action="/schedule/step2" class="space-y-6">
-
-    <input type="hidden" name="title" value="{{ .Title }}">
-    <input type="hidden" name="career_id" value="{{ .CareerID }}">
-
-    {{if .Error}}
-    <div class="p-3 border border-red-300 bg-red-50 text-red-700 rounded-sm text-sm">
-        {{.Error}}
-    </div>
-    {{end}}
-
-    {{ range .Plan.Semesters }}
-    <details class="bg-white rounded-sm shadow border border-gray-300">
-        <summary class="text-lg font-semibold cursor-pointer select-none p-4 border-b border-gray-300">
-            Semestre {{ .Semester }}
-        </summary>
-
-        <div class="grid md:grid-cols-2 gap-2 p-4">
-            {{ range .Subjects }}
-            <label class="flex items-center gap-3 p-2 rounded-sm hover:bg-gray-50 cursor-pointer border border-gray-300">
-                <input
-                    type="checkbox"
-                    name="assignment_ids"
-                    value="{{ .ID }}"
-                    class="w-4 h-4"
-                >
-                <div>
-                    <div class="font-medium">{{ .Name }}</div>
-                    <div class="text-sm text-gray-500">{{ .Department }}</div>
-                </div>
-            </label>
-            {{ end }}
-        </div>
-    </details>
+{{ define "content" }}
+  <form method="POST" action="/schedule/step2" class="space-y-6">
+    <input type="hidden" name="title" value="{{ .Title }}" />
+    <input type="hidden" name="career_id" value="{{ .CareerID }}" />
+    {{ if .Error }}
+      <div
+        class="p-3 border border-red-300 bg-red-50 text-red-700 rounded-sm text-sm">
+        {{ .Error }}
+      </div>
     {{ end }}
-
+    {{ range .Plan.Semesters }}
+      <details class="bg-white rounded-sm shadow border border-gray-300">
+        <summary
+          class="text-lg font-semibold cursor-pointer select-none p-4 border-b border-gray-300">
+          Semestre
+          {{ .Semester }}
+        </summary>
+        <div class="grid md:grid-cols-2 gap-2 p-4">
+          {{ range .Subjects }}
+            <label
+              class="flex items-center gap-3 p-2 rounded-sm hover:bg-gray-50 cursor-pointer border border-gray-300">
+              <input
+                type="checkbox"
+                name="assignment_ids"
+                value="{{ .ID }}"
+                class="w-4 h-4" />
+              <div>
+                <div class="font-medium">{{ .Name }}</div>
+                <div class="text-sm text-gray-500">{{ .Department }}</div>
+              </div>
+            </label>
+          {{ end }}
+        </div>
+      </details>
+    {{ end }}
     <div class="flex justify-end mt-4">
-        <button
-            type="submit"
-            class="px-6 py-2 bg-primary-600 text-white rounded-sm hover:bg-primary-700"
-        >
-            Continuar
-        </button>
+      <button
+        type="submit"
+        class="px-6 py-2 bg-primary-600 text-white rounded-sm hover:bg-primary-700">
+        Continuar
+      </button>
     </div>
-
-</form>
-{{end}}
+  </form>
+{{ end }}

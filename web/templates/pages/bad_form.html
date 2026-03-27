@@ -1,15 +1,24 @@
 {{ define "custom_head" }}
-<title>BAD FORM - PoliPlanner</title>
+  <title>BAD FORM - PoliPlanner</title>
 {{ end }}
-
 {{ define "content" }}
-<div class="flex flex-col items-center justify-center min-h-screen px-4 text-center bg-gray-50">
-    <h1 class="text-4xl font-bold text-gray-900 mb-4">Formulario inconsistente</h1>
-    <p class="text-lg text-gray-700 mb-2">El formulario que estas tratando de mandar contiene
-        informacion erronea o inconsistente. Por favor vuelve a intentarlo rellenando los datos correctos</p>
-    <p class="text-gray-600">
-        Volvé a la
-        <a href="/dashboard" class="text-primary-600 hover:text-primary-700 font-medium">página principal</a>.
+  <div
+    class="flex flex-col items-center justify-center min-h-screen px-4 text-center bg-gray-50">
+    <h1 class="text-4xl font-bold text-gray-900 mb-4">
+      Formulario inconsistente
+    </h1>
+    <p class="text-lg text-gray-700 mb-2">
+      El formulario que estas tratando de mandar contiene informacion erronea o
+      inconsistente. Por favor vuelve a intentarlo rellenando los datos
+      correctos
     </p>
-</div>
+    <p class="text-gray-600">
+      Volvé a la
+      <a
+        href="/dashboard"
+        class="text-primary-600 hover:text-primary-700 font-medium"
+        >página principal</a
+      >.
+    </p>
+  </div>
 {{ end }}

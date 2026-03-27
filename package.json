@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/elias-gill/poliplanner2#readme",
   "devDependencies": {
+    "prettier": "^3.8.1",
+    "prettier-plugin-go-template": "^0.0.15",
     "tailwindcss": "^4.2.1"
   },
   "dependencies": {

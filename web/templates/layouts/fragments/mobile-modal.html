@@ -1,15 +1,22 @@
-{{define "fragments/mobile-modal"}}
-<div id="mobile-menu-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center">
-    <div class="bg-white rounded-xl shadow-2xl w-11/12 max-w-sm max-h-[80vh] overflow-y-auto transition-all duration-300">
-        <div class="flex items-center justify-between p-4 border-b border-gray-200">
-            <span class="text-lg font-semibold text-gray-900">Menú</span>
-            <button id="mobile-menu-close" type="button" class="text-gray-500 hover:text-gray-900 focus:outline-none">
-                <i class="bi bi-x text-3xl"></i>
-            </button>
-        </div>
-        <div id="mobile-menu-content" class="p-4 space-y-3">
-            <!-- Aquí se inyecta el contenido dinámico -->
-        </div>
+{{ define "fragments/mobile-modal" }}
+  <div
+    id="mobile-menu-modal"
+    class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center">
+    <div
+      class="bg-white rounded-xl shadow-2xl w-11/12 max-w-sm max-h-[80vh] overflow-y-auto transition-all duration-300">
+      <div
+        class="flex items-center justify-between p-4 border-b border-gray-200">
+        <span class="text-lg font-semibold text-gray-900">Menú</span>
+        <button
+          id="mobile-menu-close"
+          type="button"
+          class="text-gray-500 hover:text-gray-900 focus:outline-none">
+          <i class="bi bi-x text-3xl"></i>
+        </button>
+      </div>
+      <div id="mobile-menu-content" class="p-4 space-y-3">
+        <!-- Aquí se inyecta el contenido dinámico -->
+      </div>
     </div>
-</div>
-{{end}}
+  </div>
+{{ end }}

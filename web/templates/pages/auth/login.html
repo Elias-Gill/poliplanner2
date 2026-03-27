@@ -1,26 +1,30 @@
 {{ define "custom_head" }}
   <title>Iniciar Sesión - PoliPlanner</title>
 {{ end }}
-
 {{ define "content" }}
   <div class="md:h-full md:justify-center md:items-center flex">
     <div class="w-full max-w-md bg-white rounded-sm shadow-lg p-6 md:p-10">
-
       <div class="text-center mb-5 md:mb-6">
-        <img src="/static/logo.svg" alt="Logo PoliPlanner" class="mx-auto h-16 w-auto md:h-20" />
+        <img
+          src="/static/logo.svg"
+          alt="Logo PoliPlanner"
+          class="mx-auto h-16 w-auto md:h-20" />
         <h2 class="mt-4 text-2xl font-bold text-gray-900">Iniciar Sesión</h2>
       </div>
-
       <form
         hx-post="/login?redirect={{ .Redirect }}"
         hx-target="#messages"
         hx-swap="innerHTML"
-        class="space-y-3 md:space-y-6"
-      >
+        class="space-y-3 md:space-y-6">
         <div>
-          <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
+          <label
+            for="username"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Usuario</label
+          >
           <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <i class="bi bi-person text-gray-500"></i>
             </div>
             <input
@@ -28,17 +32,20 @@
               id="username"
               name="username"
               class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 placeholder-gray-400 transition-colors"
-              style="text-transform: lowercase;"
+              style="text-transform: lowercase"
               required
-              placeholder="Usuario o correo"
-            />
+              placeholder="Usuario o correo" />
           </div>
         </div>
-
         <div>
-          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+          <label
+            for="password"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Contraseña</label
+          >
           <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <i class="bi bi-lock text-gray-500"></i>
             </div>
             <input
@@ -47,42 +54,41 @@
               name="password"
               class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 placeholder-gray-400 transition-colors"
               required
-              placeholder="Contraseña"
-            />
+              placeholder="Contraseña" />
           </div>
         </div>
-
         <div class="flex justify-between text-sm pt-1">
           <!-- NOTE: hx-boost esta desactivado porque al estar dentro del form este link,
           entonces htmx va a tratar de reemplazar el contenido del form en vez del body -->
-          <a href="/password-recovery" hx-boost="false" class="font-medium text-primary-600 hover:text-primary-700 transition-colors">
-            ¿Olvidaste la contraseña?
-          </a>
+          <a
+            href="/password-recovery"
+            hx-boost="false"
+            class="font-medium text-primary-600 hover:text-primary-700 transition-colors"
+            >¿Olvidaste la contraseña?</a
+          >
         </div>
-
         <button
           type="submit"
-          class="w-full bg-primary-600 text-white py-3 rounded-sm font-semibold hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors mt-1"
-        >
+          class="w-full bg-primary-600 text-white py-3 rounded-sm font-semibold hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors mt-1">
           Iniciar sesión
         </button>
-
         <div id="messages" class="text-center text-sm pt-1"></div>
       </form>
-
       <div class="mt-0 md:mt-4 text-center text-sm text-gray-600">
-        ¿No tenés cuenta? 
-        <a href="/signup" class="font-medium text-primary-600 hover:text-primary-700 transition-colors">
-          Registrate acá
-        </a>
+        ¿No tenés cuenta?
+        <a
+          href="/signup"
+          class="font-medium text-primary-600 hover:text-primary-700 transition-colors"
+          >Registrate acá</a
+        >
       </div>
-
       <div class="mt-2 md:mt-3 text-center text-xs text-gray-500">
-        <a href="/tools/" class="hover:underline transition-colors">Herramientas</a>
+        <a href="/tools/" class="hover:underline transition-colors"
+          >Herramientas</a
+        >
         <span class="mx-2">|</span>
         <a href="/guides/" class="hover:underline transition-colors">Guías</a>
       </div>
-
     </div>
   </div>
 {{ end }}
