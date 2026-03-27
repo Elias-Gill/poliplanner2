@@ -1,0 +1,258 @@
+{{ define "dashboard/content" }}
+<!-- Vista diaria tipo slider dentro de tarjeta blanca -->
+<section class="p-6 space-y-6 bg-white rounded-sm shadow-sm">
+    <h2 class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
+        Horario diario
+    </h2>
+    <div class="flex overflow-x-auto overflow-scroll gap-4 py-2">
+        <!-- Lunes -->
+        <div class="flex-shrink-0 w-80 bg-white p-4 rounded-sm border border-gray-200">
+            <h3 class="font-semibold text-gray-800 mb-4">Lunes</h3>
+            {{ if .Weekly.Monday }}
+            {{ range .Weekly.Monday }}
+            <div class="mb-3 p-4 rounded-sm bg-white shadow-sm space-y-1">
+                <div class="font-medium text-gray-900">{{ .Name }}</div>
+                <div class="flex justify-between text-sm text-gray-600">
+                    <span>Aula: {{ .Room }}</span>
+                    <span class="text-primary-600 p-1 border bg-primary-50 border-primary-300 rounded-sm">
+                        {{ .Start.Format "15:04" }} - {{ .End.Format "15:04" }}
+                    </span>
+                </div>
+            </div>
+            {{ end }}
+            {{ else }}
+            <i class="text-sm text-gray-400">Dia libre</i>
+            {{ end }}
+        </div>
+        <!-- Martes -->
+        <div class="flex-shrink-0 w-80 bg-white p-4 rounded-sm border border-gray-200">
+            <h3 class="font-semibold text-gray-800 mb-4">Martes</h3>
+            {{ if .Weekly.Tuesday }}
+            {{ range .Weekly.Tuesday }}
+            <div class="mb-3 p-4 rounded-sm bg-white shadow-sm space-y-1">
+                <div class="font-medium text-gray-900">{{ .Name }}</div>
+                <div class="flex justify-between text-sm text-gray-600">
+                    <span>Aula: {{ .Room }}</span>
+                    <span class="text-primary-600 p-1 border bg-primary-50 border-primary-300 rounded-sm">
+                        {{ .Start.Format "15:04" }} - {{ .End.Format "15:04" }}
+                    </span>
+                </div>
+            </div>
+            {{ end }}
+            {{ else }}
+            <i class="text-sm text-gray-400">Dia libre</i>
+            {{ end }}
+        </div>
+        <!-- Miércoles -->
+        <div class="flex-shrink-0 w-80 bg-white p-4 rounded-sm border border-gray-200">
+            <h3 class="font-semibold text-gray-800 mb-4">Miércoles</h3>
+            {{ if .Weekly.Wednesday }}
+            {{ range .Weekly.Wednesday }}
+            <div class="mb-3 p-4 rounded-sm bg-white shadow-sm space-y-1">
+                <div class="font-medium text-gray-900">{{ .Name }}</div>
+                <div class="flex justify-between text-sm text-gray-600">
+                    <span>Aula: {{ .Room }}</span>
+                    <span class="text-primary-600 p-1 border bg-primary-50 border-primary-300 rounded-sm">
+                        {{ .Start.Format "15:04" }} - {{ .End.Format "15:04" }}
+                    </span>
+                </div>
+            </div>
+            {{ end }}
+            {{ else }}
+            <i class="text-sm text-gray-400">Dia libre</i>
+            {{ end }}
+        </div>
+        <!-- Jueves -->
+        <div class="flex-shrink-0 w-80 bg-white p-4 rounded-sm border border-gray-200">
+            <h3 class="font-semibold text-gray-800 mb-4">Jueves</h3>
+            {{ if .Weekly.Thursday }}
+            {{ range .Weekly.Thursday }}
+            <div class="mb-3 p-4 rounded-sm bg-white shadow-sm space-y-1">
+                <div class="font-medium text-gray-900">{{ .Name }}</div>
+                <div class="flex justify-between text-sm text-gray-600">
+                    <span>Aula: {{ .Room }}</span>
+                    <span class="text-primary-600 p-1 border bg-primary-50 border-primary-300 rounded-sm">
+                        {{ .Start.Format "15:04" }} - {{ .End.Format "15:04" }}
+                    </span>
+                </div>
+            </div>
+            {{ end }}
+            {{ else }}
+            <i class="text-sm text-gray-400">Dia libre</i>
+            {{ end }}
+        </div>
+        <!-- Viernes -->
+        <div class="flex-shrink-0 w-80 bg-white p-4 rounded-sm border border-gray-200">
+            <h3 class="font-semibold text-gray-800 mb-4">Viernes</h3>
+            {{ if .Weekly.Friday }}
+            {{ range .Weekly.Friday }}
+            <div class="mb-3 p-4 rounded-sm bg-white shadow-sm space-y-1">
+                <div class="font-medium text-gray-900">{{ .Name }}</div>
+                <div class="flex justify-between text-sm text-gray-600">
+                    <span>Aula: {{ .Room }}</span>
+                    <span class="text-primary-600 p-1 border bg-primary-50 border-primary-300 rounded-sm">
+                        {{ .Start.Format "15:04" }} - {{ .End.Format "15:04" }}
+                    </span>
+                </div>
+            </div>
+            {{ end }}
+            {{ else }}
+            <i class="text-sm text-gray-400">Dia libre</i>
+            {{ end }}
+        </div>
+        <!-- Sábado -->
+        <div class="flex-shrink-0 w-80 bg-white p-4 rounded-sm border border-gray-200">
+            <h3 class="font-semibold text-gray-800 mb-4">Sábado</h3>
+            {{ if .Weekly.Saturday }}
+            {{ range .Weekly.Saturday }}
+            <div class="mb-3 p-4 rounded-sm bg-white shadow-sm space-y-1">
+                <div class="font-medium text-gray-900">{{ .Name }}</div>
+                <div class="flex justify-between text-sm text-gray-600">
+                    <span>Aula: {{ .Room }}</span>
+                    <span class="text-primary-600 p-1 border bg-primary-50 border-primary-300 rounded-sm">
+                        {{ .Start.Format "15:04" }} - {{ .End.Format "15:04" }}
+                    </span>
+                </div>
+            </div>
+            {{ end }}
+            {{ else }}
+            <i class="text-sm text-gray-400">Dia libre</i>
+            {{ end }}
+    </div>
+</section>
+
+<!-- Exámenes -->
+<section class="p-6 space-y-6 bg-white rounded-sm shadow-sm">
+    <h2 class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
+        Exámenes
+    </h2>
+{{ if .Exams.Partial1 }}
+<div class="space-y-4">
+    <h3 class="text-md font-semibold text-gray-800">Parcial 1</h3>
+    <div class="space-y-3">
+        {{ range .Exams.Partial1 }}
+        <div class="p-4 border-l-4 rounded-sm bg-blue-50 border-blue-400 shadow-sm">
+            <div class="flex justify-between items-center mb-2">
+                <span class="font-medium text-gray-900">{{ .CourseName }}</span>
+            </div>
+            {{ if .Room }}
+            <p class="text-sm text-gray-700 mb-2"><span class="font-semibold">Aula:</span> {{ .Room }}</p>
+            {{ end }}
+            <div class="flex flex-col text-sm text-gray-600 space-y-1">
+                <span><span class="font-semibold">Fecha:</span> {{ .Date.Format "02/01/2006" }}</span>
+                <span><span class="font-semibold">Hora:</span> {{ .Date.Format "15:04" }} hs</span>
+                {{ if .Revision }}
+                <span><span class="font-semibold">Revisión:</span> {{ .Revision.Format "02/01/2006" }}</span>
+                {{ end }}
+            </div>
+        </div>
+        {{ end }}
+    </div>
+</div>
+{{ end }}
+
+{{ if .Exams.Partial2 }}
+<div class="space-y-4">
+    <h3 class="text-md font-semibold text-gray-800">Parcial 2</h3>
+    <div class="space-y-3">
+        {{ range .Exams.Partial2 }}
+        <div class="p-4 border-l-4 rounded-sm bg-blue-50 border-blue-400 shadow-sm">
+            <div class="flex justify-between items-center mb-2">
+                <span class="font-medium text-gray-900">{{ .CourseName }}</span>
+            </div>
+            {{ if .Room }}
+            <p class="text-sm text-gray-700 mb-2"><span class="font-semibold">Aula:</span> {{ .Room }}</p>
+            {{ end }}
+            <div class="flex flex-col text-sm text-gray-600 space-y-1">
+                <span><span class="font-semibold">Fecha:</span> {{ .Date.Format "02/01/2006" }}</span>
+                <span><span class="font-semibold">Hora:</span> {{ .Date.Format "15:04" }} hs</span>
+                {{ if .Revision }}
+                <span><span class="font-semibold">Revisión:</span> {{ .Revision.Format "02/01/2006" }}</span>
+                {{ end }}
+            </div>
+        </div>
+        {{ end }}
+    </div>
+</div>
+{{ end }}
+
+{{ if .Exams.Final1 }}
+<div class="space-y-4">
+    <h3 class="text-md font-semibold text-gray-800">Final 1</h3>
+    <div class="space-y-3">
+        {{ range .Exams.Final1 }}
+        <div class="p-4 border-l-4 rounded-sm bg-yellow-50 border-yellow-400 shadow-sm">
+            <div class="flex justify-between items-center mb-2">
+                <span class="font-medium text-gray-900">{{ .CourseName }}</span>
+            </div>
+            {{ if .Room }}
+            <p class="text-sm text-gray-700 mb-2"><span class="font-semibold">Aula:</span> {{ .Room }}</p>
+            {{ end }}
+            <div class="flex flex-col text-sm text-gray-600 space-y-1">
+                <span><span class="font-semibold">Fecha:</span> {{ .Date.Format "02/01/2006" }}</span>
+                <span><span class="font-semibold">Hora:</span> {{ .Date.Format "15:04" }} hs</span>
+                {{ if .Revision }}
+                <span><span class="font-semibold">Revisión:</span> {{ .Revision.Format "02/01/2006" }}</span>
+                {{ end }}
+            </div>
+        </div>
+        {{ end }}
+    </div>
+</div>
+{{ end }}
+
+{{ if .Exams.Final2 }}
+<div class="space-y-4">
+    <h3 class="text-md font-semibold text-gray-800">Final 2</h3>
+    <div class="space-y-3">
+        {{ range .Exams.Final2 }}
+        <div class="p-4 border-l-4 rounded-sm bg-yellow-50 border-yellow-400 shadow-sm">
+            <div class="flex justify-between items-center mb-2">
+                <span class="font-medium text-gray-900">{{ .CourseName }}</span>
+            </div>
+            {{ if .Room }}
+            <p class="text-sm text-gray-700 mb-2"><span class="font-semibold">Aula:</span> {{ .Room }}</p>
+            {{ end }}
+            <div class="flex flex-col text-sm text-gray-600 space-y-1">
+                <span><span class="font-semibold">Fecha:</span> {{ .Date.Format "02/01/2006" }}</span>
+                <span><span class="font-semibold">Hora:</span> {{ .Date.Format "15:04" }} hs</span>
+                {{ if .Revision }}
+                <span><span class="font-semibold">Revisión:</span> {{ .Revision.Format "02/01/2006" }}</span>
+                {{ end }}
+            </div>
+        </div>
+        {{ end }}
+    </div>
+</div>
+{{ end }}
+</section>
+
+<!-- Materias info extra -->
+<section class="p-6 space-y-6 bg-white rounded-sm shadow-sm">
+    <h2 class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
+        Información de materias
+    </h2>
+    <div class="space-y-4">
+        {{ range .Info }}
+        <div class="p-4 border-l-4 rounded-sm bg-white border-gray-300 shadow-sm space-y-2">
+            <div class="flex justify-between items-center">
+                <span class="font-medium text-gray-900">{{ .Name }} ({{ .Section }})</span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded {{ if eq .CourseType 0 }} bg-blue-100 text-blue-800 {{ else }} bg-red-100 text-red-800 {{ end }}">
+                    {{ if eq .CourseType 0 }} Curso Normal {{ else }} Solo Examen Final {{ end }}
+                </span>
+            </div>
+            <div>
+                <p class="text-sm font-semibold text-gray-700 mb-1">Profesores:</p>
+                <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
+                    {{ range .Teachers }}<li>{{ .Name }} ({{ .Email }})</li>{{ end }}
+                </ul>
+            </div>
+            {{ if .SaturdayDates }}
+            <p class="text-sm text-gray-600"><span class="font-semibold">Sábados especiales:</span> {{ .SaturdayDates }}</p>
+            {{ end }}
+            <p class="text-sm text-gray-600"><span class="font-semibold">Comité:</span> {{ .CommitteePresident }}, {{ .CommitteeMember1 }}, {{ .CommitteeMember2 }}</p>
+        </div>
+        {{ end }}
+    </div>
+</section>
+{{ end }}

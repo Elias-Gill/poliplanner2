@@ -52,7 +52,11 @@ func NewAuthRouter(userService *userApp.UserService, emailService *email.EmailSe
 		})
 
 		r.Get("/login", func(w http.ResponseWriter, r *http.Request) {
-			data := map[string]any{"Redirect": r.URL.Query().Get("redirect")}
+			data := map[string]any{
+				"Redirect": r.URL.Query().Get("redirect"),
+				"Error":    "",
+				"Username": "",
+			}
 			loginTemplate.Execute(w, data)
 		})
 
@@ -62,119 +66,165 @@ func NewAuthRouter(userService *userApp.UserService, emailService *email.EmailSe
 				return
 			}
 
-			username := r.FormValue("username")
+			username := strings.TrimSpace(r.FormValue("username"))
 			password := r.FormValue("password")
+			redirect := r.URL.Query().Get("redirect")
 
 			u, err := userService.AuthenticateUser(r.Context(), username, password)
 			if err != nil {
-				executeFragment(w, r, "messages/error_message", "Invalid username or password")
+				data := map[string]any{
+					"Redirect": redirect,
+					"Username": username,
+					"Error":    "Usuario o contraseña incorrectos",
+				}
+				loginTemplate.Execute(w, data)
 				return
 			}
 
+			// Login exitoso
 			sessionID := auth.CreateSession(u.ID)
 
-			// set session cookie
 			http.SetCookie(w, &http.Cookie{
 				Name:     auth.SessionIdCookie,
 				Value:    sessionID,
 				Path:     "/",
 				HttpOnly: true,
 				Secure:   config.Get().Security.SecureHTTP,
-				SameSite: http.SameSiteLaxMode,
+				SameSite: http.SameSiteLaxMode, // Mejor que NoneMode para login normal
 				Expires:  time.Now().In(timezone.ParaguayTZ).Add(30 * time.Minute),
 			})
 
-			redirectTo := r.URL.Query().Get("redirect")
-			if redirectTo == "" {
-				redirectTo = "/dashboard"
+			if redirect == "" {
+				redirect = "/dashboard"
 			}
 
-			customRedirect(w, r, redirectTo)
+			http.Redirect(w, r, redirect, http.StatusSeeOther)
 		})
 
 		r.Get("/signup", func(w http.ResponseWriter, r *http.Request) {
-			signupTemplate.Execute(w, nil)
+			data := map[string]any{
+				"Username": "",
+				"Email":    "",
+				"Error":    "",
+				"Success":  "",
+			}
+			signupTemplate.Execute(w, data)
 		})
 
 		r.Post("/signup", func(w http.ResponseWriter, r *http.Request) {
 			if err := r.ParseForm(); err != nil {
-				http.Error(w, "Invalid form", http.StatusBadRequest)
+				data := map[string]any{
+					"Error": "Error al procesar el formulario",
+				}
+				signupTemplate.Execute(w, data)
 				return
 			}
 
-			username := r.FormValue("username")
-			email := r.FormValue("email")
+			username := strings.TrimSpace(r.FormValue("username"))
+			email := strings.TrimSpace(r.FormValue("email"))
 			password := r.FormValue("password")
 			confirm := r.FormValue("confirm_password")
 
 			err := userService.CreateUser(r.Context(), username, email, password, confirm)
+
 			if err != nil {
-				var field, msg string
+				var msg string
 
 				switch e := err.(type) {
 				case userDomain.ValidationError:
-					field, msg = e.Field, e.Message
+					msg = e.Message
 				case error:
 					switch {
 					case errors.Is(err, userDomain.ErrUsernameTaken):
-						field, msg = "username", "Username already taken"
+						msg = "Este nombre de usuario ya está en uso"
 					case errors.Is(err, userDomain.ErrEmailTaken):
-						field, msg = "email", "Email already in use"
+						msg = "Este correo electrónico ya está registrado"
 					default:
-						field, msg = "", "Unexpected error"
+						msg = "Ocurrió un error inesperado"
 					}
 				}
 
-				if field != "" {
-					executeFragment(w, r, "messages/error_message", field+": "+msg)
-				} else {
-					executeFragment(w, r, "messages/error_message", "Failed to create account")
+				data := map[string]any{
+					"Username": username,
+					"Email":    email,
+					"Error":    msg,
 				}
+				signupTemplate.Execute(w, data)
 				return
 			}
 
-			customRedirect(w, r, "/login")
+			data := map[string]any{
+				"Success": "¡Cuenta creada correctamente! Ya puedes iniciar sesión.",
+			}
+			signupTemplate.Execute(w, data)
 		})
 
 		r.Get("/password-recovery", func(w http.ResponseWriter, r *http.Request) {
-			recoveryTemplate.Execute(w, nil)
+			data := map[string]any{
+				"Error":   "",
+				"Success": "",
+				"Email":   "",
+			}
+			recoveryTemplate.Execute(w, data)
 		})
 
 		r.Post("/password-recovery", func(w http.ResponseWriter, r *http.Request) {
 			if err := r.ParseForm(); err != nil {
-				executeFragment(w, r, "messages/error_message", "Failed to process form")
+				data := map[string]any{
+					"Error": "Error al procesar el formulario",
+					"Email": r.Form.Get("email"),
+				}
+				recoveryTemplate.Execute(w, data)
 				return
 			}
 
 			email := strings.TrimSpace(r.Form.Get("email"))
 
+			// Create a recovery token
 			token, err := userService.StartPasswordRecovery(r.Context(), email)
+
 			if err != nil {
 				var msg string
 				if ve, ok := err.(userDomain.ValidationError); ok && ve.Field == "email" {
 					msg = ve.Message
 				} else {
-					msg = "If the email exists, a recovery link has been sent."
+					msg = "Ocurrió un error al procesar tu solicitud. Inténtalo nuevamente."
 				}
-				executeFragment(w, r, "messages/success_message", msg)
+
+				data := map[string]any{
+					"Error": msg,
+					"Email": email,
+				}
+				recoveryTemplate.Execute(w, data)
 				return
 			}
 
-			// User does not exists
+			// User not exists (do not leak existence)
 			if token == "" {
-				executeFragment(w, r, "messages/success_message",
-					"If the email exists, a recovery link has been sent.")
+				data := map[string]any{
+					"Success": "Si el correo existe, te hemos enviado un enlace de recuperación.",
+					"Email":   email,
+				}
+				recoveryTemplate.Execute(w, data)
 				return
 			}
 
+			// Send email
 			if err := emailService.SendRecoveryEmail(email, token); err != nil {
 				logger.Error("Failed to send recovery email", "error", err)
-				customRedirect(w, r, "/500")
+				data := map[string]any{
+					"Error": "Hubo un problema al enviar el correo. Por favor intenta nuevamente más tarde.",
+					"Email": email,
+				}
+				recoveryTemplate.Execute(w, data)
 				return
 			}
 
-			executeFragment(w, r, "messages/success_message",
-				"If the email exists, a recovery link has been sent.")
+			data := map[string]any{
+				"Success": "Si el correo existe, te hemos enviado un enlace de recuperación.",
+				"Email":   email,
+			}
+			recoveryTemplate.Execute(w, data)
 		})
 
 		r.Get("/password-recovery/{token}", func(w http.ResponseWriter, r *http.Request) {
@@ -183,19 +233,32 @@ func NewAuthRouter(userService *userApp.UserService, emailService *email.EmailSe
 				customRedirect(w, r, "/500")
 				return
 			}
-			data := map[string]any{"Token": token}
+
+			data := map[string]any{
+				"Token":   token,
+				"Error":   "",
+				"Success": "",
+			}
 			recoveryCommitTemplate.Execute(w, data)
 		})
 
 		r.Post("/password-recovery/{token}", func(w http.ResponseWriter, r *http.Request) {
 			token := chi.URLParam(r, "token")
 			if token == "" {
-				executeFragment(w, r, "messages/error_message", "Invalid Token")
+				data := map[string]any{
+					"Token": token,
+					"Error": "Token inválido",
+				}
+				recoveryCommitTemplate.Execute(w, data)
 				return
 			}
 
 			if err := r.ParseForm(); err != nil {
-				executeFragment(w, r, "messages/error_message", "Failed to parse form")
+				data := map[string]any{
+					"Token": token,
+					"Error": "Error al procesar el formulario",
+				}
+				recoveryCommitTemplate.Execute(w, data)
 				return
 			}
 
@@ -204,24 +267,28 @@ func NewAuthRouter(userService *userApp.UserService, emailService *email.EmailSe
 
 			err := userService.CommitPasswordRecovery(r.Context(), token, password, confirm)
 			if err != nil {
-				var field, msg string
+				var msg string
 				if ve, ok := err.(userDomain.ValidationError); ok {
-					field, msg = ve.Field, ve.Message
+					msg = ve.Message
 				} else if errors.Is(err, userDomain.ErrInvalidToken) {
-					msg = "Invalid or expired token"
+					msg = "El enlace es inválido o ha expirado"
 				} else {
-					msg = "Failed to update password"
+					msg = "No se pudo actualizar la contraseña"
 				}
 
-				if field != "" {
-					executeFragment(w, r, "messages/error_message", field+": "+msg)
-				} else {
-					executeFragment(w, r, "messages/error_message", msg)
+				data := map[string]any{
+					"Token": token,
+					"Error": msg,
 				}
+				recoveryCommitTemplate.Execute(w, data)
 				return
 			}
 
-			executeFragment(w, r, "messages/success_message", "Password updated successfully")
+			data := map[string]any{
+				"Token":   token,
+				"Success": "¡Contraseña actualizada correctamente! Ya puedes iniciar sesión.",
+			}
+			recoveryCommitTemplate.Execute(w, data)
 		})
 	}
 }

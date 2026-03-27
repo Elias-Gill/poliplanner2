@@ -28,6 +28,8 @@ type ExamClass struct {
 	Room       string
 	Date       time.Time
 	Revision   *time.Time
+	Type       ExamType
+	Instance   ExamInstance
 }
 
 type ExamsScheduleView struct {

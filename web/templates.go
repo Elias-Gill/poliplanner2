@@ -1,6 +1,7 @@
 package web
 
 import (
+	"encoding/json"
 	"html/template"
 	"io/fs"
 	"path"
@@ -20,13 +21,22 @@ var (
 	Fragments = parseFragments()
 )
 
+// toJS convierte cualquier valor a JSON seguro para insertar directamente en <script>
+func toJS(v any) template.JS {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return "[]"
+	}
+	return template.JS(b)
+}
+
 // Parses the layotus and the layout fragments (navbar, sidebar, etc)
 func parseBaseLayout() *template.Template {
 	tPath := path.Join(config.Get().Paths.BaseDir, "web", "templates", "layouts")
 	fragPattern := path.Join(tPath, "fragments", "*.html")
 	layout := path.Join(tPath, "base_layout.html")
 
-	tmpl := template.New("base").Funcs(template.FuncMap{ /* custom functions here */ })
+	tmpl := template.New("base").Funcs(template.FuncMap{"toJS": toJS})
 	tmpl = template.Must(tmpl.ParseGlob(fragPattern))
 	tmpl = template.Must(tmpl.ParseFiles(layout))
 
@@ -36,7 +46,7 @@ func parseBaseLayout() *template.Template {
 // Parses reusable components like messages, buttons, etc
 func parseFragments() *template.Template {
 	baseDir := path.Join(config.Get().Paths.BaseDir, "web", "templates", "fragments")
-	tmpl := template.New("base").Funcs(template.FuncMap{})
+	tmpl := template.New("base").Funcs(template.FuncMap{"toJS": toJS})
 
 	err := filepath.Walk(baseDir, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {

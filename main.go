@@ -22,7 +22,8 @@ func main() {
 	config.MustLoad()
 	cfg := config.Get()
 
-	log.InitLogger(config.Get().Logging.Verbose)
+	log.InitLogger(cfg.Logging.Verbose)
+	log.Info("Logger initialized", "verbose", cfg.Logging.Verbose)
 	log.Info("Loading env configuraion")
 
 	log.Debug("Initializing db")

@@ -2,6 +2,7 @@ package router
 
 import (
 	"context"
+	"html/template"
 	"net/http"
 	"path"
 	"strconv"
@@ -31,7 +32,10 @@ func NewDashboardRouter(
 	templateDir := path.Join(config.Get().Paths.BaseDir, "web", "templates", "pages", "dashboard")
 
 	// Main page
-	dashboardTemplate := parseTemplateWithBaseLayout(path.Join(templateDir, "index.html"))
+	base := parseTemplateWithBaseLayout(path.Join(templateDir, "index.html"))
+
+	dashboardTemplate := template.Must(template.Must(base.Clone()).ParseFiles(path.Join(templateDir, "overview.html")))
+	calendarTemplate := template.Must(template.Must(base.Clone()).ParseFiles(path.Join(templateDir, "calendar.html")))
 
 	return func(r chi.Router) {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -93,12 +97,42 @@ func NewDashboardRouter(
 		})
 
 		r.Get("/calendar", func(w http.ResponseWriter, r *http.Request) {
-			// TODO: get user selected schedule from cookie
-			// TODO: get current selected schedule
-			// TODO: fetch schedule data
-			// TODO: load models into calendar data
-			// TODO: render calendar
-			executeFragment(w, r, "dashboard/subjects_section", nil)
+			now := time.Now()
+			fakeExams := []courseOffering.ExamClass{
+				{
+					CourseName: "Matemática Discreta",
+					Room:       "Aula 204",
+					Date:       time.Date(2026, 4, 2, 0, 0, 0, 0, time.Local),
+					Revision:   nil,
+					Type:       courseOffering.ExamPartial,
+					Instance:   courseOffering.Instance1,
+				},
+				{
+					CourseName: "Programación II",
+					Room:       "Laboratorio 3",
+					Date:       time.Date(2026, 4, 5, 0, 0, 0, 0, time.Local),
+					Revision:   &now,
+					Type:       courseOffering.ExamPartial,
+					Instance:   courseOffering.Instance2,
+				},
+				{
+					CourseName: "Estructuras de Datos",
+					Room:       "Laboratorio 1",
+					Date:       now,
+					Revision:   &now,
+					Type:       courseOffering.ExamFinal,
+					Instance:   courseOffering.Instance1,
+				},
+				{
+					CourseName: "Álgebra Lineal",
+					Room:       "Aula 210",
+					Date:       time.Date(2026, 3, 30, 0, 0, 0, 0, time.Local),
+					Revision:   nil,
+					Type:       courseOffering.ExamFinal,
+					Instance:   courseOffering.Instance2,
+				},
+			}
+			calendarTemplate.Execute(w, fakeExams)
 		})
 	}
 }

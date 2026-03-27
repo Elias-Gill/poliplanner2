@@ -115,7 +115,7 @@ func getSession(tokenString string) (*Session, bool) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, jwt.ErrTokenMalformed
 		}
-		return []byte(config.Get().Security.UpdateKey), nil
+		return []byte(config.Get().Security.JWTSignKey), nil
 	})
 
 	if err != nil || !token.Valid {
