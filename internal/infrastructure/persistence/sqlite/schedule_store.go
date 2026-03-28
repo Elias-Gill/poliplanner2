@@ -64,7 +64,7 @@ func (s *SqliteScheduleStore) Save(ctx context.Context, sche schedule.Schedule) 
 	return schedule.ScheduleID(id), nil
 }
 
-func (s *SqliteScheduleStore) ListByUserID(ctx context.Context, ownerID user.UserID) ([]schedule.ScheduleBasicData, error) {
+func (s *SqliteScheduleStore) ListByUserID(ctx context.Context, ownerID user.UserID) ([]schedule.ScheduleSummary, error) {
 	rows, err := s.db.QueryContext(ctx, `
 		SELECT id, descripcion, creado_en
 		FROM horarios
@@ -75,9 +75,9 @@ func (s *SqliteScheduleStore) ListByUserID(ctx context.Context, ownerID user.Use
 	}
 	defer rows.Close()
 
-	var list []schedule.ScheduleBasicData
+	var list []schedule.ScheduleSummary
 	for rows.Next() {
-		var sbd schedule.ScheduleBasicData
+		var sbd schedule.ScheduleSummary
 		if err := rows.Scan(&sbd.ID, &sbd.Description); err != nil {
 			return nil, err
 		}

@@ -1,6 +1,6 @@
 package schedule
 
-type ScheduleBasicData struct {
+type ScheduleSummary struct {
 	ID ScheduleID
 	Description string
 }

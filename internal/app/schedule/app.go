@@ -24,7 +24,7 @@ func NewScheduleService(storer schedule.ScheduleStorer) *ScheduleService {
 	}
 }
 
-func (s ScheduleService) ListUserSchedules(ctx context.Context, userID user.UserID) ([]schedule.ScheduleBasicData, error) {
+func (s ScheduleService) ListUserSchedules(ctx context.Context, userID user.UserID) ([]schedule.ScheduleSummary, error) {
 	return s.storer.ListByUserID(ctx, userID)
 }
 

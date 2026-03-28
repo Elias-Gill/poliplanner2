@@ -25,26 +25,94 @@ type overviewData struct {
 	Exams  courseOffering.ExamsScheduleView
 }
 
+type dashboardPage struct {
+	Mode       string
+	SelectedID int64
+	Data       any
+	Schedules  []scheduleDomain.ScheduleSummary
+}
+
 func NewDashboardRouter(
 	scheduleService *schedule.ScheduleService,
 	planService *academicPlan.AcademicPlanService,
 ) func(r chi.Router) {
 	templateDir := path.Join(config.Get().Paths.BaseDir, "web", "templates", "pages", "dashboard")
 
-	// Main page
 	base := parseTemplateWithBaseLayout(path.Join(templateDir, "index.html"))
-
 	dashboardTemplate := template.Must(template.Must(base.Clone()).ParseFiles(path.Join(templateDir, "overview.html")))
 	calendarTemplate := template.Must(template.Must(base.Clone()).ParseFiles(path.Join(templateDir, "calendar.html")))
 
+	// External functions to serve data
+	serveOverview := func(ctx context.Context, userID user.UserID, selectedID scheduleDomain.ScheduleID) (any, error) {
+		// TODO: fetch selected schedule data
+		// FIX: error handling
+		schedule, _ := scheduleService.GetSchedule(ctx, userID, selectedID)
+		// if err != nil {
+		// 	customRedirect(w, r, "/500")
+		// 	return nil, err
+		// }
+
+		// TODO: load models into data
+		weekly, _ := planService.ListCoursesSchedule(ctx, schedule.Courses)
+		exams, _ := planService.ListCoursesExams(ctx, schedule.Courses)
+		info, _ := planService.ListCoursesInfo(ctx, schedule.Courses)
+
+		// TODO: render data models
+		return overviewData{info, *weekly, exams}, nil
+	}
+
+	serveCalendar := func(ctx context.Context, userID user.UserID, selectedID scheduleDomain.ScheduleID) (any, error) {
+		// TODO: replace with real DB data
+		now := time.Now()
+		fakeExams := []courseOffering.ExamClass{
+			{
+				CourseName: "Matemática Discreta",
+				Room:       "Aula 204",
+				Date:       time.Date(2026, 4, 2, 0, 0, 0, 0, time.Local),
+				Revision:   nil,
+				Type:       courseOffering.ExamPartial,
+				Instance:   courseOffering.Instance1,
+			},
+			{
+				CourseName: "Programación II",
+				Room:       "Laboratorio 3",
+				Date:       time.Date(2026, 4, 5, 0, 0, 0, 0, time.Local),
+				Revision:   &now,
+				Type:       courseOffering.ExamPartial,
+				Instance:   courseOffering.Instance2,
+			},
+			{
+				CourseName: "Estructuras de Datos",
+				Room:       "Laboratorio 1",
+				Date:       now,
+				Revision:   &now,
+				Type:       courseOffering.ExamFinal,
+				Instance:   courseOffering.Instance1,
+			},
+			{
+				CourseName: "Álgebra Lineal",
+				Room:       "Aula 210",
+				Date:       time.Date(2026, 3, 30, 0, 0, 0, 0, time.Local),
+				Revision:   nil,
+				Type:       courseOffering.ExamFinal,
+				Instance:   courseOffering.Instance2,
+			},
+		}
+
+		return fakeExams, nil
+	}
+
 	return func(r chi.Router) {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+			// extract mode query param
+			mode := r.URL.Query().Get("mode")
+			if mode != "calendar" {
+				mode = "overview"
+			}
+
 			// extract last selected schedule cookie
 			selected, present := getLatestSelectionCookie(r)
-
-			// extract query param: ?id=...
 			queryID := r.URL.Query().Get("id")
-
 			userID := extractUserID(r)
 
 			ctx, cancel := context.WithTimeout(r.Context(), time.Millisecond*300)
@@ -69,7 +137,7 @@ func NewDashboardRouter(
 			// priority:
 			// 1. query param
 			// 2. cookie
-			// 3. last schedule
+			// 3. last schedule on the list
 			queryIDint, err := strconv.ParseInt(queryID, 10, 64)
 			if queryID != "" && err == nil {
 				selectedID = scheduleDomain.ScheduleID(queryIDint)
@@ -79,60 +147,15 @@ func NewDashboardRouter(
 				selectedID = schedules[len(schedules)-1].ID
 			}
 
-			// TODO: fetch selected schedule data
-			// FIX: error handling
-			schedule, _ := scheduleService.GetSchedule(ctx, user.UserID(userID), selectedID)
-			// if err != nil {
-			// 	customRedirect(w, r, "/500")
-			// 	return
-			// }
-
-			// TODO: load models into data
-			weekly, _ := planService.ListCoursesSchedule(ctx, schedule.Courses)
-			exams, _ := planService.ListCoursesExams(ctx, schedule.Courses)
-			info, _ := planService.ListCoursesInfo(ctx, schedule.Courses)
-
-			// TODO: render data models
-			dashboardTemplate.Execute(w, overviewData{info, *weekly, exams})
-		})
-
-		r.Get("/calendar", func(w http.ResponseWriter, r *http.Request) {
-			now := time.Now()
-			fakeExams := []courseOffering.ExamClass{
-				{
-					CourseName: "Matemática Discreta",
-					Room:       "Aula 204",
-					Date:       time.Date(2026, 4, 2, 0, 0, 0, 0, time.Local),
-					Revision:   nil,
-					Type:       courseOffering.ExamPartial,
-					Instance:   courseOffering.Instance1,
-				},
-				{
-					CourseName: "Programación II",
-					Room:       "Laboratorio 3",
-					Date:       time.Date(2026, 4, 5, 0, 0, 0, 0, time.Local),
-					Revision:   &now,
-					Type:       courseOffering.ExamPartial,
-					Instance:   courseOffering.Instance2,
-				},
-				{
-					CourseName: "Estructuras de Datos",
-					Room:       "Laboratorio 1",
-					Date:       now,
-					Revision:   &now,
-					Type:       courseOffering.ExamFinal,
-					Instance:   courseOffering.Instance1,
-				},
-				{
-					CourseName: "Álgebra Lineal",
-					Room:       "Aula 210",
-					Date:       time.Date(2026, 3, 30, 0, 0, 0, 0, time.Local),
-					Revision:   nil,
-					Type:       courseOffering.ExamFinal,
-					Instance:   courseOffering.Instance2,
-				},
+			var data any
+			if mode == "calendar" {
+				data, _ = serveCalendar(ctx, user.UserID(userID), selectedID)
+				calendarTemplate.Execute(w, dashboardPage{Mode: mode, SelectedID: int64(selectedID), Data: data, Schedules: schedules})
+				return
 			}
-			calendarTemplate.Execute(w, fakeExams)
+
+			data, _ = serveOverview(ctx, user.UserID(userID), selectedID)
+			dashboardTemplate.Execute(w, dashboardPage{Mode: mode, SelectedID: int64(selectedID), Data: data, Schedules: schedules})
 		})
 	}
 }

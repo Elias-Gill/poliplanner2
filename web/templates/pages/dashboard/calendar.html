@@ -1,51 +1,49 @@
 {{ define "custom_head" }}
 <title>Dashboard - PoliPlanner</title>
-
 <script src="/static/js/fullcalendar/index.global.min.js"></script>
 
 <style>
   .fc {
     background: white;
-    border-radius: 0;           /* quitamos redondeado fuerte */
+    border-radius: 0;
     overflow: hidden;
   }
 
+  .fc-view-harness {
+    overflow-y: auto;
+  }
+
   .fc-toolbar-title {
-    font-size: 1.35rem !important;
+    font-size: 1.25rem !important;
     font-weight: 600;
     color: #1f2937;
+    white-space: normal;
+    text-align: center;
   }
 
   .fc-event {
     border: none;
-    border-radius: 4px;         /* más sutil */
+    border-radius: 4px;
     padding: 4px 8px;
     font-size: 0.875rem;
   }
 
-  .fc-event.partial { background-color: #3b82f6; }
-  .fc-event.final   { background-color: #ef4444; }
+  .fc-event.partial { background-color: #557fab; }
+  .fc-event.final   { background-color: oklch(68.1% 0.162 75.834); } /* amarillo final */
 
   .fc-event .fc-event-title {
     font-weight: 500;
   }
 
-  /* Mobile: más espacio útil */
   @media (max-width: 768px) {
-    .fc {
-      border-radius: 0;
-    }
-    .fc .fc-toolbar {
-      padding: 10px 8px;
-    }
-    .fc .fc-view-harness {
-      padding: 0 !important;
-    }
+    .fc-toolbar-title { font-size: 1.1rem !important; }
+    .fc .fc-toolbar { padding: 8px 4px; }
+    .fc-view-harness { max-height: 400px; }
   }
 </style>
 {{ end }}
+
 {{ define "dashboard/content" }}
-<!-- Calendario -->
 <section class="p-6 bg-gray-50 rounded-sm border border-gray-200 mb-6">
   <h2 class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
     Calendario de exámenes
@@ -53,32 +51,66 @@
   <div id="exam-calendar" class="p-2 md:p-4 bg-white rounded-sm shadow-sm"></div>
 </section>
 
-<!-- Lista de próximos exámenes -->
 <section class="p-6 bg-gray-50 rounded-sm border border-gray-200">
   <h2 class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
     Próximos exámenes
   </h2>
-  <div id="upcoming-exams" class="space-y-4">
-    <!-- Llenado por JavaScript -->
-  </div>
+  <div id="upcoming-exams" class="space-y-4"></div>
 </section>
 
 <script>
 const exams = {{ . | toJS }};
-const calendarEvents = exams.map(exam => {
-  const isFinal = exam.Type === "final";
-  let title = `${exam.CourseName} — ${isFinal ? 'Final' : 'Parcial'}`;
-  if (exam.Room) title += ` • ${exam.Room}`;
-  return {
-    title,
-    start: exam.Date,
-    allDay: true,
-    classNames: [isFinal ? 'final' : 'partial'],
-    extendedProps: { room: exam.Room || '', revision: exam.Revision, type: exam.Type }
-  };
-});
+
+function formatExamDiv(exam) {
+  // Texto del label: "Parcial 1", "Final 2"
+  const labelText = exam.Type.charAt(0).toUpperCase() + exam.Type.slice(1) + (exam.Instance ? ` ${exam.Instance}` : '');
+
+  // Mantener colores originales del bubble
+  const bgColor = exam.Type === 'final' ? 'bg-yellow-50 border-yellow-400' : 'bg-primary-50 border-primary-400';
+  const labelColor = exam.Type === 'final' ? 'bg-yellow-100 text-yellow-700' : 'bg-primary-50 text-primary-700';
+
+  const div = document.createElement('div');
+  div.className = `p-4 border-l-4 rounded-sm ${bgColor} shadow-sm`;
+
+  div.innerHTML = `
+    <div class="flex justify-between items-start mb-2">
+      <div class="font-medium text-gray-900">${exam.CourseName}</div>
+      <span class="text-xs font-semibold px-2 py-0.5 rounded ${labelColor}">
+        ${labelText}
+      </span>
+    </div>
+    ${exam.Room ? `<p class="text-sm text-gray-700 mb-2"><span class="font-semibold">Aula:</span> ${exam.Room}</p>` : ''}
+    <div class="flex flex-col text-sm text-gray-600 space-y-1">
+      <span><span class="font-semibold">Fecha:</span> ${new Date(exam.Date).toLocaleDateString('es-ES')}</span>
+      <span><span class="font-semibold">Hora:</span> ${new Date(exam.Date).toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'})} hs</span>
+      ${exam.Revision ? `<span><span class="font-semibold">Revisión:</span> ${new Date(exam.Revision).toLocaleDateString('es-ES')}</span>` : ''}
+    </div>
+  `;
+  return div;
+}
+
+function renderUpcomingExams(examsList) {
+  const container = document.getElementById('upcoming-exams');
+  container.innerHTML = '';
+
+  if (!examsList.length) {
+    container.innerHTML = `<p class="text-gray-500 py-8 text-center">No hay exámenes próximos.</p>`;
+    return;
+  }
+
+  const sorted = [...examsList].sort((a,b) => new Date(a.Date) - new Date(b.Date));
+  sorted.forEach(exam => container.appendChild(formatExamDiv(exam)));
+}
 
 document.addEventListener('DOMContentLoaded', () => {
+  // En el calendario solo mostrar el nombre de la materia
+  const calendarEvents = exams.map(exam => ({
+    title: exam.CourseName,
+    start: exam.Date,
+    allDay: true,
+    classNames: [exam.Type === 'final' ? 'final' : 'partial']
+  }));
+
   const calendar = new FullCalendar.Calendar(document.getElementById('exam-calendar'), {
     initialView: 'dayGridMonth',
     headerToolbar: { left: 'prev,next', center: 'title', right: 'today' },
@@ -86,46 +118,10 @@ document.addEventListener('DOMContentLoaded', () => {
     locale: 'es',
     height: 'auto'
   });
+
   calendar.render();
 
-  renderUpcomingExams(calendarEvents);
+  renderUpcomingExams(exams);
 });
-
-function renderUpcomingExams(events) {
-  const container = document.getElementById('upcoming-exams');
-  container.innerHTML = '';
-
-  if (!events.length) {
-    container.innerHTML = `<p class="text-gray-500 py-8 text-center">No hay exámenes próximos.</p>`;
-    return;
-  }
-
-  const sorted = [...events].sort((a, b) => new Date(a.start) - new Date(b.start));
-
-  sorted.forEach(event => {
-    const date = new Date(event.start);
-    const isFinal = event.classNames.includes('final');
-    const bgColor = isFinal ? 'bg-red-50 border-red-400' : 'bg-blue-50 border-blue-400';
-    const labelColor = isFinal ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700';
-
-    const div = document.createElement('div');
-    div.className = `p-4 border-l-4 rounded-sm ${bgColor} shadow-sm hover:border-gray-400 transition-colors`;
-
-    div.innerHTML = `
-      <div class="flex justify-between items-start">
-        <div class="font-medium text-gray-900">${event.title}</div>
-        <span class="text-xs font-semibold px-2 py-0.5 rounded ${labelColor}">
-          ${isFinal ? 'Final' : 'Parcial'}
-        </span>
-      </div>
-      ${event.extendedProps.room ? `<p class="text-sm text-gray-700 mt-2"><span class="font-semibold">Aula:</span> ${event.extendedProps.room}</p>` : ''}
-      <div class="mt-2 text-sm text-gray-600 space-y-1">
-        <div><span class="font-semibold">Fecha:</span> ${date.toLocaleDateString('es-ES', { weekday:'short', day:'numeric', month:'short', year:'numeric'})}</div>
-        ${event.extendedProps.revision ? `<div><span class="font-semibold">Revisión:</span> ${new Date(event.extendedProps.revision).toLocaleDateString('es-ES')}</div>` : ''}
-      </div>
-    `;
-    container.appendChild(div);
-  });
-}
 </script>
 {{end}}
