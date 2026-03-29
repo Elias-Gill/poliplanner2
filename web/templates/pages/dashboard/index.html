@@ -6,28 +6,32 @@
   <div class="space-y-6">
     <!-- Header compacto dentro de tarjeta -->
     <div class="bg-white border border-gray-200 rounded-sm shadow-sm p-6">
-      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3 md:gap-6">
+      <div
+        class="flex flex-col md:flex-row md:items-start md:justify-between gap-3 md:gap-6">
         <div>
           <h1 class="text-2xl md:text-3xl font-semibold text-gray-900">
             Dashboard
           </h1>
           <p class="text-sm mt-3 text-gray-600 max-w-sm">
-            Revisa tu horario semanal, exámenes y mas información de tus secciones.
+            Revisa tu horario semanal, exámenes y mas información de tus
+            secciones.
           </p>
         </div>
         <div class="flex flex-col md:items-end gap-2 w-full md:w-auto">
           <div class="w-full md:w-64 flex flex-col gap-2">
             <div class="flex gap-2 w-full">
-<select
-    id="schedule-select"
-    class="flex-1 border border-gray-300 rounded-sm px-3 py-2 text-gray-900"
-    onchange="window.location.href='?id='+this.value+'&mode=overview'">
-  {{ range .Schedules }}
-  <option value="{{ .ID }}" {{ if eq $.SelectedID .ID }}selected{{ end }}>
-    {{ .Name }}
-  </option>
-  {{ end }}
-</select>
+              <select
+                id="schedule-select"
+                class="flex-1 border border-gray-300 rounded-sm px-3 py-2 text-gray-900"
+                onchange="window.location.href='?id='+this.value+'&mode=overview'">
+                {{ range .Schedules }}
+                  <option
+                    value="{{ .ID }}"
+                    {{ if eq $.SelectedID .ID }}selected{{ end }}>
+                    {{ .Name }}
+                  </option>
+                {{ end }}
+              </select>
               <a
                 href="/schedule/"
                 class="inline-flex items-center justify-center bg-primary-600 text-white px-3 py-2 rounded-sm hover:bg-primary-700 transition-colors"
@@ -35,18 +39,26 @@
                 <i class="bi bi-plus-lg"></i>
               </a>
             </div>
-<div class="flex bg-gray-200 rounded-sm p-1 w-full mt-2">
-  <a
-    href="?id={{ .SelectedID }}&mode=overview"
-    class="flex-1 px-3 py-2 {{ if eq .Mode "overview" }}bg-white text-gray-900{{ else }}text-gray-600{{ end }} rounded-sm text-sm font-medium">
-    Overview
-  </a>
-  <a
-    href="?id={{ .SelectedID }}&mode=calendar"
-    class="flex-1 px-3 py-2 {{ if eq .Mode "calendar" }}bg-white text-gray-900{{ else }}text-gray-600{{ end }} text-sm font-medium">
-    Calendario
-  </a>
-</div>
+            <div class="flex bg-gray-200 rounded-sm p-1 w-full mt-2">
+              <a
+                href="?id={{ .SelectedID }}&mode=overview"
+                class="flex-1 px-3 py-2 {{ if eq .Mode "overview" }}
+                  bg-white text-gray-900
+                {{ else }}
+                  text-gray-600
+                {{ end }} rounded-sm text-sm font-medium">
+                Overview
+              </a>
+              <a
+                href="?id={{ .SelectedID }}&mode=calendar"
+                class="flex-1 px-3 py-2 {{ if eq .Mode "calendar" }}
+                  bg-white text-gray-900
+                {{ else }}
+                  text-gray-600
+                {{ end }} text-sm font-medium">
+                Calendario
+              </a>
+            </div>
           </div>
         </div>
       </div>

@@ -2,11 +2,10 @@ package academicPlan
 
 import (
 	"context"
-	"time"
+	"fmt"
 
 	"github.com/elias-gill/poliplanner2/internal/domain/academicPlan"
 	"github.com/elias-gill/poliplanner2/internal/domain/courseOffering"
-	"github.com/elias-gill/poliplanner2/internal/domain/teacher"
 )
 
 type AcademicPlanService struct {
@@ -36,176 +35,140 @@ func (a AcademicPlanService) ListOffering(
 	ctx context.Context,
 	courses []academicPlan.SubjectID,
 ) ([]courseOffering.OfferList, error) {
-	// TODO: implementar
-	var offers []courseOffering.OfferList
+	offers := make([]courseOffering.OfferList, 0, len(courses))
+
 	for _, subjectID := range courses {
+		// Get subject info
+		subject, err := a.planStorer.GetSubject(ctx, subjectID)
+		if err != nil {
+			return nil, fmt.Errorf("get subject %d: %w", subjectID, err)
+		}
+
+		// List sections
+		sections, err := a.courseStorer.FindOfferForSubject(ctx, subjectID)
+		if err != nil {
+			return nil, fmt.Errorf("find offering for subject %d: %w", subjectID, err)
+		}
+
 		offers = append(offers, courseOffering.OfferList{
-			Subject: mockSubjectName(subjectID),
-			Offer: []courseOffering.Section{
-				{
-					ID:         courseOffering.SectionID(subjectID*10 + 1),
-					Section:    "A",
-					CourseName: mockSubjectName(subjectID),
-					Type:       courseOffering.Normal,
-					Teachers: []teacher.Teacher{
-						{ID: 1, FirstName: "Juan", LastName: "Gonzalez"},
-					},
-				},
-				{
-					ID:         courseOffering.SectionID(subjectID*10 + 2),
-					Section:    "B",
-					CourseName: mockSubjectName(subjectID),
-					Type:       courseOffering.Normal,
-					Teachers: []teacher.Teacher{
-						{ID: 2, FirstName: "Maria", LastName: "Lopez"},
-						{ID: 3, FirstName: "Carlos", LastName: "Fernandez"},
-					},
-				},
-				{
-					ID:         courseOffering.SectionID(subjectID*10 + 3),
-					Section:    "C",
-					CourseName: mockSubjectName(subjectID),
-					Type:       courseOffering.ExamOnly,
-					Teachers: []teacher.Teacher{
-						{ID: 4, FirstName: "Pedro", LastName: "Martinez"},
-					},
-				},
-			},
+			Subject: subject.Name,
+			Offer:   sections,
 		})
 	}
 
 	return offers, nil
 }
 
-func mockSubjectName(id academicPlan.SubjectID) string {
-	switch id {
-	case 1:
-		return "Calculo I"
-	case 2:
-		return "Algebra Lineal"
-	case 3:
-		return "Fisica I"
-	case 4:
-		return "Programacion I"
-	case 5:
-		return "Calculo II"
-	case 6:
-		return "Fisica II"
-	case 7:
-		return "Programacion II"
-	case 8:
-		return "Estadistica"
-	case 9:
-		return "Estructura de Datos"
-	case 10:
-		return "Base de Datos"
-	default:
-		return "Asignatura Desconocida"
+func (a AcademicPlanService) ListCoursesSchedule(
+	ctx context.Context,
+	courses []courseOffering.CourseOfferingID,
+) (*courseOffering.CoursesScheduleView, error) {
+	if len(courses) == 0 {
+		return &courseOffering.CoursesScheduleView{}, nil
 	}
+
+	schedules, err := a.courseStorer.GetCoursesSchedules(ctx, courses)
+	if err != nil {
+		return nil, fmt.Errorf("get courses schedules: %w", err)
+	}
+
+	view := &courseOffering.CoursesScheduleView{}
+
+	for _, class := range schedules {
+		switch class.Day {
+		case courseOffering.Monday:
+			view.Monday = append(view.Monday, class)
+
+		case courseOffering.Tuesday:
+			view.Tuesday = append(view.Tuesday, class)
+
+		case courseOffering.Wednesday:
+			view.Wednesday = append(view.Wednesday, class)
+
+		case courseOffering.Thursday:
+			view.Thursday = append(view.Thursday, class)
+
+		case courseOffering.Friday:
+			view.Friday = append(view.Friday, class)
+
+		case courseOffering.Saturday:
+			view.Saturday = append(view.Saturday, class)
+
+		default:
+			return nil, fmt.Errorf("invalid weekday in course class: %v", class.Day)
+		}
+	}
+
+	return view, nil
+}
+
+func (a AcademicPlanService) ListExams(
+	ctx context.Context,
+	id courseOffering.CourseOfferingID,
+) ([]courseOffering.ExamClass, error) {
+	// FIX: error handling
+	exams, _ := a.courseStorer.GetCoursesExams(ctx, []courseOffering.CourseOfferingID{id})
+	return exams, nil
 }
 
 func (a AcademicPlanService) ListCoursesExams(
 	ctx context.Context,
 	courses []courseOffering.CourseOfferingID,
-) (courseOffering.ExamsScheduleView, error) {
+) (*courseOffering.ExamsScheduleView, error) {
 
-	now := time.Now()
-	later := now.Add(48 * time.Hour)
+	if len(courses) == 0 {
+		return &courseOffering.ExamsScheduleView{}, nil
+	}
 
-	return courseOffering.ExamsScheduleView{
-		Partial1: []courseOffering.ExamClass{
-			{
-				CourseName: "Matematica 1",
-				Date:       now,
-				Revision:   nil,
-				Room:       "A52",
-			},
-			{
-				CourseName: "Fisica 1",
-				Date:       later,
-				Revision:   nil,
-				Room:       "B12",
-			},
-		},
-		Partial2: []courseOffering.ExamClass{
-			{
-				CourseName: "Programacion 1",
-				Date:       later,
-				Revision:   nil,
-				Room:       "Lab 2",
-			},
-		},
-		Final1: []courseOffering.ExamClass{
-			{
-				CourseName: "Matematica 1",
-				Date:       later,
-				Revision:   &now,
-				Room:       "A52",
-			},
-		},
-		Final2: []courseOffering.ExamClass{
-			{
-				CourseName: "Programacion 1",
-				Date:       now,
-				Revision:   nil,
-				Room:       "Lab 2",
-			},
-		},
-	}, nil
-}
+	exams, err := a.courseStorer.GetCoursesExams(ctx, courses)
+	if err != nil {
+		return nil, fmt.Errorf("get courses exams: %w", err)
+	}
 
-func (a AcademicPlanService) ListCoursesSchedule(
-	ctx context.Context,
-	courses []courseOffering.CourseOfferingID,
-) (*courseOffering.CoursesScheduleView, error) {
-	// TODO: implementar
-	now := time.Now()
-	view := &courseOffering.CoursesScheduleView{
-		Monday: []courseOffering.CourseClass{
-			{
-				CourseID: 1,
-				Name:     "Matematica 1",
-				Room:     "Aula 3",
-				Start:    now.Add(2 * time.Hour),
-				End:      now.Add(4 * time.Hour),
-			},
-			{
-				CourseID: 2,
-				Name:     "Fisica 1",
-				Room:     "Laboratorio",
-				Start:    now.Add(5 * time.Hour),
-				End:      now.Add(7 * time.Hour),
-			},
-			{
-				CourseID: 1,
-				Name:     "Matematica 1",
-				Room:     "Aula 3",
-				Start:    now.Add(2 * time.Hour),
-				End:      now.Add(4 * time.Hour),
-			},
-			{
-				CourseID: 2,
-				Name:     "Fisica 1",
-				Room:     "Laboratorio",
-				Start:    now.Add(5 * time.Hour),
-				End:      now.Add(7 * time.Hour),
-			},
-		},
+	view := &courseOffering.ExamsScheduleView{}
 
-		Tuesday: []courseOffering.CourseClass{
-			{
-				CourseID: 3,
-				Name:     "Programacion",
-				Room:     "Aula 5",
-				Start:    now.Add(3 * time.Hour),
-				End:      now.Add(5 * time.Hour),
-			},
-		},
+	for _, exam := range exams {
+		switch exam.Type {
 
-		Wednesday: []courseOffering.CourseClass{},
-		Thursday:  []courseOffering.CourseClass{},
-		Friday:    []courseOffering.CourseClass{},
-		Saturday:  []courseOffering.CourseClass{},
+		case courseOffering.ExamPartial:
+			switch exam.Instance {
+			case courseOffering.Instance1:
+				view.Partial1 = append(view.Partial1, exam)
+
+			case courseOffering.Instance2:
+				view.Partial2 = append(view.Partial2, exam)
+
+			default:
+				return nil, fmt.Errorf(
+					"invalid partial exam instance for course %s: %v",
+					exam.CourseName,
+					exam.Instance,
+				)
+			}
+
+		case courseOffering.ExamFinal:
+			switch exam.Instance {
+			case courseOffering.Instance1:
+				view.Final1 = append(view.Final1, exam)
+
+			case courseOffering.Instance2:
+				view.Final2 = append(view.Final2, exam)
+
+			default:
+				return nil, fmt.Errorf(
+					"invalid final exam instance for course %s: %v",
+					exam.CourseName,
+					exam.Instance,
+				)
+			}
+
+		default:
+			return nil, fmt.Errorf(
+				"invalid exam type for course %s: %v",
+				exam.CourseName,
+				exam.Type,
+			)
+		}
 	}
 
 	return view, nil
@@ -216,60 +179,23 @@ func (a AcademicPlanService) ListCoursesInfo(
 	courses []courseOffering.CourseOfferingID,
 ) ([]courseOffering.CourseSummary, error) {
 
-	result := []courseOffering.CourseSummary{
-		{
-			Name: "Matematica 1",
-			Teachers: []courseOffering.TeacherInfo{
-				{
-					Name:  "Juan Perez",
-					Email: "juan.perez@politecnica.edu.py",
-				},
-				{
-					Name:  "Maria Gomez",
-					Email: "maria.gomez@politecnica.edu.py",
-				},
-			},
-			Section:    "TQ",
-			CourseType: courseOffering.Normal,
+	if len(courses) == 0 {
+		return []courseOffering.CourseSummary{}, nil
+	}
 
-			SaturdayDates: "10/05, 24/05",
+	result := make([]courseOffering.CourseSummary, 0, len(courses))
 
-			CommitteeMember1:   "Carlos Ruiz",
-			CommitteeMember2:   "Ana Duarte",
-			CommitteePresident: "Luis Fernandez",
-		},
-		{
-			Name: "Fisica 1",
-			Teachers: []courseOffering.TeacherInfo{
-				{
-					Name:  "Pedro Martinez",
-					Email: "pedro.martinez@politecnica.edu.py",
-				},
-			},
-			Section:       "B",
-			CourseType:    courseOffering.Normal,
-			SaturdayDates: "",
+	for _, courseID := range courses {
+		details, err := a.courseStorer.GetCourseDetails(ctx, courseID)
+		if err != nil {
+			return nil, fmt.Errorf("get course details %d: %w", courseID, err)
+		}
 
-			CommitteeMember1:   "Miguel Benitez",
-			CommitteeMember2:   "Rosa Acosta",
-			CommitteePresident: "Jose Caballero",
-		},
-		{
-			Name: "Programacion 1",
-			Teachers: []courseOffering.TeacherInfo{
-				{
-					Name:  "Laura Diaz",
-					Email: "laura.diaz@politecnica.edu.py",
-				},
-			},
-			Section:       "A",
-			CourseType:    courseOffering.ExamOnly,
-			SaturdayDates: "15/09",
+		if details == nil {
+			return nil, fmt.Errorf("course details %d not found", courseID)
+		}
 
-			CommitteeMember1:   "Andres Lopez",
-			CommitteeMember2:   "Sofia Rojas",
-			CommitteePresident: "Diego Vargas",
-		},
+		result = append(result, *details)
 	}
 
 	return result, nil

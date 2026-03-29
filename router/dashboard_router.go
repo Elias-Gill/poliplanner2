@@ -21,8 +21,8 @@ const latestSelectionCookie = "latestScheduleSelection"
 
 type overviewData struct {
 	Info   []courseOffering.CourseSummary
-	Weekly courseOffering.CoursesScheduleView
-	Exams  courseOffering.ExamsScheduleView
+	Weekly *courseOffering.CoursesScheduleView
+	Exams  *courseOffering.ExamsScheduleView
 }
 
 type dashboardPage struct {
@@ -43,63 +43,28 @@ func NewDashboardRouter(
 	calendarTemplate := template.Must(template.Must(base.Clone()).ParseFiles(path.Join(templateDir, "calendar.html")))
 
 	// External functions to serve data
+	// FIX: error handling
 	serveOverview := func(ctx context.Context, userID user.UserID, selectedID scheduleDomain.ScheduleID) (any, error) {
-		// TODO: fetch selected schedule data
-		// FIX: error handling
-		schedule, _ := scheduleService.GetSchedule(ctx, userID, selectedID)
-		// if err != nil {
-		// 	customRedirect(w, r, "/500")
-		// 	return nil, err
-		// }
+		schedule, err := scheduleService.GetSchedule(ctx, userID, selectedID)
+		if err != nil {
+			return nil, err
+		}
 
-		// TODO: load models into data
 		weekly, _ := planService.ListCoursesSchedule(ctx, schedule.Courses)
 		exams, _ := planService.ListCoursesExams(ctx, schedule.Courses)
 		info, _ := planService.ListCoursesInfo(ctx, schedule.Courses)
 
-		// TODO: render data models
-		return overviewData{info, *weekly, exams}, nil
+		return overviewData{info, weekly, exams}, nil
 	}
 
+	// FIX: error handling
 	serveCalendar := func(ctx context.Context, userID user.UserID, selectedID scheduleDomain.ScheduleID) (any, error) {
-		// TODO: replace with real DB data
-		now := time.Now()
-		fakeExams := []courseOffering.ExamClass{
-			{
-				CourseName: "Matemática Discreta",
-				Room:       "Aula 204",
-				Date:       time.Date(2026, 4, 2, 0, 0, 0, 0, time.Local),
-				Revision:   nil,
-				Type:       courseOffering.ExamPartial,
-				Instance:   courseOffering.Instance1,
-			},
-			{
-				CourseName: "Programación II",
-				Room:       "Laboratorio 3",
-				Date:       time.Date(2026, 4, 5, 0, 0, 0, 0, time.Local),
-				Revision:   &now,
-				Type:       courseOffering.ExamPartial,
-				Instance:   courseOffering.Instance2,
-			},
-			{
-				CourseName: "Estructuras de Datos",
-				Room:       "Laboratorio 1",
-				Date:       now,
-				Revision:   &now,
-				Type:       courseOffering.ExamFinal,
-				Instance:   courseOffering.Instance1,
-			},
-			{
-				CourseName: "Álgebra Lineal",
-				Room:       "Aula 210",
-				Date:       time.Date(2026, 3, 30, 0, 0, 0, 0, time.Local),
-				Revision:   nil,
-				Type:       courseOffering.ExamFinal,
-				Instance:   courseOffering.Instance2,
-			},
+		schedule, err := scheduleService.GetSchedule(ctx, userID, selectedID)
+		if err != nil {
+			return nil, err
 		}
-
-		return fakeExams, nil
+		exams, _ := planService.ListCoursesExams(ctx, schedule.Courses)
+		return exams, nil
 	}
 
 	return func(r chi.Router) {

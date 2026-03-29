@@ -23,6 +23,11 @@ func (s SqliteAcademicPlanStore) ListCareers(ctx context.Context) ([]*academicPl
 	}, nil
 }
 
+func (s SqliteAcademicPlanStore) GetSubject(ctx context.Context, id academicPlan.SubjectID) (*academicPlan.Subject, error) {
+	// TODO: implementar
+	return nil, nil
+}
+
 func (s SqliteAcademicPlanStore) GetPlanByCareerID(ctx context.Context, career academicPlan.CareerID) (*academicPlan.AcademicPlan, error) {
 	// TODO: immplementar
 	return &academicPlan.AcademicPlan{

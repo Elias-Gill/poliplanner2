@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/elias-gill/poliplanner2/logger"
 	"github.com/elias-gill/poliplanner2/web"
 )
 
@@ -46,15 +45,6 @@ func parseTemplateWithBaseLayout(path string) *template.Template {
 
 func parseComponentTemplate(path string) *template.Template {
 	return template.Must(template.ParseFiles(path))
-}
-
-func executeFragment(w http.ResponseWriter, r *http.Request, fragment string, data any) {
-	w.Header().Set("Content-Type", "text/html")
-	err := web.Fragments.ExecuteTemplate(w, fragment, data)
-	if err != nil {
-		customRedirect(w, r, "/500")
-		logger.Debug("Error executing fragment", "error", err)
-	}
 }
 
 // ---------- validation helpers ----------

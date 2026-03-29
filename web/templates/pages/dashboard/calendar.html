@@ -1,62 +1,76 @@
 {{ define "custom_head" }}
-<title>Dashboard - PoliPlanner</title>
-<script src="/static/js/fullcalendar/index.global.min.js"></script>
+  <title>Dashboard - PoliPlanner</title>
+  <script src="/static/js/fullcalendar/index.global.min.js"></script>
 
-<style>
-  .fc {
-    background: white;
-    border-radius: 0;
-    overflow: hidden;
-  }
+  <style>
+    .fc {
+      background: white;
+      border-radius: 0;
+      overflow: hidden;
+    }
 
-  .fc-view-harness {
-    overflow-y: auto;
-  }
+    .fc-view-harness {
+      overflow-y: auto;
+    }
 
-  .fc-toolbar-title {
-    font-size: 1.25rem !important;
-    font-weight: 600;
-    color: #1f2937;
-    white-space: normal;
-    text-align: center;
-  }
+    .fc-toolbar-title {
+      font-size: 1.25rem !important;
+      font-weight: 600;
+      color: #1f2937;
+      white-space: normal;
+      text-align: center;
+    }
 
-  .fc-event {
-    border: none;
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-size: 0.875rem;
-  }
+    .fc-event {
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 0.875rem;
+    }
 
-  .fc-event.partial { background-color: #557fab; }
-  .fc-event.final   { background-color: oklch(68.1% 0.162 75.834); } /* amarillo final */
+    .fc-event.partial {
+      background-color: #557fab;
+    }
+    .fc-event.final {
+      background-color: oklch(68.1% 0.162 75.834);
+    } /* amarillo final */
 
-  .fc-event .fc-event-title {
-    font-weight: 500;
-  }
+    .fc-event .fc-event-title {
+      font-weight: 500;
+    }
 
-  @media (max-width: 768px) {
-    .fc-toolbar-title { font-size: 1.1rem !important; }
-    .fc .fc-toolbar { padding: 8px 4px; }
-    .fc-view-harness { max-height: 400px; }
-  }
-</style>
+    @media (max-width: 768px) {
+      .fc-toolbar-title {
+        font-size: 1.1rem !important;
+      }
+      .fc .fc-toolbar {
+        padding: 8px 4px;
+      }
+      .fc-view-harness {
+        max-height: 400px;
+      }
+    }
+  </style>
 {{ end }}
 
 {{ define "dashboard/content" }}
-<section class="p-6 bg-gray-50 rounded-sm border border-gray-200 mb-6">
-  <h2 class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
-    Calendario de exámenes
-  </h2>
-  <div id="exam-calendar" class="p-2 md:p-4 bg-white rounded-sm shadow-sm"></div>
-</section>
+  <section class="p-6 bg-gray-50 rounded-sm border border-gray-200 mb-6">
+    <h2
+      class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
+      Calendario de exámenes
+    </h2>
+    <div
+      id="exam-calendar"
+      class="p-2 md:p-4 bg-white rounded-sm shadow-sm"></div>
+  </section>
 
-<section class="p-6 bg-gray-50 rounded-sm border border-gray-200">
-  <h2 class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
-    Próximos exámenes
-  </h2>
-  <div id="upcoming-exams" class="space-y-4"></div>
-</section>
+  <section class="p-6 bg-gray-50 rounded-sm border border-gray-200">
+    <h2
+      class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
+      Próximos exámenes
+    </h2>
+    <div id="upcoming-exams" class="space-y-4"></div>
+  </section>
 
 <script>
 const exams = {{ . | toJS }};
@@ -124,4 +138,4 @@ document.addEventListener('DOMContentLoaded', () => {
   renderUpcomingExams(exams);
 });
 </script>
-{{end}}
+{{ end }}

@@ -2,8 +2,6 @@ package courseOffering
 
 import (
 	"time"
-
-	"github.com/elias-gill/poliplanner2/internal/domain/teacher"
 )
 
 type SectionID int64
@@ -12,7 +10,7 @@ type Section struct {
 	ID         SectionID
 	Section    string
 	CourseName string
-	Teachers   []teacher.Teacher
+	Teachers   []TeacherInfo
 	Type       CourseType
 }
 
@@ -44,6 +42,7 @@ type ExamsScheduleView struct {
 type CourseClass struct {
 	CourseID CourseOfferingID
 	Name     string
+	Day      WeekDay
 
 	Room  string
 	Start time.Time
