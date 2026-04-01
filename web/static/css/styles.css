@@ -21,3 +21,26 @@
   --color-primary-800: #1f3550;
   --color-primary-900: #142536;
 }
+
+/* Safe area support */
+.pb-safe {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+}
+
+/* Mejor altura del nav + safe area */
+nav.pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Active state para los links (opcional pero recomendado) */
+.active-state-dashboard[href="/dashboard"] i,
+.active-state-guides[href="/guides"] i,
+.active-state-tools[href="/tools"] i {
+    color: #60a5fa; /* azul más visible */
+    transform: scale(1.1);
+}
+
+/* Evitar highlight azul en iOS al tocar */
+a {
+    -webkit-tap-highlight-color: transparent;
+}
