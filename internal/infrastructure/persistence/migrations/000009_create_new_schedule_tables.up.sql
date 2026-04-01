@@ -3,11 +3,11 @@
 CREATE TABLE horarios (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     usuario_id INTEGER NOT NULL,
-    descripcion TEXT NOT NULL DEFAULT 'Mi horario',
+    titulo TEXT NOT NULL DEFAULT 'Mi horario',
     creado_en DATETIME DEFAULT (datetime('now')),
 
     FOREIGN KEY (usuario_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    UNIQUE (usuario_id, descripcion)
+    UNIQUE (usuario_id, titulo)
 );
 
 -- Detalle de cursos en cada horario

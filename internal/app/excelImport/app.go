@@ -44,7 +44,7 @@ func (s *ImportService) AutoSync(ctx context.Context) {
 	}
 
 	logger.Info("Starting automatic Excel sync")
-	s.sheetVersionStorer.SetLastCheckedAt(ctx, time.Now().In(timezone.ParaguayTZ))
+	s.sheetVersionStorer.SetLastCheckedDate(ctx, time.Now().In(timezone.ParaguayTZ))
 
 	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
 	defer cancel()
@@ -98,6 +98,9 @@ func (s *ImportService) PersistSource(ctx context.Context, src source.ExcelSourc
 
 	logger.Debug("Excel parser initialized successfully")
 
+	var pID period.PeriodID = 0
+	sheetCount := 0
+
 	pError := s.importStorer.RunImport(ctx, func(writer ImportWriter) error {
 		// Search or create a new period based on the source data
 		periodID, err := writer.EnsurePeriod(period.NewPeriodFromTime(sourceMeta.Date))
@@ -106,8 +109,8 @@ func (s *ImportService) PersistSource(ctx context.Context, src source.ExcelSourc
 			return fmt.Errorf("cannot save current period: %w", err)
 		}
 		logger.Debug("Period ensured", "period_id", periodID)
+		pID = periodID
 
-		sheetCount := 0
 		for parserExcel.NextSheet() {
 			sheetCount++
 			logger.Debug("Processing sheet", "sheet_number", sheetCount)
@@ -138,7 +141,21 @@ func (s *ImportService) PersistSource(ctx context.Context, src source.ExcelSourc
 	})
 
 	success := pError == nil
-	err = s.importStorer.SaveAudit(ctx, sourceMeta, success, pError)
+	now := time.Now().In(timezone.ParaguayTZ)
+	version, err := sheetversion.NewSheetVersion(
+		pID,
+		sourceMeta.Name,
+		sourceMeta.URI,
+		now,
+		sheetCount,
+		pError,
+	)
+	if err != nil {
+		logger.Error("Failed to create audit struct", "uri", sourceMeta.URI, "error", err)
+		return fmt.Errorf("failed to create Excel audit summary: %w", err)
+	}
+
+	_, err = s.importStorer.SaveAudit(ctx, version)
 	if err != nil {
 		logger.Error("Failed to save import audit", "uri", sourceMeta.URI, "error", err)
 		return fmt.Errorf("failed to save Excel audit summary: %w", err)
@@ -156,7 +173,7 @@ func (s *ImportService) PersistSource(ctx context.Context, src source.ExcelSourc
 // ================================
 
 func (s *ImportService) shouldAutoSync(ctx context.Context) bool {
-	lastCheck, err := s.sheetVersionStorer.GetLastCheckedAt(ctx)
+	lastCheck, err := s.sheetVersionStorer.GetLastCheckedDate(ctx)
 	if err != nil {
 		logger.Warn("Failed to retrieve last checked time", "error", err)
 		return true // si hay error, mejor intentar sincronizar

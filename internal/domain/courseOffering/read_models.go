@@ -6,6 +6,8 @@ import (
 
 type SectionID int64
 
+type ExamID int64
+
 type Section struct {
 	ID         SectionID
 	Section    string
@@ -22,6 +24,7 @@ type OfferList struct {
 // =========================
 
 type ExamClass struct {
+	ID         ExamID
 	CourseName string
 	Room       string
 	Date       time.Time

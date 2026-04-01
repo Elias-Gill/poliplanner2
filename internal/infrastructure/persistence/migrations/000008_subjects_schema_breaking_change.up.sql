@@ -80,6 +80,8 @@ CREATE TABLE cursos (
     comite_miembro1 TEXT,
     comite_miembro2 TEXT,
 
+    fechas_sabados TEXT,
+
     UNIQUE (malla, seccion, periodo)
 );
 CREATE INDEX idx_cursos_malla_periodo ON cursos(malla, periodo);

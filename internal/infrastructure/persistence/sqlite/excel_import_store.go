@@ -8,7 +8,7 @@ import (
 	excelimport "github.com/elias-gill/poliplanner2/internal/app/excelImport"
 	"github.com/elias-gill/poliplanner2/internal/domain/courseOffering"
 	"github.com/elias-gill/poliplanner2/internal/domain/period"
-	"github.com/elias-gill/poliplanner2/internal/infrastructure/source"
+	"github.com/elias-gill/poliplanner2/internal/domain/sheetVersion"
 )
 
 // ============================================================
@@ -65,42 +65,46 @@ func (s *SqliteExcelImportStorer) RunImport(
 
 func (s *SqliteExcelImportStorer) SaveAudit(
 	ctx context.Context,
-	meta source.ExcelSourceMetadata,
-	success bool,
-	errorMsg error,
-) error {
+	version *sheetVersion.SheetVersion,
+) (sheetVersion.SheetVersionID, error) {
 
-	successInt := 0
-	if success {
-		successInt = 1
+	successInt := 1
+	if version.Error != "" {
+		successInt = 0
 	}
 
-	var errStr *string
-	if errorMsg != nil {
-		msg := errorMsg.Error()
-		errStr = &msg
-	}
-
-	_, err := s.db.ExecContext(
+	result, err := s.db.ExecContext(
 		ctx,
 		`
 		INSERT INTO sheet_version (
 			file_name,
 			url,
 			success,
-			error_message
-		) VALUES (?, ?, ?, ?)
+			error_message,
+			period,
+			parsed_at,
+			parsed_sheets
+		) VALUES (?, ?, ?, ?, ?, ?, ?)
 		`,
-		meta.Name,
-		meta.URI,
+		version.FileName,
+		version.URL,
 		successInt,
-		errStr,
+		version.Error,
+		version.Period,
+		version.ParsedAt,
+		version.ParsedSheets,
 	)
+
 	if err != nil {
-		return fmt.Errorf("failed to insert sheet audit record: %w", err)
+		return -1, fmt.Errorf("failed to insert sheet audit record: %w", err)
 	}
 
-	return nil
+	id, err := result.LastInsertId()
+	if err != nil {
+		return -1, fmt.Errorf("failed to get last inserted record id: %w", err)
+	}
+
+	return sheetVersion.SheetVersionID(id), nil
 }
 
 // ============================================================
@@ -265,15 +269,16 @@ func (w sqliteExcelImportWritter) upsertCourse(
 	err := w.tx.QueryRow(`
 		INSERT INTO cursos (
 			malla, periodo, nombre, seccion, tipo,
-			comite_presidente, comite_miembro1, comite_miembro2
+			comite_presidente, comite_miembro1, comite_miembro2, fechas_sabados
 		)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 		ON CONFLICT(malla, seccion, periodo) DO UPDATE SET
 			nombre = excluded.nombre,
 			tipo = excluded.tipo,
 			comite_presidente = excluded.comite_presidente,
 			comite_miembro1 = excluded.comite_miembro1,
-			comite_miembro2 = excluded.comite_miembro2
+			comite_miembro2 = excluded.comite_miembro2,
+			fechas_sabados = excluded.fechas_sabados
 		RETURNING id
 	`,
 		mallaID,
@@ -284,6 +289,7 @@ func (w sqliteExcelImportWritter) upsertCourse(
 		off.CommitteePresident,
 		off.CommitteeMember1,
 		off.CommitteeMember2,
+		off.SaturdayDates,
 	).Scan(&courseID)
 
 	if err != nil {

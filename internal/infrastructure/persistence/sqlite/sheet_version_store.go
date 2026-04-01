@@ -59,7 +59,7 @@ func (s SqliteSheetVersionStore) GetNewest(ctx context.Context) (*sheetversion.S
 	return sv, nil
 }
 
-func (s SqliteSheetVersionStore) GetLastCheckedAt(
+func (s SqliteSheetVersionStore) GetLastCheckedDate(
 	ctx context.Context,
 ) (*time.Time, error) {
 
@@ -89,7 +89,7 @@ func (s SqliteSheetVersionStore) GetLastCheckedAt(
 	return &t, nil
 }
 
-func (s SqliteSheetVersionStore) SetLastCheckedAt(
+func (s SqliteSheetVersionStore) SetLastCheckedDate(
 	ctx context.Context,
 	t time.Time,
 ) error {

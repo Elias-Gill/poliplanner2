@@ -14,7 +14,6 @@ import (
 	planModel "github.com/elias-gill/poliplanner2/internal/domain/academicPlan"
 	"github.com/elias-gill/poliplanner2/internal/domain/courseOffering"
 	scheduleModel "github.com/elias-gill/poliplanner2/internal/domain/schedule"
-	"github.com/elias-gill/poliplanner2/internal/domain/user"
 	"github.com/elias-gill/poliplanner2/logger"
 	"github.com/go-chi/chi/v5"
 )
@@ -82,8 +81,8 @@ func NewSchedulesRouter(
 		})
 
 		r.Post("/", func(w http.ResponseWriter, r *http.Request) {
-
 			if err := r.ParseForm(); err != nil {
+				// If form parsing fails, redirect to a bad form page
 				customRedirect(w, r, "/bad_form")
 				return
 			}
@@ -91,6 +90,7 @@ func NewSchedulesRouter(
 			ctx, cancel := context.WithTimeout(r.Context(), time.Second)
 			defer cancel()
 
+			// Fetch the list of careers to populate the view
 			careers, err := planService.ListCareers(ctx)
 			if err != nil {
 				logger.Error("cannot list careers", "error", err)
@@ -104,24 +104,39 @@ func NewSchedulesRouter(
 				Career:  r.Form.Get("career_id"),
 			}
 
+			// Validate that the title is not empty
 			title, err := requiredString(view.Title)
 			if err != nil {
-				view.Error = "title is required"
+				view.Error = "el título es obligatorio"
 				step1.Execute(w, view)
 				return
 			}
 
+			// Validate that the career ID is valid
 			careerID, err := parseID(view.Career)
 			if err != nil {
-				view.Error = "invalid career selected"
+				view.Error = "carrera seleccionada no válida"
 				step1.Execute(w, view)
 				return
 			}
 
+			// Check if a schedule with this title already exists for the current user
+			userID := extractUserID(r)
+			available, err := scheduleService.TitleIsAvailable(ctx, userID, title)
+			if err != nil {
+				customRedirect(w, r, "/500")
+				return
+			}
+			if !available {
+				view.Error = "ya existe un horario con este título"
+				step1.Execute(w, view)
+				return
+			}
+
+			// Build query parameters and redirect to step 2
 			q := url.Values{}
 			q.Set("title", title)
 			q.Set("career_id", strconv.FormatInt(careerID, 10))
-
 			customRedirect(w, r, "/schedule/step2?"+q.Encode())
 		})
 
@@ -309,13 +324,24 @@ func NewSchedulesRouter(
 			ctx, cancel := context.WithTimeout(r.Context(), 300*time.Millisecond)
 			defer cancel()
 
+			// Check if a schedule with this title already exists for the current user
+			available, err := scheduleService.TitleIsAvailable(ctx, userID, title)
+			if err != nil {
+				logger.Error("cannot check title existence", "error", err)
+				customRedirect(w, r, "/500")
+				return
+			}
+			if !available {
+				customRedirect(w, r, "/bad_form")
+				return
+			}
+
 			schedule, err := scheduleModel.NewSchedule(
-				user.UserID(userID),
+				userID,
 				title,
 				courses,
 			)
 			if err != nil {
-				logger.Error("cannot create schedule", "error", err)
 				customRedirect(w, r, "/bad_form")
 				return
 			}
@@ -330,7 +356,7 @@ func NewSchedulesRouter(
 			// set this id into a cookie
 			http.SetCookie(w, &http.Cookie{
 				Name:     latestSelectionCookie,
-				Value:    strconv.FormatInt(int64(scheduleID), 64),
+				Value:    strconv.FormatInt(int64(scheduleID), 10),
 				Path:     "/",
 				HttpOnly: true,
 				Secure:   config.Get().Security.SecureHTTP,

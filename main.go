@@ -16,8 +16,6 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-// FIX: que no se pueda crear nuevo horario cuando no se puede resolver el periodo, ver ese flujo
-
 func main() {
 	config.MustLoad()
 	cfg := config.Get()

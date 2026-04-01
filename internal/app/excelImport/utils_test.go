@@ -1,4 +1,4 @@
-package parser
+package excelimport
 
 import (
 	"testing"
@@ -37,16 +37,9 @@ func TestNameNormalization(t *testing.T) {
 
 	for _, testCase := range tests {
 		t.Run(testCase.input, func(t *testing.T) {
-			dto := SubjectDTO{}
-			dto.SetSubjectName(testCase.input)
-
-			if dto.TentativeRealSubjectName != testCase.expected {
-				t.Errorf(
-					"SetSubjectName(%q) => %q, expected %q",
-					testCase.input,
-					dto.TentativeRealSubjectName,
-					testCase.expected,
-					)
+			got := normalizeSubjectName(testCase.input)
+			if got != testCase.expected {
+				t.Errorf("normalizeSubjectName(%q) => %q, expected %q", testCase.input, got, testCase.expected)
 			}
 		})
 	}

@@ -26,9 +26,57 @@ func (a AcademicPlanService) ListCareers(ctx context.Context) ([]*academicPlan.C
 
 func (a AcademicPlanService) GetCareerPlan(
 	ctx context.Context,
-	career academicPlan.CareerID,
+	careerID academicPlan.CareerID,
 ) (*academicPlan.AcademicPlan, error) {
-	return a.planStorer.GetPlanByCareerID(ctx, career)
+
+	career, err := a.planStorer.GetCareer(ctx, careerID)
+	if err != nil {
+		return nil, err
+	}
+	if career == nil {
+		return nil, nil
+	}
+
+	rows, err := a.planStorer.GetPlanByCareerID(ctx, careerID)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(rows) == 0 {
+		return &academicPlan.AcademicPlan{
+			CareerID:  career.ID,
+			Semesters: []academicPlan.SemesterSubjects{},
+		}, nil
+	}
+
+	var semesters []academicPlan.SemesterSubjects
+
+	currentSemester := rows[0].Semester
+	currentSubjects := []academicPlan.Subject{}
+
+	for _, r := range rows {
+		if r.Semester != currentSemester {
+			semesters = append(semesters, academicPlan.SemesterSubjects{
+				Semester: currentSemester,
+				Subjects: currentSubjects,
+			})
+
+			currentSemester = r.Semester
+			currentSubjects = []academicPlan.Subject{}
+		}
+
+		currentSubjects = append(currentSubjects, r)
+	}
+
+	semesters = append(semesters, academicPlan.SemesterSubjects{
+		Semester: currentSemester,
+		Subjects: currentSubjects,
+	})
+
+	return &academicPlan.AcademicPlan{
+		CareerID:  career.ID,
+		Semesters: semesters,
+	}, nil
 }
 
 func (a AcademicPlanService) ListOffering(
@@ -102,16 +150,29 @@ func (a AcademicPlanService) ListCoursesSchedule(
 	return view, nil
 }
 
-func (a AcademicPlanService) ListExams(
+func (a AcademicPlanService) GetCourseExams(
 	ctx context.Context,
 	id courseOffering.CourseOfferingID,
 ) ([]courseOffering.ExamClass, error) {
-	// FIX: error handling
-	exams, _ := a.courseStorer.GetCoursesExams(ctx, []courseOffering.CourseOfferingID{id})
+	exams, err := a.courseStorer.GetCoursesExams(ctx, []courseOffering.CourseOfferingID{id})
+	if err != nil {
+		return nil, fmt.Errorf("failed to list exams for course %d: %w", id, err)
+	}
 	return exams, nil
 }
 
 func (a AcademicPlanService) ListCoursesExams(
+	ctx context.Context,
+	ids []courseOffering.CourseOfferingID,
+) ([]courseOffering.ExamClass, error) {
+	exams, err := a.courseStorer.GetCoursesExams(ctx, ids)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list exams for courses: %w", err)
+	}
+	return exams, nil
+}
+
+func (a AcademicPlanService) GetScheduleExamsView(
 	ctx context.Context,
 	courses []courseOffering.CourseOfferingID,
 ) (*courseOffering.ExamsScheduleView, error) {

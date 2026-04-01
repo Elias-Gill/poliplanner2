@@ -1,22 +1,69 @@
 package sheetVersion
 
-import "time"
+import (
+	"fmt"
+	"time"
+
+	"github.com/elias-gill/poliplanner2/internal/domain/period"
+)
 
 type SheetVersionID int64
 
 type SheetVersion struct {
-	ID SheetVersionID
+	ID     SheetVersionID
+	Period period.PeriodID
 
-	FileName string
-	URL      string
-	ParsedAt time.Time
+	FileName     string
+	URL          string
+	ParsedAt     time.Time
+	ParsedSheets int
 
-	sheets int
-	errors []string
+	Succeeded bool
+	Error     string
+}
 
-	// hacer el calculo manual de la cantidad de errores al crear el agregado
-	// En la db simplemente se guardan los errores y ya
+func NewSheetVersion(
+	periodID period.PeriodID,
+	fileName string,
+	url string,
+	parsedAt time.Time,
+	parsedSheets int,
+	errMsg error,
+) (*SheetVersion, error) {
 
-	// TODO: enlazar con el periodo para poder hacer filtrado
-	// Period period.PeriodID
+	if periodID == 0 {
+		return nil, fmt.Errorf("period id is required")
+	}
+
+	if fileName == "" {
+		return nil, fmt.Errorf("file name is required")
+	}
+
+	if url == "" {
+		return nil, fmt.Errorf("url is required")
+	}
+
+	if parsedAt.IsZero() {
+		return nil, fmt.Errorf("parsedAt is required")
+	}
+
+	if parsedSheets < 0 {
+		return nil, fmt.Errorf("parsedSheets cannot be negative")
+	}
+
+	v := &SheetVersion{
+		Period:       periodID,
+		FileName:     fileName,
+		URL:          url,
+		ParsedAt:     parsedAt,
+		ParsedSheets: parsedSheets,
+		Succeeded:    true,
+	}
+
+	if errMsg != nil {
+		v.Error = errMsg.Error()
+		v.Succeeded = false
+	}
+
+	return v, nil
 }

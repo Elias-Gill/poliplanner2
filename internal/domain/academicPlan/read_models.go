@@ -22,8 +22,9 @@ type Career struct {
 type Subject struct {
 	ID         SubjectID
 	Name       string
-	Level      int
 	Department string
+	Level      int
+	Semester   int
 }
 
 type SemesterSubjects struct {

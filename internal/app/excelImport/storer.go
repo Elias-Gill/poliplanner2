@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/elias-gill/poliplanner2/internal/domain/period"
-	"github.com/elias-gill/poliplanner2/internal/infrastructure/source"
+	"github.com/elias-gill/poliplanner2/internal/domain/sheetVersion"
 )
 
 type ImportStorer interface {
@@ -12,12 +12,7 @@ type ImportStorer interface {
 
 	// SaveAudit records a new audit entry for an Excel import, capturing metadata,
 	// whether the import succeeded, and any errors encountered during parsing.
-	SaveAudit(
-		ctx context.Context,
-		meta source.ExcelSourceMetadata,
-		success bool,
-		errorMsg error,
-	) error
+	SaveAudit(ctx context.Context, version *sheetVersion.SheetVersion) (sheetVersion.SheetVersionID, error)
 }
 
 type ImportWriter interface {

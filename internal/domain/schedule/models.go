@@ -12,11 +12,11 @@ import (
 type ScheduleID int64
 
 type Schedule struct {
-	ID          ScheduleID
-	Owner       user.UserID
-	Description string
-	CreatedAt   time.Time
-	Courses     []courseOffering.CourseOfferingID
+	ID        ScheduleID
+	Owner     user.UserID
+	Title     string
+	CreatedAt time.Time
+	Courses   []courseOffering.CourseOfferingID
 }
 
 func NewSchedule(owner user.UserID, description string, courses []courseOffering.CourseOfferingID) (*Schedule, error) {
@@ -25,9 +25,9 @@ func NewSchedule(owner user.UserID, description string, courses []courseOffering
 	}
 
 	return &Schedule{
-		Owner:       owner,
-		Description: description,
-		CreatedAt:   time.Now().In(timezone.ParaguayTZ),
-		Courses:     courses,
+		Owner:     owner,
+		Title:     description,
+		CreatedAt: time.Now().In(timezone.ParaguayTZ),
+		Courses:   courses,
 	}, nil
 }

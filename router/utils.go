@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/elias-gill/poliplanner2/internal/domain/user"
 	"github.com/elias-gill/poliplanner2/web"
 )
 
@@ -16,10 +17,10 @@ import (
 //
 // If this is the case, then probably the endpoint has not been added to the "protected
 // endpoints" array list in the middleware configuration.
-func extractUserID(r *http.Request) int64 {
+func extractUserID(r *http.Request) user.UserID {
 	switch id := r.Context().Value("userID").(type) {
 	case int64:
-		return id
+		return user.UserID(id)
 	default:
 		panic("The user ID is not set in the request of a protected endpoint, something wrong must have happened with the session manager middleware")
 	}
