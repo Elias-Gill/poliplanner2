@@ -17,53 +17,88 @@
             secciones.
           </p>
         </div>
-        <div class="flex flex-col md:items-end gap-2 w-full md:w-auto">
-          <div class="w-full md:w-64 flex flex-col gap-2">
-            <div class="flex gap-2 w-full">
-              <select
-                id="schedule-select"
-                class="flex-1 border border-gray-300 rounded-sm px-3 py-2 text-gray-900"
-                onchange="window.location.href='?id='+this.value+'&mode=overview'">
-                {{ range .Schedules }}
-                  <option
-                    value="{{ .ID }}"
-                    {{ if eq $.SelectedID .ID }}selected{{ end }}>
-                    {{ .Title }}
-                  </option>
-                {{ end }}
-              </select>
-              <a
-                href="/schedule/"
-                class="inline-flex items-center justify-center bg-primary-600 text-white px-3 py-2 rounded-sm hover:bg-primary-700 transition-colors"
-                title="Nuevo horario">
-                <i class="bi bi-plus-lg"></i>
-              </a>
-            </div>
-            <div class="flex bg-gray-200 rounded-sm p-1 w-full mt-2">
-              <a
-                href="?id={{ .SelectedID }}&mode=overview"
-                class="flex-1 px-3 py-2 {{ if eq .Mode "overview" }}
-                  bg-white text-gray-900
-                {{ else }}
-                  text-gray-600
-                {{ end }} rounded-sm text-sm font-medium">
-                Overview
-              </a>
-              <a
-                href="?id={{ .SelectedID }}&mode=calendar"
-                class="flex-1 px-3 py-2 {{ if eq .Mode "calendar" }}
-                  bg-white text-gray-900
-                {{ else }}
-                  text-gray-600
-                {{ end }} text-sm font-medium">
-                Calendario
-              </a>
+
+        {{ if .Schedules }}
+          <div class="flex flex-col md:items-end gap-2 w-full md:w-auto">
+            <div class="w-full md:w-64 flex flex-col gap-2">
+              <div class="flex gap-2 w-full">
+                <select
+                  id="schedule-select"
+                  class="flex-1 border border-gray-300 rounded-sm px-3 py-2 text-gray-900"
+                  onchange="window.location.href='?id='+this.value+'&mode=overview'">
+                  {{ range .Schedules }}
+                    <option
+                      value="{{ .ID }}"
+                      {{ if eq $.SelectedID .ID }}selected{{ end }}>
+                      {{ .Title }}
+                    </option>
+                  {{ end }}
+                </select>
+                <a
+                  href="/schedule/"
+                  class="inline-flex items-center justify-center bg-primary-600 text-white px-3 py-2 rounded-sm hover:bg-primary-700 transition-colors"
+                  title="Nuevo horario">
+                  <i class="bi bi-plus-lg"></i>
+                </a>
+              </div>
+              <div class="flex bg-gray-200 rounded-sm p-1 w-full mt-2">
+                <a
+                  href="?id={{ .SelectedID }}&mode=overview"
+                  class="flex-1 px-3 py-2 {{ if eq .Mode "overview" }}
+                    bg-white text-gray-900
+                  {{ else }}
+                    text-gray-600
+                  {{ end }} rounded-sm text-sm font-medium">
+                  Overview
+                </a>
+                <a
+                  href="?id={{ .SelectedID }}&mode=calendar"
+                  class="flex-1 px-3 py-2 {{ if eq .Mode "calendar" }}
+                    bg-white text-gray-900
+                  {{ else }}
+                    text-gray-600
+                  {{ end }} text-sm font-medium">
+                  Calendario
+                </a>
+              </div>
             </div>
           </div>
-        </div>
+        {{ end }}
       </div>
     </div>
 
-    {{ block "dashboard/content" .Data }}{{ end }}
+    <!-- Contenido principal -->
+    {{ if .Schedules }}
+      {{ block "dashboard/content" .Data }}{{ end }}
+    {{ else }}
+      <!-- Empty State coherente con dashboard -->
+      <div class="bg-white border border-gray-200 rounded-sm shadow-sm mb-6">
+        <div class="p-6 border-b border-gray-200">
+          <h2 class="text-lg font-semibold text-gray-900">Horarios</h2>
+          <p class="text-sm text-gray-600 mt-1">
+            Aquí aparecerán tus horarios creados.
+          </p>
+        </div>
+
+        <div class="p-10 flex flex-col items-center text-center">
+          <div
+            class="w-14 h-14 bg-gray-100 rounded-sm flex items-center justify-center mb-5">
+            <i class="bi bi-calendar-x text-2xl text-gray-500"></i>
+          </div>
+
+          <p class="text-gray-700 mb-6 max-w-sm">
+            Aún no tienes horarios. Crea uno para visualizar tu calendario,
+            exámenes y overview de materias.
+          </p>
+
+          <a
+            href="/schedule/"
+            class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-sm text-sm font-medium transition-colors">
+            <i class="bi bi-plus-lg"></i>
+            Crear horario
+          </a>
+        </div>
+      </div>
+    {{ end }}
   </div>
 {{ end }}

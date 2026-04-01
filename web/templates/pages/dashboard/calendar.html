@@ -1,72 +1,96 @@
 {{ define "custom_head" }}
-<title>Dashboard - PoliPlanner</title>
-<script src="/static/js/fullcalendar/index.global.min.js"></script>
+  <title>Dashboard - PoliPlanner</title>
+  <script src="/static/js/fullcalendar/index.global.min.js"></script>
 
-<style>
-/* Highlight temporal */
-.highlight-exam-green {
-  animation: highlightFlashGreen 2s ease;
-  border-color: #22c55e;
-  background-color: #bbf7d0;
-  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.4);
-}
+  <style>
+    /* Highlight temporal */
+    .highlight-exam-green {
+      animation: highlightFlashGreen 2s ease;
+      border-color: #22c55e;
+      background-color: #bbf7d0;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.4);
+    }
 
-@keyframes highlightFlashGreen {
-  0%   { background-color: #dcfce7; }
-  50%  { background-color: #bbf7d0; }
-  100% { background-color: #dcfce7; }
-}
+    @keyframes highlightFlashGreen {
+      0% {
+        background-color: #dcfce7;
+      }
+      50% {
+        background-color: #bbf7d0;
+      }
+      100% {
+        background-color: #dcfce7;
+      }
+    }
 
-/* FullCalendar styles */
-.fc { 
-  background: white; 
-  border-radius: 0; 
-  overflow: hidden; 
-}
-.fc-view-harness { overflow-y: auto; }
+    /* FullCalendar styles */
+    .fc {
+      background: white;
+      border-radius: 0;
+      overflow: hidden;
+    }
+    .fc-view-harness {
+      overflow-y: auto;
+    }
 
-.fc-toolbar-title {
-  font-size: 1.25rem !important;
-  font-weight: 600;
-  color: #1f2937;
-  white-space: normal;
-  text-align: center;
-}
+    .fc-toolbar-title {
+      font-size: 1.25rem !important;
+      font-weight: 600;
+      color: #1f2937;
+      white-space: normal;
+      text-align: center;
+    }
 
-.fc-event { 
-  border: none; 
-  border-radius: 4px; 
-  padding: 4px 8px; 
-  font-size: 0.875rem; 
-  cursor: pointer;
-}
+    .fc-event {
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
 
-.fc-event.partial { background-color: #557fab; }
-.fc-event.final { background-color: oklch(68.1% 0.162 75.834); }
-.fc-event .fc-event-title { font-weight: 500; }
+    .fc-event.partial {
+      background-color: #557fab;
+    }
+    .fc-event.final {
+      background-color: oklch(68.1% 0.162 75.834);
+    }
+    .fc-event .fc-event-title {
+      font-weight: 500;
+    }
 
-@media (max-width: 768px) {
-  .fc-toolbar-title { font-size: 1.1rem !important; }
-  .fc .fc-toolbar { padding: 8px 4px; }
-  .fc-view-harness { max-height: 400px; }
-}
-</style>
+    @media (max-width: 768px) {
+      .fc-toolbar-title {
+        font-size: 1.1rem !important;
+      }
+      .fc .fc-toolbar {
+        padding: 8px 4px;
+      }
+      .fc-view-harness {
+        max-height: 400px;
+      }
+    }
+  </style>
 {{ end }}
 
 {{ define "dashboard/content" }}
-<section class="p-6 bg-gray-50 rounded-sm border border-gray-200 mb-6">
-  <h2 class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
-    Calendario de exámenes
-  </h2>
-  <div id="exam-calendar" class="p-2 md:p-4 bg-white rounded-sm shadow-sm"></div>
-</section>
+  <section class="p-6 bg-gray-50 rounded-sm border border-gray-200 mb-6">
+    <h2
+      class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
+      Calendario de exámenes
+    </h2>
+    <div
+      id="exam-calendar"
+      class="p-2 md:p-4 bg-white rounded-sm shadow-sm"></div>
+  </section>
 
-<section class="p-6 bg-gray-50 rounded-sm border border-gray-200">
-  <h2 class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
-    Próximos exámenes
-  </h2>
-  <div id="upcoming-exams" class="space-y-4"></div>
-</section>
+  <section class="p-6 bg-gray-50 rounded-sm border border-gray-200">
+    <h2
+      class="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
+      Próximos exámenes
+    </h2>
+    <div id="upcoming-exams" class="space-y-4"></div>
+  </section>
 
 <script>
 const exams = {{ . | toJS }};
@@ -81,18 +105,18 @@ document.addEventListener('DOMContentLoaded', () => {
     start: exam.Date,
     allDay: true,
     classNames: [exam.Type === 'final' ? 'final' : 'partial'],
-    extendedProps: { 
-      examId: exam.ID 
+    extendedProps: {
+      examId: exam.ID
     }
   }));
 
   // ==================== FULLCALENDAR ====================
   const calendar = new FullCalendar.Calendar(document.getElementById('exam-calendar'), {
     initialView: 'dayGridMonth',
-    headerToolbar: { 
-      left: 'prev,next today', 
-      center: 'title', 
-      right: '' 
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: ''
     },
     events: calendarEvents,
     locale: 'es',
@@ -101,11 +125,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cuando se hace click en un evento del calendario
     eventClick: function(info) {
       const examId = info.event.extendedProps.examId;
-      
+
       const examDiv = listContainer.querySelector(`[data-exam-id="${examId}"]`);
       if (examDiv) {
         examDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
+
         examDiv.classList.add('highlight-exam-green');
         setTimeout(() => {
           examDiv.classList.remove('highlight-exam-green');
@@ -118,15 +142,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ==================== RENDER LIST ====================
   function formatExamDiv(exam) {
-    const labelText = exam.Type.charAt(0).toUpperCase() + exam.Type.slice(1) + 
+    const labelText = exam.Type.charAt(0).toUpperCase() + exam.Type.slice(1) +
                      (exam.Instance ? ` ${exam.Instance}` : '');
 
-    const bgClass = exam.Type === 'final' 
-      ? 'bg-yellow-50 border-yellow-400' 
+    const bgClass = exam.Type === 'final'
+      ? 'bg-yellow-50 border-yellow-400'
       : 'bg-primary-50 border-primary-400';
 
-    const labelColor = exam.Type === 'final' 
-      ? 'bg-yellow-100 text-yellow-700' 
+    const labelColor = exam.Type === 'final'
+      ? 'bg-yellow-100 text-yellow-700'
       : 'bg-primary-50 text-primary-700';
 
     const div = document.createElement('div');
@@ -152,14 +176,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderUpcomingExams() {
     listContainer.innerHTML = '';
-    
+
     if (!exams.length) {
       listContainer.innerHTML = `<p class="text-gray-500 py-8 text-center">No hay exámenes próximos.</p>`;
       return;
     }
 
     const sortedExams = [...exams].sort((a, b) => new Date(a.Date) - new Date(b.Date));
-    
+
     sortedExams.forEach(exam => {
       listContainer.appendChild(formatExamDiv(exam));
     });

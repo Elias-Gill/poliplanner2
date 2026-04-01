@@ -116,6 +116,16 @@ func NewDashboardRouter(
 				return
 			}
 
+			// If no schedule created, then execute the template with empty data
+			if len(schedules) == 0 {
+				dashboardTemplate.Execute(w, dashboardPage{
+					Mode:      mode,
+					Data:      nil,
+					Schedules: schedules,
+				})
+				return
+			}
+
 			var selectedID scheduleDomain.ScheduleID
 			if queryID != "" {
 				if qid, err := strconv.ParseInt(queryID, 10, 64); err == nil {

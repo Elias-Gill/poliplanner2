@@ -1,42 +1,48 @@
 {{ define "base" }}
-<!doctype html>
-<html lang="es" class="h-full">
-<head>
-  <meta charset="UTF-8" />
-  <!-- Muy importante para safe-area -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  
-  <link rel="stylesheet" href="/static/css/bootstrap-icons/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="/static/output.css" />
-  
-  <script src="/static/js/theme_bootstrap.js"></script>
-  <script src="/static/js/theme_toggle.js"></script>
-  
-  {{ block "custom_head" . }}{{ end }}
-</head>
-<body class="h-full bg-gray-100 text-gray-900 antialiased">
-        <div class="flex h-screen overflow-hidden">
-    {{ template "fragments/sidebar" . }}
-    
-    <div class="flex flex-col flex-1 overflow-hidden">
-      {{ template "fragments/navbar_mobile" . }}
-      
-      <main class="flex-1 overflow-y-auto p-3 pb-20 md:pb-8 md:p-8 lg:p-20 lg:pt-10">
-        {{ block "content" . }}{{ end }}
-      </main>
-    </div>
-  </div>
+  <!doctype html>
+  <html lang="es" class="h-full">
+    <head>
+      <meta charset="UTF-8" />
+      <!-- Muy importante para safe-area -->
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
-  {{ template "fragments/mobile-modal" . }}
-  <script src="/static/js/medium_zoom.js"></script>
-        <script>
-            
-        document.querySelectorAll('nav a').forEach(link => {
-        if (link.href === window.location.href.split('?')[0]) {
-        link.classList.add('text-blue-400');
-        }
+      <link
+        rel="stylesheet"
+        href="/static/css/bootstrap-icons/bootstrap-icons.min.css" />
+      <link rel="stylesheet" href="/static/output.css" />
+
+      <script src="/static/js/theme_bootstrap.js"></script>
+      <script src="/static/js/theme_toggle.js"></script>
+
+      {{ block "custom_head" . }}{{ end }}
+    </head>
+    <body class="h-full bg-gray-100 text-gray-900 antialiased">
+      <div class="flex h-screen overflow-hidden">
+        {{ template "fragments/sidebar" . }}
+
+
+        <div class="flex flex-col flex-1 overflow-hidden">
+          {{ template "fragments/navbar_mobile" . }}
+
+
+          <main
+            class="flex-1 overflow-y-auto p-3 pb-20 md:pb-8 md:p-8 lg:p-20 lg:pt-10">
+            {{ block "content" . }}{{ end }}
+          </main>
+        </div>
+      </div>
+
+      {{ template "fragments/mobile-modal" . }}
+      <script src="/static/js/medium_zoom.js"></script>
+      <script>
+        document.querySelectorAll("nav a").forEach((link) => {
+          if (link.href === window.location.href.split("?")[0]) {
+            link.classList.add("text-blue-400");
+          }
         });
-        </script>
-</body>
-</html>
+      </script>
+    </body>
+  </html>
 {{ end }}
