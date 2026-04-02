@@ -10,7 +10,7 @@
             <h3 class="font-semibold text-gray-800 mb-4">Lunes</h3>
             {{ if .Weekly.Monday }}
             {{ range .Weekly.Monday }}
-            <div class="mb-3 p-4 rounded-sm bg-white shadow-sm space-y-1">
+            <div class="mb-3 p-4 rounded-sm bg-white border border-gray-300 shadow-sm space-y-1">
                 <div class="font-medium text-gray-900">{{ .Name }}</div>
                 <div class="flex justify-between text-sm text-gray-600">
                     <span>Aula: {{ .Room }}</span>
@@ -29,7 +29,7 @@
             <h3 class="font-semibold text-gray-800 mb-4">Martes</h3>
             {{ if .Weekly.Tuesday }}
             {{ range .Weekly.Tuesday }}
-            <div class="mb-3 p-4 rounded-sm bg-white shadow-sm space-y-1">
+            <div class="mb-3 p-4 rounded-sm bg-white border border-gray-300 shadow-sm space-y-1">
                 <div class="font-medium text-gray-900">{{ .Name }}</div>
                 <div class="flex justify-between text-sm text-gray-600">
                     <span>Aula: {{ .Room }}</span>
@@ -48,7 +48,7 @@
             <h3 class="font-semibold text-gray-800 mb-4">Miércoles</h3>
             {{ if .Weekly.Wednesday }}
             {{ range .Weekly.Wednesday }}
-            <div class="mb-3 p-4 rounded-sm bg-white shadow-sm space-y-1">
+            <div class="mb-3 p-4 rounded-sm bg-white border border-gray-300 shadow-sm space-y-1">
                 <div class="font-medium text-gray-900">{{ .Name }}</div>
                 <div class="flex justify-between text-sm text-gray-600">
                     <span>Aula: {{ .Room }}</span>
@@ -67,7 +67,7 @@
             <h3 class="font-semibold text-gray-800 mb-4">Jueves</h3>
             {{ if .Weekly.Thursday }}
             {{ range .Weekly.Thursday }}
-            <div class="mb-3 p-4 rounded-sm bg-white shadow-sm space-y-1">
+            <div class="mb-3 p-4 rounded-sm bg-white border border-gray-300 shadow-sm space-y-1">
                 <div class="font-medium text-gray-900">{{ .Name }}</div>
                 <div class="flex justify-between text-sm text-gray-600">
                     <span>Aula: {{ .Room }}</span>
@@ -86,7 +86,7 @@
             <h3 class="font-semibold text-gray-800 mb-4">Viernes</h3>
             {{ if .Weekly.Friday }}
             {{ range .Weekly.Friday }}
-            <div class="mb-3 p-4 rounded-sm bg-white shadow-sm space-y-1">
+            <div class="mb-3 p-4 rounded-sm bg-white border border-gray-300 shadow-sm space-y-1">
                 <div class="font-medium text-gray-900">{{ .Name }}</div>
                 <div class="flex justify-between text-sm text-gray-600">
                     <span>Aula: {{ .Room }}</span>
@@ -105,7 +105,7 @@
             <h3 class="font-semibold text-gray-800 mb-4">Sábado</h3>
             {{ if .Weekly.Saturday }}
             {{ range .Weekly.Saturday }}
-            <div class="mb-3 p-4 rounded-sm bg-white shadow-sm space-y-1">
+            <div class="mb-3 p-4 rounded-sm bg-white border border-gray-300 shadow-sm space-y-1">
                 <div class="font-medium text-gray-900">{{ .Name }}</div>
                 <div class="flex justify-between text-sm text-gray-600">
                     <span>Aula: {{ .Room }}</span>

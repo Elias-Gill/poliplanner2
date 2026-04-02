@@ -7,10 +7,10 @@
   <div
     class="flex items-center justify-center min-h-screen px-0 sm:px-6 lg:px-8">
     <div
-      class="w-full max-w-3xl py-4 bg-white rounded-sm shadow-xl overflow-hidden">
-      <div class="px-6 md:px-10 pt-10 pb-12 mt-3 space-y-16 md:space-y-20">
+      class="w-full border-gray-300 border max-w-3xl py-4 bg-gray-50 rounded-sm shadow-xl overflow-hidden">
+      <div class="px-6 md:px-10 pt-10 pb-6 space-y-8 md:space-y-10">
         <!-- Sección 1 -->
-        <section class="space-y-6">
+        <section class="space-y-4">
           <div class="pb-2 border-b border-gray-200">
             <h2 class="text-xl font-semibold text-gray-900">
               Sincronización automática
@@ -22,7 +22,7 @@
           </div>
           <form
             id="syncForm"
-            class="p-6 space-y-6 border border-gray-300 rounded-sm bg-gray-50/40">
+            class="p-5 space-y-4 border border-gray-300 rounded-sm bg-gray-50/40">
             <div>
               <label
                 for="syncKey"
@@ -35,20 +35,21 @@
                 name="syncKey"
                 required
                 placeholder="Ingresa la clave"
-                class="block w-full px-4 py-3 text-gray-900 placeholder-gray-400 border border-gray-300 rounded-sm shadow-sm transition focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+                class="block w-full px-4 py-2.5 text-gray-900 placeholder-gray-400 border border-gray-300 rounded-sm shadow-sm transition focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
             </div>
             <button
               type="submit"
-              class="w-full px-4 py-3 font-medium text-white transition duration-150 rounded-sm bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+              class="w-full px-4 py-2.5 font-medium text-white transition duration-150 rounded-sm bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
               Sincronizar ahora
             </button>
           </form>
           <div
             id="syncResult"
-            class="pt-2 text-sm font-medium min-h-[2.5rem]"></div>
+            class="pt-1 text-sm font-medium min-h-[2rem]"></div>
         </section>
+        
         <!-- Divider -->
-        <div class="relative mb-4">
+        <div class="relative">
           <div class="absolute inset-0 flex items-center">
             <div class="w-full border-t border-gray-300"></div>
           </div>
@@ -58,8 +59,9 @@
             >
           </div>
         </div>
+        
         <!-- Sección 2 -->
-        <section class="space-y-6">
+        <section class="space-y-4">
           <div class="pb-2 border-b border-gray-200">
             <h2 class="text-xl font-semibold text-gray-900">
               Subida manual de archivo
@@ -72,7 +74,7 @@
           <form
             id="uploadForm"
             enctype="multipart/form-data"
-            class="p-6 space-y-6 border border-gray-300 rounded-sm bg-gray-50/40">
+            class="p-5 space-y-4 border border-gray-300 rounded-sm bg-gray-50/40">
             <!-- Contraseña -->
             <div>
               <label
@@ -86,7 +88,7 @@
                 name="uploadKey"
                 required
                 placeholder="Ingresa la clave"
-                class="block w-full px-4 py-3 text-gray-900 placeholder-gray-400 border border-gray-300 rounded-sm shadow-sm transition focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+                class="block w-full px-4 py-2.5 text-gray-900 placeholder-gray-400 border border-gray-300 rounded-sm shadow-sm transition focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
             </div>
             <!-- Período -->
             <div>
@@ -99,7 +101,7 @@
                 id="periodSelect"
                 name="period"
                 required
-                class="block w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-sm shadow-sm transition focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                class="block w-full px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-sm shadow-sm transition focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                 <option value="" disabled selected>Seleccione período</option>
                 <option value="1">Período 1</option>
                 <option value="2">Período 2</option>
@@ -117,7 +119,7 @@
                 id="downloadUrl"
                 name="downloadUrl"
                 placeholder="https://ejemplo.com/archivo.xlsx"
-                class="block w-full px-4 py-3 text-gray-900 placeholder-gray-400 border border-gray-300 rounded-sm shadow-sm transition focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+                class="block w-full px-4 py-2.5 text-gray-900 placeholder-gray-400 border border-gray-300 rounded-sm shadow-sm transition focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
             </div>
             <!-- File -->
             <div>
@@ -136,30 +138,30 @@
                   class="absolute inset-0 z-10 w-full h-full opacity-0 cursor-pointer" />
                 <div
                   class="flex items-center overflow-hidden bg-white border border-gray-300 rounded-sm shadow-sm transition focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-primary-500">
-                  <div class="px-4 py-3 bg-gray-100 border-r border-gray-300">
+                  <div class="px-4 py-2.5 bg-gray-100 border-r border-gray-300">
                     <i
                       class="text-xl text-primary-600 bi bi-file-earmark-spreadsheet"></i>
                   </div>
-                  <div class="flex-1 px-4 py-3 text-sm text-gray-500 truncate">
+                  <div class="flex-1 px-4 py-2.5 text-sm text-gray-500 truncate">
                     <span id="fileNameDisplay"
                       >Ningún archivo seleccionado</span
                     >
                   </div>
                 </div>
               </div>
-              <p class="mt-1.5 text-xs text-gray-500">
+              <p class="mt-1 text-xs text-gray-500">
                 Formatos permitidos: .xls, .xlsx
               </p>
             </div>
             <button
               type="submit"
-              class="w-full px-4 py-3 font-medium text-white transition duration-150 rounded-sm bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+              class="w-full px-4 py-2.5 font-medium text-white transition duration-150 rounded-sm bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
               Subir Archivo
             </button>
           </form>
           <div
             id="uploadResult"
-            class="pt-2 text-sm font-medium min-h-[2.5rem]"></div>
+            class="pt-1 text-sm font-medium min-h-[2rem]"></div>
         </section>
       </div>
     </div>
@@ -174,7 +176,7 @@
         const key = document.getElementById("syncKey").value;
         const resultEl = document.getElementById("syncResult");
 
-        resultEl.className = "min-h-[2.5rem] text-sm font-medium";
+        resultEl.className = "min-h-[2rem] text-sm font-medium";
         resultEl.textContent = "Procesando...";
 
         try {
@@ -222,7 +224,7 @@
           return;
         }
 
-        resultEl.className = "min-h-[2.5rem] text-sm font-medium";
+        resultEl.className = "min-h-[2rem] text-sm font-medium";
         resultEl.textContent = "Subiendo archivo...";
 
         const formData = new FormData();

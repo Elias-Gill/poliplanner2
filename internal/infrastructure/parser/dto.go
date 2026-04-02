@@ -18,7 +18,7 @@ const (
 type WeekDay int
 
 const (
-	Monday WeekDay = iota
+	Monday WeekDay = 1 + iota
 	Tuesday
 	Wednesday
 	Thursday
