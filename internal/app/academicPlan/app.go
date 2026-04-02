@@ -3,9 +3,12 @@ package academicPlan
 import (
 	"context"
 	"fmt"
+	"time"
 
+	"github.com/elias-gill/poliplanner2/internal/config/timezone"
 	"github.com/elias-gill/poliplanner2/internal/domain/academicPlan"
 	"github.com/elias-gill/poliplanner2/internal/domain/courseOffering"
+	"github.com/elias-gill/poliplanner2/internal/domain/period"
 )
 
 type AcademicPlanService struct {
@@ -93,7 +96,8 @@ func (a AcademicPlanService) ListOffering(
 		}
 
 		// List sections
-		sections, err := a.courseStorer.FindOfferForSubject(ctx, subjectID)
+		period := period.NewPeriodFromTime(time.Now().In(timezone.ParaguayTZ))
+		sections, err := a.courseStorer.FindOfferForSubject(ctx, subjectID, period)
 		if err != nil {
 			return nil, fmt.Errorf("find offering for subject %d: %w", subjectID, err)
 		}

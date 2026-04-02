@@ -10,6 +10,7 @@ import (
 
 	"github.com/elias-gill/poliplanner2/internal/domain/academicPlan"
 	"github.com/elias-gill/poliplanner2/internal/domain/courseOffering"
+	"github.com/elias-gill/poliplanner2/internal/domain/period"
 )
 
 type SqliteCourseOfferingStore struct {
@@ -23,6 +24,7 @@ func NewSqliteCourseOfferingStore(connection *sql.DB) *SqliteCourseOfferingStore
 func (s SqliteCourseOfferingStore) FindOfferForSubject(
 	ctx context.Context,
 	subjectID academicPlan.SubjectID,
+	p period.Period,
 ) ([]courseOffering.Section, error) {
 
 	rows, err := s.db.QueryContext(
@@ -35,10 +37,16 @@ func (s SqliteCourseOfferingStore) FindOfferForSubject(
 			c.tipo
 		FROM cursos c
 		JOIN mallas m ON m.id = c.malla
-		WHERE m.id = ?
+		JOIN periodos pe ON pe.id = c.periodo
+		WHERE 
+			m.id = ?
+			AND pe.year = ?
+			AND pe.periodo = ?
 		ORDER BY c.nombre, c.seccion
 		`,
 		subjectID,
+		p.Year,
+		int(p.Semester),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query course offerings: %w", err)

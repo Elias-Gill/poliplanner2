@@ -4,10 +4,11 @@ import (
 	"context"
 
 	"github.com/elias-gill/poliplanner2/internal/domain/academicPlan"
+	"github.com/elias-gill/poliplanner2/internal/domain/period"
 )
 
 type CourseStorer interface {
-	FindOfferForSubject(ctx context.Context, subejctID academicPlan.SubjectID) ([]Section, error)
+	FindOfferForSubject(ctx context.Context, subejctID academicPlan.SubjectID, period period.Period) ([]Section, error)
 
 	GetCourseDetails(ctx context.Context, id CourseOfferingID) (*CourseSummary, error)
 

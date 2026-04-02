@@ -250,7 +250,18 @@
             {{ if .SaturdayDates }}
             <p class="text-sm text-gray-600"><span class="font-semibold">Sábados especiales:</span> {{ .SaturdayDates }}</p>
             {{ end }}
-            <p class="text-sm text-gray-600"><span class="font-semibold">Comité:</span> {{ .CommitteePresident }}, {{ .CommitteeMember1 }}, {{ .CommitteeMember2 }}</p>
+<p class="text-sm font-semibold text-gray-700">Comité:</p>
+<ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
+    {{ if .CommitteePresident }}
+        <li>{{ .CommitteePresident }}</li>
+    {{ end }}
+    {{ if .CommitteeMember1 }}
+        <li>{{ .CommitteeMember1 }}</li>
+    {{ end }}
+    {{ if .CommitteeMember2 }}
+        <li>{{ .CommitteeMember2 }}</li>
+    {{ end }}
+</ul>
         </div>
         {{ end }}
     </div>
