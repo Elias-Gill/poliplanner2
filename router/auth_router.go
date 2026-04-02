@@ -165,7 +165,11 @@ func NewAuthRouter(userService *userApp.UserService, emailService *email.EmailSe
 				"Success": "",
 				"Email":   "",
 			}
-			recoveryTemplate.Execute(w, data)
+			err := recoveryTemplate.Execute(w, data)
+			if err != nil {
+				logger.Error("Cannot load recovery template", "error", err)
+				customRedirect(w, r, "/500")
+			}
 		})
 
 		r.Post("/password-recovery", func(w http.ResponseWriter, r *http.Request) {

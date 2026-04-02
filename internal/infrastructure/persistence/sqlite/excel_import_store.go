@@ -337,7 +337,7 @@ func (w sqliteExcelImportWritter) replaceSchedule(
 
 		_, err := stmt.Exec(
 			courseID,
-			int(s.Day)+1,
+			int(s.Day),
 			s.Start.Format("15:04"),
 			s.End.Format("15:04"),
 			s.Room,

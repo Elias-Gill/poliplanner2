@@ -5,7 +5,7 @@
 {{ define "content" }}
   <div class="space-y-6">
     <!-- Header compacto dentro de tarjeta -->
-    <div class="bg-white border border-gray-200 rounded-sm shadow-sm p-6">
+    <div class="bg-gray-50 border border-gray-300 rounded-sm shadow-sm p-6">
       <div
         class="flex flex-col md:flex-row md:items-start md:justify-between gap-3 md:gap-6">
         <div>
@@ -41,11 +41,11 @@
                   <i class="bi bi-plus-lg"></i>
                 </a>
               </div>
-              <div class="flex bg-gray-200 rounded-sm p-1 w-full mt-2">
+              <div class="flex bg-gray-50 rounded-sm p-1 w-full mt-2 border border-gray-300">
                 <a
                   href="?id={{ .SelectedID }}&mode=overview"
                   class="flex-1 px-3 py-2 {{ if eq .Mode "overview" }}
-                    bg-white text-gray-900
+                    bg-gray-300 text-gray-900
                   {{ else }}
                     text-gray-600
                   {{ end }} rounded-sm text-sm font-medium">
@@ -54,7 +54,7 @@
                 <a
                   href="?id={{ .SelectedID }}&mode=calendar"
                   class="flex-1 px-3 py-2 {{ if eq .Mode "calendar" }}
-                    bg-white text-gray-900
+                    bg-gray-300 text-gray-900
                   {{ else }}
                     text-gray-600
                   {{ end }} text-sm font-medium">
@@ -72,8 +72,8 @@
       {{ block "dashboard/content" .Data }}{{ end }}
     {{ else }}
       <!-- Empty State coherente con dashboard -->
-      <div class="bg-white border border-gray-200 rounded-sm shadow-sm mb-6">
-        <div class="p-6 border-b border-gray-200">
+      <div class="bg-white border border-gray-300 rounded-sm shadow-sm mb-6">
+        <div class="p-6 border-b border-gray-300">
           <h2 class="text-lg font-semibold text-gray-900">Horarios</h2>
           <p class="text-sm text-gray-600 mt-1">
             Aquí aparecerán tus horarios creados.

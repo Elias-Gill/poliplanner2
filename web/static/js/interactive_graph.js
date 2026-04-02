@@ -25,7 +25,7 @@ const COLORS = {
   NODE_PARENT_BG: "#fbbf24",
   NODE_PARENT_BORDER: "#6b7280",
 
-  EDGE_NORMAL: "#232323",
+  EDGE_NORMAL: "#535353",
   EDGE_OPACITY: 0.8,
 };
 
@@ -82,7 +82,7 @@ const SEMESTERS_TITLE_STYLE = {
   font: {
     size: 28,
     bold: true,
-    color: "#374151",
+    color: "#646464",
   },
   shape: "text",
 };

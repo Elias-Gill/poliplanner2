@@ -20,8 +20,67 @@
   --color-primary-700: #2f4c6d;
   --color-primary-800: #1f3550;
   --color-primary-900: #142536;
+
+    --color-sidebar-bg: #1f3550;      /* primary-800 */
+    --color-sidebar-text: #f3f4f6;    /* gray-100 */
+    --color-sidebar-text-muted: #9ca3af; /* gray-400 */
+    --color-sidebar-border: #374151;  /* gray-700 */
+    --color-sidebar-hover: #2f4c6d;   /* primary-700 */
 }
 
+.dark-mode {
+    /* Sidebar - modo oscuro (blanco y negro) */
+    --color-sidebar-bg: #111111;
+    --color-sidebar-text: #f5f5f5;
+    --color-sidebar-text-muted: #888888;
+    --color-sidebar-border: #2a2a2a;
+    --color-sidebar-hover: #1a1a1a;
+
+    /* ===== BASE ===== */
+    --color-bg: #0a0a0a;
+    --color-surface: #141414;
+    --color-border: #2a2a2a;
+    --color-text: #f5f5f5;
+    --color-text-muted: #a3a3a3;
+
+    /* ===== PRIMARY - Azul oscuro elegante (como el original pero adaptado) ===== */
+    --color-primary-50:  #1a1a1a;   /* casi negro con un toque azul */
+    --color-primary-600: #7fa3c4;
+
+    /* ===== YELLOW - escala de grises también ===== */
+    --color-yellow-50:  #1a1a1a;
+    --color-yellow-100: #262626;
+    --color-yellow-200: #333333;
+    --color-yellow-800: #bfbfbf;
+    --color-yellow-900: #d9d9d9;
+
+    /* ===== GREEN - Verde apagado, natural ===== */
+    --color-green-50:  #0f2418;
+    --color-green-100: #14301f;
+    --color-green-200: #193c26;
+    --color-green-300: #1e482d;
+    --color-green-400: #235434;
+    --color-green-500: #2a6040;
+    --color-green-600: #357a52;
+    --color-green-700: #409464;
+    --color-green-800: #4bae76;
+    --color-green-900: #5cc88a;
+
+    /* ===== GRAY (escala completa de grises) ===== */
+    --color-gray-50:  #0a0a0a;
+    --color-gray-100: #141414;
+    --color-gray-200: #1f1f1f;
+    --color-gray-300: #2a2a2a;
+    --color-gray-400: #404040;
+    --color-gray-500: #595959;
+    --color-gray-600: #737373;
+    --color-gray-700: #a3a3a3;
+    --color-gray-800: #d4d4d4;
+    --color-gray-900: #f5f5f5;
+
+    /* ===== WHITE ===== */
+    --color-white: #141414;
+}
 /* Safe area support */
 .pb-safe {
     padding-bottom: max(20px, env(safe-area-inset-bottom));
