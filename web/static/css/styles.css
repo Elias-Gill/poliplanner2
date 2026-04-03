@@ -21,11 +21,10 @@
   --color-primary-800: #1f3550;
   --color-primary-900: #142536;
 
-    --color-sidebar-bg: #1f3550;      /* primary-800 */
-    --color-sidebar-text: #f3f4f6;    /* gray-100 */
-    --color-sidebar-text-muted: #9ca3af; /* gray-400 */
-    --color-sidebar-border: #374151;  /* gray-700 */
-    --color-sidebar-hover: #2f4c6d;   /* primary-700 */
+  --color-sidebar-bg: #1f3550;      /* primary-800 */
+  --color-sidebar-text: #f3f4f6;    /* gray-100 */
+  --color-sidebar-text-muted: #9ca3af; /* gray-400 */
+  --color-sidebar-hover: #2f4c6d;   /* primary-700 */
 }
 
 .dark-mode {
@@ -33,7 +32,6 @@
     --color-sidebar-bg: #111111;
     --color-sidebar-text: #f5f5f5;
     --color-sidebar-text-muted: #888888;
-    --color-sidebar-border: #2a2a2a;
     --color-sidebar-hover: #1a1a1a;
 
     /* ===== BASE ===== */

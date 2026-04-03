@@ -1,8 +1,8 @@
 {{ define "fragments/navbar_mobile" }}
   <!-- Mobile Top Header -->
   <header
-    class="md:hidden border-b px-4 py-3"
-    style="background-color: var(--color-sidebar-bg); color: var(--color-sidebar-text); border-color: var(--color-sidebar-border);">
+    class="md:hidden border-b px-4 py-3 
+           bg-sidebar-bg text-sidebar-text border-gray-500">
     <div class="flex items-center justify-between">
       <a href="/" class="flex items-center gap-2">
         <img src="/static/favicon.ico" class="w-5 h-5" alt="Logo" />
@@ -14,29 +14,29 @@
 
   <!-- Mobile Bottom Navigation -->
   <nav
-    class="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t pb-safe"
-    style="background-color: var(--color-sidebar-bg); color: var(--color-sidebar-text); border-color: var(--color-sidebar-border);">
+    class="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t pb-safe 
+           bg-sidebar-bg text-sidebar-text border-gray-500">
     <div class="grid grid-cols-3 h-14">
       <a
         href="/dashboard"
-        class="flex flex-col items-center justify-center text-xs transition-colors"
-        style="color: var(--color-sidebar-text);">
+        class="flex flex-col items-center justify-center text-xs transition-colors 
+               text-sidebar-text hover:bg-sidebar-hover">
         <i class="bi bi-speedometer2 text-lg"></i>
         <span class="mt-0.5">Dashboard</span>
       </a>
 
       <a
         href="/guides"
-        class="flex flex-col items-center justify-center text-xs transition-colors"
-        style="color: var(--color-sidebar-text);">
+        class="flex flex-col items-center justify-center text-xs transition-colors 
+               text-sidebar-text hover:bg-sidebar-hover">
         <i class="bi bi-book text-lg"></i>
         <span class="mt-0.5">Guías</span>
       </a>
 
       <a
         href="/tools"
-        class="flex flex-col items-center justify-center text-xs transition-colors"
-        style="color: var(--color-sidebar-text);">
+        class="flex flex-col items-center justify-center text-xs transition-colors 
+               text-sidebar-text hover:bg-sidebar-hover">
         <i class="bi bi-tools text-lg"></i>
         <span class="mt-0.5">Herramientas</span>
       </a>
