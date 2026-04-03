@@ -1,13 +1,22 @@
 ARG GO_VERSION=1
 FROM golang:${GO_VERSION}-bookworm AS builder
 
+# Install Node.js y npm
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl ca-certificates \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /usr/src/app
 
 COPY go.mod go.sum ./
 RUN go mod download && go mod verify
 
 COPY . .
-RUN go build -v -o /run-app . \ 
+
+RUN go build -v -o /run-app . \
+    && npm install \
     && npm run build:css
 
 FROM debian:bookworm
@@ -20,14 +29,14 @@ ENV APP_BASE_DIR=/var/poliplanner
 
 COPY --from=builder /run-app /usr/local/bin/run-app
 
-COPY --from=builder /usr/src/app/internal/db/migrations \
-    /var/poliplanner/internal/db/migrations
+COPY --from=builder /usr/src/app/internal/infrastructure/persistence/migrations \
+    /var/poliplanner/internal/infrastructure/persistence/migrations
 
-COPY --from=builder /usr/src/app/internal/excel/parser/layouts \
-    /var/poliplanner/internal/excel/parser/layouts
+COPY --from=builder /usr/src/app/internal/infrastructure/parser/layout/layouts \
+    /var/poliplanner/internal/infrastructure/parser/layout/layouts
 
-COPY --from=builder /usr/src/app/internal/excel/parser/metadata \
-    /var/poliplanner/internal/excel/parser/metadata
+COPY --from=builder /usr/src/app/internal/infrastructure/parser/metadata \
+    /var/poliplanner/internal/infrastructure/parser/metadata
 
 COPY --from=builder /usr/src/app/web \
     /var/poliplanner/web
