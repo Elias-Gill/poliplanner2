@@ -1,136 +1,51 @@
 {{ define "custom_head" }}
-  <title>Manual del bicho</title>
+
+  <title>Novedades recientes en PoliPlanner</title>
 {{ end }}
+
 {{ define "content" }}
-  <link rel="stylesheet" href="/static/css/guides_styles.css" />
-  <div class="guide_article">
-    <h1>Cambios y mejoras en PoliPlanner</h1>
+
+<link rel="stylesheet" href="/static/css/guides_styles.css" />
+<div class="guide_article">
+  <h1>Novedades recientes en PoliPlanner</h1>
+
+  <p>
+    Estas últimas actualizaciones se enfocan en mejorar la experiencia de usuario y ofrecer
+        nuevas herramientas que faciliten la vida académica.
+  </p>
+
+  <section>
+    <h2>Mejora visual integral</h2>
     <p>
-      Durante estas vacaciones trabajamos incansablemente para mejorar la
-      experiencia de usuario. Te contamos qué novedades incorporamos para que tu
-      uso de PoliPlanner sea más fácil, rápido y completo.
+      Implementamos un <strong>cambio visual significativo</strong> en toda la plataforma,
+            diseñado para que las secciones más importantes estén siempre accesibles y las
+            funciones clave sean fáciles de encontrar. Entre las mejoras destacan:
     </p>
-    <section>
-      <h2>Nuevas features</h2>
-      <ul>
-        <li>
-          <strong>Recuperación y cambio de contraseñas</strong>
-          <br />
-          <small
-            >Ahora podés recuperar tu contraseña y cambiarla fácilmente la
-            configuracion de tu cuenta.</small
-          >
-        </li>
-        <li>
-          <strong>Selector de temas</strong>
-          <br />
-          <small
-            >Personalizá la apariencia de PoliPlanner con diferentes temas
-            visuales. Manten presionado el boton de <i>"Modo Oscuro"</i> para
-            ver los temas disponibles.</small
-          >
-        </li>
-        <li>
-          <strong>Vistas de materias</strong>
-          <br />
-          <small
-            >Explorá tus materias con vistas específicas: overview, calendario y
-            secciones, para una organización más clara.</small
-          >
-        </li>
-        <li>
-          <strong>Sección de herramientas</strong>
-          <br />
-          <small
-            >Accedé a nuevas herramientas sin necesidad de iniciar
-            sesión.</small
-          >
-        </li>
-      </ul>
-    </section>
-    <section>
-      <h2>Nuevas herramientas (sin necesidad de login)</h2>
-      <ul>
-        <li>
-          <strong>Consulta de materias</strong>
-          <br />
-          <small
-            ><a href="/subject">Buscá</a> información detallada de cualquier
-            materia sin necesidad de iniciar sesión.</small
-          >
-        </li>
-        <li>
-          <strong>Mejoras en la calculadora de promedios y notas</strong>
-          <br />
-          <small
-            >Una <a href="/misc/calculator">calculadora</a> con interfaz mas
-            amigable y conveniente para calcular tus notas finales.</small
-          >
-        </li>
-        <li>
-          <strong>Guías actualizadas</strong>
-          <br />
-          <small
-            >Encontrá las guías más recientes que pueden ayudarte en tu vida
-            académica</small
-          >
-        </li>
-      </ul>
-    </section>
-    <section>
-      <h2>Fixes y mejoras generales</h2>
-      <ul>
-        <li>
-          <strong>Nuevos estilos visuales</strong>
-          <br />
-          <small
-            >Renovamos la UI con una mejor estética y una experiencia más
-            moderna.</small
-          >
-        </li>
-        <li>
-          <strong>Interactividad mejorada</strong>
-          <br />
-          <small
-            >Ahora la navegacion es dinámica, sin necesidad de recargas molestas
-            de la página.</small
-          >
-        </li>
-        <li>
-          <strong>Modales y menús optimizados para mobile</strong>
-          <br />
-          <small
-            >Adaptamos la interfaz para que funcione mejor en dispositivos
-            móviles.</small
-          >
-        </li>
-        <li>
-          <strong>Mejor estandarización de estilos</strong>
-          <br />
-          <small
-            >Mayor coherencia visual en toda la plataforma para facilitar la
-            navegación.</small
-          >
-        </li>
-      </ul>
-    </section>
-    <section>
-      <h2>Mejoras de rendimiento</h2>
-      La plataforma es más ágil, fácil de utilizar y tremendamente rapida
-      gracias a una serie de mejoras técnicas llevadas a cabo.
-    </section>
-    <section>
-      <h2>¿Querés ser parte del equipo?</h2>
-      <p>
-        PoliPlanner está creciendo y buscamos personas apasionadas que quieran
-        colaborar en el desarrollo. Queremos crear aún más herramientas
-        <em>por y para estudiantes</em>, formando un equipo multidisciplinario
-        completo: <strong>devs, marketing y diseñadores</strong>.
-      </p>
-      <p>
-        Si te interesa sumarte y aportar, no dudes en unirte a nuestro
-        <a href="/contacto">grupo de WhatsApp</a> .
-      </p>
-    </section>
-  </div>
+    <ul>
+      <li>Dashboard renovado con información y accesos directos más claros.</li>
+      <li>Flujo de creación de horarios optimizado para que organizar materias sea más rápido e intuitivo.</li>
+      <li>Interfaz más clara y coherente, con mejor tipografía, contraste y disposición de elementos.</li>
+      <li>Secciones y herramientas visualmente destacadas para mejorar la navegación y reducir clics innecesarios.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Nuevas herramientas destacadas</h2>
+    <ul>
+      <li><strong>Mallas interactivas:</strong> ahora podés explorar las mallas de cada carrera
+                de forma dinámica, con información de materias y correlativas (no todas las
+                carreras se encuentran disponibles, pero seguimos agregando constantemente nuevas
+                mallas).</li>
+            <li><strong>Preparación para la API:</strong> estamos trabajando en una API que
+                permitirá consumir nuestros datos históricos y parseados de materias y
+                docentes, abriendo posibilidades para desarrolladores, nuevas herramientas e
+                integraciones con otros proyectos.</li>
+    </ul>
+  </section>
+
+  <p>
+    Estas mejoras forman parte de nuestro objetivo de hacer PoliPlanner más práctico, accesible
+        y potente, siempre pensando en resolver necesidades reales de los estudiantes.
+  </p>
+</div>
 {{ end }}
