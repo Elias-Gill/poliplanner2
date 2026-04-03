@@ -297,7 +297,7 @@ func (s SqliteCourseOfferingStore) GetCoursesExams(
 		FROM examenes e
 		JOIN cursos c ON c.id = e.curso_id
 		WHERE e.curso_id IN (%s)
-		ORDER BY e.curso_id, e.fecha, e.hora
+		ORDER BY e.fecha, e.hora
 	`, inClause)
 
 	rows, err := s.db.QueryContext(ctx, query, args...)
