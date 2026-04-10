@@ -36,41 +36,40 @@ func (s SqliteUserStore) Insert(ctx context.Context, u *user.User) error {
 	return nil
 }
 
-// WIP: realmente ni hace falta meter en una transaccion
-// FIX: revisar que todo funcione
 func (s *SqliteUserStore) Save(ctx context.Context, u *user.User) error {
-	var user user.User
-	err := s.db.QueryRowContext(ctx, `
-		SELECT user_id, username, password, email, recovery_token_hash,
-		       recovery_token_expiration, recovery_token_used
-		FROM users WHERE user_id = ? FOR UPDATE`,
-		u.ID,
-	).Scan(
-		&user.ID, &user.Username, &user.Password, &user.Email,
-		&user.RecoveryTokenHash, &user.RecoveryTokenExpiration, &user.RecoveryTokenUsed,
-	)
-	if err == sql.ErrNoRows {
-		return fmt.Errorf("user not found")
-	}
-	if err != nil {
-		return fmt.Errorf("get user error: %w", err)
-	}
+	const query = `
+		INSERT INTO users (
+			user_id,
+			username,
+			password,
+			email,
+			recovery_token_hash,
+			recovery_token_expiration,
+			recovery_token_used
+		) VALUES (?, ?, ?, ?, ?, ?, ?)
+		ON CONFLICT(user_id) DO UPDATE SET
+			username = excluded.username,
+			password = excluded.password,
+			email = excluded.email,
+			recovery_token_hash = excluded.recovery_token_hash,
+			recovery_token_expiration = excluded.recovery_token_expiration,
+			recovery_token_used = excluded.recovery_token_used
+	`
 
-	_, err = s.db.ExecContext(ctx, `
-		UPDATE users SET
-			username = ?,
-			password = ?,
-			email = ?,
-			recovery_token_hash = ?,
-			recovery_token_expiration = ?,
-			recovery_token_used = ?
-		WHERE user_id = ?`,
-		user.Username, user.Password, user.Email,
-		user.RecoveryTokenHash, user.RecoveryTokenExpiration,
-		user.RecoveryTokenUsed, u.ID,
+	_, err := s.db.ExecContext(
+		ctx,
+		query,
+		u.ID,
+		u.Username,
+		u.Password,
+		u.Email,
+		u.RecoveryTokenHash,
+		u.RecoveryTokenExpiration,
+		u.RecoveryTokenUsed,
 	)
+
 	if err != nil {
-		return fmt.Errorf("update exec error: %w", err)
+		return fmt.Errorf("upsert user error: %w", err)
 	}
 
 	return nil

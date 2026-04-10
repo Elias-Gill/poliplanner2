@@ -29,64 +29,75 @@ const exams = {{ . | toJS }};
 document.addEventListener('DOMContentLoaded', () => {
   const listContainer = document.getElementById('upcoming-exams');
 
-  // ==================== CALENDAR EVENTS ====================
+  const examById = new Map(exams.map(e => [String(e.ID), e]));
+
   const calendarEvents = exams.map(exam => ({
-    id: exam.ID,                          // Usamos el ID como clave principal
+    id: String(exam.ID),
     title: exam.CourseName,
     start: exam.Date,
     allDay: true,
     classNames: [exam.Type === 'final' ? 'final' : 'partial'],
     extendedProps: {
-      examId: exam.ID
+      examId: String(exam.ID)
     }
   }));
 
-  // ==================== FULLCALENDAR ====================
-  const calendar = new FullCalendar.Calendar(document.getElementById('exam-calendar'), {
-    initialView: 'dayGridMonth',
-    headerToolbar: {
-      left: 'prev,next today',
-      center: 'title',
-      right: ''
-    },
-    events: calendarEvents,
-    locale: 'es',
-    height: 'auto',
+  const calendar = new FullCalendar.Calendar(
+    document.getElementById('exam-calendar'),
+    {
+      initialView: 'dayGridMonth',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: ''
+      },
+      events: calendarEvents,
+      locale: 'es',
+      height: 'auto',
 
-    // Cuando se hace click en un evento del calendario
-    eventClick: function(info) {
-      const examId = info.event.extendedProps.examId;
+      eventClick: function(info) {
+        const examId = String(info.event.id);
 
-      const examDiv = listContainer.querySelector(`[data-exam-id="${examId}"]`);
-      if (examDiv) {
-        examDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const examDiv = listContainer.querySelector(
+          `[data-exam-id="${examId}"]`
+        );
 
-        examDiv.classList.add('highlight-exam-green');
-        setTimeout(() => {
-          examDiv.classList.remove('highlight-exam-green');
-        }, 2000);
+        if (examDiv) {
+          examDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+          examDiv.classList.add('highlight-exam-green');
+          setTimeout(() => {
+            examDiv.classList.remove('highlight-exam-green');
+          }, 2000);
+        }
       }
     }
-  });
+  );
 
   calendar.render();
 
-  // ==================== RENDER LIST ====================
   function formatExamDiv(exam) {
-    const labelText = exam.Type.charAt(0).toUpperCase() + exam.Type.slice(1) +
-                     (exam.Instance ? ` ${exam.Instance}` : '');
+    const labelText =
+      exam.Type.charAt(0).toUpperCase() +
+      exam.Type.slice(1) +
+      (exam.Instance ? ` ${exam.Instance}` : '');
 
-    const bgClass = exam.Type === 'final'
-      ? 'bg-yellow-50 border-yellow-400'
-      : 'bg-primary-50 border-primary-400';
+    const bgClass =
+      exam.Type === 'final'
+        ? 'bg-yellow-50 border-yellow-400'
+        : 'bg-primary-50 border-primary-400';
 
-    const labelColor = exam.Type === 'final'
-      ? 'bg-yellow-100 text-yellow-700'
-      : 'bg-primary-50 text-primary-700';
+    const labelColor =
+      exam.Type === 'final'
+        ? 'bg-yellow-100 text-yellow-700'
+        : 'bg-primary-50 text-primary-700';
 
     const div = document.createElement('div');
-    div.className = `p-4 border-l-4 rounded-sm ${bgClass} shadow-sm cursor-pointer hover:shadow-md transition-all`;
-    div.dataset.examId = exam.ID;
+
+    div.className =
+      `p-4 border-l-4 rounded-sm ${bgClass} shadow-sm cursor-pointer hover:shadow-md transition-all`;
+
+    div.dataset.examId = String(exam.ID);
 
     div.innerHTML = `
       <div class="flex justify-between items-start mb-2">
@@ -95,13 +106,22 @@ document.addEventListener('DOMContentLoaded', () => {
           ${labelText}
         </span>
       </div>
-      ${exam.Room ? `<p class="text-sm text-gray-700 mb-2"><span class="font-semibold">Aula:</span> ${exam.Room}</p>` : ''}
+      ${
+        exam.Room
+          ? `<p class="text-sm text-gray-700 mb-2"><span class="font-semibold">Aula:</span> ${exam.Room}</p>`
+          : ''
+      }
       <div class="flex flex-col text-sm text-gray-600 space-y-1">
         <span><span class="font-semibold">Fecha:</span> ${new Date(exam.Date).toLocaleDateString('es-ES')}</span>
-        <span><span class="font-semibold">Hora:</span> ${new Date(exam.Date).toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'})} hs</span>
-        ${exam.Revision ? `<span><span class="font-semibold">Revisión:</span> ${new Date(exam.Revision).toLocaleDateString('es-ES')}</span>` : ''}
+        <span><span class="font-semibold">Hora:</span> ${new Date(exam.Date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })} hs</span>
+        ${
+          exam.Revision
+            ? `<span><span class="font-semibold">Revisión:</span> ${new Date(exam.Revision).toLocaleDateString('es-ES')}</span>`
+            : ''
+        }
       </div>
     `;
+
     return div;
   }
 
@@ -109,11 +129,14 @@ document.addEventListener('DOMContentLoaded', () => {
     listContainer.innerHTML = '';
 
     if (!exams.length) {
-      listContainer.innerHTML = `<p class="text-gray-500 py-8 text-center">No hay exámenes próximos.</p>`;
+      listContainer.innerHTML =
+        `<p class="text-gray-500 py-8 text-center">No hay exámenes próximos.</p>`;
       return;
     }
 
-    const sortedExams = [...exams].sort((a, b) => new Date(a.Date) - new Date(b.Date));
+    const sortedExams = [...exams].sort(
+      (a, b) => new Date(a.Date) - new Date(b.Date)
+    );
 
     sortedExams.forEach(exam => {
       listContainer.appendChild(formatExamDiv(exam));
@@ -122,51 +145,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
   renderUpcomingExams();
 
-  // ==================== CLICK EN LA LISTA → CALENDARIO ====================
-  listContainer.addEventListener('click', (e) => {
-    const clickedDiv = e.target.closest('div[data-exam-id]');
-    if (!clickedDiv) return;
-
-    const examId = clickedDiv.dataset.examId;
+function highlightCalendarEvent(examId) {
+  const tryHighlight = () => {
     const event = calendar.getEventById(examId);
 
-    if (!event) return;
+    if (!event || !event.el) return false;
 
-    // Ir a la fecha correspondiente
-    calendar.gotoDate(event.start);
+    const el = event.el;
 
-    // Esperar a que FullCalendar renderice la vista nueva
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    el.classList.add('highlight-exam-green');
+
     setTimeout(() => {
-      highlightCalendarEvent(examId, event.title);
-    }, 180);
+      el.classList.remove('highlight-exam-green');
+    }, 2000);
+
+    return true;
+  };
+
+  // Intento inmediato
+  if (tryHighlight()) return;
+
+  // Esperar render de FullCalendar
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      tryHighlight();
+    });
   });
+}
 
-  // Función auxiliar para resaltar el evento en el calendario
-  function highlightCalendarEvent(examId, title) {
-    // Primer intento: buscar por ID (más fiable)
-    let eventEl = document.querySelector(`.fc-event[data-event-id="${examId}"]`);
+listContainer.addEventListener('click', (e) => {
+  const clickedDiv = e.target.closest('[data-exam-id]');
+  if (!clickedDiv) return;
 
-    // Fallback: buscar por título
-    if (!eventEl) {
-      const allEventEls = document.querySelectorAll('.fc-event');
-      for (const el of allEventEls) {
-        if (el.textContent.includes(title)) {
-          eventEl = el;
-          break;
-        }
-      }
-    }
+  const examId = String(clickedDiv.dataset.examId);
+  const exam = examById.get(examId);
 
-    if (eventEl) {
-      eventEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  if (!exam) return;
 
-      eventEl.classList.add('highlight-exam-green');
+  const date = new Date(exam.Date);
 
-      setTimeout(() => {
-        eventEl.classList.remove('highlight-exam-green');
-      }, 2000);
-    }
-  }
+  // Ir a la fecha del examen
+  calendar.gotoDate(date);
+
+  // Asegurar visibilidad del calendario en pantalla
+  document.getElementById('exam-calendar')
+    .scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
 });
 </script>
 {{ end }}
