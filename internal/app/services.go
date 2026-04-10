@@ -3,6 +3,7 @@ package service
 import (
 	// App layer
 	apApp "github.com/elias-gill/poliplanner2/internal/app/academicPlan"
+	"github.com/elias-gill/poliplanner2/internal/app/auth"
 	emailApp "github.com/elias-gill/poliplanner2/internal/app/email"
 	excelApp "github.com/elias-gill/poliplanner2/internal/app/excelImport"
 	scheduleApp "github.com/elias-gill/poliplanner2/internal/app/schedule"
@@ -28,6 +29,7 @@ type Services struct {
 	ImportService       *excelApp.ImportService
 	EmailService        *emailApp.EmailService
 	AcademicPlanService *apApp.AcademicPlanService
+	AuthService         *auth.AuthManager
 }
 
 // Convenience function to instantiate all the services in one call
@@ -38,6 +40,7 @@ func NewServices(
 	scheduleStore schedule.ScheduleStorer,
 	planStorer academicPlan.AcademicPlanStorer,
 	courseStorer courseOffering.CourseStorer,
+	sessionStorer auth.SessionStorer,
 ) *Services {
 	return &Services{
 		UserService:         userApp.NewUserService(userStore),
@@ -46,5 +49,6 @@ func NewServices(
 		EmailService:        emailApp.NewEmailService(config.Get().Email.APIKey),
 		ScheduleService:     scheduleApp.NewScheduleService(scheduleStore),
 		AcademicPlanService: apApp.NewAcademicPlanService(planStorer, courseStorer),
+		AuthService:         auth.NewAuthManager(userStore, sessionStorer),
 	}
 }

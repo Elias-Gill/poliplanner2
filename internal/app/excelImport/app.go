@@ -224,7 +224,7 @@ func (s *ImportService) syncNewestVersion(ctx context.Context) error {
 		return s.PersistSource(ctx, newestSource)
 	}
 
-	logger.Info("Current database version is up to date",
+	logger.Info("Current excel source version is up to date",
 		"source_date", sourceDate,
 		"db_parsed_at", latestVersion.ParsedAt,
 	)

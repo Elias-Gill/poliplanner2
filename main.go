@@ -6,7 +6,6 @@ import (
 	"path"
 
 	"github.com/elias-gill/poliplanner2/internal/app"
-	"github.com/elias-gill/poliplanner2/internal/auth"
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/persistence"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/persistence/sqlite"
@@ -38,20 +37,23 @@ func main() {
 		sqlite.NewSqliteScheduleStore(conn.GetConnection()),
 		sqlite.NewSqliteAcademicPlanStorer(conn.GetConnection()),
 		sqlite.NewSqliteCourseOfferingStore(conn.GetConnection()),
+		sqlite.NewSqliteSessionStore(conn.GetConnection()),
 	)
 
-	// Configure http server
 	r := chi.NewRouter()
-	r.Use(auth.SessionMiddleware)
 
-	// login, special pages and auth router (REFACTOR)
-	r.Route("/", router.NewAuthRouter(services.UserService, services.EmailService))
+	// Register middlewares
+	r.Use(router.NewSessionMiddleware(services.AuthService))
+
+	// REFACTOR: separate special routes into more routers
+	// login, special pages and auth router
+	r.Route("/", router.NewAuthRouter(services.UserService, services.AuthService, services.EmailService))
 
 	r.Route("/dashboard", router.NewDashboardRouter(services.ScheduleService, services.AcademicPlanService))
 	r.Route("/schedule", router.NewSchedulesRouter(services.ScheduleService, services.AcademicPlanService))
 
 	// User administration router
-	r.Route("/user", router.NewUserRouter(services.UserService))
+	r.Route("/user", router.NewUserRouter(services.UserService, services.AuthService))
 
 	// Misc routers
 	r.Route("/tools", router.NewToolsRouter())
@@ -71,6 +73,7 @@ func main() {
 	// 404 - Not found
 	r.NotFound(router.NotFoundHandler)
 
+	// Auto import new excel versions on startup
 	go func() {
 		// 30 seconds has to be more than enough, even when google drive is slow
 		ctx, cancel := context.WithTimeout(context.Background(), config.Get().Excel.ScraperTimeout)

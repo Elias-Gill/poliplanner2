@@ -18,9 +18,9 @@ import (
 // If this is the case, then probably the endpoint has not been added to the "protected
 // endpoints" array list in the middleware configuration.
 func extractUserID(r *http.Request) user.UserID {
-	switch id := r.Context().Value("userID").(type) {
-	case int64:
-		return user.UserID(id)
+	switch id := r.Context().Value(UserIDKey).(type) {
+	case user.UserID:
+		return id
 	default:
 		panic("The user ID is not set in the request of a protected endpoint, something wrong must have happened with the session manager middleware")
 	}

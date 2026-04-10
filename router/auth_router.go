@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/elias-gill/poliplanner2/internal/app/auth"
 	"github.com/elias-gill/poliplanner2/internal/app/email"
 	userApp "github.com/elias-gill/poliplanner2/internal/app/user"
-	"github.com/elias-gill/poliplanner2/internal/auth"
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/config/timezone"
 	userDomain "github.com/elias-gill/poliplanner2/internal/domain/user"
@@ -17,7 +17,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func NewAuthRouter(userService *userApp.UserService, emailService *email.EmailService) func(r chi.Router) {
+func NewAuthRouter(userService *userApp.UserService, authService *auth.AuthManager, emailService *email.EmailService) func(r chi.Router) {
 	baseDir := path.Join(config.Get().Paths.BaseDir, "web", "templates", "pages")
 
 	// templates paths
@@ -68,9 +68,13 @@ func NewAuthRouter(userService *userApp.UserService, emailService *email.EmailSe
 
 			username := strings.TrimSpace(r.FormValue("username"))
 			password := r.FormValue("password")
-			redirect := r.URL.Query().Get("redirect")
 
-			u, err := userService.AuthenticateUser(r.Context(), username, password)
+			redirect := r.URL.Query().Get("redirect")
+			if redirect == "" {
+				redirect = "/dashboard"
+			}
+
+			session, err := authService.AuthenticateUser(r.Context(), username, password)
 			if err != nil {
 				data := map[string]any{
 					"Redirect": redirect,
@@ -81,22 +85,8 @@ func NewAuthRouter(userService *userApp.UserService, emailService *email.EmailSe
 				return
 			}
 
-			// Login exitoso
-			sessionID := auth.CreateSession(u.ID)
-
-			http.SetCookie(w, &http.Cookie{
-				Name:     auth.SessionIdCookie,
-				Value:    sessionID,
-				Path:     "/",
-				HttpOnly: true,
-				Secure:   config.Get().Security.SecureHTTP,
-				SameSite: http.SameSiteLaxMode, // Mejor que NoneMode para login normal
-				Expires:  time.Now().In(timezone.ParaguayTZ).Add(30 * time.Minute),
-			})
-
-			if redirect == "" {
-				redirect = "/dashboard"
-			}
+			// Succesfull login
+			setSessionCookie(w, session.ID)
 
 			http.Redirect(w, r, redirect, http.StatusSeeOther)
 		})
@@ -295,4 +285,16 @@ func NewAuthRouter(userService *userApp.UserService, emailService *email.EmailSe
 			recoveryCommitTemplate.Execute(w, data)
 		})
 	}
+}
+
+func setSessionCookie(w http.ResponseWriter, token auth.SessionID) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     SessionIdCookie,
+		Value:    string(token),
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   config.Get().Security.SecureHTTP,
+		SameSite: http.SameSiteLaxMode, // Mejor que NoneMode para login normal
+		Expires:  time.Now().In(timezone.ParaguayTZ).Add(30 * time.Minute),
+	})
 }

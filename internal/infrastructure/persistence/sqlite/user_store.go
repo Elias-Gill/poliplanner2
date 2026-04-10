@@ -36,7 +36,9 @@ func (s SqliteUserStore) Insert(ctx context.Context, u *user.User) error {
 	return nil
 }
 
-func (s *SqliteUserStore) Update(ctx context.Context, userID user.UserID, updateFn func(user *user.User) error) error {
+// WIP: realmente ni hace falta meter en una transaccion
+// FIX: revisar que todo funcione
+func (s *SqliteUserStore) Save(ctx context.Context, u *user.User) error {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("begin tx: %w", err)
@@ -48,7 +50,7 @@ func (s *SqliteUserStore) Update(ctx context.Context, userID user.UserID, update
 		SELECT user_id, username, password, email, recovery_token_hash,
 		       recovery_token_expiration, recovery_token_used
 		FROM users WHERE user_id = ? FOR UPDATE`,
-		userID,
+		u.ID,
 	).Scan(
 		&user.ID, &user.Username, &user.Password, &user.Email,
 		&user.RecoveryTokenHash, &user.RecoveryTokenExpiration, &user.RecoveryTokenUsed,
@@ -58,10 +60,6 @@ func (s *SqliteUserStore) Update(ctx context.Context, userID user.UserID, update
 	}
 	if err != nil {
 		return fmt.Errorf("get user error: %w", err)
-	}
-
-	if err := updateFn(&user); err != nil {
-		return fmt.Errorf("update canceled: %w", err)
 	}
 
 	_, err = tx.ExecContext(ctx, `
@@ -75,7 +73,7 @@ func (s *SqliteUserStore) Update(ctx context.Context, userID user.UserID, update
 		WHERE user_id = ?`,
 		user.Username, user.Password, user.Email,
 		user.RecoveryTokenHash, user.RecoveryTokenExpiration,
-		user.RecoveryTokenUsed, userID,
+		user.RecoveryTokenUsed, u.ID,
 	)
 	if err != nil {
 		return fmt.Errorf("update exec error: %w", err)
