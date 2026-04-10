@@ -24,7 +24,6 @@ func NewUserRouter(userService *user.UserService, authService *auth.AuthManager)
 		r.Get("/logout", func(w http.ResponseWriter, r *http.Request) {
 			// TODO: Invalidate cookie
 			// FIX: logout with method
-
 			customRedirect(w, r, "/")
 		})
 	}

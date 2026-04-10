@@ -39,14 +39,8 @@ func (s SqliteUserStore) Insert(ctx context.Context, u *user.User) error {
 // WIP: realmente ni hace falta meter en una transaccion
 // FIX: revisar que todo funcione
 func (s *SqliteUserStore) Save(ctx context.Context, u *user.User) error {
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return fmt.Errorf("begin tx: %w", err)
-	}
-	defer tx.Rollback()
-
 	var user user.User
-	err = tx.QueryRowContext(ctx, `
+	err := s.db.QueryRowContext(ctx, `
 		SELECT user_id, username, password, email, recovery_token_hash,
 		       recovery_token_expiration, recovery_token_used
 		FROM users WHERE user_id = ? FOR UPDATE`,
@@ -62,7 +56,7 @@ func (s *SqliteUserStore) Save(ctx context.Context, u *user.User) error {
 		return fmt.Errorf("get user error: %w", err)
 	}
 
-	_, err = tx.ExecContext(ctx, `
+	_, err = s.db.ExecContext(ctx, `
 		UPDATE users SET
 			username = ?,
 			password = ?,
@@ -79,19 +73,16 @@ func (s *SqliteUserStore) Save(ctx context.Context, u *user.User) error {
 		return fmt.Errorf("update exec error: %w", err)
 	}
 
-	return tx.Commit()
+	return nil
 }
 
 func (s SqliteUserStore) Delete(ctx context.Context, userID user.UserID) error {
-	tx, err := s.db.BeginTx(ctx, nil)
+	_, err := s.db.ExecContext(ctx, `DELETE FROM users WHERE user_id = ?`, userID)
 	if err != nil {
-		return fmt.Errorf("begin tx: %w", err)
+		return fmt.Errorf("delete exec error: %w", err)
 	}
-	defer tx.Rollback()
 
-	_, err = s.db.ExecContext(ctx, `DELETE FROM users WHERE user_id = ?`, userID)
-
-	return tx.Commit()
+	return nil
 }
 
 func (s SqliteUserStore) GetByID(ctx context.Context, userID user.UserID) (*user.User, error) {

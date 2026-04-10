@@ -74,7 +74,7 @@ func NewAuthRouter(userService *userApp.UserService, authService *auth.AuthManag
 				redirect = "/dashboard"
 			}
 
-			session, err := authService.AuthenticateUser(r.Context(), username, password)
+			session, err := authService.Login(r.Context(), username, password)
 			if err != nil {
 				data := map[string]any{
 					"Redirect": redirect,

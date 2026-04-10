@@ -1,7 +1,7 @@
 -- +migrate Up
 CREATE TABLE user_sessions (
     session_token VARCHAR(64) PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     expires_at TIMESTAMP DEFAULT (datetime('now', '+30 minutes')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_used_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

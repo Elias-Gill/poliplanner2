@@ -3,10 +3,10 @@ package auth
 import (
 	"context"
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/elias-gill/poliplanner2/internal/domain/user"
+	"github.com/elias-gill/poliplanner2/logger"
 )
 
 type AuthManager struct {
@@ -25,22 +25,22 @@ func NewAuthManager(userStore user.UserStorer, sessionStore SessionStorer) *Auth
 // =         Public API           =
 // ================================
 
-// Errores personalizados
 var (
-	ErrSessionExpired    = errors.New("session has expired")
-	ErrSessionSaveFailed = errors.New("failed to save session")
-	ErrSessionNotFound   = errors.New("session not found")
+	ErrSessionExpired      = errors.New("session has expired")
+	ErrSessionNotFound     = errors.New("session not found")
+	ErrSessionSaveFailed   = errors.New("failed to save session")
+	ErrSessionDeleteFailed = errors.New("failed to delete session")
+	ErrSessionStoreFailure = errors.New("session store failure")
+	ErrUserStoreFailure    = errors.New("user store failure")
 )
 
-func (a *AuthManager) AuthenticateUser(ctx context.Context, login string, rawPassword string) (*Session, error) {
-	login = strings.ToLower(strings.TrimSpace(login))
+// Login authenticates a user and creates a new session.
+func (a *AuthManager) Login(ctx context.Context, login string, rawPassword string) (*Session, error) {
+	login = normalizeLogin(login)
 
-	u, err := a.userStorer.GetByUsername(ctx, login)
+	u, err := a.getUserByLogin(ctx, login)
 	if err != nil {
-		u, err = a.userStorer.GetByEmail(ctx, login)
-		if err != nil {
-			return nil, user.ErrInvalidCredentials
-		}
+		return nil, err
 	}
 
 	if err := u.AuthenticatePassword(rawPassword); err != nil {
@@ -50,30 +50,78 @@ func (a *AuthManager) AuthenticateUser(ctx context.Context, login string, rawPas
 	s := NewSession(u.ID)
 
 	if err := a.sessionStorer.Save(ctx, s); err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrSessionSaveFailed, err)
+		logger.Error("Session store failure", "error", err)
+		return nil, errors.Join(ErrSessionSaveFailed, err)
 	}
 
 	return s, nil
 }
 
-func (a *AuthManager) AuthenticateSession(ctx context.Context, token SessionID) (*Session, error) {
+// ValidateSession retrieves and validates an existing session.
+func (a *AuthManager) ValidateSession(ctx context.Context, token SessionID) (*Session, error) {
 	s, err := a.sessionStorer.Get(ctx, token)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrSessionNotFound, err)
+		return nil, errors.Join(ErrSessionStoreFailure, err)
+	}
+
+	if s == nil {
+		return nil, ErrSessionNotFound
 	}
 
 	if s.HasExpired() {
-		// FIX: error handling
-		// Invalidate session
-		_ = a.sessionStorer.Delete(ctx, s.ID)
+		if err := a.sessionStorer.Delete(ctx, s.ID); err != nil {
+			return nil, errors.Join(ErrSessionExpired, ErrSessionDeleteFailed, err)
+		}
+
 		return nil, ErrSessionExpired
 	}
 
 	s.ExtendIfNeeded()
 
 	if err := a.sessionStorer.Save(ctx, s); err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrSessionSaveFailed, err)
+		return nil, errors.Join(ErrSessionSaveFailed, err)
 	}
 
 	return s, nil
+}
+
+// Logout invalidates a session by removing it from the store.
+func (a *AuthManager) Logout(ctx context.Context, token SessionID) error {
+	if err := a.sessionStorer.Delete(ctx, token); err != nil {
+		return errors.Join(ErrSessionDeleteFailed, err)
+	}
+	return nil
+}
+
+// ================================
+// =        Private Helpers       =
+// ================================
+
+// normalizeLogin standardizes login input (username or email).
+func normalizeLogin(login string) string {
+	return strings.ToLower(strings.TrimSpace(login))
+}
+
+// getUserByLogin attempts to retrieve a user by username first, then by email.
+// Separates infrastructure failures from invalid credentials.
+func (a *AuthManager) getUserByLogin(ctx context.Context, login string) (*user.User, error) {
+	u, err := a.userStorer.GetByUsername(ctx, login)
+	if err == nil {
+		return u, nil
+	}
+
+	if !errors.Is(err, user.ErrUserNotFound) {
+		logger.Error("User store failure", "error", err)
+		return nil, errors.Join(ErrUserStoreFailure, err)
+	}
+
+	u, err = a.userStorer.GetByEmail(ctx, login)
+	if err != nil {
+		if errors.Is(err, user.ErrUserNotFound) {
+			return nil, user.ErrInvalidCredentials
+		}
+		return nil, errors.Join(ErrUserStoreFailure, err)
+	}
+
+	return u, nil
 }

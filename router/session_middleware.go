@@ -44,7 +44,7 @@ func NewSessionMiddleware(authManager *auth.AuthManager) func(next http.Handler)
 			}
 
 			// If present, then authenticate the session
-			session, err := authManager.AuthenticateSession(
+			session, err := authManager.ValidateSession(
 				r.Context(),
 				auth.SessionID(cookie.Value),
 			)
