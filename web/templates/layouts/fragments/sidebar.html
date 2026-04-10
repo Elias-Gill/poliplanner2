@@ -1,62 +1,63 @@
 {{ define "fragments/sidebar" }}
-<!-- Sidebar desktop -->
-<aside
-  class="hidden h-screen md:flex md:flex-col md:w-64 border-r 
+  <!-- Sidebar desktop -->
+  <aside
+    class="hidden h-screen md:flex md:flex-col md:w-64 border-r 
          bg-sidebar-bg text-sidebar-text border-gray-500">
-
-  <!-- Header -->
-  <div
-    class="p-5 border-b transition-colors 
+    <!-- Header -->
+    <div
+      class="p-5 border-b transition-colors 
            bg-sidebar-bg hover:bg-sidebar-hover border-gray-500">
-    <div class="flex items-start justify-between">
-      <a href="/guides/about">
-        <div class="flex items-center gap-3">
-          <img src="/static/favicon.ico" class="w-8 h-8 bg-white rounded rounded-xl" alt="Logo" />
-          <span class="text-xl font-semibold">PoliPlanner</span>
-        </div>
-        <div class="mt-1 text-xs text-sidebar-text-muted">
-          Por estudiantes y para estudiantes
-        </div>
+      <div class="flex items-start justify-between">
+        <a href="/guides/about">
+          <div class="flex items-center gap-3">
+            <img
+              src="/static/favicon.ico"
+              class="w-8 h-8 bg-white rounded rounded-xl"
+              alt="Logo" />
+            <span class="text-xl font-semibold">PoliPlanner</span>
+          </div>
+          <div class="mt-1 text-xs text-sidebar-text-muted">
+            Por estudiantes y para estudiantes
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Navegación -->
+    <nav class="flex-1 px-3 py-4 space-y-1">
+      <a
+        href="/dashboard"
+        class="nav-link flex items-center gap-3 px-4 py-3 rounded-sm transition-colors 
+             text-sidebar-text hover:bg-sidebar-hover">
+        <i class="bi bi-speedometer2 text-lg"></i>
+        <span>Dashboard</span>
       </a>
-    </div>
-  </div>
 
-  <!-- Navegación -->
-  <nav class="flex-1 px-3 py-4 space-y-1">
-    <a
-      href="/dashboard"
-      class="nav-link flex items-center gap-3 px-4 py-3 rounded-sm transition-colors 
+      <a
+        href="/guides"
+        class="nav-link flex items-center gap-3 px-4 py-3 rounded-sm transition-colors 
              text-sidebar-text hover:bg-sidebar-hover">
-      <i class="bi bi-speedometer2 text-lg"></i>
-      <span>Dashboard</span>
-    </a>
+        <i class="bi bi-book text-lg"></i>
+        <span>Guías universitarias</span>
+      </a>
 
-    <a
-      href="/guides"
-      class="nav-link flex items-center gap-3 px-4 py-3 rounded-sm transition-colors 
+      <a
+        href="/tools"
+        class="nav-link flex items-center gap-3 px-4 py-3 rounded-sm transition-colors 
              text-sidebar-text hover:bg-sidebar-hover">
-      <i class="bi bi-book text-lg"></i>
-      <span>Guías universitarias</span>
-    </a>
+        <i class="bi bi-tools text-lg"></i>
+        <span>Herramientas</span>
+      </a>
+    </nav>
 
-    <a
-      href="/tools"
-      class="nav-link flex items-center gap-3 px-4 py-3 rounded-sm transition-colors 
-             text-sidebar-text hover:bg-sidebar-hover">
-      <i class="bi bi-tools text-lg"></i>
-      <span>Herramientas</span>
-    </a>
-  </nav>
-
-  <!-- Zona inferior -->
-  <div
-    class="p-5 border-t space-y-4 border-gray-500">
-    <div class="flex justify-center">
-      {{ template "fragments/theme-toggle" "theme-toggle-desktop" }}
+    <!-- Zona inferior -->
+    <div class="p-5 border-t space-y-4 border-gray-500">
+      <div class="flex justify-center">
+        {{ template "fragments/theme-toggle" "theme-toggle-desktop" }}
+      </div>
+      <div class="text-xs text-center text-sidebar-text-muted">
+        Parte de la Iniciativa PoliPlanner
+      </div>
     </div>
-    <div class="text-xs text-center text-sidebar-text-muted">
-      Parte de la Iniciativa PoliPlanner
-    </div>
-  </div>
-</aside>
+  </aside>
 {{ end }}
