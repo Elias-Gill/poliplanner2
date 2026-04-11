@@ -17,16 +17,16 @@ import (
 	"github.com/elias-gill/poliplanner2/logger"
 )
 
-type ImportService struct {
-	sheetVersionStorer sheetversion.SheetVersionStorer
-	importStorer       ImportStorer
+type ExcelImporter struct {
+	sheetVersionStorer sheetversion.SheetVersionRepository
+	importStorer       ImportRepository
 }
 
-func NewExcelImportService(
-	importStorer ImportStorer,
-	sheetVersionStorer sheetversion.SheetVersionStorer,
-) *ImportService {
-	return &ImportService{
+func New(
+	importStorer ImportRepository,
+	sheetVersionStorer sheetversion.SheetVersionRepository,
+) *ExcelImporter {
+	return &ExcelImporter{
 		importStorer:       importStorer,
 		sheetVersionStorer: sheetVersionStorer,
 	}
@@ -37,7 +37,7 @@ func NewExcelImportService(
 // ================================
 
 // PeriodicSync checks if the last sync was 48hs ago to perform a search and parsing
-func (s *ImportService) AutoSync(ctx context.Context) {
+func (s *ExcelImporter) AutoSync(ctx context.Context) {
 	if !s.shouldAutoSync(ctx) {
 		logger.Info("Excel auto-sync skipped: last check was less than 48 hours ago")
 		return
@@ -59,7 +59,7 @@ func (s *ImportService) AutoSync(ctx context.Context) {
 
 // Sync ignores the 48hs threshold but still checks if the web source is newer
 // before parsing it.
-func (s *ImportService) Sync(ctx context.Context) error {
+func (s *ExcelImporter) Sync(ctx context.Context) error {
 	logger.Info("Manual Excel sync requested")
 
 	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
@@ -76,7 +76,7 @@ func (s *ImportService) Sync(ctx context.Context) error {
 }
 
 // PersistSource parses and persists an ExcelSource into persistent storage
-func (s *ImportService) PersistSource(ctx context.Context, src source.ExcelSource) error {
+func (s *ExcelImporter) PersistSource(ctx context.Context, src source.ExcelSource) error {
 	logger.Info("Starting persistence of Excel source")
 
 	sourceMeta := src.GetMetadata()
@@ -172,7 +172,7 @@ func (s *ImportService) PersistSource(ctx context.Context, src source.ExcelSourc
 // =       Private helpers        =
 // ================================
 
-func (s *ImportService) shouldAutoSync(ctx context.Context) bool {
+func (s *ExcelImporter) shouldAutoSync(ctx context.Context) bool {
 	lastCheck, err := s.sheetVersionStorer.GetLastCheckedDate(ctx)
 	if err != nil {
 		logger.Warn("Failed to retrieve last checked time", "error", err)
@@ -190,7 +190,7 @@ func (s *ImportService) shouldAutoSync(ctx context.Context) bool {
 	return elapsed >= 48*time.Hour
 }
 
-func (s *ImportService) syncNewestVersion(ctx context.Context) error {
+func (s *ExcelImporter) syncNewestVersion(ctx context.Context) error {
 	logger.Info("Searching for newest Excel version")
 
 	key := config.Get().Excel.GoogleAPIKey
@@ -232,7 +232,7 @@ func (s *ImportService) syncNewestVersion(ctx context.Context) error {
 	return nil
 }
 
-func (s *ImportService) persistSheetSubjects(
+func (s *ExcelImporter) persistSheetSubjects(
 	sheet *parser.ParsedSheet,
 	periodID period.PeriodID,
 	writer ImportWriter,

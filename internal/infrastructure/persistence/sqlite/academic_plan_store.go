@@ -13,7 +13,7 @@ type SqliteAcademicPlanStore struct {
 	db *sql.DB
 }
 
-func NewSqliteAcademicPlanStorer(connection *sql.DB) *SqliteAcademicPlanStore {
+func NewSqliteAcademicPlanStore(connection *sql.DB) *SqliteAcademicPlanStore {
 	return &SqliteAcademicPlanStore{db: connection}
 }
 

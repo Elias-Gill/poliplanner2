@@ -7,8 +7,8 @@ import (
 )
 
 func NewDashboardRouter(
-	scheduleService *schedule.ScheduleService,
-	planService *academicPlan.AcademicPlanService,
+	scheduleService *schedule.Schedule,
+	planService *academicPlan.AcademicPlan,
 ) func(r chi.Router) {
 
 	handlers := newDashboardHandlers(scheduleService, planService)

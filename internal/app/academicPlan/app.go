@@ -11,23 +11,23 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/domain/period"
 )
 
-type AcademicPlanService struct {
-	planStorer   academicPlan.AcademicPlanStorer
-	courseStorer courseOffering.CourseStorer
+type AcademicPlan struct {
+	planStorer   academicPlan.AcademicPlanRepository
+	courseStorer courseOffering.CourseRepository
 }
 
-func NewAcademicPlanService(
-	planStorer academicPlan.AcademicPlanStorer,
-	courseStorer courseOffering.CourseStorer,
-) *AcademicPlanService {
-	return &AcademicPlanService{planStorer: planStorer, courseStorer: courseStorer}
+func New(
+	planStorer academicPlan.AcademicPlanRepository,
+	courseStorer courseOffering.CourseRepository,
+) *AcademicPlan {
+	return &AcademicPlan{planStorer: planStorer, courseStorer: courseStorer}
 }
 
-func (a AcademicPlanService) ListCareers(ctx context.Context) ([]*academicPlan.Career, error) {
+func (a AcademicPlan) ListCareers(ctx context.Context) ([]*academicPlan.Career, error) {
 	return a.planStorer.ListCareers(ctx)
 }
 
-func (a AcademicPlanService) GetCareerPlan(
+func (a AcademicPlan) GetCareerPlan(
 	ctx context.Context,
 	careerID academicPlan.CareerID,
 ) (*academicPlan.AcademicPlan, error) {
@@ -82,7 +82,7 @@ func (a AcademicPlanService) GetCareerPlan(
 	}, nil
 }
 
-func (a AcademicPlanService) ListOffering(
+func (a AcademicPlan) ListOffering(
 	ctx context.Context,
 	courses []academicPlan.SubjectID,
 ) ([]courseOffering.OfferList, error) {
@@ -111,7 +111,7 @@ func (a AcademicPlanService) ListOffering(
 	return offers, nil
 }
 
-func (a AcademicPlanService) ListCoursesSchedule(
+func (a AcademicPlan) ListCoursesSchedule(
 	ctx context.Context,
 	courses []courseOffering.CourseOfferingID,
 ) (*courseOffering.CoursesScheduleView, error) {
@@ -154,7 +154,7 @@ func (a AcademicPlanService) ListCoursesSchedule(
 	return view, nil
 }
 
-func (a AcademicPlanService) GetCourseExams(
+func (a AcademicPlan) GetCourseExams(
 	ctx context.Context,
 	id courseOffering.CourseOfferingID,
 ) ([]courseOffering.ExamClass, error) {
@@ -165,7 +165,7 @@ func (a AcademicPlanService) GetCourseExams(
 	return exams, nil
 }
 
-func (a AcademicPlanService) ListCoursesExams(
+func (a AcademicPlan) ListCoursesExams(
 	ctx context.Context,
 	ids []courseOffering.CourseOfferingID,
 ) ([]courseOffering.ExamClass, error) {
@@ -176,7 +176,7 @@ func (a AcademicPlanService) ListCoursesExams(
 	return exams, nil
 }
 
-func (a AcademicPlanService) GetScheduleExamsView(
+func (a AcademicPlan) GetScheduleExamsView(
 	ctx context.Context,
 	courses []courseOffering.CourseOfferingID,
 ) (*courseOffering.ExamsScheduleView, error) {
@@ -239,7 +239,7 @@ func (a AcademicPlanService) GetScheduleExamsView(
 	return view, nil
 }
 
-func (a AcademicPlanService) ListCoursesInfo(
+func (a AcademicPlan) ListCoursesInfo(
 	ctx context.Context,
 	courses []courseOffering.CourseOfferingID,
 ) ([]courseOffering.CourseSummary, error) {

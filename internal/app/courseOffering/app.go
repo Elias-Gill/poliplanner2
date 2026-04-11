@@ -5,11 +5,11 @@ import (
 )
 
 type CourseOfferingService struct {
-	courseStorer courseOffering.CourseStorer
+	courseStorer courseOffering.CourseRepository
 }
 
 func NewAcademicPlanService(
-	courseStorer courseOffering.CourseStorer,
+	courseStorer courseOffering.CourseRepository,
 ) *CourseOfferingService {
 	return &CourseOfferingService{courseStorer: courseStorer}
 }

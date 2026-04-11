@@ -4,7 +4,7 @@ import (
 	"context"
 )
 
-type UserStorer interface {
+type UserRepository interface {
 	Insert(ctx context.Context, u *User) error
 	Delete(ctx context.Context, userID UserID) error
 	Save(ctx context.Context, user *User) error

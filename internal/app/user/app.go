@@ -6,15 +6,15 @@ import (
 	"strings"
 )
 
-type UserService struct {
-	userStorer user.UserStorer
+type User struct {
+	userStorer user.UserRepository
 }
 
-func NewUserService(userStorer user.UserStorer) *UserService {
-	return &UserService{userStorer: userStorer}
+func New(userStorer user.UserRepository) *User {
+	return &User{userStorer: userStorer}
 }
 
-func (s *UserService) CreateUser(
+func (s *User) CreateUser(
 	ctx context.Context,
 	username,
 	email,
@@ -42,7 +42,7 @@ func (s *UserService) CreateUser(
 	return s.userStorer.Insert(ctx, u)
 }
 
-func (s *UserService) StartPasswordRecovery(ctx context.Context, email string) (string, error) {
+func (s *User) StartPasswordRecovery(ctx context.Context, email string) (string, error) {
 	email = strings.ToLower(strings.TrimSpace(email))
 	if err := user.ValidateEmailInput(email); err != nil {
 		return "", err
@@ -64,7 +64,7 @@ func (s *UserService) StartPasswordRecovery(ctx context.Context, email string) (
 	return token, nil
 }
 
-func (s *UserService) CommitPasswordRecovery(ctx context.Context, token, newPassword, confirmPassword string) error {
+func (s *User) CommitPasswordRecovery(ctx context.Context, token, newPassword, confirmPassword string) error {
 	// Validate passwords
 	if err := user.ValidatePasswordInput(newPassword, confirmPassword); err != nil {
 		return err

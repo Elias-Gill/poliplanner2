@@ -8,14 +8,14 @@ import (
 	brevo "github.com/getbrevo/brevo-go/lib"
 )
 
-type EmailService struct {
+type EmailSender struct {
 	enabled bool
 	apiKey  string
 	client  *brevo.APIClient
 }
 
-func NewEmailService(apiKey string) *EmailService {
-	client := &EmailService{enabled: false}
+func New(apiKey string) *EmailSender {
+	client := &EmailSender{enabled: false}
 
 	if apiKey == "" {
 		logger.Warn("Email api key is not set, Email Service will be disabled")
@@ -33,7 +33,7 @@ func NewEmailService(apiKey string) *EmailService {
 	return client
 }
 
-func (e *EmailService) SendRecoveryEmail(to string, recToken string) error {
+func (e *EmailSender) SendRecoveryEmail(to string, recToken string) error {
 	if !e.enabled {
 		logger.Debug("Email support is disabled")
 		return fmt.Errorf("Email service is disabled")

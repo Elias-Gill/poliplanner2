@@ -20,13 +20,13 @@ import (
 const maxUploadSize = 8 << 20 // 8 MiB
 
 type ExcelHandlers struct {
-	excelService     *excelimport.ImportService
+	excelService     *excelimport.ExcelImporter
 	syncFormTemplate *template.Template // se usará el parse que ya tienes en utils
 	updateKey        string
 	scraperTimeout   time.Duration
 }
 
-func newExcelHandlers(excelService *excelimport.ImportService) *ExcelHandlers {
+func newExcelHandlers(excelService *excelimport.ExcelImporter) *ExcelHandlers {
 	cfg := config.Get()
 
 	baseDir := path.Join(cfg.Paths.BaseDir, "web", "templates", "pages")

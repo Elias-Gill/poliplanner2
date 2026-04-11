@@ -7,7 +7,7 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/domain/sheetVersion"
 )
 
-type ImportStorer interface {
+type ImportRepository interface {
 	RunImport(ctx context.Context, fn func(ImportWriter) error) error
 
 	// SaveAudit records a new audit entry for an Excel import, capturing metadata,

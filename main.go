@@ -37,12 +37,12 @@ func main() {
 	}
 	defer conn.CloseDB()
 
-	services := service.NewServices(
+	useCases := service.NewUseCases(
 		sqlite.NewSqliteUserStore(conn.GetConnection()),
 		sqlite.NewSqliteSheetVersionStore(conn.GetConnection()),
-		sqlite.NewSqliteExcelImportStorer(conn.GetConnection()),
+		sqlite.NewSqliteExcelImportStore(conn.GetConnection()),
 		sqlite.NewSqliteScheduleStore(conn.GetConnection()),
-		sqlite.NewSqliteAcademicPlanStorer(conn.GetConnection()),
+		sqlite.NewSqliteAcademicPlanStore(conn.GetConnection()),
 		sqlite.NewSqliteCourseOfferingStore(conn.GetConnection()),
 		sqlite.NewSqliteSessionStore(conn.GetConnection()),
 	)
@@ -50,14 +50,14 @@ func main() {
 	r := chi.NewRouter()
 
 	// Register middlewares
-	r.Use(middleware.NewSessionMiddleware(services.AuthService))
+	r.Use(middleware.NewSessionMiddleware(useCases.Auth))
 
 	// REFACTOR: separate special routes into more routers
 	// login, special pages and auth router
-	r.Route("/", auth.NewAuthRouter(services.UserService, services.AuthService, services.EmailService))
+	r.Route("/", auth.NewAuthRouter(useCases.User, useCases.Auth, useCases.Email))
 
-	r.Route("/dashboard", dashboard.NewDashboardRouter(services.ScheduleService, services.AcademicPlanService))
-	r.Route("/schedule", schedules.NewSchedulesRouter(services.ScheduleService, services.AcademicPlanService))
+	r.Route("/dashboard", dashboard.NewDashboardRouter(useCases.Schedule, useCases.AcademicPlan))
+	r.Route("/schedule", schedules.NewSchedulesRouter(useCases.Schedule, useCases.AcademicPlan))
 
 	// User administration router
 	// r.Route("/user", router.NewUserRouter(services.UserService, services.AuthService))
@@ -68,7 +68,7 @@ func main() {
 	// r.Route("/courses", router.NewCourseRouter(services.CoursesService, services.CareerService))
 
 	// Admin routers
-	r.Route("/excel", excel.NewExcelRouter(services.ImportService))
+	r.Route("/excel", excel.NewExcelRouter(useCases.ExcelImport))
 
 	// Static files
 	staticDir := http.Dir(path.Join(config.Get().Paths.BaseDir, "web", "static"))
@@ -86,7 +86,7 @@ func main() {
 		ctx, cancel := context.WithTimeout(context.Background(), config.Get().Excel.ScraperTimeout)
 		defer cancel()
 		// The result of this operation is irrelevant
-		services.ImportService.AutoSync(ctx)
+		useCases.ExcelImport.AutoSync(ctx)
 	}()
 
 	// Start Server

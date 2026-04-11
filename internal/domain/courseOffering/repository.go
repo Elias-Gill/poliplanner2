@@ -7,7 +7,7 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/domain/period"
 )
 
-type CourseStorer interface {
+type CourseRepository interface {
 	FindOfferForSubject(ctx context.Context, subejctID academicPlan.SubjectID, period period.Period) ([]Section, error)
 
 	GetCourseDetails(ctx context.Context, id CourseOfferingID) (*CourseSummary, error)

@@ -8,7 +8,7 @@ import (
 
 var ErrNoSheetVersion = errors.New("no sheet version found")
 
-type SheetVersionStorer interface {
+type SheetVersionRepository interface {
 	GetNewest(ctx context.Context) (*SheetVersion, error)
 
 	GetLastCheckedDate(ctx context.Context) (*time.Time, error)

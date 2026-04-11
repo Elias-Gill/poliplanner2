@@ -5,7 +5,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func NewExcelRouter(excelService *excelimport.ImportService) func(r chi.Router) {
+func NewExcelRouter(excelService *excelimport.ExcelImporter) func(r chi.Router) {
 	handlers := newExcelHandlers(excelService)
 
 	return func(r chi.Router) {

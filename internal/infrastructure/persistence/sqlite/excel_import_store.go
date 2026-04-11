@@ -27,7 +27,7 @@ type SqliteExcelImportStorer struct {
 	db *sql.DB
 }
 
-func NewSqliteExcelImportStorer(db *sql.DB) *SqliteExcelImportStorer {
+func NewSqliteExcelImportStore(db *sql.DB) *SqliteExcelImportStorer {
 	return &SqliteExcelImportStorer{
 		db: db,
 	}

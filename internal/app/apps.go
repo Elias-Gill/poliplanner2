@@ -22,33 +22,33 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/config"
 )
 
-type Services struct {
-	UserService         *userApp.UserService
-	SheetVersionService *sheetVersionApp.SheetVersionService
-	ScheduleService     *scheduleApp.ScheduleService
-	ImportService       *excelApp.ImportService
-	EmailService        *emailApp.EmailService
-	AcademicPlanService *apApp.AcademicPlanService
-	AuthService         *auth.AuthManager
+type UseCases struct {
+	User         *userApp.User
+	SheetVersion *sheetVersionApp.SheetVersion
+	Schedule     *scheduleApp.Schedule
+	ExcelImport  *excelApp.ExcelImporter
+	Email        *emailApp.EmailSender
+	AcademicPlan *apApp.AcademicPlan
+	Auth         *auth.AuthManager
 }
 
 // Convenience function to instantiate all the services in one call
-func NewServices(
-	userStore user.UserStorer,
-	sheetVersionStore sheetVersion.SheetVersionStorer,
-	importStorer excelApp.ImportStorer,
-	scheduleStore schedule.ScheduleStorer,
-	planStorer academicPlan.AcademicPlanStorer,
-	courseStorer courseOffering.CourseStorer,
-	sessionStorer auth.SessionStorer,
-) *Services {
-	return &Services{
-		UserService:         userApp.NewUserService(userStore),
-		SheetVersionService: sheetVersionApp.NewSheetVersionService(sheetVersionStore),
-		ImportService:       excelApp.NewExcelImportService(importStorer, sheetVersionStore),
-		EmailService:        emailApp.NewEmailService(config.Get().Email.APIKey),
-		ScheduleService:     scheduleApp.NewScheduleService(scheduleStore),
-		AcademicPlanService: apApp.NewAcademicPlanService(planStorer, courseStorer),
-		AuthService:         auth.NewAuthManager(userStore, sessionStorer),
+func NewUseCases(
+	userStore user.UserRepository,
+	sheetVersionStore sheetVersion.SheetVersionRepository,
+	importStore excelApp.ImportRepository,
+	scheduleStore schedule.ScheduleRepository,
+	planStore academicPlan.AcademicPlanRepository,
+	courseStore courseOffering.CourseRepository,
+	sessionStore auth.SessionRepository,
+) *UseCases {
+	return &UseCases{
+		User:         userApp.New(userStore),
+		SheetVersion: sheetVersionApp.New(sheetVersionStore),
+		ExcelImport:  excelApp.New(importStore, sheetVersionStore),
+		Email:        emailApp.New(config.Get().Email.APIKey),
+		Schedule:     scheduleApp.New(scheduleStore),
+		AcademicPlan: apApp.New(planStore, courseStore),
+		Auth:         auth.New(userStore, sessionStore),
 	}
 }

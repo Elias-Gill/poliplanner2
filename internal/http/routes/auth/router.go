@@ -7,7 +7,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func NewAuthRouter(userService *userApp.UserService, authService *auth.AuthManager, emailService *email.EmailService) func(r chi.Router) {
+func NewAuthRouter(userService *userApp.User, authService *auth.AuthManager, emailService *email.EmailSender) func(r chi.Router) {
 	handlers := newAuthHandlers(userService, authService, emailService)
 
 	return func(r chi.Router) {

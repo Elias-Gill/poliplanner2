@@ -42,8 +42,8 @@ type Step3View struct {
 }
 
 type SchedulesHandlers struct {
-	scheduleService *schedule.ScheduleService
-	planService     *academicPlan.AcademicPlanService
+	scheduleService *schedule.Schedule
+	planService     *academicPlan.AcademicPlan
 
 	// templates
 	step1 *template.Template
@@ -52,8 +52,8 @@ type SchedulesHandlers struct {
 }
 
 func newSchedulesHandlers(
-	scheduleService *schedule.ScheduleService,
-	planService *academicPlan.AcademicPlanService,
+	scheduleService *schedule.Schedule,
+	planService *academicPlan.AcademicPlan,
 ) *SchedulesHandlers {
 
 	basePath := path.Join(

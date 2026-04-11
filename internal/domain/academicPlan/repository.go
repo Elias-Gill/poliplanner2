@@ -4,7 +4,7 @@ import (
 	"context"
 )
 
-type AcademicPlanStorer interface {
+type AcademicPlanRepository interface {
 	GetPlanByCareerID(ctx context.Context, career CareerID) ([]Subject, error)
 	ListCareers(ctx context.Context) ([]*Career, error)
 

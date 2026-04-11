@@ -10,11 +10,11 @@ import (
 )
 
 type AuthManager struct {
-	userStorer    user.UserStorer
-	sessionStorer SessionStorer
+	userStorer    user.UserRepository
+	sessionStorer SessionRepository
 }
 
-func NewAuthManager(userStore user.UserStorer, sessionStore SessionStorer) *AuthManager {
+func New(userStore user.UserRepository, sessionStore SessionRepository) *AuthManager {
 	return &AuthManager{
 		userStorer:    userStore,
 		sessionStorer: sessionStore,

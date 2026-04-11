@@ -40,12 +40,12 @@ var (
 )
 
 type AuthHandlers struct {
-	userService  *userApp.UserService
+	userService  *userApp.User
 	authService  *auth.AuthManager
-	emailService *email.EmailService
+	emailService *email.EmailSender
 }
 
-func newAuthHandlers(userService *userApp.UserService, authService *auth.AuthManager, emailService *email.EmailService) *AuthHandlers {
+func newAuthHandlers(userService *userApp.User, authService *auth.AuthManager, emailService *email.EmailSender) *AuthHandlers {
 	return &AuthHandlers{
 		userService:  userService,
 		authService:  authService,

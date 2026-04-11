@@ -8,20 +8,20 @@ import (
 	sheetversion "github.com/elias-gill/poliplanner2/internal/domain/sheetVersion"
 )
 
-type SheetVersionService struct {
+type SheetVersion struct {
 	db                 *sql.DB
-	sheetVersionStorer sheetversion.SheetVersionStorer
+	sheetVersionStorer sheetversion.SheetVersionRepository
 }
 
-func NewSheetVersionService(
-	sheetVersionStorer sheetversion.SheetVersionStorer,
-) *SheetVersionService {
-	return &SheetVersionService{
+func New(
+	sheetVersionStorer sheetversion.SheetVersionRepository,
+) *SheetVersion {
+	return &SheetVersion{
 		sheetVersionStorer: sheetVersionStorer,
 	}
 }
 
-func (s *SheetVersionService) FindLatestSheetVersion(
+func (s *SheetVersion) FindLatestSheetVersion(
 	ctx context.Context,
 ) (*sheetversion.SheetVersion, error) {
 	version, err := s.sheetVersionStorer.GetNewest(ctx)

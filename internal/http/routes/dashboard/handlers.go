@@ -34,8 +34,8 @@ type dashboardPage struct {
 }
 
 type DashboardHandlers struct {
-	scheduleService *schedule.ScheduleService
-	planService     *academicPlan.AcademicPlanService
+	scheduleService *schedule.Schedule
+	planService     *academicPlan.AcademicPlan
 
 	// templates
 	dashboardTemplate *template.Template
@@ -43,8 +43,8 @@ type DashboardHandlers struct {
 }
 
 func newDashboardHandlers(
-	scheduleService *schedule.ScheduleService,
-	planService *academicPlan.AcademicPlanService,
+	scheduleService *schedule.Schedule,
+	planService *academicPlan.AcademicPlan,
 ) *DashboardHandlers {
 
 	templateDir := path.Join(config.Get().Paths.BaseDir, "web", "templates", "pages", "dashboard")

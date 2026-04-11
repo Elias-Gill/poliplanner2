@@ -13,18 +13,18 @@ var (
 	ErrPermissionDenied = errors.New("User has no permission")
 )
 
-type ScheduleService struct {
-	storer schedule.ScheduleStorer
+type Schedule struct {
+	storer schedule.ScheduleRepository
 }
 
-func NewScheduleService(storer schedule.ScheduleStorer) *ScheduleService {
-	return &ScheduleService{
+func New(storer schedule.ScheduleRepository) *Schedule {
+	return &Schedule{
 		storer: storer,
 	}
 }
 
 // ListUserSchedules returns all schedules for a user
-func (s ScheduleService) ListUserSchedules(ctx context.Context, userID user.UserID) ([]schedule.ScheduleSummary, error) {
+func (s Schedule) ListUserSchedules(ctx context.Context, userID user.UserID) ([]schedule.ScheduleSummary, error) {
 	logger.Debug("ListUserSchedules called", "userID", userID)
 	sched, err := s.storer.ListByUserID(ctx, userID)
 	if err != nil {
@@ -36,7 +36,7 @@ func (s ScheduleService) ListUserSchedules(ctx context.Context, userID user.User
 }
 
 // GetSchedule returns schedule details if the user owns it
-func (s ScheduleService) GetSchedule(ctx context.Context, userID user.UserID, scheduleID schedule.ScheduleID) (*schedule.Schedule, error) {
+func (s Schedule) GetSchedule(ctx context.Context, userID user.UserID, scheduleID schedule.ScheduleID) (*schedule.Schedule, error) {
 	logger.Debug("GetSchedule called", "userID", userID, "scheduleID", scheduleID)
 	sche, err := s.storer.GetDetailsByID(ctx, scheduleID)
 	if err != nil {
@@ -54,7 +54,7 @@ func (s ScheduleService) GetSchedule(ctx context.Context, userID user.UserID, sc
 }
 
 // Save persists a schedule and returns its ID
-func (s ScheduleService) Save(ctx context.Context, sche schedule.Schedule) (schedule.ScheduleID, error) {
+func (s Schedule) Save(ctx context.Context, sche schedule.Schedule) (schedule.ScheduleID, error) {
 	logger.Debug("Save called", "title", sche.Title, "owner", sche.Owner)
 	id, err := s.storer.Save(ctx, sche)
 	if err != nil {
@@ -66,7 +66,7 @@ func (s ScheduleService) Save(ctx context.Context, sche schedule.Schedule) (sche
 }
 
 // TitleIsAvailable checks if the user has a schedule with the same title
-func (s ScheduleService) TitleIsAvailable(ctx context.Context, userID user.UserID, title string) (bool, error) {
+func (s Schedule) TitleIsAvailable(ctx context.Context, userID user.UserID, title string) (bool, error) {
 	logger.Debug("TitleIsAvailable called", "userID", userID, "title", title)
 	list, err := s.ListUserSchedules(ctx, userID)
 	if err != nil {
