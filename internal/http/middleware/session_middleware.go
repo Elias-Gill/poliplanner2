@@ -1,4 +1,4 @@
-package router
+package middleware
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 
 	"github.com/elias-gill/poliplanner2/internal/app/auth"
 	"github.com/elias-gill/poliplanner2/internal/domain/user"
+	utils "github.com/elias-gill/poliplanner2/internal/http"
 	"github.com/elias-gill/poliplanner2/logger"
 )
 
@@ -39,7 +40,7 @@ func NewSessionMiddleware(authManager *auth.AuthManager) func(next http.Handler)
 			cookie, err := r.Cookie(SessionIdCookie)
 			if err != nil {
 				logger.Debug("session middleware redirect", "cause", "cookie not present")
-				customRedirect(w, r, loginPage)
+				utils.CustomRedirect(w, r, loginPage)
 				return
 			}
 
@@ -56,7 +57,7 @@ func NewSessionMiddleware(authManager *auth.AuthManager) func(next http.Handler)
 					"cause", "invalid session",
 					"error", err,
 				)
-				customRedirect(w, r, loginPage)
+				utils.CustomRedirect(w, r, loginPage)
 				return
 			}
 
@@ -84,4 +85,19 @@ func buildLoginRedirect(r *http.Request) string {
 func injectUserIntoContext(r *http.Request, userID user.UserID) *http.Request {
 	ctx := context.WithValue(r.Context(), "userID", userID)
 	return r.WithContext(ctx)
+}
+
+// This function should never fail or panic if the session middleware is functioning correctly.
+// If a protected endpoint is reached without a userID set in the request context,
+// the application is in an invalid state and something unexpected has occurred.
+//
+// If this is the case, then probably the endpoint has not been added to the "protected
+// endpoints" array list in the middleware configuration.
+func MustExtractUserID(r *http.Request) user.UserID {
+	switch id := r.Context().Value(UserIDKey).(type) {
+	case user.UserID:
+		return id
+	default:
+		panic("The user ID is not set in the request of a protected endpoint, something wrong must have happened with the session manager middleware")
+	}
 }

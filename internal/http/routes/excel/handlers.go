@@ -1,8 +1,9 @@
-package router
+package excel
 
 import (
 	"context"
 	"fmt"
+	"html/template"
 	"net/http"
 	"path"
 	"strconv"
@@ -12,48 +13,61 @@ import (
 	excelimport "github.com/elias-gill/poliplanner2/internal/app/excelImport"
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/config/timezone"
+	utils "github.com/elias-gill/poliplanner2/internal/http"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/source"
-	"github.com/go-chi/chi/v5"
 )
 
 const maxUploadSize = 8 << 20 // 8 MiB
 
-func NewExcelRouter(excelService *excelimport.ImportService) func(r chi.Router) {
+type ExcelHandlers struct {
+	excelService     *excelimport.ImportService
+	syncFormTemplate *template.Template // se usará el parse que ya tienes en utils
+	updateKey        string
+	scraperTimeout   time.Duration
+}
+
+func newExcelHandlers(excelService *excelimport.ImportService) *ExcelHandlers {
 	cfg := config.Get()
 
-	updateKey := cfg.Security.UpdateKey
 	baseDir := path.Join(cfg.Paths.BaseDir, "web", "templates", "pages")
-
 	syncFormPath := path.Join(baseDir, "excel", "sync-form.html")
-	syncFormTemplate := parseTemplateWithBaseLayout(syncFormPath)
+	syncFormTemplate := utils.ParseTemplateWithBaseLayout(syncFormPath)
 
-	return func(r chi.Router) {
-		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			syncFormTemplate.Execute(w, nil)
-		})
-
-		r.Post("/sync", func(w http.ResponseWriter, r *http.Request) {
-			if !isAuthorized(r.Header.Get("Authorization"), updateKey) {
-				http.Error(w, "Unauthorized", http.StatusForbidden)
-				return
-			}
-
-			ct := r.Header.Get("Content-Type")
-			if strings.Contains(ct, "multipart/form-data") {
-				handleUpload(w, r, excelService)
-			} else {
-				handleSync(w, r, excelService, cfg.Excel.ScraperTimeout)
-			}
-		})
+	return &ExcelHandlers{
+		excelService:     excelService,
+		syncFormTemplate: syncFormTemplate,
+		updateKey:        cfg.Security.UpdateKey,
+		scraperTimeout:   cfg.Excel.ScraperTimeout,
 	}
 }
 
-func isAuthorized(authHeader, expected string) bool {
-	return strings.TrimSpace(authHeader) == "Bearer "+expected
+// ==================== Handlers ====================
+
+func (h *ExcelHandlers) SyncForm(w http.ResponseWriter, r *http.Request) {
+	h.syncFormTemplate.Execute(w, nil)
 }
 
-// handleUpload creates a manual ExcelSource and passes it to the service
-func handleUpload(w http.ResponseWriter, r *http.Request, svc *excelimport.ImportService) {
+func (h *ExcelHandlers) Sync(w http.ResponseWriter, r *http.Request) {
+	if !h.isAuthorized(r.Header.Get("Authorization")) {
+		http.Error(w, "Unauthorized", http.StatusForbidden)
+		return
+	}
+
+	ct := r.Header.Get("Content-Type")
+	if strings.Contains(ct, "multipart/form-data") {
+		h.handleUpload(w, r)
+	} else {
+		h.handleSync(w, r)
+	}
+}
+
+// ==================== Helper methods ====================
+
+func (h *ExcelHandlers) isAuthorized(authHeader string) bool {
+	return strings.TrimSpace(authHeader) == "Bearer "+h.updateKey
+}
+
+func (h *ExcelHandlers) handleUpload(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 	if err := r.ParseMultipartForm(maxUploadSize); err != nil {
 		http.Error(w, "Invalid form data", http.StatusBadRequest)
@@ -79,7 +93,6 @@ func handleUpload(w http.ResponseWriter, r *http.Request, svc *excelimport.Impor
 		downloadURL = "manual-upload"
 	}
 
-	// Create a minimal ExcelSource from the uploaded file
 	source := source.NewExcelSourceFromReader(file, source.ExcelSourceMetadata{
 		Name:   header.Filename,
 		URI:    downloadURL,
@@ -87,7 +100,7 @@ func handleUpload(w http.ResponseWriter, r *http.Request, svc *excelimport.Impor
 		Date:   time.Now().In(timezone.ParaguayTZ),
 	})
 
-	if err := svc.PersistSource(r.Context(), source); err != nil {
+	if err := h.excelService.PersistSource(r.Context(), source); err != nil {
 		http.Error(w, "Could not process the file: "+err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -95,11 +108,11 @@ func handleUpload(w http.ResponseWriter, r *http.Request, svc *excelimport.Impor
 	respondHTML(w, http.StatusOK, "File processed successfully")
 }
 
-func handleSync(w http.ResponseWriter, r *http.Request, svc *excelimport.ImportService, timeout time.Duration) {
-	ctx, cancel := context.WithTimeout(r.Context(), timeout)
+func (h *ExcelHandlers) handleSync(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(r.Context(), h.scraperTimeout)
 	defer cancel()
 
-	if err := svc.Sync(ctx); err != nil {
+	if err := h.excelService.Sync(ctx); err != nil {
 		http.Error(w, "Sync failed: "+err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -107,7 +120,6 @@ func handleSync(w http.ResponseWriter, r *http.Request, svc *excelimport.ImportS
 	respondHTML(w, http.StatusOK, "Sync completed successfully")
 }
 
-// REFACTOR: I DONT like this
 func respondHTML(w http.ResponseWriter, status int, msg string) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(status)

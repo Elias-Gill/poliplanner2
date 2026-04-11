@@ -5,12 +5,19 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/elias-gill/poliplanner2/internal/app"
+	service "github.com/elias-gill/poliplanner2/internal/app"
 	"github.com/elias-gill/poliplanner2/internal/config"
+	utils "github.com/elias-gill/poliplanner2/internal/http"
+	"github.com/elias-gill/poliplanner2/internal/http/middleware"
+	"github.com/elias-gill/poliplanner2/internal/http/routes/auth"
+	"github.com/elias-gill/poliplanner2/internal/http/routes/dashboard"
+	"github.com/elias-gill/poliplanner2/internal/http/routes/excel"
+	"github.com/elias-gill/poliplanner2/internal/http/routes/guides"
+	"github.com/elias-gill/poliplanner2/internal/http/routes/schedules"
+	"github.com/elias-gill/poliplanner2/internal/http/routes/tools"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/persistence"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/persistence/sqlite"
 	log "github.com/elias-gill/poliplanner2/logger"
-	"github.com/elias-gill/poliplanner2/router"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -43,25 +50,25 @@ func main() {
 	r := chi.NewRouter()
 
 	// Register middlewares
-	r.Use(router.NewSessionMiddleware(services.AuthService))
+	r.Use(middleware.NewSessionMiddleware(services.AuthService))
 
 	// REFACTOR: separate special routes into more routers
 	// login, special pages and auth router
-	r.Route("/", router.NewAuthRouter(services.UserService, services.AuthService, services.EmailService))
+	r.Route("/", auth.NewAuthRouter(services.UserService, services.AuthService, services.EmailService))
 
-	r.Route("/dashboard", router.NewDashboardRouter(services.ScheduleService, services.AcademicPlanService))
-	r.Route("/schedule", router.NewSchedulesRouter(services.ScheduleService, services.AcademicPlanService))
+	r.Route("/dashboard", dashboard.NewDashboardRouter(services.ScheduleService, services.AcademicPlanService))
+	r.Route("/schedule", schedules.NewSchedulesRouter(services.ScheduleService, services.AcademicPlanService))
 
 	// User administration router
-	r.Route("/user", router.NewUserRouter(services.UserService, services.AuthService))
+	// r.Route("/user", router.NewUserRouter(services.UserService, services.AuthService))
 
 	// Misc routers
-	r.Route("/tools", router.NewToolsRouter())
-	r.Route("/guides", router.NewGuidesRouter())
+	r.Route("/tools", tools.NewToolsRouter())
+	r.Route("/guides", guides.NewGuidesRouter())
 	// r.Route("/courses", router.NewCourseRouter(services.CoursesService, services.CareerService))
 
 	// Admin routers
-	r.Route("/excel", router.NewExcelRouter(services.ImportService))
+	r.Route("/excel", excel.NewExcelRouter(services.ImportService))
 
 	// Static files
 	staticDir := http.Dir(path.Join(config.Get().Paths.BaseDir, "web", "static"))
@@ -71,7 +78,7 @@ func main() {
 	r.Handle("/favicon.ico", http.FileServer(staticDir))
 
 	// 404 - Not found
-	r.NotFound(router.NotFoundHandler)
+	r.NotFound(NotFoundHandler)
 
 	// Auto import new excel versions on startup
 	go func() {
@@ -88,4 +95,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+// REFACTOR: que mierda hace esto aca
+func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
+	baseDir := path.Join(config.Get().Paths.BaseDir, "web", "templates", "pages")
+	w.Header().Set("Content-Type", "text/html")
+
+	utils.ParseTemplateWithBaseLayout(path.Join(baseDir, "404.html")).Execute(w, nil)
 }
