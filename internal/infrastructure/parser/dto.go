@@ -176,38 +176,42 @@ func (s *SubjectDTO) SetSection(val string) {
 // ============================================================
 
 func (s *SubjectDTO) SetTeachersFirtNames(firstNames string) {
-	list := strings.Split(firstNames, "\n")
+	list := splitCleanLines(firstNames)
+
 	s.ensureTeachersLen(max(len(s.Teachers), len(list)))
 
 	for i, v := range list {
-		s.Teachers[i].FirstName = strings.TrimSpace(v)
+		s.Teachers[i].FirstName = v
 	}
 }
 
 func (s *SubjectDTO) SetTeachersLastNames(secondNames string) {
-	list := strings.Split(secondNames, "\n")
+	list := splitCleanLines(secondNames)
+
 	s.ensureTeachersLen(max(len(s.Teachers), len(list)))
 
 	for i, v := range list {
-		s.Teachers[i].LastName = strings.TrimSpace(v)
+		s.Teachers[i].LastName = v
 	}
 }
 
 func (s *SubjectDTO) SetTeachersTitles(titles string) {
-	list := strings.Split(titles, "\n")
+	list := splitCleanLines(titles)
+
 	s.ensureTeachersLen(max(len(s.Teachers), len(list)))
 
 	for i, v := range list {
-		s.Teachers[i].Title = strings.TrimSpace(v)
+		s.Teachers[i].Title = v
 	}
 }
 
 func (s *SubjectDTO) SetTeachersEmails(emails string) {
-	list := strings.Split(emails, "\n")
+	list := splitCleanLines(emails)
+
 	s.ensureTeachersLen(max(len(s.Teachers), len(list)))
 
 	for i, v := range list {
-		s.Teachers[i].Email = strings.TrimSpace(v)
+		s.Teachers[i].Email = v
 	}
 }
 

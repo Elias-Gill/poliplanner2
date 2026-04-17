@@ -1,8 +1,8 @@
 -- Carreras
 CREATE TABLE carreras (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    -- acronimo de la carrera (ej: IIN, ISP). Debe de ir en mayusculas
-    siglas VARCHAR(6) NOT NULL,
+    -- acronimo de la carrera (ej: IIN, ISP, VILLARRICA). Debe de ir en mayusculas
+    siglas VARCHAR(30) NOT NULL,
     UNIQUE (siglas)
 );
 

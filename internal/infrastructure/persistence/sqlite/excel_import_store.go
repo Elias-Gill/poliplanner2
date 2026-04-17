@@ -112,7 +112,6 @@ func (s *SqliteExcelImportStorer) SaveAudit(
 // ============================================================
 
 func (w sqliteExcelImportWritter) EnsurePeriod(p period.Period) (period.PeriodID, error) {
-
 	_, err := w.tx.Exec(`
 		INSERT INTO periodos (year, periodo)
 		VALUES (?, ?)
@@ -135,7 +134,6 @@ func (w sqliteExcelImportWritter) EnsurePeriod(p period.Period) (period.PeriodID
 }
 
 func (w sqliteExcelImportWritter) SaveCourseOffering(off excelimport.Offering) error {
-
 	// 1. Carrera
 	careerID, err := w.ensureCareer(off.Subject.Career)
 	if err != nil {

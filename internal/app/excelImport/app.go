@@ -113,7 +113,6 @@ func (s *ExcelImporter) PersistSource(ctx context.Context, src source.ExcelSourc
 
 		for parserExcel.NextSheet() {
 			sheetCount++
-			logger.Debug("Processing sheet", "sheet_number", sheetCount)
 
 			sheetResult, err := parserExcel.ParseCurrentSheet()
 			if err != nil {
@@ -256,6 +255,7 @@ func (s *ExcelImporter) persistSheetSubjects(
 				"index", i,
 				"error", err,
 			)
+
 			return fmt.Errorf("cannot save course offering for subject %q: %w", sub.RawSubjectName, err)
 		}
 

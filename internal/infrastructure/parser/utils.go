@@ -207,3 +207,24 @@ func isValidDate(day, month, year int) bool {
 
 	return day <= daysInMonth
 }
+
+func splitCleanLines(input string) []string {
+	input = strings.TrimSpace(input)
+
+	if input == "" {
+		return nil
+	}
+
+	lines := strings.Split(input, "\n")
+
+	var result []string
+	for _, l := range lines {
+		l = strings.TrimSpace(l)
+		if l == "" {
+			continue
+		}
+		result = append(result, l)
+	}
+
+	return result
+}

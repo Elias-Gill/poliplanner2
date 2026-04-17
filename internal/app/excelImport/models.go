@@ -1,6 +1,7 @@
 package excelimport
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -199,4 +200,60 @@ func generateSearchKey(firstName, lastName string) string {
 	}
 
 	return first + "_" + last
+}
+
+func (o Offering) String() string {
+	var sb strings.Builder
+
+	sb.WriteString("Offering{ ")
+
+	sb.WriteString("CourseName=" + o.CourseName + " ")
+	sb.WriteString("Period=" + fmt.Sprintf("%v", o.Period) + " ")
+	sb.WriteString("Section=" + o.Section + " ")
+	sb.WriteString("CourseType=" + fmt.Sprintf("%v", o.CourseType) + " ")
+
+	sb.WriteString("Subject={")
+	sb.WriteString("Career=" + o.Subject.Career + " ")
+	sb.WriteString("Name=" + o.Subject.Name + " ")
+	sb.WriteString("Department=" + o.Subject.Department + " ")
+	sb.WriteString("Semester=" + fmt.Sprintf("%d", o.Subject.Semester) + " ")
+	sb.WriteString("Level=" + fmt.Sprintf("%d", o.Subject.Level))
+	sb.WriteString("} ")
+
+	sb.WriteString("Teachers=[")
+
+	for i, t := range o.Teachers {
+		if i > 0 {
+			sb.WriteString(", ")
+		}
+		sb.WriteString(t.FirstName + " " + t.LastName + "<" + t.Email + ">")
+	}
+
+	sb.WriteString("] ")
+
+	sb.WriteString("Schedule=[")
+
+	for i, s := range o.Schedule {
+		if i > 0 {
+			sb.WriteString(", ")
+		}
+
+		start := ""
+		end := ""
+
+		if s.Start != nil {
+			start = s.Start.String()
+		}
+		if s.End != nil {
+			end = s.End.String()
+		}
+
+		sb.WriteString(fmt.Sprintf("day=%v,start=%s,end=%s,room=%s", s.Day, start, end, s.Room))
+	}
+
+	sb.WriteString("] ")
+
+	sb.WriteString("}")
+
+	return sb.String()
 }

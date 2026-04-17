@@ -158,7 +158,7 @@ func (loader *AcademicPlanLoader) searchAcadamicData(normalizedName string) *Aca
 }
 
 func (loader *AcademicPlanLoader) matchesCache(current, cached string) bool {
-	return strings.HasPrefix(cached, current)
+	return strings.EqualFold(cached, current)
 }
 
 func (loader *AcademicPlanLoader) updateCache(name string, meta *AcademicPlanData) {

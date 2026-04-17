@@ -10,6 +10,7 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/exceptions"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/layout"
 	"github.com/elias-gill/poliplanner2/internal/utils"
+	"github.com/elias-gill/poliplanner2/logger"
 	"github.com/xuri/excelize/v2"
 )
 
@@ -51,7 +52,7 @@ func NewExcelParser(file io.ReadCloser) (*ExcelParser, error) {
 
 	p := &ExcelParser{
 		layouts:        layouts,
-		headerKeywords: []string{"item", "ítem"},
+		headerKeywords: []string{"item", "ítem", "DPTO.", "dpto"},
 		currentSheet:   -1,
 		fieldSetters:   setters,
 	}
@@ -85,7 +86,7 @@ func (ep *ExcelParser) NextSheet() bool {
 	for ep.currentSheet < len(ep.sheetNames) {
 		name := ep.sheetNames[ep.currentSheet]
 		// Fast check for ignored sheets
-		if ep.shouldIgnoreSheet(name) {
+		if !ep.shouldParseSheet(name) {
 			ep.currentSheet++
 			continue
 		}
@@ -99,7 +100,10 @@ func (ep *ExcelParser) ParseCurrentSheet() (*ParsedSheet, error) {
 	if ep.currentSheet < 0 || ep.currentSheet >= len(ep.sheetNames) {
 		return nil, exceptions.NewExcelParserException("No current sheet selected", nil)
 	}
+
 	sheetName := ep.sheetNames[ep.currentSheet]
+	logger.Info("Parsing", "sheet_name", sheetName)
+
 	subjects, err := ep.parseSheet(sheetName)
 	if err != nil {
 		return nil, err
@@ -119,7 +123,7 @@ func (ep *ExcelParser) prepareParser(file io.ReadCloser) error {
 	// Use optimized options for better performance
 	f, err := excelize.OpenReader(file, excelize.Options{
 		// Limit memory usage by restricting unzip size
-		UnzipSizeLimit: 16 << 20, // 16MB limit
+		UnzipSizeLimit: 25 << 20, // 16MB limit
 		// Skip loading cell styles we don't need
 		UnzipXMLSizeLimit: 8 << 20, // 8MB per XML file
 	})
@@ -170,6 +174,7 @@ func (ep *ExcelParser) parseSheet(sheetName string) ([]SubjectDTO, error) {
 				startingCell = ep.calculateStartingCell(row)
 				l, err := ep.findFittingLayout(lowerHeader)
 				if err != nil {
+					logger.Error("No layout found", "sheet_name", sheetName)
 					return nil, err
 				}
 				layout = l
@@ -222,7 +227,7 @@ func (ep *ExcelParser) findFittingLayout(lowerHeader []string) (*layout.Layout, 
 			return &ep.layouts[i], nil
 		}
 	}
-	return nil, exceptions.NewLayoutMatchException("No matching layout found")
+	return nil, exceptions.NewLayoutMatchException("No matching layout found for sheet")
 }
 
 // Check if a layout matches a given header row
@@ -310,22 +315,38 @@ func (ep *ExcelParser) calculateStartingCell(row []string) int {
 	return 0
 }
 
-func (ep *ExcelParser) shouldIgnoreSheet(name string) bool {
-	// Quick length check first
+func (ep *ExcelParser) shouldParseSheet(name string) bool {
 	if len(name) == 0 {
 		return false
 	}
 
-	// Common ignored sheet names
-	if name == "Códigos" || name == "códigos" {
+	lower := strings.ToLower(strings.TrimSpace(name))
+
+	// whitelist exact match codes
+	valid := map[string]struct{}{
+		"iae":        {},
+		"icm":        {},
+		"iek":        {},
+		"iel":        {},
+		"ien":        {},
+		"iin":        {},
+		"imk":        {},
+		"isp":        {},
+		"lca":        {},
+		"lci":        {},
+		"lcik":       {},
+		"lel":        {},
+		"lgh":        {},
+		"tse":        {},
+		"villarrica": {},
+	}
+
+	if _, ok := valid[lower]; ok {
 		return true
 	}
 
-	lowerName := strings.ToLower(name)
-	if strings.Contains(lowerName, "odigos") ||
-		strings.Contains(lowerName, "asignaturas") ||
-		strings.Contains(lowerName, "homologadas") ||
-		strings.Contains(lowerName, "homólogas") {
+	// special case: Coronel Oviedo (flexible matching)
+	if strings.Contains(lower, "oviedo") {
 		return true
 	}
 
