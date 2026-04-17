@@ -30,12 +30,18 @@ func main() {
 	log.Info("Logger initialized", "verbose", cfg.Logging.Verbose)
 	log.Info("Loading env configuraion")
 
-	log.Debug("Initializing db")
-	conn, err := persistence.InitDB()
+	log.Info("Initializing db")
+	conn, err := persistence.ConnectDB()
 	if err != nil {
 		panic(err)
 	}
 	defer conn.CloseDB()
+
+	log.Info("Running migrations")
+	err = persistence.RunMigrations()
+	if err != nil {
+		panic(err)
+	}
 
 	useCases := service.NewUseCases(
 		sqlite.NewSqliteUserStore(conn.GetConnection()),

@@ -9,4 +9,3 @@ CREATE TABLE schedules (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (schedule_sheet_version) REFERENCES sheet_version(version_id) ON DELETE CASCADE
 );
-

@@ -23,7 +23,7 @@ func TestParseSubjects_ByCareerSheets(t *testing.T) {
 	expectedSubjectsByCareer := map[string][]SubjectDTO{
 		"IIN": {
 			subject(
-				withGeneral("DCB", 2, "MI", "IIN", "Algebra Lineal"),
+				withGeneral("DCB", 2, "MI", "Algebra Lineal"),
 				withTeachers(teacher("Lic.", "Richard Adrián", "Villasanti Flores", "")),
 				func(s *SubjectDTO) {
 					s.Partial1Date = datePtr(2024, 9, 17)
@@ -53,7 +53,7 @@ func TestParseSubjects_ByCareerSheets(t *testing.T) {
 				},
 			),
 			subject(
-				withGeneral("DCB", 3, "NB", "IIN", "Cálculo II"),
+				withGeneral("DCB", 3, "NB", "Cálculo II"),
 				withTeachers(teacher("Lic.", "Silvia Verónica", "Chamorro Hermosa", "schamorro@pol.una.py")),
 				func(s *SubjectDTO) {
 					s.Partial1Date = datePtr(2024, 9, 9)
@@ -82,7 +82,7 @@ func TestParseSubjects_ByCareerSheets(t *testing.T) {
 				},
 			),
 			subject(
-				withGeneral("DG", 1, "MJ", "IIN", "Contabilidad (*)"),
+				withGeneral("DG", 1, "MJ", "Contabilidad (*)"),
 				withTeachers(teacher("C.P.", "Leidy Jessica", "Ríos Argaña", "ljrios@pol.una.py")),
 				func(s *SubjectDTO) {
 					s.Final1Date = datePtr(2024, 12, 4)
@@ -101,7 +101,7 @@ func TestParseSubjects_ByCareerSheets(t *testing.T) {
 				},
 			),
 			subject(
-				withGeneral("DEI", 10, "TQ", "IIN", "Diseño de Compiladores"),
+				withGeneral("DEI", 10, "TQ", "Diseño de Compiladores"),
 				withTeachers(teacher("Ing.", "Sergio Andrés", "Aranda Zemán", "saranda@pol.una.py")),
 				func(s *SubjectDTO) {
 					s.Final1Date = datePtr(2024, 12, 13)
@@ -126,7 +126,7 @@ func TestParseSubjects_ByCareerSheets(t *testing.T) {
 		},
 		"ISP": {
 			subject(
-				withGeneral("DG", 2, "TQ", "ISP", "Administración de Empresas (*)"),
+				withGeneral("DG", 2, "TQ", "Administración de Empresas (*)"),
 				withTeachers(teacher("Lic.", "Zulma Lucía", "Demattei Ortiz", "zdemattei@pol.una.py")),
 				func(s *SubjectDTO) {
 					s.Final1Date = datePtr(2024, 12, 13)
@@ -205,7 +205,7 @@ func subject(opts ...func(*SubjectDTO)) SubjectDTO {
 	return s
 }
 
-func withGeneral(dept string, semester int, section, career, raw string) func(*SubjectDTO) {
+func withGeneral(dept string, semester int, section, raw string) func(*SubjectDTO) {
 	return func(s *SubjectDTO) {
 		s.Department = dept
 		s.Semester = semester

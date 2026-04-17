@@ -17,7 +17,7 @@ type DbConnection struct {
 	db *sql.DB
 }
 
-func InitDB() (*DbConnection, error) {
+func ConnectDB() (*DbConnection, error) {
 	cfg := config.Get()
 
 	log.Info("Initializing database connection", "url", cfg.Database.URL)
@@ -41,15 +41,17 @@ func InitDB() (*DbConnection, error) {
 	}
 	log.Debug("Foreign keys enabled successfully")
 
-	migrateURL := "sqlite3://file:" + cfg.Database.URL + "?cache=shared&mode=rwc"
-	log.Debug("Running database migrations", "migrations_dir", cfg.Database.MigrationsDir)
-
-	err = runMigrations(cfg.Database.MigrationsDir, migrateURL)
-
 	return &DbConnection{db: db}, err
 }
 
-func runMigrations(migrationsDir, databaseURL string) error {
+func RunMigrations() error {
+	cfg := config.Get()
+
+	migrationsDir := cfg.Database.MigrationsDir
+
+	databaseURL := "sqlite3://file:" + cfg.Database.URL + "?cache=shared&mode=rwc"
+	log.Debug("Running database migrations", "migrations_dir", cfg.Database.MigrationsDir)
+
 	log.Debug("Creating migration instance", "source", "file://"+migrationsDir)
 
 	m, err := migrate.New("file://"+migrationsDir, databaseURL)
