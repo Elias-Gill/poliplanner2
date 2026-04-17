@@ -32,143 +32,204 @@ func main() {
 
 	app := scheduleApp.New(sqlite.NewSqliteScheduleStore(db))
 
-	rows, err := db.Query(`
-		SELECT
-			schedule_id,
-			user_id,
-			schedule_description,
-			schedule_sheet_version,
-			created_at
+	// =========================================
+	// Step 1: iterate users
+	// =========================================
+
+	usersRows, err := db.Query(`
+		SELECT DISTINCT user_id
 		FROM schedules
-		ORDER BY schedule_id`)
+	`)
 	if err != nil {
-		logger.Error("Error listing user schedules", "error", err)
+		logger.Error("Cannot list users", "error", err)
 		return
 	}
-	defer rows.Close()
+	defer usersRows.Close()
 
-	for rows.Next() {
-		var (
-			scheduleID   int64
-			userID       int64
-			description  string
-			sheetVersion int64
-			createdAt    string
-		)
+	for usersRows.Next() {
+		var userID int64
 
-		err := rows.Scan(
-			&scheduleID,
-			&userID,
-			&description,
-			&sheetVersion,
-			&createdAt,
-		)
-		if err != nil {
-			logger.Error("Cannot scan schedules row", "error", err)
+		if err := usersRows.Scan(&userID); err != nil {
+			logger.Error("Cannot scan user", "error", err)
 			return
 		}
 
 		// =========================================
-		// Retrieve subjects from the old schedule
+		// Step 2: get distinct schedule names per user
 		// =========================================
 
-		query := `
-			SELECT s.subject_name, s.section
-			FROM schedule_subjects dt
-			JOIN subjects s ON s.subject_id = dt.subject_id
-			WHERE dt.schedule_id = ?
-		`
-
-		rows2, err := db.Query(query, scheduleID)
+		namesRows, err := db.Query(`
+			SELECT DISTINCT schedule_description
+			FROM schedules
+			WHERE user_id = ?
+		`, userID)
 		if err != nil {
-			logger.Error("Cannot query schedule subjects", "error", err, "schedule_id", scheduleID)
+			logger.Error("Cannot list schedule names", "error", err, "user_id", userID)
 			return
 		}
 
-		var courses = make([]auxCourse, 0, 8)
+		var names []string
 
-		for rows2.Next() {
-			var c auxCourse
-
-			err := rows2.Scan(&c.Name, &c.Section)
-			if err != nil {
-				rows2.Close()
-				logger.Error("Cannot scan schedules row", "error", err, "schedule_id", scheduleID)
+		for namesRows.Next() {
+			var name string
+			if err := namesRows.Scan(&name); err != nil {
+				namesRows.Close()
+				logger.Error("Cannot scan schedule name", "error", err, "user_id", userID)
 				return
 			}
-
-			// minimal defensive cleanup
-			c.Name = strings.TrimSpace(c.Name)
-			c.Section = strings.TrimSpace(c.Section)
-
-			courses = append(courses, c)
+			names = append(names, name)
 		}
-
-		if err := rows2.Err(); err != nil {
-			rows2.Close()
-			logger.Error("Error iterating schedule subjects rows", "error", err, "schedule_id", scheduleID)
-			return
-		}
-
-		rows2.Close()
+		namesRows.Close()
 
 		// =========================================
-		// Map to new courses
+		// Step 3: for each name, get latest schedule
 		// =========================================
 
-		var courseIDs []courseOffering.CourseOfferingID
+		for _, name := range names {
 
-		for _, c := range courses {
-			var id int64
+			var (
+				scheduleID  int64
+				description string
+				createdAt   string
+			)
 
 			err := db.QueryRow(`
-				SELECT id
-				FROM cursos
-				WHERE nombre = ?
-				AND seccion = ?
+				SELECT schedule_id, schedule_description, created_at
+				FROM schedules
+				WHERE user_id = ?
+				AND schedule_description = ?
+				ORDER BY schedule_id DESC
 				LIMIT 1
-			`, c.Name, c.Section).Scan(&id)
+			`, userID, name).Scan(
+				&scheduleID,
+				&description,
+				&createdAt,
+			)
 
 			if err != nil {
-				if err == sql.ErrNoRows {
+				logger.Error("Cannot fetch latest schedule",
+					"error", err,
+					"user_id", userID,
+					"name", name,
+				)
+				continue
+			}
+
+			// =========================================
+			// Step 4: retrieve old subjects
+			// =========================================
+
+			subRows, err := db.Query(`
+				SELECT s.subject_name, s.section
+				FROM schedule_subjects dt
+				JOIN subjects s ON s.subject_id = dt.subject_id
+				WHERE dt.schedule_id = ?
+			`, scheduleID)
+			if err != nil {
+				logger.Error("Cannot query schedule subjects",
+					"error", err,
+					"schedule_id", scheduleID,
+				)
+				continue
+			}
+
+			var courses []auxCourse
+
+			for subRows.Next() {
+				var c auxCourse
+
+				if err := subRows.Scan(&c.Name, &c.Section); err != nil {
+					subRows.Close()
+					logger.Error("Cannot scan subject row",
+						"error", err,
+						"schedule_id", scheduleID,
+					)
+					return
+				}
+
+				c.Name = strings.TrimSpace(c.Name)
+				c.Section = strings.TrimSpace(c.Section)
+
+				courses = append(courses, c)
+			}
+			subRows.Close()
+
+			// =========================================
+			// Step 5: map to new courses
+			// =========================================
+
+			var courseIDs []courseOffering.CourseOfferingID
+
+			for _, c := range courses {
+				var id int64
+
+				err := db.QueryRow(`
+					SELECT id
+					FROM cursos
+					WHERE nombre = ?
+					AND seccion = ?
+					LIMIT 1
+				`, c.Name, c.Section).Scan(&id)
+
+				if err != nil {
+					if err == sql.ErrNoRows {
+						continue
+					}
+
+					logger.Error("Cannot find course",
+						"error", err,
+						"name", c.Name,
+						"section", c.Section,
+						"user_id", userID,
+					)
 					continue
 				}
 
-				logger.Error("Cannot query course",
-					"error", err,
-					"name", c.Name,
-					"section", c.Section,
+				// Skip over repeated course ids
+				skip := false
+				for i := range courseIDs {
+					if courseIDs[i] == courseOffering.CourseOfferingID(id) {
+						skip = true
+						break
+					}
+				}
+
+				if !skip {
+					courseIDs = append(courseIDs, courseOffering.CourseOfferingID(id))
+				}
+			}
+
+			// =========================================
+			// Step 6: create new schedule
+			// =========================================
+
+			newSchedule, err := schedule.NewSchedule(
+				user.UserID(userID),
+				description,
+				courseIDs,
+			)
+			if err != nil {
+				logger.Warn("Empty schedule",
 					"schedule_id", scheduleID,
+					"user_id", userID,
+				)
+				continue
+			}
+
+			_, err = app.Save(context.Background(), *newSchedule)
+			if err != nil {
+				logger.Error("Cannot save schedule",
+					"error", err,
+					"schedule_id", scheduleID,
+					"user_id", userID,
 				)
 				return
 			}
-
-			courseIDs = append(courseIDs, courseOffering.CourseOfferingID(id))
-		}
-
-		// =========================================
-		// Create new schedule
-		// =========================================
-
-		newSchedule, err := schedule.NewSchedule(
-			user.UserID(userID),
-			description,
-			courseIDs,
-		)
-		if err != nil {
-			logger.Error("Cannot create schedule domain object", "error", err, "schedule_id", scheduleID)
-			return
-		}
-
-		_, err = app.Save(context.Background(), *newSchedule)
-		if err != nil {
-			logger.Error("Cannot save new schedule", "error", err, "schedule_id", scheduleID)
-			return
 		}
 	}
 
-	if err := rows.Err(); err != nil {
-		logger.Error("Cannot retrieve schedules row", "error", err)
+	if err := usersRows.Err(); err != nil {
+		logger.Error("Error iterating users", "error", err)
 		return
 	}
 
