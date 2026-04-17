@@ -1,0 +1,707 @@
+{
+  "career": {
+    "id": "IAE",
+    "name": "Ingeniería Aeronáutica",
+    "totalSemesters": 10,
+    "totalCredits": 349
+  },
+  "subjects": {
+    "aeronautica general": {
+      "name": "Aeronáutica General",
+      "semester": 1,
+      "credits": 4,
+      "required_credits": 0,
+      "weekly_hours": 4,
+      "desc": "",
+      "prerequisites": []
+    },
+    "algebra": {
+      "name": "Álgebra",
+      "semester": 1,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": []
+    },
+    "calculo I": {
+      "name": "Cálculo I",
+      "semester": 1,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": []
+    },
+    "geometria analitica y vectores": {
+      "name": "Geometría Analítica y Vectores",
+      "semester": 1,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": []
+    },
+    "quimica": {
+      "name": "Química",
+      "semester": 1,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": []
+    },
+    "dibujo tecnico mecanico": {
+      "name": "Dibujo Técnico Mecánico",
+      "semester": 1,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": []
+    },
+    "ciencia y tecnologia del medio ambiente": {
+      "name": "Ciencia y Tecnología del Medio Ambiente",
+      "semester": 1,
+      "credits": 3,
+      "required_credits": 0,
+      "weekly_hours": 3,
+      "desc": "",
+      "prerequisites": []
+    },
+    "ingles I": {
+      "name": "Inglés I",
+      "semester": 1,
+      "credits": 4,
+      "required_credits": 0,
+      "weekly_hours": 4,
+      "desc": "",
+      "prerequisites": []
+    },
+    "prevision y seguridad en el trabajo": {
+      "name": "Previsión y Seguridad en el Trabajo",
+      "semester": 1,
+      "credits": 3,
+      "required_credits": 0,
+      "weekly_hours": 3,
+      "desc": "",
+      "prerequisites": []
+    },
+    "algebra lineal": {
+      "name": "Álgebra Lineal",
+      "semester": 2,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "algebra",
+        "geometria analitica y vectores"
+      ]
+    },
+    "algoritmo": {
+      "name": "Algoritmo",
+      "semester": 2,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "algebra"
+      ]
+    },
+    "calculo II": {
+      "name": "Cálculo II",
+      "semester": 2,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "calculo I",
+        "geometria analitica y vectores"
+      ]
+    },
+    "fisica I": {
+      "name": "Física I",
+      "semester": 2,
+      "credits": 8,
+      "required_credits": 0,
+      "weekly_hours": 8,
+      "desc": "",
+      "prerequisites": [
+        "calculo I"
+      ]
+    },
+    "fisica II": {
+      "name": "Física II",
+      "semester": 2,
+      "credits": 8,
+      "required_credits": 0,
+      "weekly_hours": 8,
+      "desc": "",
+      "prerequisites": [
+        "calculo I"
+      ]
+    },
+    "principios de metrologia industrial": {
+      "name": "Principios de Metrología Industrial",
+      "semester": 2,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "dibujo tecnico mecanico"
+      ]
+    },
+    "ingles II": {
+      "name": "Inglés II",
+      "semester": 2,
+      "credits": 4,
+      "required_credits": 0,
+      "weekly_hours": 4,
+      "desc": "",
+      "prerequisites": [
+        "ingles I"
+      ]
+    },
+    "calculo III": {
+      "name": "Cálculo III",
+      "semester": 3,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "calculo II"
+      ]
+    },
+    "calculo IV": {
+      "name": "Cálculo IV",
+      "semester": 3,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "calculo II"
+      ]
+    },
+    "circuitos electricos I": {
+      "name": "Circuitos Eléctricos I",
+      "semester": 3,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "calculo II",
+        "fisica II"
+      ]
+    },
+    "introduccion a la ciencia de materiales": {
+      "name": "Introducción a la Ciencia de Materiales",
+      "semester": 3,
+      "credits": 8,
+      "required_credits": 0,
+      "weekly_hours": 8,
+      "desc": "",
+      "prerequisites": [
+        "fisica II",
+        "quimica"
+      ]
+    },
+    "mecanica de materiales": {
+      "name": "Mecánica de Materiales",
+      "semester": 3,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "algebra lineal",
+        "fisica I"
+      ]
+    },
+    "principios de electronica": {
+      "name": "Principios de Electrónica",
+      "semester": 3,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "fisica II",
+        "quimica"
+      ]
+    },
+    "programacion": {
+      "name": "Programación",
+      "semester": 3,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "algoritmo"
+      ]
+    },
+    "ingles III": {
+      "name": "Inglés III",
+      "semester": 3,
+      "credits": 4,
+      "required_credits": 0,
+      "weekly_hours": 4,
+      "desc": "",
+      "prerequisites": [
+        "ingles II"
+      ]
+    },
+    "calculo V": {
+      "name": "Cálculo V",
+      "semester": 4,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "calculo IV"
+      ]
+    },
+    "circuitos electricos II": {
+      "name": "Circuitos Eléctricos II",
+      "semester": 4,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "circuitos electricos I"
+      ]
+    },
+    "diseno y manufactura asistido por computadora": {
+      "name": "Diseño y Manufactura Asistido por Computadora",
+      "semester": 4,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "programacion",
+        "principios de metrologia industrial"
+      ]
+    },
+    "electronica aplicada": {
+      "name": "Electrónica Aplicada",
+      "semester": 4,
+      "credits": 8,
+      "required_credits": 0,
+      "weekly_hours": 8,
+      "desc": "",
+      "prerequisites": [
+        "principios de electronica"
+      ]
+    },
+    "probabilidad y estadistica": {
+      "name": "Probabilidad y Estadística",
+      "semester": 4,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "calculo III"
+      ]
+    },
+    "fisica III": {
+      "name": "Física III",
+      "semester": 4,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "fisica II",
+        "calculo III"
+      ]
+    },
+    "fisica IV": {
+      "name": "Física IV",
+      "semester": 4,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "calculo III"
+      ]
+    },
+    "mecanica clasica": {
+      "name": "Mecánica Clásica",
+      "semester": 4,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "fisica I",
+        "calculo III"
+      ]
+    },
+    "resistencia de materiales": {
+      "name": "Resistencia de Materiales",
+      "semester": 4,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "mecanica de materiales"
+      ]
+    },
+    "ingles IV": {
+      "name": "Inglés IV",
+      "semester": 4,
+      "credits": 4,
+      "required_credits": 0,
+      "weekly_hours": 4,
+      "desc": "",
+      "prerequisites": [
+        "ingles III"
+      ]
+    },
+    "calculo VI": {
+      "name": "Cálculo VI",
+      "semester": 5,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "calculo V"
+      ]
+    },
+    "caracterizacion de materiales": {
+      "name": "Caracterización de Materiales",
+      "semester": 5,
+      "credits": 4,
+      "required_credits": 0,
+      "weekly_hours": 4,
+      "desc": "",
+      "prerequisites": [
+        "introduccion a la ciencia de materiales",
+        "resistencia de materiales"
+      ]
+    },
+    "elementos de maquinas": {
+      "name": "Elementos de Máquinas",
+      "semester": 5,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "mecanica clasica"
+      ]
+    },
+    "estructura aeronautica I": {
+      "name": "Estructura Aeronáutica I",
+      "semester": 5,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "resistencia de materiales"
+      ]
+    },
+    "maquinas electricas": {
+      "name": "Máquinas Eléctricas",
+      "semester": 5,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "circuitos electricos II"
+      ]
+    },
+    "mecanica de fluidos I": {
+      "name": "Mecánica de Fluidos I",
+      "semester": 5,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "calculo IV",
+        "fisica IV"
+      ]
+    },
+    "termodinamica de materiales I": {
+      "name": "Termodinámica de Materiales I",
+      "semester": 5,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "fisica IV",
+        "introduccion a la ciencia de materiales"
+      ]
+    },
+    "ingles V": {
+      "name": "Inglés V",
+      "semester": 5,
+      "credits": 4,
+      "required_credits": 0,
+      "weekly_hours": 4,
+      "desc": "",
+      "prerequisites": [
+        "ingles IV"
+      ]
+    },
+    "estructura aeronautica II": {
+      "name": "Estructura Aeronáutica II",
+      "semester": 6,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "estructura aeronautica I",
+        "caracterizacion de materiales"
+      ]
+    },
+    "aerodinamica I": {
+      "name": "Aerodinámica I",
+      "semester": 6,
+      "credits": 8,
+      "required_credits": 0,
+      "weekly_hours": 8,
+      "desc": "",
+      "prerequisites": [
+        "mecanica de fluidos I"
+      ]
+    },
+    "mecanica de fluidos II": {
+      "name": "Mecánica de Fluidos II",
+      "semester": 6,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "mecanica de fluidos I"
+      ]
+    },
+    "sistemas de control I": {
+      "name": "Sistemas de Control I",
+      "semester": 6,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "calculo VI"
+      ]
+    },
+    "termodinamica de materiales II": {
+      "name": "Termodinámica de Materiales II",
+      "semester": 6,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "termodinamica de materiales I"
+      ]
+    },
+    "ingles VI": {
+      "name": "Inglés VI",
+      "semester": 6,
+      "credits": 4,
+      "required_credits": 0,
+      "weekly_hours": 4,
+      "desc": "",
+      "prerequisites": [
+        "ingles V"
+      ]
+    },
+    "aerodinamica II": {
+      "name": "Aerodinámica II",
+      "semester": 7,
+      "credits": 8,
+      "required_credits": 0,
+      "weekly_hours": 8,
+      "desc": "",
+      "prerequisites": [
+        "aerodinamica I",
+        "mecanica de fluidos II"
+      ]
+    },
+    "estructura aeronautica III": {
+      "name": "Estructura Aeronáutica III",
+      "semester": 7,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "estructura aeronautica II"
+      ]
+    },
+    "motores I": {
+      "name": "Motores I",
+      "semester": 7,
+      "credits": 8,
+      "required_credits": 0,
+      "weekly_hours": 8,
+      "desc": "",
+      "prerequisites": [
+        "maquinas electricas",
+        "termodinamica de materiales II",
+        "elementos de maquinas"
+      ]
+    },
+    "sistemas de control II": {
+      "name": "Sistemas de Control II",
+      "semester": 7,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "sistemas de control I"
+      ]
+    },
+    "economia y finanzas": {
+      "name": "Economía y Finanzas",
+      "semester": 8,
+      "credits": 4,
+      "required_credits": 0,
+      "weekly_hours": 4,
+      "desc": "",
+      "prerequisites": [
+        "aeronautica general",
+        "ciencia y tecnologia del medio ambiente",
+        "prevision y seguridad en el trabajo",
+        "diseno y manufactura asistido por computadora",
+        "electronica aplicada",
+        "probabilidad y estadistica",
+        "fisica III",
+        "ingles VI",
+        "aerodinamica II",
+        "estructura aeronautica III",
+        "motores I",
+        "sistemas de control II"
+      ]
+    },
+    "estructura aeronautica IV": {
+      "name": "Estructura Aeronáutica IV",
+      "semester": 8,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "diseno y manufactura asistido por computadora",
+        "estructura aeronautica III"
+      ]
+    },
+    "motores II": {
+      "name": "Motores II",
+      "semester": 8,
+      "credits": 8,
+      "required_credits": 0,
+      "weekly_hours": 8,
+      "desc": "",
+      "prerequisites": [
+        "motores I"
+      ]
+    },
+    "navegacion y control": {
+      "name": "Navegación y Control",
+      "semester": 8,
+      "credits": 7,
+      "required_credits": 0,
+      "weekly_hours": 7,
+      "desc": "",
+      "prerequisites": [
+        "electronica aplicada",
+        "fisica III",
+        "sistemas de control II"
+      ]
+    },
+    "construccion aeronautica y mecanica": {
+      "name": "Construcción Aeronáutica y Mecánica",
+      "semester": 9,
+      "credits": 8,
+      "required_credits": 0,
+      "weekly_hours": 8,
+      "desc": "",
+      "prerequisites": [
+        "aerodinamica II",
+        "estructura aeronautica IV"
+      ]
+    },
+    "gestion de mantenimiento y reparacion I": {
+      "name": "Gestión de Mantenimiento y Reparación I",
+      "semester": 9,
+      "credits": 8,
+      "required_credits": 0,
+      "weekly_hours": 8,
+      "desc": "",
+      "prerequisites": [
+        "motores II"
+      ]
+    },
+    "plan de negocios": {
+      "name": "Plan de Negocios",
+      "semester": 9,
+      "credits": 4,
+      "required_credits": 0,
+      "weekly_hours": 4,
+      "desc": "",
+      "prerequisites": [
+        "economia y finanzas"
+      ]
+    },
+    "gestion de aeropuerto y vuelo": {
+      "name": "Gestión de Aeropuerto y Vuelo",
+      "semester": 10,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "gestion de mantenimiento y reparacion I"
+      ]
+    },
+    "gestion de mantenimiento y reparacion II": {
+      "name": "Gestión de Mantenimiento y Reparación II",
+      "semester": 10,
+      "credits": 8,
+      "required_credits": 0,
+      "weekly_hours": 8,
+      "desc": "",
+      "prerequisites": [
+        "gestion de mantenimiento y reparacion I",
+        "navegacion y control"
+      ]
+    },
+    "planeamiento y control de la produccion": {
+      "name": "Planeamiento y Control de la Producción",
+      "semester": 10,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "gestion de mantenimiento y reparacion I",
+        "probabilidad y estadistica"
+      ]
+    }
+  }
+}

@@ -1,0 +1,687 @@
+{
+  "career": {
+    "id": "IEL",
+    "name": "Ingeniería en Electricidad",
+    "totalSemesters": 10,
+    "totalCredits": 356
+  },
+  "subjects": {
+    "algebra": {
+      "name": "Álgebra",
+      "semester": 1,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": []
+    },
+    "calculo I": {
+      "name": "Cálculo I",
+      "semester": 1,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": []
+    },
+    "dibujo tecnico": {
+      "name": "Dibujo Técnico",
+      "semester": 1,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": []
+    },
+    "geometria analitica y vectores": {
+      "name": "Geometría Analítica y Vectores",
+      "semester": 1,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": []
+    },
+    "prevision y seguridad en el trabajo": {
+      "name": "Previsión y Seguridad en el Trabajo",
+      "semester": 1,
+      "credits": 3,
+      "required_credits": 0,
+      "weekly_hours": 3,
+      "desc": "",
+      "prerequisites": []
+    },
+    "quimica": {
+      "name": "Química",
+      "semester": 1,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": []
+    },
+    "algoritmo": {
+      "name": "Algoritmo",
+      "semester": 2,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": []
+    },
+    "calculo II": {
+      "name": "Cálculo II",
+      "semester": 2,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "calculo I"
+      ]
+    },
+    "diseno asistido por computadora": {
+      "name": "Diseño Asistido por Computadora",
+      "semester": 2,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "dibujo tecnico"
+      ]
+    },
+    "electrotecnia I": {
+      "name": "Electrotecnia I",
+      "semester": 2,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "algebra"
+      ]
+    },
+    "fisica I": {
+      "name": "Física I",
+      "semester": 2,
+      "credits": 7,
+      "required_credits": 0,
+      "weekly_hours": 7,
+      "desc": "",
+      "prerequisites": [
+        "calculo I"
+      ]
+    },
+    "fisica II": {
+      "name": "Física II",
+      "semester": 2,
+      "credits": 8,
+      "required_credits": 0,
+      "weekly_hours": 8,
+      "desc": "",
+      "prerequisites": [
+        "calculo I"
+      ]
+    },
+    "programacion": {
+      "name": "Programación",
+      "semester": 3,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "algoritmo"
+      ]
+    },
+    "calculo III": {
+      "name": "Cálculo III",
+      "semester": 3,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "calculo II"
+      ]
+    },
+    "calculo IV": {
+      "name": "Cálculo IV",
+      "semester": 3,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "calculo II",
+        "geometria analitica y vectores"
+      ]
+    },
+    "circuitos electricos I": {
+      "name": "Circuitos Eléctricos I",
+      "semester": 3,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "calculo II",
+        "fisica II"
+      ]
+    },
+    "electrotecnia II": {
+      "name": "Electrotecnia II",
+      "semester": 3,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "electrotecnia I"
+      ]
+    },
+    "fisica III": {
+      "name": "Física III",
+      "semester": 3,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "calculo II",
+        "fisica II"
+      ]
+    },
+    "resistencia de materiales": {
+      "name": "Resistencia de Materiales",
+      "semester": 3,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "fisica I"
+      ]
+    },
+    "calculo V": {
+      "name": "Cálculo V",
+      "semester": 4,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "calculo IV"
+      ]
+    },
+    "circuitos electricos II": {
+      "name": "Circuitos Eléctricos II",
+      "semester": 4,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "circuitos electricos I"
+      ]
+    },
+    "electronica I": {
+      "name": "Electrónica I",
+      "semester": 4,
+      "credits": 7,
+      "required_credits": 0,
+      "weekly_hours": 7,
+      "desc": "",
+      "prerequisites": [
+        "circuitos electricos I"
+      ]
+    },
+    "fisica IV": {
+      "name": "Física IV",
+      "semester": 4,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "fisica III",
+        "calculo IV"
+      ]
+    },
+    "fisica V": {
+      "name": "Física V",
+      "semester": 4,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "fisica III"
+      ]
+    },
+    "probabilidad y estadistica": {
+      "name": "Probabilidad y Estadística",
+      "semester": 4,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "calculo III"
+      ]
+    },
+    "calculo VI": {
+      "name": "Cálculo VI",
+      "semester": 5,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "calculo V"
+      ]
+    },
+    "conversion de energia electrica I": {
+      "name": "Conversión de Energía Eléctrica I",
+      "semester": 5,
+      "credits": 7,
+      "required_credits": 0,
+      "weekly_hours": 7,
+      "desc": "",
+      "prerequisites": [
+        "fisica II"
+      ]
+    },
+    "electronica digital": {
+      "name": "Electrónica Digital",
+      "semester": 5,
+      "credits": 8,
+      "required_credits": 0,
+      "weekly_hours": 8,
+      "desc": "",
+      "prerequisites": [
+        "electronica I"
+      ]
+    },
+    "electronica II": {
+      "name": "Electrónica II",
+      "semester": 5,
+      "credits": 7,
+      "required_credits": 0,
+      "weekly_hours": 7,
+      "desc": "",
+      "prerequisites": [
+        "electronica I",
+        "fisica V"
+      ]
+    },
+    "fisica VI": {
+      "name": "Física VI",
+      "semester": 5,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "fisica IV"
+      ]
+    },
+    "instalaciones electricas I": {
+      "name": "Instalaciones Eléctricas I",
+      "semester": 5,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "circuitos electricos II",
+        "electrotecnia II"
+      ]
+    },
+    "conversion de energia electrica II": {
+      "name": "Conversión de Energía Eléctrica II",
+      "semester": 6,
+      "credits": 7,
+      "required_credits": 0,
+      "weekly_hours": 7,
+      "desc": "",
+      "prerequisites": [
+        "conversion de energia electrica I"
+      ]
+    },
+    "electronica de potencia I": {
+      "name": "Electrónica de Potencia I",
+      "semester": 6,
+      "credits": 7,
+      "required_credits": 0,
+      "weekly_hours": 7,
+      "desc": "",
+      "prerequisites": [
+        "electronica II"
+      ]
+    },
+    "fisica VII": {
+      "name": "Física VII",
+      "semester": 6,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "fisica VI"
+      ]
+    },
+    "fisica VIII": {
+      "name": "Física VIII",
+      "semester": 6,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "fisica VI"
+      ]
+    },
+    "instalaciones electricas II": {
+      "name": "Instalaciones Eléctricas II",
+      "semester": 6,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "instalaciones electricas I"
+      ]
+    },
+    "instrumentacion industrial": {
+      "name": "Instrumentación Industrial",
+      "semester": 6,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "electronica digital"
+      ]
+    },
+    "sistemas de control I": {
+      "name": "Sistemas de Control I",
+      "semester": 6,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "calculo VI"
+      ]
+    },
+    "automatizacion industrial": {
+      "name": "Automatización Industrial",
+      "semester": 7,
+      "credits": 7,
+      "required_credits": 0,
+      "weekly_hours": 7,
+      "desc": "",
+      "prerequisites": [
+        "conversion de energia electrica II",
+        "instrumentacion industrial"
+      ]
+    },
+    "distribucion de energia electrica": {
+      "name": "Distribución de Energía Eléctrica",
+      "semester": 7,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "fisica VII"
+      ]
+    },
+    "electronica de potencia II": {
+      "name": "Electrónica de Potencia II",
+      "semester": 7,
+      "credits": 7,
+      "required_credits": 0,
+      "weekly_hours": 7,
+      "desc": "",
+      "prerequisites": [
+        "electronica de potencia I"
+      ]
+    },
+    "instalaciones electricas III": {
+      "name": "Instalaciones Eléctricas III",
+      "semester": 7,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "instalaciones electricas II"
+      ]
+    },
+    "sistemas de control II": {
+      "name": "Sistemas de Control II",
+      "semester": 7,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "sistemas de control I"
+      ]
+    },
+    "sistemas digitales I": {
+      "name": "Sistemas Digitales I",
+      "semester": 7,
+      "credits": 7,
+      "required_credits": 0,
+      "weekly_hours": 7,
+      "desc": "",
+      "prerequisites": [
+        "electronica digital"
+      ]
+    },
+    "administracion y recursos humanos": {
+      "name": "Administración y Recursos Humanos",
+      "semester": 8,
+      "credits": 3,
+      "required_credits": 0,
+      "weekly_hours": 3,
+      "desc": "",
+      "prerequisites": [
+        "prevision y seguridad en el trabajo"
+      ]
+    },
+    "instalacion electrica industrial": {
+      "name": "Instalación Eléctrica Industrial",
+      "semester": 8,
+      "credits": 7,
+      "required_credits": 0,
+      "weekly_hours": 7,
+      "desc": "",
+      "prerequisites": [
+        "instalaciones electricas III"
+      ]
+    },
+    "lineas de transmision": {
+      "name": "Líneas de Transmisión",
+      "semester": 8,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "distribucion de energia electrica"
+      ]
+    },
+    "sistemas de potencia I": {
+      "name": "Sistemas de Potencia I",
+      "semester": 8,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "electronica de potencia II"
+      ]
+    },
+    "sistemas digitales II": {
+      "name": "Sistemas Digitales II",
+      "semester": 8,
+      "credits": 7,
+      "required_credits": 0,
+      "weekly_hours": 7,
+      "desc": "",
+      "prerequisites": [
+        "sistemas digitales I",
+        "sistemas de control II",
+        "programacion"
+      ]
+    },
+    "sistemas neumaticos industriales": {
+      "name": "Sistemas Neumáticos Industriales",
+      "semester": 8,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "automatizacion industrial",
+        "fisica VIII"
+      ]
+    },
+    "generacion de energia electrica": {
+      "name": "Generación de Energía Eléctrica",
+      "semester": 9,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "lineas de transmision"
+      ]
+    },
+    "mantenimiento industrial": {
+      "name": "Mantenimiento Industrial",
+      "semester": 9,
+      "credits": 7,
+      "required_credits": 0,
+      "weekly_hours": 7,
+      "desc": "",
+      "prerequisites": [
+        "sistemas neumaticos industriales",
+        "instalacion electrica industrial"
+      ]
+    },
+    "normalizacion y calidad industrial": {
+      "name": "Normalización y Calidad Industrial",
+      "semester": 9,
+      "credits": 3,
+      "required_credits": 0,
+      "weekly_hours": 3,
+      "desc": "",
+      "prerequisites": []
+    },
+    "proteccion en sistemas electricos": {
+      "name": "Protección en Sistemas Eléctricos",
+      "semester": 9,
+      "credits": 6,
+      "required_credits": 0,
+      "weekly_hours": 6,
+      "desc": "",
+      "prerequisites": [
+        "sistemas de potencia I"
+      ]
+    },
+    "sistemas de potencia II": {
+      "name": "Sistemas de Potencia II",
+      "semester": 9,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "sistemas de potencia I"
+      ]
+    },
+    "subestaciones": {
+      "name": "Subestaciones",
+      "semester": 9,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "lineas de transmision"
+      ]
+    },
+    "emprendedorismo": {
+      "name": "Emprendedorismo",
+      "semester": 10,
+      "credits": 2,
+      "required_credits": 0,
+      "weekly_hours": 2,
+      "desc": "",
+      "prerequisites": []
+    },
+    "derecho": {
+      "name": "Derecho",
+      "semester": 10,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "administracion y recursos humanos"
+      ]
+    },
+    "economia y finanzas": {
+      "name": "Economía y Finanzas",
+      "semester": 10,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "administracion y recursos humanos"
+      ]
+    },
+    "factibilidad de sistemas electricos": {
+      "name": "Factibilidad de Sistemas Eléctricos",
+      "semester": 10,
+      "credits": 5,
+      "required_credits": 0,
+      "weekly_hours": 5,
+      "desc": "",
+      "prerequisites": [
+        "subestaciones"
+      ]
+    },
+    "medicion de la energia electrica": {
+      "name": "Medición de la Energía Eléctrica",
+      "semester": 10,
+      "credits": 7,
+      "required_credits": 0,
+      "weekly_hours": 7,
+      "desc": "",
+      "prerequisites": [
+        "proteccion en sistemas electricos"
+      ]
+    },
+    "proyecto de trabajo de grado": {
+      "name": "Proyecto de Trabajo de Grado",
+      "semester": 10,
+      "credits": 17,
+      "required_credits": 0,
+      "weekly_hours": 17,
+      "desc": "",
+      "prerequisites": [
+        "sistemas digitales II",
+        "mantenimiento industrial",
+        "generacion de energia electrica"
+      ]
+    }
+  }
+}
