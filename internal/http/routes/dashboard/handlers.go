@@ -72,7 +72,7 @@ func (h *DashboardHandlers) executeTemplate(w http.ResponseWriter, tpl *template
 }
 
 func (h *DashboardHandlers) serveOverview(ctx context.Context, userID user.UserID, selectedID scheduleDomain.ScheduleID) (any, error) {
-	sch, err := h.scheduleService.GetSchedule(ctx, userID, selectedID)
+	sch, err := h.scheduleService.Get(ctx, userID, selectedID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get schedule: %w", err)
 	}
@@ -96,7 +96,7 @@ func (h *DashboardHandlers) serveOverview(ctx context.Context, userID user.UserI
 }
 
 func (h *DashboardHandlers) serveCalendar(ctx context.Context, userID user.UserID, selectedID scheduleDomain.ScheduleID) (any, error) {
-	sch, err := h.scheduleService.GetSchedule(ctx, userID, selectedID)
+	sch, err := h.scheduleService.Get(ctx, userID, selectedID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get schedule: %w", err)
 	}

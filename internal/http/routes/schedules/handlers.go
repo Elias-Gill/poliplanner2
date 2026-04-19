@@ -2,6 +2,7 @@ package schedules
 
 import (
 	"context"
+	"errors"
 	"html/template"
 	"net/http"
 	"net/url"
@@ -68,6 +69,39 @@ func newSchedulesHandlers(
 		step2:           utils.ParseTemplateWithBaseLayout(path.Join(basePath, "step2.html")),
 		step3:           utils.ParseTemplateWithBaseLayout(path.Join(basePath, "step3.html")),
 	}
+}
+
+// ==================== DELETE SCHEDULE ====================
+
+func (h *SchedulesHandlers) DeleteSchedule(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(r.Context(), 300*time.Millisecond)
+	defer cancel()
+
+	userID := middleware.MustExtractUserID(r)
+
+	idStr := r.FormValue("id")
+	if idStr == "" {
+		utils.CustomRedirect(w, r, "/bad_form")
+		return
+	}
+
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		utils.CustomRedirect(w, r, "/bad_form")
+		return
+	}
+
+	err = h.scheduleService.Delete(ctx, userID, scheduleModel.ScheduleID(id))
+	if err != nil {
+		if errors.Is(err, schedule.ErrPermissionDenied) {
+			utils.CustomRedirect(w, r, "/404")
+		} else {
+			utils.CustomRedirect(w, r, "/500")
+		}
+		return
+	}
+
+	utils.CustomRedirect(w, r, "/dashboard")
 }
 
 // ==================== STEP 1 ====================

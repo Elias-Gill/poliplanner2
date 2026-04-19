@@ -35,8 +35,8 @@ func (s Schedule) ListUserSchedules(ctx context.Context, userID user.UserID) ([]
 	return sched, nil
 }
 
-// GetSchedule returns schedule details if the user owns it
-func (s Schedule) GetSchedule(ctx context.Context, userID user.UserID, scheduleID schedule.ScheduleID) (*schedule.Schedule, error) {
+// Get returns schedule details if the user owns it
+func (s Schedule) Get(ctx context.Context, userID user.UserID, scheduleID schedule.ScheduleID) (*schedule.Schedule, error) {
 	logger.Debug("GetSchedule called", "userID", userID, "scheduleID", scheduleID)
 	sche, err := s.storer.GetDetailsByID(ctx, scheduleID)
 	if err != nil {
@@ -56,13 +56,37 @@ func (s Schedule) GetSchedule(ctx context.Context, userID user.UserID, scheduleI
 // Save persists a schedule and returns its ID
 func (s Schedule) Save(ctx context.Context, sche schedule.Schedule) (schedule.ScheduleID, error) {
 	logger.Debug("Save called", "title", sche.Title, "owner", sche.Owner)
+
 	id, err := s.storer.Save(ctx, sche)
 	if err != nil {
 		logger.Debug("Save failed", "title", sche.Title, "owner", sche.Owner, "error", err)
 		return 0, err
 	}
+
 	logger.Debug("Save successful", "scheduleID", id, "title", sche.Title)
 	return id, nil
+}
+
+func (s Schedule) Delete(ctx context.Context, userID user.UserID, scheduleID schedule.ScheduleID) error {
+	logger.Debug("Delete schedule called", "userID", userID, "scheduleID", scheduleID)
+	sche, err := s.storer.GetDetailsByID(ctx, scheduleID)
+	if err != nil {
+		logger.Debug("cannot get schedule details for deletion", "scheduleID", scheduleID, "error", err)
+		return err
+	}
+
+	if sche.Owner != userID {
+		logger.Debug("permission denied for schedule", "scheduleID", scheduleID, "userID", userID)
+		return ErrPermissionDenied
+	}
+
+	err = s.storer.Delete(ctx, scheduleID)
+	if err != nil {
+		return err
+	}
+
+	logger.Debug("Schedule deletion successful", "scheduleID", scheduleID, "userID", userID)
+	return nil
 }
 
 // TitleIsAvailable checks if the user has a schedule with the same title

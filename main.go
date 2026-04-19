@@ -15,6 +15,7 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/http/routes/guides"
 	"github.com/elias-gill/poliplanner2/internal/http/routes/schedules"
 	"github.com/elias-gill/poliplanner2/internal/http/routes/tools"
+	"github.com/elias-gill/poliplanner2/internal/http/routes/user"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/persistence"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/persistence/sqlite"
 	log "github.com/elias-gill/poliplanner2/logger"
@@ -66,7 +67,7 @@ func main() {
 	r.Route("/schedule", schedules.NewSchedulesRouter(useCases.Schedule, useCases.AcademicPlan))
 
 	// User administration router
-	// r.Route("/user", router.NewUserRouter(services.UserService, services.AuthService))
+	r.Route("/user", user.NewUserRouter(useCases.Auth))
 
 	// Misc routers
 	r.Route("/tools", tools.NewToolsRouter())

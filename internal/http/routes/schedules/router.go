@@ -17,6 +17,7 @@ func NewSchedulesRouter(
 		// STEP 1
 		r.Get("/", handlers.Step1Get)
 		r.Post("/", handlers.Step1Post)
+		r.Post("/delete", handlers.DeleteSchedule)
 
 		// STEP 2
 		r.Get("/step2", handlers.Step2Get)

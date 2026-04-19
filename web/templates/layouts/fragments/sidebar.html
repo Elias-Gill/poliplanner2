@@ -50,14 +50,28 @@
       </a>
     </nav>
 
-    <!-- Zona inferior -->
-    <div class="p-5 border-t space-y-4 border-gray-500">
-      <div class="flex justify-center">
-        {{ template "fragments/theme-toggle" "theme-toggle-desktop" }}
-      </div>
-      <div class="text-xs text-center text-sidebar-text-muted">
-        Parte de la Iniciativa PoliPlanner
-      </div>
-    </div>
+<!-- Zona inferior -->
+<div class="p-5 border-t space-y-4 border-gray-500">
+  <div class="flex justify-center">
+    {{ template "fragments/theme-toggle" "theme-toggle-desktop" }}
+  </div>
+  <div class="text-xs text-center text-sidebar-text-muted">
+    Parte de la Iniciativa PoliPlanner
+  </div>
+
+<!-- Logout button -->
+<div class="mt-8 pt-2 w-full">
+  <form action="/user/logout" method="POST" class="flex justify-center">
+    <button type="submit" 
+            onclick="return confirm('¿Cerrar sesión?')"
+            class="inline-flex items-center justify-center gap-2 px-4 py-1.5
+                   rounded-sm border border-red-300 hover:bg-red-400 text-sm text-red-200 font-medium 
+                   transition-all duration-150 shadow-sm hover:shadow-md">
+      <i class="bi bi-box-arrow-right text-lg"></i> 
+      <span>Cerrar sesión</span>
+    </button>
+  </form>
+</div>
+</div>
   </aside>
 {{ end }}

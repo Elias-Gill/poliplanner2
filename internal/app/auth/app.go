@@ -57,7 +57,7 @@ func (a *AuthManager) Login(ctx context.Context, login string, rawPassword strin
 	return s, nil
 }
 
-// ValidateSession retrieves and validates an existing session.
+// ValidateSession retrieves validates an existing session and extends if needed.
 func (a *AuthManager) ValidateSession(ctx context.Context, token SessionID) (*Session, error) {
 	s, err := a.sessionStorer.Get(ctx, token)
 	if err != nil {
@@ -86,10 +86,21 @@ func (a *AuthManager) ValidateSession(ctx context.Context, token SessionID) (*Se
 }
 
 // Logout invalidates a session by removing it from the store.
-func (a *AuthManager) Logout(ctx context.Context, token SessionID) error {
+func (a *AuthManager) Logout(ctx context.Context, userID user.UserID, token SessionID) error {
+	// Compare token user with logged user
+	session, err := a.ValidateSession(ctx, token)
+	if err != nil {
+		return errors.Join(ErrSessionNotFound, err)
+	}
+
+	if session.User != userID {
+		return errors.Join(ErrSessionNotFound, err)
+	}
+
 	if err := a.sessionStorer.Delete(ctx, token); err != nil {
 		return errors.Join(ErrSessionDeleteFailed, err)
 	}
+
 	return nil
 }
 
