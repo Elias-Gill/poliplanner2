@@ -40,15 +40,20 @@
                   title="Nuevo horario">
                   <i class="bi bi-plus-lg"></i>
                 </a>
-                        <form action="/schedule/delete" method="POST" class="inline-block" onsubmit="return confirm('¿Estás seguro de eliminar este horario?');">
-                            <input type="hidden" name="id" value="{{ .SelectedID }}">
-                            <button type="submit"
-                                class="inline-flex items-center justify-center border
+                <form
+                  action="/schedule/delete"
+                  method="POST"
+                  class="inline-block"
+                  onsubmit="return confirm('¿Estás seguro de eliminar este horario?');">
+                  <input type="hidden" name="id" value="{{ .SelectedID }}" />
+                  <button
+                    type="submit"
+                    class="inline-flex items-center justify-center border
                                 border-red-300 text-red-400 px-3 py-2 rounded-sm hover:bg-red-200 transition-colors"
-                                title="Eliminar horario">
-                                <i class="bi bi-trash text-red-400"></i>
-                            </button>
-                        </form>
+                    title="Eliminar horario">
+                    <i class="bi bi-trash text-red-400"></i>
+                  </button>
+                </form>
               </div>
               <div
                 class="flex bg-gray-50 rounded-sm p-1 w-full mt-2 border border-gray-300">
