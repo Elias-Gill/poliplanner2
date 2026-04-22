@@ -15,11 +15,11 @@ RUN go mod download && go mod verify
 
 COPY . .
 
+RUN go build -v -o /migrate_schedule_data ./cmd/schedules_migration/main.go
+
 RUN go build -v -o /run-app . \
     && npm install \
     && npm run build:css
-
-RUN go build -v -o /migrate_schedule_data ./cmd/schedules_migration/main.go
 
 FROM debian:bookworm
 

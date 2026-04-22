@@ -11,7 +11,7 @@ import (
 )
 
 // REFACTOR: move to a dedicated cookies section or something
-const LatestSelectionCookie = "latestScheduleSelection"
+const LatestSelectionCookie = "latestSelectedSchedule"
 
 // Makes a correct redirect if the request is from htmx or is a simple http request
 func CustomRedirect(w http.ResponseWriter, r *http.Request, target string) {
