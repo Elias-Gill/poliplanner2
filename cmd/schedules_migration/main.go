@@ -3,8 +3,12 @@ package main
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"slices"
 	"strings"
+	"time"
 
+	excelimport "github.com/elias-gill/poliplanner2/internal/app/excelImport"
 	scheduleApp "github.com/elias-gill/poliplanner2/internal/app/schedule"
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/domain/courseOffering"
@@ -12,10 +16,11 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/domain/user"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/persistence"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/persistence/sqlite"
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/scraper"
 	"github.com/elias-gill/poliplanner2/logger"
 )
 
-// WARNING: This assumes the server has been run at least once before executing this script.
+// WARNING: This assumes the server has ALL new db migrations up to date before this is runned
 // WARNING: This script performs irreversible data writes. Test thoroughly before running in production.
 
 func main() {
@@ -31,6 +36,18 @@ func main() {
 	db := conn.GetConnection()
 
 	app := scheduleApp.New(sqlite.NewSqliteScheduleStore(db))
+
+	// =========================================
+	// Step 0: force new excel import
+	// =========================================
+
+	importer := excelimport.New(sqlite.NewSqliteExcelImportStore(db), sqlite.NewSqliteSheetVersionStore(db))
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
+	defer cancel()
+	if syncNewestVersion(ctx, importer) != nil {
+		logger.Error("Cannot download new excel from internet")
+		return
+	}
 
 	// =========================================
 	// Step 1: iterate users
@@ -186,17 +203,11 @@ func main() {
 				}
 
 				// Skip over repeated course ids
-				skip := false
-				for i := range courseIDs {
-					if courseIDs[i] == courseOffering.CourseOfferingID(id) {
-						skip = true
-						break
-					}
+				if slices.Contains(courseIDs, courseOffering.CourseOfferingID(id)) {
+					continue
 				}
 
-				if !skip {
-					courseIDs = append(courseIDs, courseOffering.CourseOfferingID(id))
-				}
+				courseIDs = append(courseIDs, courseOffering.CourseOfferingID(id))
 			}
 
 			// =========================================
@@ -239,4 +250,29 @@ func main() {
 type auxCourse struct {
 	Name    string
 	Section string
+}
+
+func syncNewestVersion(ctx context.Context, importer *excelimport.ExcelImporter) error {
+	logger.Info("Forcing Excel import (no version checks)")
+
+	key := config.Get().Excel.GoogleAPIKey
+	scraper := scraper.NewWebScraper(scraper.NewGoogleDriveHelper(key))
+
+	source, err := scraper.FindLatestDownloadSource(ctx)
+	if err != nil {
+		logger.Error("Failed to find Excel source", "error", err)
+		return fmt.Errorf("error fetching Excel source: %w", err)
+	}
+
+	logger.Info("Source found, proceeding with import",
+		"date", source.GetMetadata().Date,
+	)
+
+	if err := importer.PersistSource(ctx, source); err != nil {
+		logger.Error("Failed to persist Excel source", "error", err)
+		return fmt.Errorf("error persisting Excel source: %w", err)
+	}
+
+	logger.Info("Excel import completed successfully")
+	return nil
 }
