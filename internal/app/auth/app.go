@@ -122,7 +122,6 @@ func (a *AuthManager) getUserByLogin(ctx context.Context, login string) (*user.U
 	}
 
 	if !errors.Is(err, user.ErrUserNotFound) {
-		logger.Error("User store failure", "error", err)
 		return nil, errors.Join(ErrUserStoreFailure, err)
 	}
 

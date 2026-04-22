@@ -113,7 +113,7 @@ func (s SqliteUserStore) GetByUsername(ctx context.Context, username string) (*u
 			&u.RecoveryTokenHash, &u.RecoveryTokenExpiration, &u.RecoveryTokenUsed)
 	if err == sql.ErrNoRows {
 		logger.Debug("User not found", "username", username)
-		return nil, err
+		return nil, user.ErrUserNotFound
 	}
 	if err != nil {
 		logger.Warn("Database error searching user", "username", username, "error", err)
