@@ -19,6 +19,8 @@ RUN go build -v -o /run-app . \
     && npm install \
     && npm run build:css
 
+RUN go build -v -o /migrate_schedule_data ./cmd/schedules_migration/main.go
+
 FROM debian:bookworm
 
 RUN apt-get update \
@@ -28,6 +30,7 @@ RUN apt-get update \
 ENV APP_BASE_DIR=/var/poliplanner
 
 COPY --from=builder /run-app /usr/local/bin/run-app
+COPY --from=builder /migrate_schedule_data /usr/local/bin/migrate_schedule_data
 
 COPY --from=builder /usr/src/app/internal/infrastructure/persistence/migrations \
     /var/poliplanner/internal/infrastructure/persistence/migrations

@@ -264,8 +264,18 @@ func syncNewestVersion(ctx context.Context, importer *excelimport.ExcelImporter)
 		return fmt.Errorf("error fetching Excel source: %w", err)
 	}
 
+	sourceDate := source.GetMetadata().Date
+
+	// sanity check: dont accept versions before 2026
+	if sourceDate.Year() < 2026 {
+		logger.Warn("Excel source too old, skipping import",
+			"date", sourceDate,
+		)
+		return fmt.Errorf("excel source is too old: %v", sourceDate)
+	}
+
 	logger.Info("Source found, proceeding with import",
-		"date", source.GetMetadata().Date,
+		"date", sourceDate,
 	)
 
 	if err := importer.PersistSource(ctx, source); err != nil {
