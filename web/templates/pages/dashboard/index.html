@@ -1,198 +1,119 @@
+{{ define "custom_head" }}
+  <title>Dashboard - PoliPlanner</title>
+{{ end }}
+
 {{ define "content" }}
-<main>
-  <div class="header-selector">
-    <h1>Mis horarios</h1>
-    {{ if .Schedules }}
-    <div class="form-container">
-      <select id="viewModeSelector"
-        name="mode"
-        hx-get="/dashboard/view"
-        hx-swap="innerHTML swap:.22s settle:.2s"
-        hx-target="#schedule-detail"
-        hx-include="#scheduleSelector"
-        hx-trigger="change, load">
-        <option value="overview" selected>Vista Rapida</option>
-        <option value="calendar">Calendario</option>
-        <option value="extra">Secciones</option>
-      </select>
-      <select id="scheduleSelector"
-                name="id"
-                hx-get="/dashboard/view"
-                hx-swap="innerHTML swap:.22s settle:.2s"
-                hx-target="#schedule-detail"
-                hx-include="#viewModeSelector"
-                hx-trigger="change, load">
-        <option value="" disabled {{ if or (not .SelectedScheduleID) (eq .SelectedScheduleID -1) }}selected{{ end }}>Selecciona un horario</option>
-        {{ range .Schedules }}
-        <option value="{{ .Schedule.ID }}" {{ if and $.SelectedScheduleID (eq .Schedule.ID $.SelectedScheduleID) }}selected{{ end }}>
-          {{ .Schedule.Description }}
-          {{ if .NeedsUpdate }} ⚠️ {{ end }}
-        </option>
+  <div class="space-y-6">
+    <!-- Header compacto dentro de tarjeta -->
+    <div class="bg-gray-50 border border-gray-300 rounded-sm shadow-sm p-6">
+      <div
+        class="flex flex-col md:flex-row md:items-start md:justify-between gap-3 md:gap-6">
+        <div>
+          <h1 class="text-2xl md:text-3xl font-semibold text-gray-900">
+            Dashboard
+          </h1>
+          <p class="text-sm mt-3 text-gray-600 max-w-sm">
+            Revisa tu horario semanal, exámenes y mas información de tus
+            secciones.
+          </p>
+        </div>
+
+        {{ if .Schedules }}
+          <div class="flex flex-col md:items-end gap-2 w-full md:w-auto">
+            <div class="w-full md:w-64 flex flex-col gap-2">
+              <div class="flex gap-2 w-full">
+                <select
+                  id="schedule-select"
+                  class="flex-1 border border-gray-300 rounded-sm px-3 py-2 text-gray-900"
+                  onchange="window.location.href='?id='+this.value+'&mode=overview'">
+                  {{ range .Schedules }}
+                    <option
+                      value="{{ .ID }}"
+                      {{ if eq $.SelectedID .ID }}selected{{ end }}>
+                      {{ .Title }}
+                    </option>
+                  {{ end }}
+                </select>
+                <a
+                  href="/schedule/"
+                  class="inline-flex items-center justify-center bg-primary-600 text-white px-3 py-2 rounded-sm hover:bg-primary-700 transition-colors"
+                  title="Nuevo horario">
+                  <i class="bi bi-plus-lg"></i>
+                </a>
+                <form
+                  action="/schedule/delete"
+                  method="POST"
+                  class="inline-block"
+                  onsubmit="return confirm('¿Estás seguro de eliminar este horario?');">
+                  <input type="hidden" name="id" value="{{ .SelectedID }}" />
+                  <button
+                    type="submit"
+                    class="inline-flex items-center justify-center border
+                                border-red-300 text-red-400 px-3 py-2 rounded-sm hover:bg-red-200 transition-colors"
+                    title="Eliminar horario">
+                    <i class="bi bi-trash text-red-400"></i>
+                  </button>
+                </form>
+              </div>
+              <div
+                class="flex bg-gray-50 rounded-sm p-1 w-full mt-2 border border-gray-300">
+                <a
+                  href="?id={{ .SelectedID }}&mode=overview"
+                  class="flex-1 px-3 py-2 {{ if eq .Mode "overview" }}
+                    bg-gray-300 text-gray-900
+                  {{ else }}
+                    text-gray-600
+                  {{ end }} rounded-sm text-sm font-medium">
+                  Overview
+                </a>
+                <a
+                  href="?id={{ .SelectedID }}&mode=calendar"
+                  class="flex-1 px-3 py-2 {{ if eq .Mode "calendar" }}
+                    bg-gray-300 text-gray-900
+                  {{ else }}
+                    text-gray-600
+                  {{ end }} text-sm font-medium">
+                  Calendario
+                </a>
+              </div>
+            </div>
+          </div>
         {{ end }}
-      </select>
+      </div>
     </div>
+
+    <!-- Contenido principal -->
+    {{ if .Schedules }}
+      {{ block "dashboard/content" .Data }}{{ end }}
     {{ else }}
-    <p>No tienes horarios registrados.</p>
+      <!-- Empty State coherente con dashboard -->
+      <div class="bg-gray-50 border border-gray-300 rounded-sm shadow-sm mb-6">
+        <div class="p-6 border-b border-gray-300">
+          <h2 class="text-lg font-semibold text-gray-900">Horarios</h2>
+          <p class="text-sm text-gray-600 mt-1">
+            Aquí aparecerán tus horarios creados.
+          </p>
+        </div>
+
+        <div class="p-10 flex flex-col items-center text-center">
+          <div
+            class="w-14 h-14 bg-gray-200 rounded-sm flex items-center justify-center mb-5">
+            <i class="bi bi-calendar-x text-2xl text-gray-600"></i>
+          </div>
+
+          <p class="text-gray-700 mb-6 max-w-sm">
+            Aún no tienes horarios. Crea uno para visualizar tu calendario,
+            exámenes y overview de materias.
+          </p>
+
+          <a
+            href="/schedule/"
+            class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-sm text-sm font-medium transition-colors">
+            <i class="bi bi-plus-lg"></i>
+            Crear horario
+          </a>
+        </div>
+      </div>
     {{ end }}
-    <a href="/schedule/create" style="color: white; text-decoration: none;">
-      <button>
-        <i class="bi bi-plus-circle" style="margin-right: var(--space-sm)"></i>Crear
-      </button>
-    </a>
   </div>
-  <!-- details go here -->
-  <section>
-    <div id="schedule-detail"></div>
-  </section>
-  <style>
-    .header-selector {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .form-container {
-      display: flex;
-      align-items: center;
-      gap: var(--space-md);
-    }
-    #scheduleSelector, #viewModeSelector {
-      border: 1px solid var(--color-border);
-      border-radius: var(--border-radius);
-    }
-    .error {
-      background: #dc3545;
-      color: #fff;
-      border: none;
-      padding: .3rem .6rem;
-      border-radius: var(--border-radius);
-      cursor: pointer;
-    }
-    @media(max-width:768px) {
-      .header-selector {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-md);
-      }
-      .form-container {
-        width: 100%;
-        gap: var(--space-sm);
-      }
-      #scheduleSelector, #viewModeSelector {
-        width: 100%;
-      }
-    }
-
-    #schedule-detail.htmx-swapping {
-      opacity: 0;
-      transition: all .22s ease-out;
-    }
-
-    #schedule-detail.htmx-settling {
-      opacity: 1;
-      transition: all .24s ease-in;
-    }
-  </style>
-  <script>
-    class ScriptLoader {
-        constructor(options) {
-            const { src, global, protocol = document.location.protocol } = options
-            this.src = src
-            this.global = global
-            this.protocol = protocol
-            this.isLoaded = false
-        }
-
-        loadScript() {
-            return new Promise((resolve, reject) => {
-                const script = document.createElement('script')
-                script.type = 'text/javascript'
-                script.async = true
-                script.src = `${this.protocol}//${this.src}`
-
-                const el = document.getElementsByTagName('script')[0]
-                el.parentNode.insertBefore(script, el)
-
-                script.addEventListener('load', () => {
-                    this.isLoaded = true
-                    resolve(script)
-                })
-
-                script.addEventListener('error', () => {
-                    reject(new Error(`${this.src} failed to load.`))
-                })
-            })
-        }
-
-        async load() {
-            if (!this.isLoaded) {
-                await this.loadScript()
-            }
-            return window[this.global]
-        }
-    }
-  </script>
-  <!-- modal para actualizacion de horarios -->
-  <script>
-    const scheduleSelector = document.getElementById('scheduleSelector');
-
-    function checkAndShowModal() {
-      const selectedOption = scheduleSelector.options[scheduleSelector.selectedIndex];
-      if (selectedOption.text.includes('⚠️')) {
-        showUpdateModal(selectedOption.value);
-      }
-    }
-
-    scheduleSelector.addEventListener('change', checkAndShowModal);
-
-    // Ejecutar una vez al cargar
-    checkAndShowModal();
-
-      function showUpdateModal(scheduleId) {
-          // Si ya existe el modal, no creamos otro
-          if (document.getElementById('updateModal')) {
-              return;
-          }
-
-          const modal = document.createElement('div');
-          modal.id = 'updateModal';
-          modal.style = `
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      `;
-
-          const content = document.createElement('div');
-          content.style = `
-      background: var(--color-bg);
-      border: 1px solid var(--color-border);
-      padding: 1.5rem;
-      border-radius: 8px;
-      max-width: 320px;
-      text-align: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      `;
-
-          content.innerHTML = `
-      <p>Nueva version del excel disponible. Quieres actualizar tu horario?</p>
-      <a href="/schedule/${scheduleId}/update"
-      style="display:inline-block; margin:10px; padding:8px 16px; text-decoration:underline; border-radius:4px;">
-      Actualizar
-      </a>
-      <button id="cancelUpdateBtn" style="margin-left: 10px; padding: 8px 16px;">Cancelar</button>
-      `;
-
-          modal.appendChild(content);
-          document.body.appendChild(modal);
-
-          document.getElementById('cancelUpdateBtn').onclick = () => {
-              modal.remove();
-          };
-      }
-  </script>
-</main>
 {{ end }}

@@ -1,104 +1,278 @@
-{{define "custom_head"}}
-<head>
-  <title>Excel dashboard</title>
-</head>
-{{end}}
-{{define "content"}}
-<main>
-  <h1>Sync Excel Dashboard</h1>
-  <section>
-    <h2>Trigger autonomous update</h2>
-    <form id="syncForm">
-      <label for="syncKey">Password:</label>
-      <input type="password" id="syncKey" name="syncKey" required />
-      <br />
-      <br />
-      <button type="submit">Sync Excel</button>
-    </form>
-    <div id="syncResult"></div>
-  </section>
-  <hr />
-  <section>
-    <h2>Upload file manually</h2>
-    <form id="uploadForm" enctype="multipart/form-data">
-      <label for="uploadKey">Password:</label>
-      <input type="password" id="uploadKey" name="uploadKey" required />
-      <br />
-      <br />
-      <label for="downloadUrl">Download URL (optional):</label>
-      <input type="url" id="downloadUrl" name="downloadUrl" placeholder="https://example.com/file.xlsx" />
-      <br />
-      <br />
-      <label for="fileInput">Choose Excel file:</label>
-      <input type="file" id="fileInput" name="file" accept=".xls,.xlsx" required />
-      <br />
-      <br />
-      <button type="submit">Upload File</button>
-    </form>
-  </section>
-  <div id="uploadResult"></div>
+{{ define "custom_head" }}
+  <head>
+    <title>Excel Dashboard - PoliPlanner</title>
+  </head>
+{{ end }}
+{{ define "content" }}
+  <div
+    class="flex items-center justify-center min-h-screen px-0 sm:px-6 lg:px-8">
+    <div
+      class="w-full border-gray-300 border max-w-3xl py-4 bg-gray-50 rounded-sm shadow-xl overflow-hidden">
+      <div class="px-6 md:px-10 pt-10 pb-6 space-y-8 md:space-y-10">
+        <!-- Sección 1 -->
+        <section class="space-y-4">
+          <div class="pb-2 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-900">
+              Sincronización automática
+            </h2>
+            <p class="mt-1 text-sm text-gray-600">
+              Ejecuta la actualización del Excel más reciente desde la fuente
+              web.
+            </p>
+          </div>
+          <form
+            id="syncForm"
+            class="p-5 space-y-4 border border-gray-300 rounded-sm bg-gray-50/40">
+            <div>
+              <label
+                for="syncKey"
+                class="block mb-1.5 text-sm font-medium text-gray-700"
+                >Contraseña de autorización</label
+              >
+              <input
+                type="password"
+                id="syncKey"
+                name="syncKey"
+                required
+                placeholder="Ingresa la clave"
+                class="block w-full px-4 py-2.5 text-gray-900 placeholder-gray-400 border border-gray-300 rounded-sm shadow-sm transition focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+            </div>
+            <button
+              type="submit"
+              class="w-full px-4 py-2.5 font-medium text-white transition duration-150 rounded-sm bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+              Sincronizar ahora
+            </button>
+          </form>
+          <div
+            id="syncResult"
+            class="pt-1 text-sm font-medium min-h-[2rem]"></div>
+        </section>
+
+        <!-- Divider -->
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-300"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-4 font-medium text-gray-500 bg-white"
+              >O sube manualmente</span
+            >
+          </div>
+        </div>
+
+        <!-- Sección 2 -->
+        <section class="space-y-4">
+          <div class="pb-2 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-900">
+              Subida manual de archivo
+            </h2>
+            <p class="mt-1 text-sm text-gray-600">
+              Carga tu propio archivo Excel y selecciona el período
+              correspondiente.
+            </p>
+          </div>
+          <form
+            id="uploadForm"
+            enctype="multipart/form-data"
+            class="p-5 space-y-4 border border-gray-300 rounded-sm bg-gray-50/40">
+            <!-- Contraseña -->
+            <div>
+              <label
+                for="uploadKey"
+                class="block mb-1.5 text-sm font-medium text-gray-700">
+                Contraseña de autorización
+              </label>
+              <input
+                type="password"
+                id="uploadKey"
+                name="uploadKey"
+                required
+                placeholder="Ingresa la clave"
+                class="block w-full px-4 py-2.5 text-gray-900 placeholder-gray-400 border border-gray-300 rounded-sm shadow-sm transition focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+            </div>
+            <!-- Período -->
+            <div>
+              <label
+                for="periodSelect"
+                class="block mb-1.5 text-sm font-medium text-gray-700"
+                >Período académico</label
+              >
+              <select
+                id="periodSelect"
+                name="period"
+                required
+                class="block w-full px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-sm shadow-sm transition focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                <option value="" disabled selected>Seleccione período</option>
+                <option value="1">Período 1</option>
+                <option value="2">Período 2</option>
+              </select>
+            </div>
+            <!-- URL -->
+            <div>
+              <label
+                for="downloadUrl"
+                class="block mb-1.5 text-sm font-medium text-gray-700">
+                URL de descarga (opcional)
+              </label>
+              <input
+                type="url"
+                id="downloadUrl"
+                name="downloadUrl"
+                placeholder="https://ejemplo.com/archivo.xlsx"
+                class="block w-full px-4 py-2.5 text-gray-900 placeholder-gray-400 border border-gray-300 rounded-sm shadow-sm transition focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+            </div>
+            <!-- File -->
+            <div>
+              <label
+                for="fileInput"
+                class="block mb-1.5 text-sm font-medium text-gray-700"
+                >Archivo Excel</label
+              >
+              <div class="relative">
+                <input
+                  type="file"
+                  id="fileInput"
+                  name="file"
+                  accept=".xls,.xlsx"
+                  required
+                  class="absolute inset-0 z-10 w-full h-full opacity-0 cursor-pointer" />
+                <div
+                  class="flex items-center overflow-hidden bg-white border border-gray-300 rounded-sm shadow-sm transition focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-primary-500">
+                  <div class="px-4 py-2.5 bg-gray-100 border-r border-gray-300">
+                    <i
+                      class="text-xl text-primary-600 bi bi-file-earmark-spreadsheet"></i>
+                  </div>
+                  <div
+                    class="flex-1 px-4 py-2.5 text-sm text-gray-500 truncate">
+                    <span id="fileNameDisplay"
+                      >Ningún archivo seleccionado</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <p class="mt-1 text-xs text-gray-500">
+                Formatos permitidos: .xls, .xlsx
+              </p>
+            </div>
+            <button
+              type="submit"
+              class="w-full px-4 py-2.5 font-medium text-white transition duration-150 rounded-sm bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+              Subir Archivo
+            </button>
+          </form>
+          <div
+            id="uploadResult"
+            class="pt-1 text-sm font-medium min-h-[2rem]"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+  <!-- Scripts -->
   <script>
-    // Handle sync form submission
-    document.getElementById('syncForm').addEventListener('submit', async function (e) {
+    // Sync autónomo
+    document
+      .getElementById("syncForm")
+      .addEventListener("submit", async (e) => {
         e.preventDefault();
-        const key = document.getElementById('syncKey').value;
-        const resultEl = document.getElementById('syncResult');
+        const key = document.getElementById("syncKey").value;
+        const resultEl = document.getElementById("syncResult");
+
+        resultEl.className = "min-h-[2rem] text-sm font-medium";
+        resultEl.textContent = "Procesando...";
 
         try {
-            const response = await fetch('/excel/sync', {
-                method: 'POST',
-                headers: {
-                    'Authorization': "Bearer " + key
-                }
-            });
+          const res = await fetch("/excel/sync", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${key}`,
+            },
+          });
 
-            if (response.ok) {
-                resultEl.textContent = 'Sync request succeeded.';
-            } else {
-                const text = await response.text();
-                resultEl.textContent = `Sync failed: ${text}`;
-            }
+          if (res.ok) {
+            resultEl.className += " text-green-700";
+            resultEl.textContent = "Sincronización iniciada con éxito.";
+          } else {
+            const text = await res.text();
+            resultEl.className += " text-red-700";
+            resultEl.textContent = `Error: ${text || "Solicitud fallida"}`;
+          }
         } catch (err) {
-            resultEl.textContent = `Error: ${err.message}`;
+          resultEl.className += " text-red-700";
+          resultEl.textContent = `Error de conexión: ${err.message}`;
         }
-    });
+      });
 
-    // Handle upload form submission
-    document.getElementById('uploadForm').addEventListener('submit', async function (e) {
+    // Subida manual
+    document
+      .getElementById("uploadForm")
+      .addEventListener("submit", async (e) => {
         e.preventDefault();
-        const key = document.getElementById('uploadKey').value;
-        const fileInput = document.getElementById('fileInput');
-        const downloadUrlInput = document.getElementById('downloadUrl');
-        const resultEl = document.getElementById('uploadResult');
 
-        if (fileInput.files.length === 0) {
-            resultEl.textContent = 'Please select a file.';
-            return;
+        const key = document.getElementById("uploadKey").value;
+        const period = document.getElementById("periodSelect").value;
+        const fileInput = document.getElementById("fileInput");
+        const urlInput = document.getElementById("downloadUrl");
+        const resultEl = document.getElementById("uploadResult");
+
+        if (!period) {
+          resultEl.className = "text-red-700 text-sm font-medium";
+          resultEl.textContent = "Selecciona un período válido.";
+          return;
         }
+        if (fileInput.files.length === 0) {
+          resultEl.className = "text-red-700 text-sm font-medium";
+          resultEl.textContent = "Selecciona un archivo Excel.";
+          return;
+        }
+
+        resultEl.className = "min-h-[2rem] text-sm font-medium";
+        resultEl.textContent = "Subiendo archivo...";
 
         const formData = new FormData();
-        formData.append('file', fileInput.files[0]);
-        formData.append('downloadUrl', downloadUrlInput.value);
+        formData.append("file", fileInput.files[0]);
+        formData.append("downloadUrl", urlInput.value);
+        formData.append("period", period);
 
         try {
-            const response = await fetch('/excel/sync', {
-                method: 'POST',
-                headers: {
-                    'Authorization': "Bearer " + key
-                },
-                body: formData
-            });
+          const res = await fetch("/excel/sync", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${key}`,
+            },
+            body: formData,
+          });
 
-            if (response.ok) {
-                resultEl.textContent = 'File uploaded successfully.';
-            } else {
-                const text = await response.text();
-                resultEl.textContent = `Upload failed: ${text}`;
-            }
+          if (res.ok) {
+            resultEl.className += " text-green-700";
+            resultEl.textContent = "Archivo subido y procesado correctamente.";
+          } else {
+            const text = await res.text();
+            resultEl.className += " text-red-700";
+            resultEl.textContent = `Error: ${text || "Fallo en la subida"}`;
+          }
         } catch (err) {
-            resultEl.textContent = `Error: ${err.message}`;
+          resultEl.className += " text-red-700";
+          resultEl.textContent = `Error de conexión: ${err.message}`;
         }
-    });
+      });
+
+    // Mostrar nombre del archivo seleccionado
+    const fileInput = document.getElementById("fileInput");
+    const fileNameDisplay = document.getElementById("fileNameDisplay");
+
+    if (fileInput && fileNameDisplay) {
+      fileInput.addEventListener("change", function (e) {
+        if (this.files && this.files.length > 0) {
+          const fileName = this.files[0].name;
+          fileNameDisplay.textContent = fileName;
+          fileNameDisplay.className = "text-gray-900 font-medium truncate";
+        } else {
+          fileNameDisplay.textContent = "Ningún archivo seleccionado";
+          fileNameDisplay.className = "text-gray-500 italic truncate";
+        }
+      });
+    } else {
+      console.warn("Elementos fileInput o fileNameDisplay no encontrados");
+    }
   </script>
-</main>
-{{end}}
+{{ end }}

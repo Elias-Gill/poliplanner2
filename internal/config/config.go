@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	log "github.com/elias-gill/poliplanner2/internal/logger"
+	log "github.com/elias-gill/poliplanner2/logger"
 )
 
 // ================================
@@ -69,7 +69,6 @@ type LoggingConfig struct {
 
 type SecurityConfig struct {
 	UpdateKey  string
-	JWTSignKey string
 	SecureHTTP bool
 }
 
@@ -128,12 +127,6 @@ func MustLoad() {
 		os.Exit(1)
 	}
 
-	jwtKey := getEnv("JWT_KEY", "")
-	if jwtKey == "" {
-		log.Error("Missing JWT signature key, refusing to start")
-		os.Exit(1)
-	}
-
 	secureHTTPDefault := env == EnvProd // true on production
 	verboseLogsDefault := env == EnvDev // false on production
 
@@ -146,14 +139,14 @@ func MustLoad() {
 
 		Database: DatabaseConfig{
 			URL:           resolvePath(baseDir, "DATABASE_URL", "poliplanner.db"),
-			MigrationsDir: filepath.Join(baseDir, "internal/db/migrations"),
+			MigrationsDir: filepath.Join(baseDir, filepath.Join("internal", "infrastructure", "persistence", "migrations")),
 		},
 
 		Paths: PathsConfig{
 			BaseDir:                baseDir,
-			ExcelParsingLayoutsDir: filepath.Join(baseDir, "internal/excelparser/layouts"),
-			SubjectsMetadataDir:    filepath.Join(baseDir, "internal/excelparser/metadata"),
-			DownloadsDir:           resolvePath(baseDir, "DOWNLOADS_DIR", "tmp/poliplanner"),
+			ExcelParsingLayoutsDir: filepath.Join(baseDir, "internal", "infrastructure", "parser", "layouts"),
+			SubjectsMetadataDir:    filepath.Join(baseDir, "internal", "infrastructure", "parser", "metadata"),
+			DownloadsDir:           resolvePath(baseDir, "DOWNLOADS_DIR", filepath.Join("tmp", "poliplanner")),
 		},
 
 		Excel: ExcelConfig{
@@ -167,7 +160,6 @@ func MustLoad() {
 
 		Security: SecurityConfig{
 			UpdateKey:  updateKey,
-			JWTSignKey: jwtKey,
 			SecureHTTP: getEnvAsBool("SECURE_HTTP", secureHTTPDefault),
 		},
 

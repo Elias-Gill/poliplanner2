@@ -1,13 +1,20 @@
-{{define "custom_head"}}
-<head>
-  <title>Error interno</title>
-</head>
-{{end}}
-
-{{define "content"}}
-<main>
-  <h1>Error 500 - Algo salió mal</h1>
-  <p>Ocurrió un error inesperado en el servidor.</p>
-  <p>Intentá de nuevo más tarde o volvé a la <a href="/dashboard">página principal</a>.</p>
-</main>
-{{end}}
+{{ define "custom_head" }}
+  <title>Error 500 - PoliPlanner</title>
+{{ end }}
+{{ define "content" }}
+  <div
+    class="flex flex-col items-center justify-center min-h-screen px-4 text-center">
+    <h1 class="text-4xl font-bold text-gray-900 mb-4">Error 500</h1>
+    <p class="text-lg text-gray-700 mb-2">
+      Ocurrió un error inesperado en el servidor.
+    </p>
+    <p class="text-gray-600">
+      Intentá de nuevo más tarde o volvé a la
+      <a
+        href="/dashboard"
+        class="text-primary-600 hover:text-primary-700 font-medium"
+        >página principal</a
+      >.
+    </p>
+  </div>
+{{ end }}

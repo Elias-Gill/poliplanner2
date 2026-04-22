@@ -1,0 +1,7 @@
+-- +migrate Up
+ALTER TABLE sheet_version ADD COLUMN success INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE sheet_version ADD COLUMN error_message TEXT;
+ALTER TABLE sheet_version ADD COLUMN parsed_sheets INTEGER NOT NULL DEFAULT 0;
+
+-- This can be NULL
+ALTER TABLE sheet_version ADD COLUMN period INTEGER REFERENCES periodos(id);

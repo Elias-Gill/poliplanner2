@@ -1,189 +1,107 @@
-{{ define "custom_head"}}
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Iniciar Sesión - PoliPlanner</title>
+{{ define "custom_head" }}
+  <title>Iniciar Sesión - PoliPlanner</title>
 {{ end }}
-{{ define "content"}}
-  <main style="min-height: 84vh;">
-    <div class="login-container">
-      <img src="/static/logo.svg" alt="Logo PoliPlanner" class="login-logo" />
-      <h2>Iniciar Sesión</h2>
+
+{{ define "content" }}
+  <div class="md:h-full md:justify-center md:items-center flex">
+    <div
+      class="w-full max-w-md bg-white rounded-sm border border-gray-300 shadow-lg p-6 md:p-10">
+      <div class="text-center mb-5 md:mb-6">
+        <img
+          src="/static/logo.svg"
+          alt="Logo PoliPlanner"
+          class="mx-auto h-16 w-auto md:h-20" />
+        <h2 class="mt-4 text-2xl font-bold text-gray-900">Iniciar Sesión</h2>
+      </div>
+
+      <!-- Mensaje de error (se muestra si viene en los datos) -->
+      {{ if .Error }}
+        <div
+          class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-sm text-sm">
+          {{ .Error }}
+        </div>
+      {{ end }}
+
 
       <form
-        hx-post="/login?redirect={{ .Redirect }}"
-        hx-target="#messages"
-        hx-swap="innerHTML"
-        method="post"
-      >
-        <div class="form-group">
-          <label for="username">Usuario</label>
-          <div class="input-with-icon">
-            <i class="bi bi-person"></i>
+        method="POST"
+        action="/login?redirect={{ .Redirect }}"
+        class="space-y-3 md:space-y-6">
+        <div>
+          <label
+            for="username"
+            class="block text-sm font-medium text-gray-700 mb-1">
+            Usuario o correo
+          </label>
+          <div class="relative">
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="bi bi-person text-gray-500"></i>
+            </div>
             <input
               type="text"
               id="username"
               name="username"
-              style="text-transform: lowercase;"
+              value="{{ .Username }}"
+              class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 placeholder-gray-400 transition-colors"
+              style="text-transform: lowercase"
               required
-              aria-describedby="username-error"
-              placeholder="Usuario o correo"
-            />
+              placeholder="usuario123" />
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="password">Contraseña</label>
-          <div class="input-with-icon">
-            <i class="bi bi-lock"></i>
+        <div>
+          <label
+            for="password"
+            class="block text-sm font-medium text-gray-700 mb-1">
+            Contraseña
+          </label>
+          <div class="relative">
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="bi bi-lock text-gray-500"></i>
+            </div>
             <input
               type="password"
               id="password"
               name="password"
+              class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 placeholder-gray-400 transition-colors"
               required
-              aria-describedby="password-error"
-              placeholder="Contraseña"
-            />
+              placeholder="Contraseña" />
           </div>
         </div>
 
-        <div
-          class="form-group"
-          style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 1.5rem;"
-        >
-          <a href="/password-recovery" style="font-weight: 600;">
+        <div class="flex justify-between text-sm pt-1">
+          <a
+            href="/password-recovery"
+            class="font-medium text-primary-600 hover:text-primary-700 transition-colors">
             ¿Olvidaste la contraseña?
           </a>
         </div>
 
         <button
           type="submit"
-          class="primary"
-          style="width: 100%; font-size: 1.1rem; font-weight: 600; padding: var(--space-md)"
-        >
+          class="w-full bg-primary-600 text-white py-3 rounded-sm font-semibold hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors mt-1">
           Iniciar sesión
         </button>
-
-        <div id="messages" style="margin-top: 1rem;">
-          <!-- Aquí htmx mostrará mensajes de error o éxito -->
-        </div>
       </form>
 
-      <p class="login-footer" style="margin-top: 1.5rem;">
+      <div class="mt-6 text-center text-sm text-gray-600">
         ¿No tenés cuenta?
-        <a href="/signup" style="font-weight: 600;">Registrate acá</a>
-      </p>
+        <a
+          href="/signup"
+          class="font-medium text-primary-600 hover:text-primary-700 transition-colors">
+          Registrate acá
+        </a>
+      </div>
 
-      <p class="login-links" style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--color-muted);">
-        <a href="/misc/" aria-label="Herramientas" style="font-weight: 600; margin-right: 0.5rem;">Herramientas</a> |
-        <a href="/guides/" aria-label="Guías para el estudiante" style="font-weight: 600; margin-left: 0.5rem;">Guías</a>
-      </p>
+      <div class="mt-4 text-center text-xs text-gray-500">
+        <a href="/tools/" class="hover:underline transition-colors"
+          >Herramientas</a
+        >
+        <span class="mx-2">|</span>
+        <a href="/guides/" class="hover:underline transition-colors">Guías</a>
+      </div>
     </div>
-
-    <style>
-      /* Estilos para página de login */
-      .login-container {
-        max-width: 350px;
-        margin: var(--space-xl) auto;
-        text-align: center;
-        border: none;
-        box-shadow: none;
-        background: none;
-      }
-
-      main {
-          min-height: 0;
-      }
-
-      .login-logo {
-        max-width: 180px;
-        width: 100%;
-        height: auto;
-        margin: var(--space-md) auto;
-      }
-
-      @media (max-width: 768px) {
-        .login-logo {
-          max-width: 140px;
-        }
-      }
-
-      h2 {
-        font-size: var(--font-size-h2);
-        font-weight: var(--font-weight-semibold);
-        color: var(--color-text);
-        margin-bottom: var(--space-md);
-      }
-
-      .form-group {
-        margin-bottom: var(--space-lg);
-        text-align: left;
-      }
-
-      .form-group label {
-        display: block;
-        font-size: var(--font-size-base);
-        font-weight: var(--font-weight-medium);
-        color: var(--color-text);
-        margin-bottom: var(--space-xs);
-      }
-
-      .input-with-icon {
-        position: relative;
-        display: flex;
-        align-items: center;
-      }
-
-      .input-with-icon i {
-        position: absolute;
-        left: var(--space-sm);
-        font-size: var(--font-size-base);
-        color: var(--color-muted);
-        margin-left: 8px;
-      }
-
-      .input-with-icon input {
-        width: 100%;
-        padding: var(--space-sm) var(--space-sm) var(--space-sm)
-          calc(var(--space-xl) + 0.5rem);
-        font-size: var(--font-size-base);
-        font-weight: var(--font-weight-normal);
-        border: 1px solid var(--color-border);
-        border-radius: var(--border-radius);
-        background-color: color-mix(
-          in srgb,
-          var(--color-bg),
-          var(--color-secondary-bg) 10%
-        );
-        transition: border-color 0.2s ease, outline 0.2s ease;
-      }
-
-      .input-with-icon input:focus {
-        outline: 2px solid var(--color-primary);
-        outline-offset: 1px;
-        border-color: var(--color-primary);
-      }
-
-      .login-footer {
-        margin-top: var(--space-lg);
-        font-size: var(--font-size-small);
-        color: var(--color-muted);
-      }
-
-      .login-footer a {
-        font-weight: var(--font-weight-medium);
-      }
-
-      .login-links {
-        margin-top: var(--space-sm);
-        font-size: var(--font-size-small);
-        color: var(--color-muted);
-      }
-
-      .login-links a {
-        font-weight: var(--font-weight-medium);
-        margin: 0 var(--space-xs);
-      }
-    </style>
-
-  </main>
+  </div>
 {{ end }}

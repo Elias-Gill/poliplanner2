@@ -1,0 +1,39 @@
+DOCUMENTACIÓN – CARGA DE MATERIAS DESDE EXCEL  
+---------------------------------------------------------------
+
+Este documento detalla el flujo completo de carga y procesamiento de materias cuando llega un
+nuevo archivo Excel de horarios de la universidad.
+
+---------------------------------------------------------------  
+Proceso de carga de materias  
+---------------------------------------------------------------
+
+Cuando el sistema detecta un Excel nuevo (vía scraping automático o subida manual), se ejecuta
+el siguiente flujo:
+
+1. Descarga y parseo inicial del Excel: Se lee la planilla oficial (hojas de horarios por
+carrera/semestre). Se extraen códigos de materia, nombres, horarios, profesores, etc.
+
+2. Identificación de materias existentes vs nuevas  
+   - Se compara el nombre de la asignatura tabla "asignaturas".  
+   - Si ya existe: se busca el cursos asociado a dicha asignatura en el periodo actual.  
+   - Si el nombre es nuevo: se crea una entrada en "asignaturas" con nombre limpio. Luego se
+     genera la instancia del curso.
+
+3. Manejo especial de electivas y optativas  
+   - En la asignaturas se registran como "electiva X", "optativa Y".
+   - El nombre real y específico (ej. "machine learning") se guarda solo en la tabla
+     de cursos.
+   - Esto permite que la misma categoría "Electiva X" tenga diferentes cursos disponibles cada
+     semestre, sin repetir datos ni inflar la tabla de materias disponibles.
+
+4. Proceso general de validación  Para evitar los errores comunes de carga manual (nombres mal
+escritos, códigos duplicados, créditos erróneos, etc.):  
+   - Normalización de nombres: se limpian mayúsculas/minúsculas, acentos y abreviaturas
+     comunes.  
+
+5. Persistencia final  
+   - Se insertan/actualizan los cursos disponibles por semestre.  
+   - Se actualiza la fecha de última carga en auto_sync_excel_check.  
+
+Más detalles de implementación en `excel_service.go`.

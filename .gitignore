@@ -58,3 +58,6 @@ poliplanner.db-wal
 
 # Temporary files
 /tmp/
+node_modules/
+
+web/static/output.css

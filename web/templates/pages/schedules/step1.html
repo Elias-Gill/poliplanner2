@@ -1,0 +1,64 @@
+{{ define "custom_head" }}
+  <title>Crear horario - PoliPlanner</title>
+{{ end }}
+{{ define "content" }}
+  <div class="flex md:h-full md:items-center md:justify-center p-6 md:p-10">
+    <div class="w-full max-w-lg bg-white rounded-sm shadow-lg p-6 md:p-10">
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Crear nuevo horario</h1>
+        <p class="text-gray-600 mt-1 text-sm">
+          Define un título y selecciona la carrera correspondiente.
+        </p>
+      </div>
+      {{ if .Error }}
+        <div
+          class="mb-4 p-3 border border-red-300 bg-red-50 text-red-700 rounded-sm text-sm">
+          {{ .Error }}
+        </div>
+      {{ end }}
+      <form method="post" action="/schedule/" class="space-y-5">
+        <!-- Título -->
+        <div>
+          <label
+            for="title"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Título del horario</label
+          >
+          <input
+            type="text"
+            id="title"
+            name="title"
+            required
+            placeholder="Ej: Horario 2026 - 1er Semestre"
+            value="{{ .Title }}"
+            class="block w-full px-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900" />
+        </div>
+        <!-- Carrera -->
+        <div>
+          <label
+            for="career_id"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Carrera</label
+          >
+          <select
+            id="career_id"
+            name="career_id"
+            required
+            class="block w-full px-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900">
+            <option value="" disabled {{ if not .Career }}selected{{ end }}>
+              Selecciona una carrera
+            </option>
+            {{ range .Careers }}
+              <option value="{{ .ID }}">{{ .Name }}</option>
+            {{ end }}
+          </select>
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-primary-600 text-white py-3 rounded-sm font-semibold hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition">
+          Continuar
+        </button>
+      </form>
+    </div>
+  </div>
+{{ end }}

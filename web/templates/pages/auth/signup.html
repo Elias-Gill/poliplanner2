@@ -1,48 +1,140 @@
-{{define "custom_head"}}
-<title>Registrarse - PoliPlanner</title>
-{{end}}
+{{ define "custom_head" }}
+  <title>Registrarse - PoliPlanner</title>
+{{ end }}
 
-{{define "content"}}
-<main>
-  <h2>Crear cuenta</h2>
-  <section>
-    <form id="signup-form" 
-          hx-post="/signup" 
-          hx-target="#messages" 
-          hx-swap="innerHTML" 
-          method="post">
-      <section>
-        <label>
-          Nombre de usuario:
-          <input type="text" style="text-transform: lowercase;" name="username" placeholder="Nombre de usuario" required autofocus>
-        </label>
-      </section>
-      <section>
-        <label>
-          Correo electrónico:
-          <input type="email" name="email" placeholder="Correo electrónico" required>
-        </label>
-      </section>
-      <section>
-        <label>
-          Contraseña (mínimo 6 caracteres):
-          <input type="password" name="password" placeholder="Contraseña" required>
-        </label>
-      </section>
-      <button type="submit">Crear cuenta</button>
-    </form>
-    <div id="messages"></div>
-    <p>
-      ¿Ya tenés cuenta? <a href="/login">Iniciar sesión</a>
-    </p>
-  </section>
-  <section>
-    <h2>Consideraciones</h2>
-    <ul>
-      <li>Los nombres de usuario <strong>solo se permiten letras minúsculas, números, guion (-) y guion bajo (_)</strong>.</li>
-      <li>Las contraseñas deben tener al menos <strong>6 caracteres</strong>.</li>
-      <li>Te recomendamos elegir un nombre de usuario fácil de recordar y usar contraseñas seguras y únicas. Almacenamos las contraseñas de forma encriptada y aplicamos todas las medidas de seguridad necesarias, pero usar una contraseña exclusiva ayuda a proteger mejor tu cuenta y tu información personal.</li>
-    </ul>
-  </section>
-</main>
-{{end}}
+{{ define "content" }}
+  <div class="md:h-full md:justify-center md:items-center flex">
+    <div
+      class="w-full max-w-md bg-white border border-gray-300 rounded-sm shadow-lg p-6 md:p-10">
+      <div class="text-center mb-5 md:mb-6">
+        <img
+          src="/static/logo.svg"
+          alt="Logo PoliPlanner"
+          class="mx-auto h-16 w-auto md:h-20" />
+        <h2 class="mt-4 text-2xl font-bold text-gray-900">Crear cuenta</h2>
+      </div>
+
+      <!-- Mensajes de error o éxito -->
+      {{ if .Success }}
+        <div
+          class="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-sm text-sm">
+          {{ .Success }}
+        </div>
+      {{ else if .Error }}
+        <div
+          class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-sm text-sm">
+          {{ .Error }}
+        </div>
+      {{ end }}
+
+      {{ if not .Success }}
+        <!-- Ocultar formulario si el registro fue exitoso -->
+        <form method="POST" action="/signup" class="space-y-4 md:space-y-5">
+          <div>
+            <label
+              for="username"
+              class="block text-sm font-medium text-gray-700 mb-1">
+              Nombre de usuario
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              value="{{ .Username }}"
+              style="text-transform: lowercase"
+              required
+              autofocus
+              placeholder="Nombre de usuario"
+              class="block w-full px-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 placeholder-gray-400 transition-colors" />
+          </div>
+
+          <div>
+            <label
+              for="email"
+              class="block text-sm font-medium text-gray-700 mb-1">
+              Correo electrónico
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value="{{ .Email }}"
+              required
+              placeholder="Correo electrónico"
+              class="block w-full px-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 placeholder-gray-400 transition-colors" />
+          </div>
+
+          <div>
+            <label
+              for="password"
+              class="block text-sm font-medium text-gray-700 mb-1">
+              Contraseña (mínimo 6 caracteres)
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              minlength="6"
+              placeholder="Contraseña"
+              class="block w-full px-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 placeholder-gray-400 transition-colors" />
+          </div>
+
+          <div>
+            <label
+              for="confirm_password"
+              class="block text-sm font-medium text-gray-700 mb-1">
+              Confirmar contraseña
+            </label>
+            <input
+              type="password"
+              id="confirm_password"
+              name="confirm_password"
+              required
+              minlength="6"
+              placeholder="Confirmar contraseña"
+              class="block w-full px-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 placeholder-gray-400 transition-colors" />
+          </div>
+
+          <button
+            type="submit"
+            class="w-full bg-primary-600 text-white py-3 rounded-sm font-semibold hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors mt-1">
+            Crear cuenta
+          </button>
+        </form>
+      {{ end }}
+
+
+      <div class="text-center text-sm mt-3 text-gray-600">
+        ¿Ya tenés cuenta?
+        <a
+          href="/login"
+          class="font-medium text-primary-600 hover:text-primary-700 transition-colors">
+          Iniciar sesión
+        </a>
+      </div>
+
+      <div class="mt-4 md:mt-6 border-t border-gray-300 pt-4 md:pt-6">
+        <h3 class="text-sm font-semibold text-gray-800 mb-2">
+          Consideraciones
+        </h3>
+        <ul class="text-xs text-gray-600 space-y-2 list-disc list-inside">
+          <li>
+            Los nombres de usuario
+            <strong>son case-insensitive</strong>(no importan letras
+            minúsculas/mayúsculas)
+            <strong> y solo admiten números, guion (-) y guion bajo (_)</strong
+            >.
+          </li>
+          <li>
+            Las contraseñas deben tener al menos <strong>6 caracteres</strong>.
+          </li>
+          <li>
+            Recomendamos elegir un nombre fácil de recordar y usar contraseñas
+            seguras y únicas. Las contraseñas se almacenan en forma encriptada.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+{{ end }}

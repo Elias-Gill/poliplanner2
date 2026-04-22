@@ -1,0 +1,65 @@
+{{ define "content" }}
+  <div class="m-5 md:ml-10">
+    <div class="max-w-3xl">
+      <h1 class="text-4xl font-bold tracking-tight text-gray-900">
+        Herramientas académicas
+      </h1>
+      <p class="mt-4 text-md text-gray-600 leading-relaxed">
+        Aquí encontrarás un conjunto de herramientas desarrolladas por y para
+        estudiantes, pensadas para facilitar la vida académica y el acceso a
+        información relevante. Todas están disponibles sin necesidad de iniciar
+        sesión.
+      </p>
+    </div>
+
+    <section class="mt-12 grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- Card 1 -->
+      <a
+        href="/tools/calculator"
+        class="group block bg-gray-50 rounded-sm border border-gray-300 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+        <!-- Imagen mejorada -->
+        <div class="relative aspect-[16/9] bg-gray-100 overflow-hidden">
+          <img
+            src="/static/images/calculator_1.png"
+            alt="Calculadora de notas"
+            class="absolute inset-0 w-full h-full object-contain p-6 group-hover:scale-105 transition-transform duration-300" />
+        </div>
+
+        <div class="p-5">
+          <h3
+            class="text-xl font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">
+            Calculadora de notas
+          </h3>
+          <p class="mt-3 text-sm text-gray-600 leading-relaxed">
+            Calcula la escala de notas para exámenes finales y determina cuántos
+            puntos necesitas para aprobar la materia.
+          </p>
+        </div>
+      </a>
+
+      <!-- Card 2 -->
+      <a
+        href="/tools/interactive_graph"
+        class="group block bg-gray-50 rounded-sm border border-gray-300 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+        <!-- Imagen mejorada -->
+        <div class="relative aspect-[16/9] bg-gray-100 overflow-hidden">
+          <img
+            src="/static/images/graph_1.png"
+            alt="Mallas curriculares interactivas"
+            class="absolute inset-0 w-full h-full object-contain p-6 group-hover:scale-105 transition-transform duration-300" />
+        </div>
+
+        <div class="p-5">
+          <h3
+            class="text-xl font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">
+            Mallas curriculares interactivas
+          </h3>
+          <p class="mt-3 text-sm text-gray-600 leading-relaxed">
+            Explora materias por semestre, correlatividades y créditos mediante
+            un grafo interactivo.
+          </p>
+        </div>
+      </a>
+    </section>
+  </div>
+{{ end }}

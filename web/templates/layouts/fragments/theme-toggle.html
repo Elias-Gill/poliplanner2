@@ -1,0 +1,53 @@
+{{ define "fragments/theme-toggle" }}
+  <!-- here the id is setted, so the theme toggle script can modify its value -->
+  <button
+    id="{{ . }}"
+    type="button"
+    class="theme-toggle relative w-14 h-7 flex items-center bg-white border border-gray-300 rounded-full transition-colors duration-300 shadow-sm">
+    <!-- Luna -->
+    <span class="absolute right-2 text-black flex items-center">
+      <i class="bi bi-moon-fill text-sm"></i>
+    </span>
+    <!-- Sol -->
+    <span class="absolute left-2 text-white flex items-center">
+      <i class="bi bi-sun-fill text-sm"></i>
+    </span>
+    <!-- Thumb -->
+    <span
+      class="theme-thumb absolute left-1 w-5 h-5 bg-gray-800 rounded-full transition-all duration-300"></span>
+  </button>
+  <style>
+    .theme-toggle {
+      background-color: white;
+    }
+
+    /* modo oscuro */
+    .dark-mode .theme-toggle {
+      background-color: black;
+      border-color: #1f2937;
+    }
+
+    /* mover thumb */
+    .dark-mode .theme-thumb {
+      transform: translateX(28px);
+      background-color: white;
+    }
+
+    /* iconos */
+    .theme-toggle .bi-moon-fill {
+      opacity: 1;
+    }
+
+    .theme-toggle .bi-sun-fill {
+      opacity: 0.35;
+    }
+
+    .dark-mode .bi-moon-fill {
+      opacity: 0.35;
+    }
+
+    .dark-mode .bi-sun-fill {
+      opacity: 1;
+    }
+  </style>
+{{ end }}

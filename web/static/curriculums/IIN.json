@@ -1,0 +1,531 @@
+{
+    "career": {
+        "id": "IIN",
+        "name": "Ingeniería Informática",
+        "totalSemesters": 10,
+        "totalCredits": 337
+    },
+
+    "subjects": {
+        "algoritmos y estructura de datos I": {
+            "name": "Algoritmos y Estructura de Datos I",
+            "semester": 1,
+            "credits": 9,
+            "weekly_hours": 9,
+            "required_credits": 0,
+            "desc": "Introducción a Algoritmos, construir, verificar y evaluar algoritmos.",
+            "prerequisites": []
+        },
+
+        "emprendedorismo": {
+            "name": "Emprendedorismo",
+            "semester": 1,
+            "credits": 4,
+            "weekly_hours": 4,
+            "required_credits": 0,
+            "desc": "Desarrollar las competencias inherentes al rol de un profesional emprendedor.",
+            "prerequisites": []
+        },
+
+        "expresion oral y escrita": {
+            "name": "Expresión Oral y Escrita",
+            "semester": 1,
+            "credits": 4,
+            "weekly_hours": 4,
+            "required_credits": 0,
+            "desc": "Análisis de gramática y ortografía. Historia del desarrollo del lenguaje español.",
+            "prerequisites": []
+        },
+
+        "fundamentos de matematica": {
+            "name": "Fundamentos de Matemática",
+            "semester": 1,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Geometría Analítica. Métodos Algebráicos. Sistemas de coordenadas cartesianas y polares.",
+            "prerequisites": []
+        },
+
+        "matematica discreta": {
+            "name": "Matemática Discreta",
+            "semester": 1,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Teoría de conjuntos. Relaciones y operaciones. Álgebra de Boole.",
+            "prerequisites": []
+        },
+
+        "organizacion y arquitectura de computadoras I": {
+            "name": "Organización y Arquitectura de Computadoras I",
+            "semester": 1,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Estudio teórico de los circuitos lógicos en todas sus modalidades.",
+            "prerequisites": []
+        },
+
+        "ingles": {
+            "name": "Inglés",
+            "semester": 2,
+            "credits": 4,
+            "weekly_hours": 4,
+            "required_credits": 0,
+            "desc": "Estudio del idioma inglés, vocabulario y gramática.",
+            "prerequisites": []
+        },
+
+        "algebra lineal": {
+            "name": "Álgebra Lineal",
+            "semester": 2,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Matrices. Operaciones con matrices.",
+            "prerequisites": ["fundamentos de matematica", "matematica discreta"]
+        },
+
+        "algoritmos y estructuras de datos II": {
+            "name": "Algoritmos y Estructura de Datos II",
+            "semester": 2,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Funciones, procedimientos y estructuras abstractas de datos.",
+            "prerequisites": ["algoritmos y estructuras de datos I"]
+        },
+
+        "calculo I": {
+            "name": "Cálculo I",
+            "semester": 2,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Funciones. Dominio y rango. Límites. Derivadas. Diferenciales.",
+            "prerequisites": ["fundamentos de matematica"]
+        },
+
+        "lenguajes de programacion I": {
+            "name": "Lenguajes de Programación I",
+            "semester": 2,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Programación estructurada y modular. Lenguaje C.",
+            "prerequisites": ["matematica discreta", "algoritmos y estructuras de datos I"]
+        },
+
+        "organizacion y arquitectura de computadoras II": {
+            "name": "Organización y Arquitectura de Computadoras II",
+            "semester": 2,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Funcionamiento de los sistemas digitales avanzados y las computadoras. Organización funcional de las computadoras digitales. Evolución de la tecnología y tendencias.",
+            "prerequisites": ["organizacion y arquitectura de computadoras I"]
+        },
+
+        "contabilidad": {
+            "name": "Contabilidad",
+            "semester": 3,
+            "credits": 4,
+            "weekly_hours": 4,
+            "required_credits": 0,
+            "desc": "Contabilidad financiera. Registro contable. Plan de Cuentas. Presupuestos.",
+            "prerequisites": []
+        },
+
+        "fisica I": {
+            "name": "Física I",
+            "semester": 3,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Álgebra vectorial. Movimiento. Sistemas de unidades. Trabajo y energía.",
+            "prerequisites": ["fundamentos de matematica"]
+        },
+
+        "algoritmos y estructuras de datos III": {
+            "name": "Algoritmos y Estructura de Datos III",
+            "semester": 3,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Aplicación de algoritmos y estructuras de datos en el contexto de problemas concretos. Evaluar costo/beneficio de algoritmos. Técnicas de diseño de algoritmos.",
+            "prerequisites": ["algoritmos y estructuras de datos II", "lenguajes de programacion I"]
+        },
+
+        "calculo II": {
+            "name": "Cálculo II",
+            "semester": 3,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Integral definida e indefinida. Sucesiones y series. Funciones de varias variables. Integrales múltiples.",
+            "prerequisites": ["calculo I"]
+        },
+
+        "lenguajes de programacion II": {
+            "name": "Lenguajes de Programación II",
+            "semester": 3,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Programación en Java. Programación orientada a objetos. Desarrollo de aplicaciones en lenguaje Java.",
+            "prerequisites": ["lenguajes de programacion I", "algoritmos y estructuras de datos II"]
+        },
+
+        "logica para ciencias de la computacion": {
+            "name": "Lógica para Ciencias de la Computación",
+            "semester": 3,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Pensamiento en forma lógica. Lógica simbólica y de primer orden. Métodos de demostración automática.",
+            "prerequisites": ["matematica discreta", "algoritmos y estructuras de datos II"]
+        },
+
+        "economia y finanzas": {
+            "name": "Economía y Finanzas",
+            "semester": 4,
+            "credits": 4,
+            "weekly_hours": 4,
+            "required_credits": 0,
+            "desc": "Oferta, Demanda y Mercados. Matemática Financiera. Desarrollo Económico. Leyes Económicas.",
+            "prerequisites": []
+        },
+
+        "fisica II": {
+            "name": "Física II",
+            "semester": 4,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Fuerzas y campos eléctricos. Potencial eléctrico. Circuitos de corriente continua. Magnetismo. Inducción electromagnética. Circuitos de corriente alterna.",
+            "prerequisites": ["fisica I"]
+        },
+
+        "redes de computadoras I": {
+            "name": "Redes de Computadoras I",
+            "semester": 4,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Transmisión de Datos. Redes de computadoras. Internet. Historia de las redes. Modelos de red y sus capas.",
+            "prerequisites": ["organizacion y arquitectura de computadoras I", "algoritmos y estructuras de datos II"]
+        },
+
+        "calculo III": {
+            "name": "Cálculo III",
+            "semester": 4,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Ecuaciones diferenciales. Métodos numéricos.",
+            "prerequisites": ["calculo II"]
+        },
+
+        "probabilidades y estadistica": {
+            "name": "Probabilidades y Estadística",
+            "semester": 4,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Estadística descriptiva. Probabilidad. Muestras aleatorias. Hipótesis estadística.",
+            "prerequisites": ["calculo II"]
+        },
+
+        "sistemas operativos": {
+            "name": "Sistemas Operativos",
+            "semester": 4,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Sistemas operativos. Procesos. Estructura del computador. Administración de memoria. Seguridad.",
+            "prerequisites": ["organizacion y arquitectura de computadoras II", "algoritmos y estructuras de datos III"]
+        },
+
+        "fisica III": {
+            "name": "Física III",
+            "semester": 5,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Oscilaciones. Ondas mecánicas. Ondas electromagnéticas.",
+            "prerequisites": ["fisica II"]
+        },
+
+        "investigacion de operaciones I": {
+            "name": "Investigación de Operaciones I",
+            "semester": 5,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Investigación de Operaciones. Programación Lineal. Algoritmos especiales. Programación Entera.",
+            "prerequisites": ["algebra lineal", "calculo II"]
+        },
+
+        "lenguajes de programacion III": {
+            "name": "Lenguajes de Programación III",
+            "semester": 5,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Programación de Sistemas. Programas, procesos e hilos de ejecución. Señales. Tiempo y Temporizadores.",
+            "prerequisites": ["lenguajes de programacion II", "sistemas operativos"]
+        },
+
+        "redes de computaddoras II": {
+            "name": "Redes de Computadoras II",
+            "semester": 5,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Capa de Red. Interredes y enrutamiento. Capa de Transporte. Capa de Aplicación. Rendimiento y operación de las redes.",
+            "prerequisites": ["redes de computadoras I", "fisica II", "organizacion y arquitectura de computadoras II"]
+        },
+
+        "sistemas distribuidos": {
+            "name": "Sistemas Distribuidos",
+            "semester": 5,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Sistemas Distribuidos. Modelos de sistemas. Comunicación entre procesos. WebServices. Transcacciones. Aplicación de sistemas distribuidos.",
+            "prerequisites": ["lenguajes de programacion II", "redes de computadoras I", "sistemas operativos"]
+        },
+
+        "tecnicas de organizacion y metodos": {
+            "name": "Técnicas de Organización y Métodos",
+            "semester": 5,
+            "credits": 4,
+            "weekly_hours": 4,
+            "required_credits": 0,
+            "desc": "Administración general. Técnicas modernas de organización y métodos.",
+            "prerequisites": []
+        },
+
+        "bases de datos I": {
+            "name": "Bases de Datos I",
+            "semester": 6,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Sistemas de base de datos. Modelo de datos. Diseño de base de datos relacionales. Lenguajes de base de datos. Prácticas con SQL. Arquitectura de sistemas de bases de datos.",
+            "prerequisites": ["logica para ciencias de la computacion", "lenguajes de programacion II"]
+        },
+
+        "estructura de los lenguajes": {
+            "name": "Estructura de los Lenguajes",
+            "semester": 6,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Lenguajes de programación, introducción, fundamentos. Tipos abstractos de datos y programación orientada a objetos. Programación funcional y lógica.",
+            "prerequisites": ["lenguajes de programacion II"]
+        },
+
+        "fisica IV": {
+            "name": "Física IV",
+            "semester": 6,
+            "credits": 5,
+            "weekly_hours": 5,
+            "required_credits": 0,
+            "desc": "Sistemas termodinámicos. Ecuaciones de estado. Calor y Primer principio de la termodinámica. Segundo principio de la termodinámica. Entropía.",
+            "prerequisites": ["fisica II"]
+        },
+
+        "ingenieria de software I": {
+            "name": "Ingeniería de Software I",
+            "semester": 6,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Ingeniería de Software. Ingeniería de Requerimientos. Modelos de Proceso de Software. Diseño de software.",
+            "prerequisites": ["lenguajes de programacion II"]
+        },
+
+        "metodos numericos": {
+            "name": "Métodos Numéricos",
+            "semester": 6,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Errores. Soluciones de ecuaciones no lineales. Resolución dee sistemas de ecuaciones lineales. Aproximación de funciones. Diferenciación e integración numérica. Solución numérica de ecuaciones diferenciales.",
+            "prerequisites": ["algebra lineal", "calculo III"]
+        },
+
+        "electiva I": {
+            "name": "Electiva I",
+            "semester": 7,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 184,
+            "desc": "Electiva I",
+            "prerequisites": []
+        },
+
+        "ingenieria de software II": {
+            "name": "Ingeniería de Software II",
+            "semester": 7,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Diseño de software. Pruebas de software. Gestión de la configuración del software. Gestión de la ingeniería de software. Proceso de la ingeniería de software.Desarrollo de proyecto software.",
+            "prerequisites": ["ingenieria de software I", "bases de datos I"]
+        },
+
+        "investigacion de operaciones II": {
+            "name": "Investigación de Operaciones II",
+            "semester": 7,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Teoría de la decisión. Teoría de Pronósticos. Teoría de Colas. Teoría de Stock.",
+            "prerequisites": ["investigacion de operaciones I", "metodos numericos"]
+        },
+
+        "matematica aplicada": {
+            "name": "Matemática Aplicada",
+            "semester": 7,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Conjuntos difusos. Aritmética difusa. Relaciones y composiciones fuzzy. Lógica difusa. Sistemas difusos. Control basado en reglas lingüísticas.",
+            "prerequisites": ["algebra lineal", "logica para ciencias de la computacion"]
+        },
+
+        "optativa I": {
+            "name": "Optativa I",
+            "semester": 7,
+            "credits": 4,
+            "weekly_hours": 4,
+            "required_credits": 0,
+            "desc": "Optativa I",
+            "prerequisites": []
+        },
+
+        "bases de datos II": {
+            "name": "Bases de Datos II",
+            "semester": 8,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Métodos y estructuras de indexación. Procesamiento y optimización de consultas. Seguridad y protección de las bases de datos. Bases de datos distribuidas. Bases de datos orientadas a objetos. Datawarehousing.",
+            "prerequisites": ["bases de datos I"]
+        },
+
+        "electiva II": {
+            "name": "Electiva II",
+            "semester": 8,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 235,
+            "desc": "Electiva II",
+            "prerequisites": []
+        },
+
+        "electiva III": {
+            "name": "Electiva III",
+            "semester": 8,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 235,
+            "desc": "Electiva III",
+            "prerequisites": []
+        },
+
+        "ingenieria de software III": {
+            "name": "Ingeniería de Software III",
+            "semester": 8,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Pruebas del software. Estimación del software. Planificación temporal y seguimiento de proyectos. Métodos ágiles. Administración de la calidad del software. Mejoras de procesos. Cambios en el software. Reingeniería. SWEBOK.",
+            "prerequisites": ["ingenieria de software II"]
+        },
+
+        "optativa II": {
+            "name": "Optativa II",
+            "semester": 8,
+            "credits": 4,
+            "weekly_hours": 4,
+            "required_credits": 0,
+            "desc": "Optativa II",
+            "prerequisites": []
+        },
+
+        "electiva IV": {
+            "name": "Electiva IV",
+            "semester": 9,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 235,
+            "desc": "Electiva IV",
+            "prerequisites": []
+        },
+
+        "electiva V": {
+            "name": "Electiva V",
+            "semester": 9,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 235,
+            "desc": "Electiva V",
+            "prerequisites": []
+        },
+
+        "gestion de centro de computos": {
+            "name": "Gestión de Centro de Cómputos",
+            "semester": 9,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 235,
+            "desc": "El gobierno y la gestión de las TIC. Sistema de gestión de servicios y seguridad de la información. DevOps.",
+            "prerequisites": []
+        },
+
+        "optativa III": {
+            "name": "Optativa III",
+            "semester": 9,
+            "credits": 4,
+            "weekly_hours": 4,
+            "required_credits": 0,
+            "desc": "Optativa III",
+            "prerequisites": []
+        },
+
+        "electiva VI": {
+            "name": "Electiva VI",
+            "semester": 10,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 268,
+            "desc": "Electiva VI",
+            "prerequisites": []
+        },
+
+        "electiva VII": {
+            "name": "Electiva VII",
+            "semester": 10,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 268,
+            "desc": "Electiva VII",
+            "prerequisites": []
+        },
+
+        "diseño de compiladores": {
+            "name": "Diseño de Compiladores",
+            "semester": 10,
+            "credits": 7,
+            "weekly_hours": 7,
+            "required_credits": 0,
+            "desc": "Electiva VII",
+            "prerequisites": ["algoritmos y estructuras de datos III", "estructura de los lenguajes"]
+        }
+
+    }
+}
