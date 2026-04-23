@@ -94,7 +94,7 @@ func (s SqliteUserStore) GetByID(ctx context.Context, userID user.UserID) (*user
 			&u.RecoveryTokenHash, &u.RecoveryTokenExpiration, &u.RecoveryTokenUsed)
 	if err == sql.ErrNoRows {
 		logger.Debug("UserID not found", "id", userID)
-		return nil, err
+		return nil, user.ErrUserNotFound
 	}
 	if err != nil {
 		logger.Warn("Database error searching userID", "userID", userID, "error", err)
@@ -132,7 +132,7 @@ func (s SqliteUserStore) GetByEmail(ctx context.Context, email string) (*user.Us
 			&u.RecoveryTokenHash, &u.RecoveryTokenExpiration, &u.RecoveryTokenUsed)
 	if err == sql.ErrNoRows {
 		logger.Debug("Email not found", "email", email)
-		return nil, err
+		return nil, user.ErrUserNotFound
 	}
 	if err != nil {
 		logger.Warn("Database error searching email", "email", email, "error", err)
@@ -151,7 +151,7 @@ func (s SqliteUserStore) GetByRecoveryToken(ctx context.Context, token string) (
 			&u.RecoveryTokenHash, &u.RecoveryTokenExpiration, &u.RecoveryTokenUsed)
 	if err == sql.ErrNoRows {
 		logger.Debug("Token not found", "token", token)
-		return nil, err
+		return nil, user.ErrInvalidToken
 	}
 	if err != nil {
 		logger.Warn("Database error searching token", "token", token, "error", err)
