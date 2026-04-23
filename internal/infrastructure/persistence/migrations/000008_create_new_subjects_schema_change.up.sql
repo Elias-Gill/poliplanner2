@@ -82,7 +82,7 @@ CREATE TABLE cursos (
 
     fechas_sabados TEXT,
 
-    UNIQUE (malla, seccion, periodo)
+    UNIQUE (nombre, malla, seccion, periodo)
 );
 CREATE INDEX idx_cursos_malla_periodo ON cursos(malla, periodo);
 

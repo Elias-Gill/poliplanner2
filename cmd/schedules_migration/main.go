@@ -2,13 +2,9 @@ package main
 
 import (
 	"context"
-	"database/sql"
-	"fmt"
 	"slices"
 	"strings"
-	"time"
 
-	excelimport "github.com/elias-gill/poliplanner2/internal/app/excelImport"
 	scheduleApp "github.com/elias-gill/poliplanner2/internal/app/schedule"
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/domain/courseOffering"
@@ -16,12 +12,12 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/domain/user"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/persistence"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/persistence/sqlite"
-	"github.com/elias-gill/poliplanner2/internal/infrastructure/scraper"
 	"github.com/elias-gill/poliplanner2/logger"
 )
 
-// WARNING: This assumes the server has ALL new db migrations up to date before this is runned
-// WARNING: This script performs irreversible data writes. Test thoroughly before running in production.
+// WARNING: This assumes the server has ALL new db migrations up to date before this is run
+// WARNING: This script performs irreversible data writes. Test thoroughly before running in production
+// WARNING: cursos table must already be populated from latest Excel import
 
 func main() {
 	config.MustLoad()
@@ -36,18 +32,6 @@ func main() {
 	db := conn.GetConnection()
 
 	app := scheduleApp.New(sqlite.NewSqliteScheduleStore(db))
-
-	// =========================================
-	// Step 0: force new excel import
-	// =========================================
-
-	importer := excelimport.New(sqlite.NewSqliteExcelImportStore(db), sqlite.NewSqliteSheetVersionStore(db))
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
-	defer cancel()
-	if syncNewestVersion(ctx, importer) != nil {
-		logger.Error("Cannot download new excel from internet")
-		return
-	}
 
 	// =========================================
 	// Step 1: iterate users
@@ -72,7 +56,7 @@ func main() {
 		}
 
 		// =========================================
-		// Step 2: get distinct schedule names per user
+		// Step 2: get distinct schedule names
 		// =========================================
 
 		namesRows, err := db.Query(`
@@ -91,7 +75,7 @@ func main() {
 			var name string
 			if err := namesRows.Scan(&name); err != nil {
 				namesRows.Close()
-				logger.Error("Cannot scan schedule name", "error", err, "user_id", userID)
+				logger.Error("Cannot scan schedule name", "error", err)
 				return
 			}
 			names = append(names, name)
@@ -99,29 +83,22 @@ func main() {
 		namesRows.Close()
 
 		// =========================================
-		// Step 3: for each name, get latest schedule
+		// Step 3: process each schedule name
 		// =========================================
 
 		for _, name := range names {
 
-			var (
-				scheduleID  int64
-				description string
-				createdAt   string
-			)
+			var scheduleID int64
 
+			// Get latest schedule for this user + name
 			err := db.QueryRow(`
-				SELECT schedule_id, schedule_description, created_at
+				SELECT schedule_id
 				FROM schedules
 				WHERE user_id = ?
 				AND schedule_description = ?
 				ORDER BY schedule_id DESC
 				LIMIT 1
-			`, userID, name).Scan(
-				&scheduleID,
-				&description,
-				&createdAt,
-			)
+			`, userID, name).Scan(&scheduleID)
 
 			if err != nil {
 				logger.Error("Cannot fetch latest schedule",
@@ -133,13 +110,18 @@ func main() {
 			}
 
 			// =========================================
-			// Step 4: retrieve old subjects
+			// Step 4: retrieve old subjects + career
 			// =========================================
 
 			subRows, err := db.Query(`
-				SELECT s.subject_name, s.section
+				SELECT 
+					s.subject_name,
+					s.section,
+					c.career_code
 				FROM schedule_subjects dt
 				JOIN subjects s ON s.subject_id = dt.subject_id
+				JOIN career_version cv ON cv.career_version_id = s.career_id
+				JOIN career c ON c.career_id = cv.career_id
 				WHERE dt.schedule_id = ?
 			`, scheduleID)
 			if err != nil {
@@ -155,7 +137,7 @@ func main() {
 			for subRows.Next() {
 				var c auxCourse
 
-				if err := subRows.Scan(&c.Name, &c.Section); err != nil {
+				if err := subRows.Scan(&c.Name, &c.Section, &c.Career); err != nil {
 					subRows.Close()
 					logger.Error("Cannot scan subject row",
 						"error", err,
@@ -164,15 +146,24 @@ func main() {
 					return
 				}
 
+				// Minimal normalization
 				c.Name = strings.TrimSpace(c.Name)
 				c.Section = strings.TrimSpace(c.Section)
+				c.Career = strings.ToUpper(strings.TrimSpace(c.Career))
 
 				courses = append(courses, c)
 			}
+
+			if err := subRows.Err(); err != nil {
+				subRows.Close()
+				logger.Error("Error iterating subject rows", "error", err)
+				return
+			}
+
 			subRows.Close()
 
 			// =========================================
-			// Step 5: map to new courses
+			// Step 5: map to new cursos (by career)
 			// =========================================
 
 			var courseIDs []courseOffering.CourseOfferingID
@@ -181,28 +172,28 @@ func main() {
 				var id int64
 
 				err := db.QueryRow(`
-					SELECT id
-					FROM cursos
-					WHERE nombre = ?
-					AND seccion = ?
+					SELECT cu.id
+					FROM cursos cu
+					JOIN mallas m ON m.id = cu.malla
+					JOIN carreras ca ON ca.id = m.carrera
+					WHERE cu.nombre = ?
+					AND cu.seccion = ?
+					AND ca.siglas = ?
 					LIMIT 1
-				`, c.Name, c.Section).Scan(&id)
+				`, c.Name, c.Section, c.Career).Scan(&id)
 
 				if err != nil {
-					if err == sql.ErrNoRows {
-						continue
-					}
-
-					logger.Error("Cannot find course",
+					logger.Warn("Error finding course",
 						"error", err,
 						"name", c.Name,
 						"section", c.Section,
+						"career", c.Career,
 						"user_id", userID,
 					)
 					continue
 				}
 
-				// Skip over repeated course ids
+				// Deduplicate
 				if slices.Contains(courseIDs, courseOffering.CourseOfferingID(id)) {
 					continue
 				}
@@ -211,12 +202,12 @@ func main() {
 			}
 
 			// =========================================
-			// Step 6: create new schedule
+			// Step 6: create new schedule via domain
 			// =========================================
 
 			newSchedule, err := schedule.NewSchedule(
 				user.UserID(userID),
-				description,
+				name,
 				courseIDs,
 			)
 			if err != nil {
@@ -250,39 +241,5 @@ func main() {
 type auxCourse struct {
 	Name    string
 	Section string
-}
-
-func syncNewestVersion(ctx context.Context, importer *excelimport.ExcelImporter) error {
-	logger.Info("Forcing Excel import (no version checks)")
-
-	key := config.Get().Excel.GoogleAPIKey
-	scraper := scraper.NewWebScraper(scraper.NewGoogleDriveHelper(key))
-
-	source, err := scraper.FindLatestDownloadSource(ctx)
-	if err != nil {
-		logger.Error("Failed to find Excel source", "error", err)
-		return fmt.Errorf("error fetching Excel source: %w", err)
-	}
-
-	sourceDate := source.GetMetadata().Date
-
-	// sanity check: dont accept versions before 2026
-	if sourceDate.Year() < 2026 {
-		logger.Warn("Excel source too old, skipping import",
-			"date", sourceDate,
-		)
-		return fmt.Errorf("excel source is too old: %v", sourceDate)
-	}
-
-	logger.Info("Source found, proceeding with import",
-		"date", sourceDate,
-	)
-
-	if err := importer.PersistSource(ctx, source); err != nil {
-		logger.Error("Failed to persist Excel source", "error", err)
-		return fmt.Errorf("error persisting Excel source: %w", err)
-	}
-
-	logger.Info("Excel import completed successfully")
-	return nil
+	Career  string
 }

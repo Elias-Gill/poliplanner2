@@ -270,7 +270,7 @@ func (w sqliteExcelImportWritter) upsertCourse(
 			comite_presidente, comite_miembro1, comite_miembro2, fechas_sabados
 		)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-		ON CONFLICT(malla, seccion, periodo) DO UPDATE SET
+		ON CONFLICT(nombre, malla, seccion, periodo) DO UPDATE SET
 			nombre = excluded.nombre,
 			tipo = excluded.tipo,
 			comite_presidente = excluded.comite_presidente,
