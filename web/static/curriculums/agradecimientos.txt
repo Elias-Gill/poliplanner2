@@ -1,0 +1,9 @@
+Agradecimientos especiales a:
+- @juanjrvrn
+- @alex43x
+- @raquelpanambitorres
+
+Quienes fueron colaboradores del proyecto de mallas interactivas
+(github.com/elias-gill/malla_interactiva) y realizaron la carga de las respectivas mallas.
+
+Su trabajo fue esencial para el desarrollo de esta herramienta.
