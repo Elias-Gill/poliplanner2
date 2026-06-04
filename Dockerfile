@@ -27,6 +27,8 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && apt-get install -y sqlite3 vim
+
 ENV APP_BASE_DIR=/var/poliplanner
 
 COPY --from=builder /run-app /usr/local/bin/run-app
