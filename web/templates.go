@@ -12,8 +12,8 @@ import (
 )
 
 var funcMap = template.FuncMap{
-	"toTitle": toTitle,
-	"toJS":    toJS,
+	"TitleCase": TitleCase,
+	"MarshallJson":    MarshallJson,
 }
 
 // Exposed layout and Templates
@@ -69,8 +69,8 @@ func parseFragments() *template.Template {
 // =            Utilitary functions for templates            =
 // ===========================================================
 
-// toJS convierte cualquier valor a JSON seguro para insertar directamente en <script>
-func toJS(v any) template.JS {
+// MarshallJson convierte cualquier valor a JSON seguro para insertar directamente en <script>
+func MarshallJson(v any) template.JS {
 	b, err := json.Marshal(v)
 	if err != nil {
 		return "[]"
@@ -78,7 +78,7 @@ func toJS(v any) template.JS {
 	return template.JS(b)
 }
 
-func toTitle(s string) string {
+func TitleCase(s string) string {
 	if s == "" {
 		return s
 	}

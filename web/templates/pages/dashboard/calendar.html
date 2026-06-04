@@ -24,7 +24,7 @@
   </section>
 
 <script>
-const exams = {{ . | toJS }};
+const exams = {{ MarshallJson . }};
 
 document.addEventListener('DOMContentLoaded', () => {
   const listContainer = document.getElementById('upcoming-exams');
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       <div class="flex flex-col text-sm text-gray-600 space-y-1">
         <span><span class="font-semibold">Fecha:</span> ${new Date(exam.Date).toLocaleDateString('es-ES')}</span>
-        <span><span class="font-semibold">Hora:</span> ${new Date(exam.Date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })} hs</span>
+        <span><span class="font-semibold">Hora:</span> ${new Date(exam.Date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', timeZone: "UTC" })} hs</span>
         ${
           exam.Revision
             ? `<span><span class="font-semibold">Revisión:</span> ${new Date(exam.Revision).toLocaleDateString('es-ES')}</span>`
