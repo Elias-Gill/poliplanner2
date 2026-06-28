@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"os"
 	"slices"
 	"strings"
 
@@ -20,7 +21,13 @@ import (
 // WARNING: cursos table must already be populated from latest Excel import
 
 func main() {
-	config.MustLoad()
+	_, err := config.Load()
+	if err != nil {
+		logger.Error("Cannot start migration", "cause", "Cannot load server config", "err", err.Error())
+		os.Exit(1)
+		return
+	}
+
 	logger.Warn("Starting schedules data migration")
 
 	conn, err := persistence.ConnectDB()

@@ -1,19 +1,18 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
+	"sync"
 	"time"
-
-	log "github.com/elias-gill/poliplanner2/logger"
 )
 
-// ================================
-// ========= Environment ==========
-// ================================
-
-type Environment string
+const (
+	appName    = "PoliPlanner"
+	appVersion = "1.0.0"
+)
 
 const (
 	EnvDev  Environment = "dev"
@@ -21,14 +20,10 @@ const (
 )
 
 // ================================
-// =========== Config =============
+// =           Config             =
 // ================================
 
-// Config holds all application configuration.
-// It is loaded once at startup and treated as immutable afterwards.
 type Config struct {
-	Environment Environment
-
 	Server   ServerConfig
 	Database DatabaseConfig
 	Paths    PathsConfig
@@ -36,14 +31,23 @@ type Config struct {
 	Logging  LoggingConfig
 	Security SecurityConfig
 	Email    EmailConfig
+	App      AppData
 }
 
 // ================================
-// ========= Sub-configs ===========
+// =       Sub-config types       =
 // ================================
+
+type Environment string
 
 type ServerConfig struct {
 	Addr string
+	Env  Environment
+}
+
+type AppData struct {
+	Name    string
+	Version string
 }
 
 type DatabaseConfig struct {
@@ -77,76 +81,87 @@ type EmailConfig struct {
 }
 
 // ================================
-// ========= Global state ==========
+// =         Global state         =
 // ================================
 
-var cfg *Config = nil
+var (
+	cfg  *Config
+	err  error
+	once sync.Once // To ensure thread safety
+)
 
 // ================================
 // =         Public API           =
 // ================================
 
-// Get returns the loaded configuration.
+// Get returns loaded config or nil if failed.
 func Get() *Config {
-	if cfg == nil {
-		MustLoad()
-	}
+	once.Do(func() {
+		cfg, err = load()
+	})
 	return cfg
 }
 
-// SetCustom allows injecting a custom config (useful for tests).
-func SetCustom(c *Config) {
-	cfg = c
+// Err returns initialization error if any.
+func Err() error {
+	once.Do(func() {
+		cfg, err = load()
+	})
+	return err
 }
 
-// MustLoad loads configuration from environment variables.
-// The application exits if critical configuration is missing.
-func MustLoad() {
+// Load builds configuration from environment variables.
+func Load() (*Config, error) {
+	return load()
+}
+
+// ================================
+// =        Internal load         =
+// ================================
+
+func load() (*Config, error) {
 	env := Environment(getEnv("APP_ENV", "dev"))
 	if env != EnvDev && env != EnvProd {
-		log.Warn("Unknown APP_ENV value, defaulting to dev", "value", env)
 		env = EnvDev
 	}
 
-	// Resolve base directory (defaults to executable directory)
-	baseDir := resolveBaseDir()
+	baseDir, err := resolveBaseDir()
+	if err != nil {
+		return nil, fmt.Errorf("cannot resolve base dir: %w", err)
+	}
 
 	googleAPIKey := getEnv("GOOGLE_API_KEY", "")
-	if googleAPIKey == "" {
-		log.Warn("Missing Google API key, excel scrapping will be disabled")
-	}
-
 	emailAPIKey := getEnv("EMAIL_API_KEY", "")
-	if emailAPIKey == "" {
-		log.Warn("Missing Email api key, emails will be disabled")
-	}
-
 	updateKey := getEnv("UPDATE_KEY", "")
+
 	if updateKey == "" {
-		log.Error("Missing UPDATE_KEY, refusing to start")
-		os.Exit(1)
+		return nil, fmt.Errorf("missing UPDATE_KEY")
 	}
 
-	secureHTTPDefault := env == EnvProd // true on production
-	verboseLogsDefault := env == EnvDev // false on production
+	secureHTTPDefault := env == EnvProd
+	verboseLogsDefault := env == EnvDev
 
-	cfg = &Config{
-		Environment: env,
+	cfg := &Config{
+		App: AppData{
+			Name:    appName,
+			Version: appVersion,
+		},
 
 		Server: ServerConfig{
 			Addr: getEnv("SERVER_ADDR", ":8080"),
+			Env:  env,
 		},
 
 		Database: DatabaseConfig{
-			URL:           resolvePath(baseDir, "DATABASE_URL", "poliplanner.db"),
-			MigrationsDir: filepath.Join(baseDir, filepath.Join("internal", "infrastructure", "persistence", "migrations")),
+			URL:           resolveOrDefaultPath(baseDir, "DATABASE_URL", "poliplanner.db"),
+			MigrationsDir: filepath.Join(baseDir, "internal", "infrastructure", "persistence", "migrations"),
 		},
 
 		Paths: PathsConfig{
 			BaseDir:                baseDir,
 			ExcelParsingLayoutsDir: filepath.Join(baseDir, "internal", "infrastructure", "parser", "layouts"),
 			SubjectsMetadataDir:    filepath.Join(baseDir, "internal", "infrastructure", "parser", "metadata"),
-			DownloadsDir:           resolvePath(baseDir, "DOWNLOADS_DIR", filepath.Join("tmp", "poliplanner")),
+			DownloadsDir:           resolveOrDefaultPath(baseDir, "DOWNLOADS_DIR", filepath.Join("tmp", "poliplanner")),
 		},
 
 		Excel: ExcelConfig{
@@ -167,44 +182,36 @@ func MustLoad() {
 			APIKey: emailAPIKey,
 		},
 	}
+
+	return cfg, nil
 }
 
 // ================================
-// ========= Helpers ==============
+// =         Helpers              =
 // ================================
 
-// resolveBaseDir determines the application base directory.
-// Priority:
-// 1. APP_BASE_DIR env var
-// 2. Current working directory
-func resolveBaseDir() string {
-	wd, _ := os.Getwd()
+func resolveBaseDir() (string, error) {
+	wd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
 
 	if raw := os.Getenv("APP_BASE_DIR"); raw != "" {
 		if filepath.IsAbs(raw) {
-			return raw
-		} else {
-			return filepath.Join(wd, raw)
+			return raw, nil
 		}
+		return filepath.Join(wd, raw), nil
 	}
 
-	return wd
+	return wd, nil
 }
 
 // ================================
-// ========= Env helpers ==========
+// =         Env helpers          =
 // ================================
 
 func getEnv(key, defaultValue string) string {
 	if value := os.Getenv(key); value != "" {
-		return value
-	}
-	return defaultValue
-}
-
-func getEnvAsInt(key string, defaultValue int) int {
-	valueStr := getEnv(key, "")
-	if value, err := strconv.Atoi(valueStr); err == nil {
 		return value
 	}
 	return defaultValue
@@ -226,10 +233,7 @@ func getEnvAsDuration(key string, defaultValue time.Duration) time.Duration {
 	return defaultValue
 }
 
-// resolvePath returns an absolute path.
-// If the env var is set, it is used (absolute or relative to baseDir).
-// Otherwise, the default relative path is joined with baseDir.
-func resolvePath(baseDir, envKey, defaultRel string) string {
+func resolveOrDefaultPath(baseDir, envKey, defaultRel string) string {
 	if raw := os.Getenv(envKey); raw != "" {
 		if filepath.IsAbs(raw) {
 			return raw

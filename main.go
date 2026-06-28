@@ -24,12 +24,15 @@ import (
 )
 
 func main() {
-	config.MustLoad()
-	cfg := config.Get()
+	log.Info("Loading env configurations")
+	cfg, err := config.Load()
+	if err != nil {
+		log.Error("Config load has errors", "err", err.Error())
+		return
+	}
 
 	log.InitLogger(cfg.Logging.Verbose)
 	log.Info("Logger initialized", "verbose", cfg.Logging.Verbose)
-	log.Info("Loading env configuraion")
 
 	log.Info("Initializing db")
 	conn, err := persistence.ConnectDB()
