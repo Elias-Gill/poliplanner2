@@ -1,0 +1,738 @@
+{
+  "career": {
+    "id": "IMK",
+    "name": "Ingeniería en Marketing",
+    "totalSemesters": 10,
+    "totalCredits": 621
+  },
+  "subjects": {
+    "algebra": {
+      "name": "Álgebra",
+      "semester": 1,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "calculo I": {
+      "name": "Cálculo I",
+      "semester": 1,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "cultura de valores": {
+      "name": "Cultura de Valores",
+      "semester": 1,
+      "credits": 3,
+      "weekly_hours": 3,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "geometria analitica y vectores": {
+      "name": "Geometría Analítica y Vectores",
+      "semester": 1,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "informatica I": {
+      "name": "Informática I",
+      "semester": 1,
+      "credits": 4,
+      "weekly_hours": 4,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "ingles I": {
+      "name": "Inglés I",
+      "semester": 1,
+      "credits": 4,
+      "weekly_hours": 4,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "sociologia de la empresa": {
+      "name": "Sociología de la Empresa",
+      "semester": 1,
+      "credits": 4,
+      "weekly_hours": 4,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "calculo II": {
+      "name": "Cálculo II",
+      "semester": 2,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo I"
+      ]
+    },
+    "contabilidad": {
+      "name": "Contabilidad",
+      "semester": 2,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "algebra"
+      ]
+    },
+    "estadistica I": {
+      "name": "Estadística I",
+      "semester": 2,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo I",
+        "algebra"
+      ]
+    },
+    "fisica I": {
+      "name": "Física I",
+      "semester": 2,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo I"
+      ]
+    },
+    "formacion integral": {
+      "name": "Formación Integral",
+      "semester": 2,
+      "credits": 3,
+      "weekly_hours": 3,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "cultura de valores"
+      ]
+    },
+    "ingles II": {
+      "name": "Inglés II",
+      "semester": 2,
+      "credits": 4,
+      "weekly_hours": 4,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "ingles I"
+      ]
+    },
+    "liderazgo": {
+      "name": "Liderazgo",
+      "semester": 2,
+      "credits": 3,
+      "weekly_hours": 3,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "cultura de valores"
+      ]
+    },
+    "comportamiento organizacional": {
+      "name": "Comportamiento Organizacional",
+      "semester": 3,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "sociologia de la empresa",
+        "formacion integral"
+      ]
+    },
+    "ecologia y desarrollo sustentable": {
+      "name": "Ecología y Desarrollo Sustentable",
+      "semester": 3,
+      "credits": 3,
+      "weekly_hours": 3,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "formacion integral"
+      ]
+    },
+    "estadistica II": {
+      "name": "Estadística II",
+      "semester": 3,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "estadistica I"
+      ]
+    },
+    "fisica II": {
+      "name": "Física II",
+      "semester": 3,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "fisica I"
+      ]
+    },
+    "gestion de marketing": {
+      "name": "Gestión de Marketing",
+      "semester": 3,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "liderazgo"
+      ]
+    },
+    "ingles III": {
+      "name": "Inglés III",
+      "semester": 3,
+      "credits": 4,
+      "weekly_hours": 4,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "ingles II"
+      ]
+    },
+    "matematica financiera": {
+      "name": "Matemática Financiera",
+      "semester": 3,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "costos y presupuestos": {
+      "name": "Costos y Presupuestos",
+      "semester": 4,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "contabilidad",
+        "matematica financiera"
+      ]
+    },
+    "desarrollo del pensamiento": {
+      "name": "Desarrollo del Pensamiento",
+      "semester": 4,
+      "credits": 3,
+      "weekly_hours": 3,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "comportamiento organizacional"
+      ]
+    },
+    "estados financieros": {
+      "name": "Estados Financieros",
+      "semester": 4,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "matematica financiera"
+      ]
+    },
+    "finanzas": {
+      "name": "Finanzas",
+      "semester": 4,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "estadistica II"
+      ]
+    },
+    "gerencia de ventas": {
+      "name": "Gerencia de Ventas",
+      "semester": 4,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "gestion de marketing"
+      ]
+    },
+    "informatica II": {
+      "name": "Informática II",
+      "semester": 4,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "informatica I"
+      ]
+    },
+    "ingles IV": {
+      "name": "Inglés IV",
+      "semester": 4,
+      "credits": 4,
+      "weekly_hours": 4,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "ingles III"
+      ]
+    },
+    "emprendedorismo": {
+      "name": "Emprendedorismo",
+      "semester": 5,
+      "credits": 4,
+      "weekly_hours": 4,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "ecologia y desarrollo sustentable",
+        "desarrollo del pensamiento"
+      ]
+    },
+    "ingles V": {
+      "name": "Inglés V",
+      "semester": 5,
+      "credits": 4,
+      "weekly_hours": 4,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "ingles IV"
+      ]
+    },
+    "investigacion de mercado": {
+      "name": "Investigación de Mercado",
+      "semester": 5,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "gerencia de ventas"
+      ]
+    },
+    "macroeconomia": {
+      "name": "Macroeconomía",
+      "semester": 5,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "finanzas",
+        "estados financieros"
+      ]
+    },
+    "marketing estrategico": {
+      "name": "Marketing Estratégico",
+      "semester": 5,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "gestion de marketing",
+        "comportamiento organizacional"
+      ]
+    },
+    "marketing internacional": {
+      "name": "Marketing Internacional",
+      "semester": 5,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "gestion de marketing",
+        "ingles IV"
+      ]
+    },
+    "politica economica": {
+      "name": "Política Económica",
+      "semester": 5,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "costos y presupuestos"
+      ]
+    },
+    "diseño grafico I": {
+      "name": "Diseño Gráfico I",
+      "semester": 6,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "gestion de marketing"
+      ]
+    },
+    "ingles VI": {
+      "name": "Inglés VI",
+      "semester": 6,
+      "credits": 4,
+      "weekly_hours": 4,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "ingles V"
+      ]
+    },
+    "marketing en el sector publico": {
+      "name": "Marketing en el Sector Público",
+      "semester": 6,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "politica economica",
+        "marketing estrategico"
+      ]
+    },
+    "politica de empresa": {
+      "name": "Política de Empresa",
+      "semester": 6,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "macroeconomia",
+        "politica economica"
+      ]
+    },
+    "psicologia publicitaria": {
+      "name": "Psicología Publicitaria",
+      "semester": 6,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "marketing estrategico"
+      ]
+    },
+    "taller publicitario I": {
+      "name": "Taller Publicitario I",
+      "semester": 6,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "marketing estrategico",
+        "investigacion de mercado"
+      ]
+    },
+    "trabajo en equipo": {
+      "name": "Trabajo en Equipo",
+      "semester": 6,
+      "credits": 3,
+      "weekly_hours": 3,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "emprendedorismo"
+      ]
+    },
+    "administracion I": {
+      "name": "Administración I",
+      "semester": 7,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "politica de empresa"
+      ]
+    },
+    "conducta del consumidor": {
+      "name": "Conducta del Consumidor",
+      "semester": 7,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "psicologia publicitaria"
+      ]
+    },
+    "diseño grafico II": {
+      "name": "Diseño Gráfico II",
+      "semester": 7,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "diseño grafico I"
+      ]
+    },
+    "gerencia de producto": {
+      "name": "Gerencia de Producto",
+      "semester": 7,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "marketing estrategico",
+        "investigacion de mercado"
+      ]
+    },
+    "gestion estrategica de las comunicaciones": {
+      "name": "Gestión Estratégica de las Comunicaciones",
+      "semester": 7,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "psicologia publicitaria",
+        "trabajo en equipo"
+      ]
+    },
+    "microeconomia": {
+      "name": "Microeconomía",
+      "semester": 7,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "politica de empresa"
+      ]
+    },
+    "taller publicitario II": {
+      "name": "Taller Publicitario II",
+      "semester": 7,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "taller publicitario I"
+      ]
+    },
+    "administracion II": {
+      "name": "Administración II",
+      "semester": 8,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "administracion I"
+      ]
+    },
+    "electiva I": {
+      "name": "Electiva I",
+      "semester": 8,
+      "credits": 4,
+      "weekly_hours": 4,
+      "required_credits": 191,
+      "desc": "",
+      "prerequisites": []
+    },
+    "electiva II": {
+      "name": "Electiva II",
+      "semester": 8,
+      "credits": 4,
+      "weekly_hours": 4,
+      "required_credits": 191,
+      "desc": "",
+      "prerequisites": []
+    },
+    "estrategia de precios": {
+      "name": "Estrategia de Precios",
+      "semester": 8,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "conducta del consumidor",
+        "costos y presupuestos"
+      ]
+    },
+    "gestion de distribucion y logistica": {
+      "name": "Gestión de Distribución y Logística",
+      "semester": 8,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "gestion estrategica de las comunicaciones",
+        "gerencia de producto"
+      ]
+    },
+    "marketing directo": {
+      "name": "Marketing Directo",
+      "semester": 8,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "gestion estrategica de las comunicaciones"
+      ]
+    },
+    "pasantias I": {
+      "name": "Pasantías I",
+      "semester": 8,
+      "credits": 150,
+      "weekly_hours": 150,
+      "required_credits": 191,
+      "desc": "",
+      "prerequisites": []
+    },
+    "comportamiento y gestion de clientes": {
+      "name": "Comportamiento y Gestión de Clientes",
+      "semester": 9,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "estrategia de precios"
+      ]
+    },
+    "derecho": {
+      "name": "Derecho",
+      "semester": 9,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "diseño e implementacion del plan de marketing": {
+      "name": "Diseño e Implementación del Plan de Marketing",
+      "semester": 9,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 224,
+      "desc": "",
+      "prerequisites": []
+    },
+    "electiva III": {
+      "name": "Electiva III",
+      "semester": 9,
+      "credits": 4,
+      "weekly_hours": 4,
+      "required_credits": 224,
+      "desc": "",
+      "prerequisites": []
+    },
+    "marketing por internet": {
+      "name": "Marketing por Internet",
+      "semester": 9,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "marketing directo"
+      ]
+    },
+    "pasantias II": {
+      "name": "Pasantías II",
+      "semester": 9,
+      "credits": 150,
+      "weekly_hours": 150,
+      "required_credits": 224,
+      "desc": "",
+      "prerequisites": []
+    },
+    "e-business": {
+      "name": "E-Business",
+      "semester": 10,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "marketing por internet"
+      ]
+    },
+    "electiva IV": {
+      "name": "Electiva IV",
+      "semester": 10,
+      "credits": 4,
+      "weekly_hours": 4,
+      "required_credits": 224,
+      "desc": "",
+      "prerequisites": []
+    },
+    "electiva V": {
+      "name": "Electiva V",
+      "semester": 10,
+      "credits": 4,
+      "weekly_hours": 4,
+      "required_credits": 224,
+      "desc": "",
+      "prerequisites": []
+    },
+    "gestion de agencias y plan de medios": {
+      "name": "Gestión de Agencias y Plan de Medios",
+      "semester": 10,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "gestion estrategica de las comunicaciones",
+        "comportamiento y gestion de clientes"
+      ]
+    },
+    "negociacion internacional": {
+      "name": "Negociación Internacional",
+      "semester": 10,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "marketing directo",
+        "comportamiento y gestion de clientes"
+      ]
+    },
+    "taller de tesis": {
+      "name": "Taller de Tesis",
+      "semester": 10,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "Para cursar, el alumno debe tener aprobado hasta el 9no. semestre incluido.",
+      "prerequisites": []
+    }
+  }
+}

@@ -1,0 +1,653 @@
+{
+  "career": {
+    "id": "IEK-ME",
+    "name": "Ingeniería en Electrónica - Mecatrónica",
+    "totalSemesters": 10,
+    "totalCredits": 328
+  },
+  "subjects": {
+    "algebra": {
+      "name": "Álgebra",
+      "semester": 1,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "calculo I": {
+      "name": "Cálculo I",
+      "semester": 1,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "comunicacion oral y escrita": {
+      "name": "Comunicación Oral y Escrita",
+      "semester": 1,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "geometria analitica y vectores": {
+      "name": "Geometría Analítica y Vectores",
+      "semester": 1,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "desarrollo del emprendedorismo": {
+      "name": "Desarrollo del Emprendedorismo",
+      "semester": 1,
+      "credits": 4,
+      "weekly_hours": 4,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "idioma I": {
+      "name": "Idioma I",
+      "semester": 1,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "informatica aplicada": {
+      "name": "Informática Aplicada",
+      "semester": 1,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "dibujo tecnico": {
+      "name": "Dibujo Técnico",
+      "semester": 2,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "quimica": {
+      "name": "Química",
+      "semester": 2,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "calculo II": {
+      "name": "Cálculo II",
+      "semester": 2,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo I",
+        "geometria analitica y vectores",
+        "algebra"
+      ]
+    },
+    "fisica I": {
+      "name": "Física I",
+      "semester": 2,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo I"
+      ]
+    },
+    "fisica II": {
+      "name": "Física II",
+      "semester": 2,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo I"
+      ]
+    },
+    "idioma II": {
+      "name": "Idioma II",
+      "semester": 2,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "idioma I"
+      ]
+    },
+    "diseño asistido por computadora": {
+      "name": "Diseño Asistido por Computadora",
+      "semester": 3,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "dibujo tecnico"
+      ]
+    },
+    "calculo III": {
+      "name": "Cálculo III",
+      "semester": 3,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo II"
+      ]
+    },
+    "calculo IV": {
+      "name": "Cálculo IV (Vectorial)",
+      "semester": 3,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo II"
+      ]
+    },
+    "circuitos electricos I": {
+      "name": "Circuitos Eléctricos I",
+      "semester": 3,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo II",
+        "fisica II"
+      ]
+    },
+    "fisica III": {
+      "name": "Física III",
+      "semester": 3,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo II",
+        "fisica II",
+        "fisica I"
+      ]
+    },
+    "principios de electronica": {
+      "name": "Principios de Electrónica",
+      "semester": 3,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "fisica II",
+        "quimica"
+      ]
+    },
+    "calculo V": {
+      "name": "Cálculo V",
+      "semester": 4,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo IV"
+      ]
+    },
+    "circuitos electricos II": {
+      "name": "Circuitos Eléctricos II",
+      "semester": 4,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "circuitos electricos I"
+      ]
+    },
+    "electronica I": {
+      "name": "Electrónica I",
+      "semester": 4,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "circuitos electricos I",
+        "principios de electronica"
+      ]
+    },
+    "fisica IV": {
+      "name": "Física IV",
+      "semester": 4,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "fisica III",
+        "calculo IV"
+      ]
+    },
+    "fisica V": {
+      "name": "Física V",
+      "semester": 4,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "fisica III"
+      ]
+    },
+    "algoritmo": {
+      "name": "Algoritmo",
+      "semester": 5,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo V"
+      ]
+    },
+    "calculo VI": {
+      "name": "Cálculo VI",
+      "semester": 5,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo V"
+      ]
+    },
+    "dibujo tecnico mecanico": {
+      "name": "Dibujo Técnico Mecánico",
+      "semester": 5,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "dibujo tecnico"
+      ]
+    },
+    "electronica aplicada": {
+      "name": "Electrónica Aplicada",
+      "semester": 5,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "electronica I"
+      ]
+    },
+    "estadistica": {
+      "name": "Estadística",
+      "semester": 5,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo V"
+      ]
+    },
+    "fisica VI": {
+      "name": "Física VI",
+      "semester": 5,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "fisica V"
+      ]
+    },
+    "electronica digital": {
+      "name": "Electrónica Digital",
+      "semester": 6,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "electronica aplicada"
+      ]
+    },
+    "maquinas electricas": {
+      "name": "Máquinas Eléctricas",
+      "semester": 6,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "circuitos electricos II"
+      ]
+    },
+    "mecanica de fluidos": {
+      "name": "Mecánica de Fluidos",
+      "semester": 6,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "fisica VI"
+      ]
+    },
+    "metodologia de la investigacion": {
+      "name": "Metodología de la Investigación",
+      "semester": 6,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "comunicacion oral y escrita",
+        "estadistica"
+      ]
+    },
+    "principios de metrologia industrial": {
+      "name": "Principios de Metrología Industrial",
+      "semester": 6,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "dibujo tecnico mecanico"
+      ]
+    },
+    "programacion": {
+      "name": "Programación",
+      "semester": 6,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "algoritmo"
+      ]
+    },
+    "control automatico I": {
+      "name": "Control Automático I",
+      "semester": 7,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "maquinas electricas"
+      ]
+    },
+    "diseño de elementos de maquinas": {
+      "name": "Diseño de Elementos de Máquinas",
+      "semester": 7,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "elementos de maquinas": {
+      "name": "Elementos de Máquinas",
+      "semester": 7,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "fisica VI"
+      ]
+    },
+    "metodos de los elementos finitos": {
+      "name": "Métodos de los Elementos Finitos",
+      "semester": 7,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "fisica VI"
+      ]
+    },
+    "microcontroladores": {
+      "name": "Microcontroladores",
+      "semester": 7,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "electronica digital"
+      ]
+    },
+    "modelado de sistemas fisicos": {
+      "name": "Modelado de Sistemas Físicos",
+      "semester": 7,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "mecanica de fluidos"
+      ]
+    },
+    "control automatico II": {
+      "name": "Control Automático II",
+      "semester": 8,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "control automatico I"
+      ]
+    },
+    "diseño y manufactura asistido por computadora": {
+      "name": "Diseño y Manufactura Asistido por Computadora",
+      "semester": 8,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "diseño de elementos de maquinas"
+      ]
+    },
+    "manufactura con maquinas convencionales": {
+      "name": "Manufactura con Máquinas Convencionales",
+      "semester": 8,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "elementos de maquinas"
+      ]
+    },
+    "maquinas a control numerico computarizado": {
+      "name": "Máquinas a Control Numérico Computarizado",
+      "semester": 8,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "diseño de elementos de maquinas"
+      ]
+    },
+    "proyectos de sistemas mecatronicos I": {
+      "name": "Proyectos de Sistemas Mecatrónicos I",
+      "semester": 8,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "microcontroladores",
+        "diseño de elementos de maquinas"
+      ]
+    },
+    "robotica": {
+      "name": "Robótica",
+      "semester": 8,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "microcontroladores"
+      ]
+    },
+    "control avanzado": {
+      "name": "Control Avanzado",
+      "semester": 9,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "control automatico II"
+      ]
+    },
+    "derecho": {
+      "name": "Derecho",
+      "semester": 9,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "metodologia de la investigacion"
+      ]
+    },
+    "inteligencia artificial": {
+      "name": "Inteligencia Artificial",
+      "semester": 9,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "robotica"
+      ]
+    },
+    "proyectos de sistemas mecatronicos II": {
+      "name": "Proyectos de Sistemas Mecatrónicos II",
+      "semester": 9,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "proyectos de sistemas mecatronicos I"
+      ]
+    },
+    "simulacion de sistemas dinamicos": {
+      "name": "Simulación de Sistemas Dinámicos",
+      "semester": 9,
+      "credits": 4,
+      "weekly_hours": 4,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "diseño de elementos de maquinas"
+      ]
+    },
+    "sistema de manufactura flexible": {
+      "name": "Sistema de Manufactura Flexible",
+      "semester": 9,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "robotica",
+        "maquinas a control numerico computarizado"
+      ]
+    },
+    "economia y finanzas": {
+      "name": "Economía y Finanzas",
+      "semester": 10,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "estadistica",
+        "proyectos de sistemas mecatronicos II"
+      ]
+    },
+    "ingenieria de materiales": {
+      "name": "Ingeniería de Materiales",
+      "semester": 10,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "metodos de los elementos finitos",
+        "manufactura con maquinas convencionales"
+      ]
+    },
+    "planeamiento y control de la produccion": {
+      "name": "Planeamiento y Control de la Producción",
+      "semester": 10,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "control avanzado",
+        "estadistica"
+      ]
+    },
+    "proyecto de trabajo de grado": {
+      "name": "Proyecto de Trabajo de Grado",
+      "semester": 10,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "proyectos de sistemas mecatronicos II"
+      ]
+    },
+    "sistema de mejoramiento ambiental": {
+      "name": "Sistema de Mejoramiento Ambiental",
+      "semester": 10,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "derecho"
+      ]
+    }
+  }
+}

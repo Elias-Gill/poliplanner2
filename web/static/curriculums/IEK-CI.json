@@ -1,0 +1,639 @@
+{
+  "career": {
+    "id": "IEK-CI",
+    "name": "Ingeniería en Electrónica - Control Industrial",
+    "totalSemesters": 10,
+    "totalCredits": 340
+  },
+  "subjects": {
+    "algebra": {
+      "name": "Álgebra",
+      "semester": 1,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "calculo I": {
+      "name": "Cálculo I",
+      "semester": 1,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "comunicacion oral y escrita": {
+      "name": "Comunicación Oral y Escrita",
+      "semester": 1,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "geometria analitica y vectores": {
+      "name": "Geometría Analítica y Vectores",
+      "semester": 1,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "desarrollo del emprendedorismo": {
+      "name": "Desarrollo del Emprendedorismo",
+      "semester": 1,
+      "credits": 4,
+      "weekly_hours": 4,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "idioma I": {
+      "name": "Idioma I",
+      "semester": 1,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "informatica aplicada": {
+      "name": "Informática Aplicada",
+      "semester": 1,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "dibujo tecnico": {
+      "name": "Dibujo Técnico",
+      "semester": 2,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "quimica": {
+      "name": "Química",
+      "semester": 2,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "calculo II": {
+      "name": "Cálculo II",
+      "semester": 2,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo I",
+        "geometria analitica y vectores",
+        "algebra"
+      ]
+    },
+    "fisica I": {
+      "name": "Física I",
+      "semester": 2,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo I"
+      ]
+    },
+    "fisica II": {
+      "name": "Física II",
+      "semester": 2,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo I"
+      ]
+    },
+    "idioma II": {
+      "name": "Idioma II",
+      "semester": 2,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "idioma I"
+      ]
+    },
+    "diseño asistido por computadora": {
+      "name": "Diseño Asistido por Computadora",
+      "semester": 3,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "dibujo tecnico"
+      ]
+    },
+    "calculo III": {
+      "name": "Cálculo III",
+      "semester": 3,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo II"
+      ]
+    },
+    "calculo IV": {
+      "name": "Cálculo IV (Vectorial)",
+      "semester": 3,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo II"
+      ]
+    },
+    "circuitos electricos I": {
+      "name": "Circuitos Eléctricos I",
+      "semester": 3,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo II",
+        "fisica II"
+      ]
+    },
+    "fisica III": {
+      "name": "Física III",
+      "semester": 3,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo II",
+        "fisica II",
+        "fisica I"
+      ]
+    },
+    "principios de electronica": {
+      "name": "Principios de Electrónica",
+      "semester": 3,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "fisica II",
+        "quimica"
+      ]
+    },
+    "calculo V": {
+      "name": "Cálculo V",
+      "semester": 4,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo IV"
+      ]
+    },
+    "circuitos electricos II": {
+      "name": "Circuitos Eléctricos II",
+      "semester": 4,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "circuitos electricos I"
+      ]
+    },
+    "electronica I": {
+      "name": "Electrónica I",
+      "semester": 4,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "circuitos electricos I",
+        "principios de electronica"
+      ]
+    },
+    "fisica IV": {
+      "name": "Física IV",
+      "semester": 4,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "fisica III",
+        "calculo IV"
+      ]
+    },
+    "fisica V": {
+      "name": "Física V",
+      "semester": 4,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "fisica III"
+      ]
+    },
+    "calculo VI": {
+      "name": "Cálculo VI",
+      "semester": 5,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo V"
+      ]
+    },
+    "electronica digital I": {
+      "name": "Electrónica Digital I",
+      "semester": 5,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "electronica I"
+      ]
+    },
+    "electronica II": {
+      "name": "Electrónica II",
+      "semester": 5,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "electronica I"
+      ]
+    },
+    "estadistica": {
+      "name": "Estadística",
+      "semester": 5,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo V"
+      ]
+    },
+    "algoritmo": {
+      "name": "Algoritmo",
+      "semester": 5,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo V"
+      ]
+    },
+    "fisica VI": {
+      "name": "Física VI",
+      "semester": 5,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "fisica V"
+      ]
+    },
+    "electronica digital II": {
+      "name": "Electrónica Digital II",
+      "semester": 6,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "electronica digital I"
+      ]
+    },
+    "electronica III": {
+      "name": "Electrónica III",
+      "semester": 6,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "electronica II"
+      ]
+    },
+    "fisica VII": {
+      "name": "Física VII",
+      "semester": 6,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "fisica VI"
+      ]
+    },
+    "metodologia de la investigacion": {
+      "name": "Metodología de la Investigación",
+      "semester": 6,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "comunicacion oral y escrita",
+        "estadistica"
+      ]
+    },
+    "programacion": {
+      "name": "Programación",
+      "semester": 6,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "algoritmo"
+      ]
+    },
+    "sistemas de control I": {
+      "name": "Sistemas de Control I",
+      "semester": 6,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "calculo VI"
+      ]
+    },
+    "automatizacion industrial": {
+      "name": "Automatización Industrial",
+      "semester": 7,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "electronica III"
+      ]
+    },
+    "controladores programables I": {
+      "name": "Controladores Programables I",
+      "semester": 7,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "electronica digital II"
+      ]
+    },
+    "principios de sensores y actuadores": {
+      "name": "Principios de Sensores y Actuadores",
+      "semester": 7,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "electronica III"
+      ]
+    },
+    "sistemas de control II": {
+      "name": "Sistemas de Control II",
+      "semester": 7,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "sistemas de control I"
+      ]
+    },
+    "sistemas digitales I": {
+      "name": "Sistemas Digitales I",
+      "semester": 7,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "electronica digital II"
+      ]
+    },
+    "sistemas operativos de microcomputadoras": {
+      "name": "Sistemas Operativos de Microcomputadoras",
+      "semester": 7,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "electronica digital II"
+      ]
+    },
+    "controladores programables II": {
+      "name": "Controladores Programables II",
+      "semester": 8,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "controladores programables I"
+      ]
+    },
+    "instalaciones electricas I": {
+      "name": "Instalaciones Eléctricas I",
+      "semester": 8,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "automatizacion industrial"
+      ]
+    },
+    "instrumentacion y control industrial": {
+      "name": "Instrumentación y Control Industrial",
+      "semester": 8,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "principios de sensores y actuadores",
+        "controladores programables I"
+      ]
+    },
+    "neumatica e hidraulica industrial": {
+      "name": "Neumática e Hidráulica Industrial",
+      "semester": 8,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "principios de sensores y actuadores",
+        "controladores programables I"
+      ]
+    },
+    "sistemas de potencia I": {
+      "name": "Sistemas de Potencia I",
+      "semester": 8,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "automatizacion industrial"
+      ]
+    },
+    "sistemas digitales II": {
+      "name": "Sistemas Digitales II",
+      "semester": 8,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "sistemas digitales I"
+      ]
+    },
+    "anteproyecto de trabajo de grado": {
+      "name": "Anteproyecto de Trabajo de Grado",
+      "semester": 9,
+      "credits": 6,
+      "weekly_hours": 6,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "arquitectura de microcomputadoras": {
+      "name": "Arquitectura de Microcomputadoras",
+      "semester": 9,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "sistemas digitales II"
+      ]
+    },
+    "comunicaciones opticas": {
+      "name": "Comunicaciones Ópticas",
+      "semester": 9,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "sistemas digitales II"
+      ]
+    },
+    "derecho": {
+      "name": "Derecho",
+      "semester": 9,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "metodologia de la investigacion"
+      ]
+    },
+    "instalaciones electricas II": {
+      "name": "Instalaciones Eléctricas II",
+      "semester": 9,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "instalaciones electricas I"
+      ]
+    },
+    "sistemas informaticos para automatizacion y control industrial": {
+      "name": "Sistemas Informáticos para Automatización y Control Industrial",
+      "semester": 9,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "controladores programables II"
+      ]
+    },
+    "administracion y recursos humanos": {
+      "name": "Administración y Recursos Humanos",
+      "semester": 10,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "derecho"
+      ]
+    },
+    "economia y finanzas": {
+      "name": "Economía y Finanzas",
+      "semester": 10,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "anteproyecto de trabajo de grado"
+      ]
+    },
+    "evaluacion de proyectos": {
+      "name": "Evaluación de Proyectos",
+      "semester": 10,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "anteproyecto de trabajo de grado"
+      ]
+    },
+    "proyecto de trabajo de grado": {
+      "name": "Proyecto de Trabajo de Grado",
+      "semester": 10,
+      "credits": 8,
+      "weekly_hours": 8,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "anteproyecto de trabajo de grado"
+      ]
+    }
+  }
+}

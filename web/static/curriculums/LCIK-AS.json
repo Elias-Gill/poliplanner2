@@ -1,0 +1,454 @@
+{
+  "career": {
+    "id": "LCIK-AS",
+    "name": "Licenciatura en Ciencias Informáticas - Análisis de Sistemas",
+    "totalSemesters": 8,
+    "totalCredits": 200
+  },
+  "subjects": {
+    "administracion I": {
+      "name": "Administración I",
+      "semester": 1,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "algoritmica I": {
+      "name": "Algorítmica I",
+      "semester": 1,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "informatica I": {
+      "name": "Informática I",
+      "semester": 1,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "matematica I": {
+      "name": "Matemática I",
+      "semester": 1,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "matematica II": {
+      "name": "Matemática II",
+      "semester": 1,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "ingles tecnico": {
+      "name": "Inglés Técnico",
+      "semester": 2,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": []
+    },
+    "administracion II": {
+      "name": "Administración II",
+      "semester": 2,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "administracion I"
+      ]
+    },
+    "algoritmica II": {
+      "name": "Algorítmica II",
+      "semester": 2,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "algoritmica I",
+        "matematica II"
+      ]
+    },
+    "informatica II": {
+      "name": "Informática II",
+      "semester": 2,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "informatica I",
+        "matematica II"
+      ]
+    },
+    "matematica III": {
+      "name": "Matemática III",
+      "semester": 2,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "matematica I",
+        "matematica II"
+      ]
+    },
+    "administracion III": {
+      "name": "Administración III",
+      "semester": 3,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "administracion II"
+      ]
+    },
+    "estadistica y probabilidades": {
+      "name": "Estadística y Probabilidades",
+      "semester": 3,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "matematica III"
+      ]
+    },
+    "estructura de datos": {
+      "name": "Estructura de Datos",
+      "semester": 3,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "algoritmica II",
+        "matematica III"
+      ]
+    },
+    "matematica IV": {
+      "name": "Matemática IV",
+      "semester": 3,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "matematica III"
+      ]
+    },
+    "sistemas operativos": {
+      "name": "Sistemas Operativos",
+      "semester": 3,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "ingles tecnico",
+        "informatica II",
+        "matematica III"
+      ]
+    },
+    "base de datos I": {
+      "name": "Base de Datos I",
+      "semester": 4,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "estructura de datos",
+        "sistemas operativos"
+      ]
+    },
+    "fisica": {
+      "name": "Física",
+      "semester": 4,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "matematica IV"
+      ]
+    },
+    "matematica V": {
+      "name": "Matemática V",
+      "semester": 4,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "matematica IV"
+      ]
+    },
+    "paradigmas de la programacion": {
+      "name": "Paradigmas de la Programación",
+      "semester": 4,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "estructura de datos"
+      ]
+    },
+    "redes I": {
+      "name": "Redes I",
+      "semester": 4,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "sistemas operativos"
+      ]
+    },
+    "administracion IV": {
+      "name": "Administración IV",
+      "semester": 5,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "administracion III"
+      ]
+    },
+    "base de datos II": {
+      "name": "Base de Datos II",
+      "semester": 5,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "base de datos I"
+      ]
+    },
+    "matematica VI": {
+      "name": "Matemática VI",
+      "semester": 5,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "matematica V"
+      ]
+    },
+    "redes II": {
+      "name": "Redes II",
+      "semester": 5,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "redes I"
+      ]
+    },
+    "investigacion operativa I": {
+      "name": "Investigación Operativa I",
+      "semester": 6,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "estadistica y probabilidades"
+      ]
+    },
+    "metodologia de la investigacion": {
+      "name": "Metodología de la Investigación",
+      "semester": 6,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "estadistica y probabilidades"
+      ]
+    },
+    "ingenieria de software I": {
+      "name": "Ingeniería de Software I",
+      "semester": 6,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "paradigmas de la programacion",
+        "redes II",
+        "base de datos I"
+      ]
+    },
+    "base de datos III": {
+      "name": "Base de Datos III",
+      "semester": 6,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "base de datos II"
+      ]
+    },
+    "investigacion operativa II": {
+      "name": "Investigación Operativa II",
+      "semester": 7,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "investigacion operativa I"
+      ]
+    },
+    "administracion V": {
+      "name": "Administración V",
+      "semester": 7,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "administracion IV"
+      ]
+    },
+    "ingenieria de software II": {
+      "name": "Ingeniería de Software II",
+      "semester": 7,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "ingenieria de software I"
+      ]
+    },
+    "simulacion": {
+      "name": "Simulación",
+      "semester": 8,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "investigacion operativa II"
+      ]
+    },
+    "auditoria y control de calidad": {
+      "name": "Auditoría y Control de Calidad",
+      "semester": 8,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "base de datos III",
+        "ingenieria de software II"
+      ]
+    },
+    "ingenieria de software III": {
+      "name": "Ingeniería de Software III",
+      "semester": 8,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "ingenieria de software II"
+      ]
+    },
+    "electiva I": {
+      "name": "Electiva I",
+      "semester": 5,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "administracion III"
+      ]
+    },
+    "electiva II": {
+      "name": "Electiva II",
+      "semester": 6,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "base de datos II",
+        "electiva I"
+      ]
+    },
+    "electiva III": {
+      "name": "Electiva III",
+      "semester": 7,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "ingenieria de software I",
+        "base de datos III"
+      ]
+    },
+    "proyecto I": {
+      "name": "Proyecto I",
+      "semester": 7,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "ingenieria de software I",
+        "electiva II",
+        "base de datos III",
+        "metodologia de la investigacion"
+      ]
+    },
+    "electiva IV": {
+      "name": "Electiva IV",
+      "semester": 8,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "electiva III",
+        "ingenieria de software II"
+      ]
+    },
+    "proyecto II": {
+      "name": "Proyecto II",
+      "semester": 8,
+      "credits": 5,
+      "weekly_hours": 5,
+      "required_credits": 0,
+      "desc": "",
+      "prerequisites": [
+        "proyecto I"
+      ]
+    }
+  }
+}
