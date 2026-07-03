@@ -10,7 +10,7 @@
 
       <link
         rel="stylesheet"
-        href="/static/css/bootstrap-icons/bootstrap-icons.min.css" />
+        href="/static/bundle/bootstrap-icons/bootstrap-icons.min.css" />
       <link rel="stylesheet" href="/static/output.css" />
 
       <script src="/static/js/theme_bootstrap.js"></script>
@@ -35,7 +35,7 @@
       </div>
 
       {{ template "fragments/mobile-modal" . }}
-      <script src="/static/js/medium_zoom.js"></script>
+      <script src="/static/bundle/medium_zoom/medium_zoom.js"></script>
       <script>
         document.querySelectorAll("nav a").forEach((link) => {
           if (link.href === window.location.href.split("?")[0]) {
