@@ -1,0 +1,140 @@
+package auth
+
+import (
+	"context"
+	"errors"
+	"strings"
+
+	"github.com/elias-gill/poliplanner2/internal/model/auth"
+	"github.com/elias-gill/poliplanner2/internal/model/user"
+	authRepo "github.com/elias-gill/poliplanner2/internal/repository/auth"
+	userRepo "github.com/elias-gill/poliplanner2/internal/repository/user"
+	"github.com/elias-gill/poliplanner2/logger"
+)
+
+type SessionService struct {
+	userStorer    userRepo.UserRepository
+	sessionStorer authRepo.AuthRepository
+}
+
+func NewSessionService(userStore userRepo.UserRepository, sessionStore authRepo.AuthRepository) *SessionService {
+	return &SessionService{
+		userStorer:    userStore,
+		sessionStorer: sessionStore,
+	}
+}
+
+// ================================
+// =         Public API           =
+// ================================
+
+var (
+	ErrSessionExpired      = errors.New("session has expired")
+	ErrSessionNotFound     = errors.New("session not found")
+	ErrSessionSaveFailed   = errors.New("failed to save session")
+	ErrSessionDeleteFailed = errors.New("failed to delete session")
+	ErrSessionStoreFailure = errors.New("session store failure")
+	ErrUserStoreFailure    = errors.New("user store failure")
+)
+
+// Login authenticates a user and creates a new session.
+func (a *SessionService) Login(ctx context.Context, login string, rawPassword string) (*auth.Session, error) {
+	login = normalizeLogin(login)
+
+	u, err := a.getUserByLogin(ctx, login)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := u.AuthenticatePassword(rawPassword); err != nil {
+		return nil, user.ErrInvalidCredentials
+	}
+
+	s := auth.NewSession(u.ID)
+
+	if err := a.sessionStorer.Save(ctx, s); err != nil {
+		logger.Error("Session store failure", "error", err)
+		return nil, errors.Join(ErrSessionSaveFailed, err)
+	}
+
+	return s, nil
+}
+
+// ValidateSession retrieves validates an existing session and extends if needed.
+func (a *SessionService) ValidateSession(ctx context.Context, token auth.SessionID) (*auth.Session, error) {
+	s, err := a.sessionStorer.Get(ctx, token)
+	if err != nil {
+		return nil, errors.Join(ErrSessionStoreFailure, err)
+	}
+
+	if s == nil {
+		return nil, ErrSessionNotFound
+	}
+
+	if s.HasExpired() {
+		if err := a.sessionStorer.Delete(ctx, s.ID); err != nil {
+			return nil, errors.Join(ErrSessionExpired, ErrSessionDeleteFailed, err)
+		}
+
+		return nil, ErrSessionExpired
+	}
+
+	s.ExtendIfNeeded()
+
+	if err := a.sessionStorer.Save(ctx, s); err != nil {
+		return nil, errors.Join(ErrSessionSaveFailed, err)
+	}
+
+	return s, nil
+}
+
+// Logout invalidates a session by removing it from the store.
+func (a *SessionService) Logout(ctx context.Context, userID user.UserID, token auth.SessionID) error {
+	// Compare token user with logged user
+	session, err := a.ValidateSession(ctx, token)
+	if err != nil {
+		return errors.Join(ErrSessionNotFound, err)
+	}
+
+	if session.User != userID {
+		return errors.Join(ErrSessionNotFound, err)
+	}
+
+	if err := a.sessionStorer.Delete(ctx, token); err != nil {
+		return errors.Join(ErrSessionDeleteFailed, err)
+	}
+
+	return nil
+}
+
+// ================================
+// =        Private Helpers       =
+// ================================
+
+// normalizeLogin standardizes login input (username or email).
+func normalizeLogin(login string) string {
+	return strings.ToLower(strings.TrimSpace(login))
+}
+
+// getUserByLogin attempts to retrieve a user by username first, then by email.
+// Separates infrastructure failures from invalid credentials.
+func (a *SessionService) getUserByLogin(ctx context.Context, login string) (*user.User, error) {
+	u, err := a.userStorer.GetByUsername(ctx, login)
+	if err == nil {
+		return u, nil
+	}
+
+	if !errors.Is(err, user.ErrUserNotFound) {
+		return nil, errors.Join(ErrUserStoreFailure, err)
+	}
+
+	u, err = a.userStorer.GetByEmail(ctx, login)
+	if err != nil {
+		if errors.Is(err, user.ErrUserNotFound) {
+			return nil, user.ErrInvalidCredentials
+		}
+		return nil, errors.Join(ErrUserStoreFailure, err)
+	}
+
+	return u, nil
+}

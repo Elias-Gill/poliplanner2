@@ -1,0 +1,122 @@
+{{ define "dashboard/schedule_sections" }}
+  <div
+    class="bg-white rounded-sm shadow-sm border border-gray-200 overflow-hidden">
+    <div class="p-4 bg-gray-700 text-white">
+      <h2 class="font-semibold text-sm tracking-wide">
+        Información de Secciones
+      </h2>
+    </div>
+
+    <div class="p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+      {{ range .Info }}
+        <div
+          class="p-4 bg-white border border-gray-200 rounded-sm shadow-2xs space-y-3">
+          <div
+            class="flex items-start justify-between gap-2 border-b border-gray-100 pb-2">
+            <div>
+              <h3 class="text-xs font-bold text-gray-900">{{ .Name }}</h3>
+              <span class="text-[11px] font-medium text-gray-500"
+                >Sección: {{ .Section }}</span
+              >
+            </div>
+            <span
+              class="text-[10px] font-bold px-2 py-0.5 rounded-xs shrink-0 {{ if eq .Type 1 }}
+                bg-red-50 text-red-700 border border-red-200
+              {{ else }}
+                bg-primary-50 text-primary-700 border border-primary-200
+              {{ end }}">
+              {{ .Type.String }}
+            </span>
+          </div>
+
+          <div>
+            <p
+              class="text-[11px] font-semibold text-gray-700 uppercase tracking-wider mb-1">
+              Docentes
+            </p>
+            {{ if .Teachers }}
+              <ul class="space-y-0.5">
+                {{ range .Teachers }}
+                  <li
+                    class="text-[11px] text-gray-600 flex items-center gap-1.5">
+                    <svg
+                      class="w-3 h-3 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span>{{ .Name }}</span>
+                    {{ if .Email }}
+                      <span class="text-gray-400 text-[10px]"
+                        >({{ .Email }})</span
+                      >
+                    {{ end }}
+                  </li>
+                {{ end }}
+              </ul>
+            {{ else }}
+              <ul class="space-y-0.5">
+                <li class="text-[11px] text-gray-400 italic">
+                  Sin profesores asignados
+                </li>
+              </ul>
+            {{ end }}
+          </div>
+
+          {{/* Solo aparece si existen fechas de sábados */}}
+          {{ if .SaturdayDates }}
+            <div
+              class="text-[11px] bg-amber-50 text-amber-900 p-2 border border-amber-200 rounded-xs">
+              <strong class="font-semibold">Sábados especiales:</strong>
+              {{ .SaturdayDates }}
+            </div>
+          {{ end }}
+
+          {{/* Sección de Comité Evaluador siempre presente */}}
+          <div class="pt-2 border-t border-gray-100">
+            <p
+              class="text-[11px] font-semibold text-gray-700 uppercase tracking-wider mb-1">
+              Comité Evaluador
+            </p>
+            {{ if or .CommitteePresident .CommitteeMember1 .CommitteeMember2 }}
+              <div class="text-[11px] text-gray-600 space-y-0.5">
+                {{ if .CommitteePresident }}
+                  <p>
+                    <span class="text-gray-400">Presidente:</span>
+                    {{ .CommitteePresident }}
+                  </p>
+                {{ end }}
+                {{ if .CommitteeMember1 }}
+                  <p>
+                    <span class="text-gray-400">Miembro 1:</span>
+                    {{ .CommitteeMember1 }}
+                  </p>
+                {{ end }}
+                {{ if .CommitteeMember2 }}
+                  <p>
+                    <span class="text-gray-400">Miembro 2:</span>
+                    {{ .CommitteeMember2 }}
+                  </p>
+                {{ end }}
+              </div>
+            {{ else }}
+              <p class="text-[11px] text-gray-400 italic">
+                Sin comité asignado
+              </p>
+            {{ end }}
+          </div>
+        </div>
+      {{ else }}
+        <div
+          class="col-span-full text-center py-6 text-gray-400 text-xs italic">
+          No hay detalles de secciones disponibles.
+        </div>
+      {{ end }}
+    </div>
+  </div>
+{{ end }}

@@ -9,70 +9,55 @@ import (
 
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/exceptions"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/layout"
-	"github.com/elias-gill/poliplanner2/internal/utils"
+	"github.com/elias-gill/poliplanner2/internal/model/academic"
 	"github.com/elias-gill/poliplanner2/logger"
 	"github.com/xuri/excelize/v2"
 )
 
-// For reusing SubjectDTO objects to reduce allocations
 var dtoPool = sync.Pool{
 	New: func() any {
-		d := new(SubjectDTO)
-		d.Reset() // Ensure clean state
-		return d
+		return new(SubjectDTO)
 	},
 }
 
-// ExcelParser handles parsing of Excel files containing subject schedules
 type ExcelParser struct {
 	layouts        []layout.Layout
 	file           *excelize.File
 	sheetNames     []string
 	currentSheet   int
-	headerKeywords []string // Keywords to identify header rows
+	headerKeywords []string
 	fieldSetters   map[string]func(*SubjectDTO, string)
 }
 
-// ParsedSheet contains the parsed subjects for a specific career/sheet
 type ParsedSheet struct {
 	Name     string
 	Subjects []SubjectDTO
 }
 
-// NewExcelParser creates a new Excel parser instance
-func NewExcelParser(file io.ReadCloser) (*ExcelParser, error) {
-	// Loads the possible known layouts of the excel file
+func NewParser(file io.ReadCloser) (*ExcelParser, error) {
 	loader := layout.NewJsonLayoutLoader()
 	layouts, err := loader.LoadJsonLayouts()
 	if err != nil {
 		return nil, exceptions.NewExcelParserConfigurationException("Failed to load layouts", err)
 	}
 
-	setters := buildFieldSetters()
-
 	p := &ExcelParser{
 		layouts:        layouts,
 		headerKeywords: []string{"item", "ítem", "DPTO.", "dpto"},
 		currentSheet:   -1,
-		fieldSetters:   setters,
+		fieldSetters:   buildFieldSetters(),
 	}
 
-	utils.MemUsageStatus("Excel parser loading", func() {
+	memUsageStatus("Excel parser loading", func() {
 		err = p.prepareParser(file)
 	})
 
 	if err != nil {
 		return nil, err
 	}
-
 	return p, nil
 }
 
-// ================================
-// =        Public API            =
-// ================================
-
-// Close releases resources used by the parser
 func (ep *ExcelParser) Close() {
 	if ep.file != nil {
 		ep.file.Close()
@@ -80,12 +65,10 @@ func (ep *ExcelParser) Close() {
 	}
 }
 
-// NextSheet moves to the next valid sheet for parsing
 func (ep *ExcelParser) NextSheet() bool {
 	ep.currentSheet++
 	for ep.currentSheet < len(ep.sheetNames) {
 		name := ep.sheetNames[ep.currentSheet]
-		// Fast check for ignored sheets
 		if !ep.shouldParseSheet(name) {
 			ep.currentSheet++
 			continue
@@ -95,7 +78,6 @@ func (ep *ExcelParser) NextSheet() bool {
 	return false
 }
 
-// Parses the currently selected sheet
 func (ep *ExcelParser) ParseCurrentSheet() (*ParsedSheet, error) {
 	if ep.currentSheet < 0 || ep.currentSheet >= len(ep.sheetNames) {
 		return nil, exceptions.NewExcelParserException("No current sheet selected", nil)
@@ -105,27 +87,20 @@ func (ep *ExcelParser) ParseCurrentSheet() (*ParsedSheet, error) {
 	logger.Info("Parsing", "sheet_name", sheetName)
 
 	subjects, err := ep.parseSheet(sheetName)
-	if err != nil {
-		return nil, err
-	}
-	return &ParsedSheet{Name: strings.ToUpper(sheetName), Subjects: subjects}, nil
+	return &ParsedSheet{
+		Name:     strings.ToUpper(strings.ReplaceAll(sheetName, " ", "")),
+		Subjects: subjects,
+	}, err
 }
-
-// =====================================
-// =        Private methods            =
-// =====================================
 
 func (ep *ExcelParser) prepareParser(file io.ReadCloser) error {
 	if ep.file != nil {
 		ep.Close()
 	}
 
-	// Use optimized options for better performance
 	f, err := excelize.OpenReader(file, excelize.Options{
-		// Limit memory usage by restricting unzip size
-		UnzipSizeLimit: 25 << 20, // 16MB limit
-		// Skip loading cell styles we don't need
-		UnzipXMLSizeLimit: 8 << 20, // 8MB per XML file
+		UnzipSizeLimit:    25 << 20,
+		UnzipXMLSizeLimit: 8 << 20,
 	})
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -137,14 +112,12 @@ func (ep *ExcelParser) prepareParser(file io.ReadCloser) error {
 	ep.file = f
 	ep.sheetNames = f.GetSheetList()
 	ep.currentSheet = -1
-
 	return nil
 }
 
 func (ep *ExcelParser) parseSheet(sheetName string) ([]SubjectDTO, error) {
 	subjects := make([]SubjectDTO, 0, 250)
 
-	// Use streaming API for better memory efficiency
 	stream, err := ep.file.Rows(sheetName)
 	if err != nil {
 		return nil, exceptions.NewExcelParserInputException("Sheet not found: "+sheetName, err)
@@ -152,9 +125,8 @@ func (ep *ExcelParser) parseSheet(sheetName string) ([]SubjectDTO, error) {
 	defer stream.Close()
 
 	var lowerHeader []string
-	var layout *layout.Layout
+	var lay *layout.Layout
 	var startingCell int
-	rowIdx := 0
 
 	for stream.Next() {
 		row, err := stream.Columns()
@@ -162,40 +134,32 @@ func (ep *ExcelParser) parseSheet(sheetName string) ([]SubjectDTO, error) {
 			return nil, exceptions.NewExcelParserInputException("Error reading row", err)
 		}
 
-		// Skip completely empty rows early
 		if len(row) == 0 || ep.isEmptyRow(row) {
-			rowIdx++
 			continue
 		}
 
-		if layout == nil {
+		if lay == nil {
 			if ep.isHeaderRow(row) {
 				lowerHeader = ep.buildLowerHeader(row)
 				startingCell = ep.calculateStartingCell(row)
 				l, err := ep.findFittingLayout(lowerHeader)
 				if err != nil {
-					logger.Error("No layout found", "sheet_name", sheetName)
 					return nil, err
 				}
-				layout = l
-				rowIdx++
-				continue
+				lay = l
 			}
-			rowIdx++
 			continue
 		}
 
-		// Stop on empty row
 		if ep.isEmptyRow(row) {
 			break
 		}
 
-		// Parse data row
 		d := dtoPool.Get().(*SubjectDTO)
 		d.Reset()
 		current := startingCell - 1
 
-		for _, field := range layout.Headers {
+		for _, field := range lay.Headers {
 			current++
 			if current >= len(row) {
 				break
@@ -208,19 +172,17 @@ func (ep *ExcelParser) parseSheet(sheetName string) ([]SubjectDTO, error) {
 				setter(d, val)
 			}
 		}
+		// Slices fijos + Structs planos = Copia segura y aislada por valor en memoria contigua
 		subjects = append(subjects, *d)
 		dtoPool.Put(d)
-		rowIdx++
 	}
 
-	if layout == nil {
+	if lay == nil {
 		return nil, exceptions.NewLayoutMatchException("No header row found in sheet: " + sheetName)
 	}
-
 	return subjects, nil
 }
 
-// Finds a layout that matches the header row
 func (ep *ExcelParser) findFittingLayout(lowerHeader []string) (*layout.Layout, error) {
 	for i := range ep.layouts {
 		if ep.layoutMatches(&ep.layouts[i], lowerHeader) {
@@ -230,23 +192,21 @@ func (ep *ExcelParser) findFittingLayout(lowerHeader []string) (*layout.Layout, 
 	return nil, exceptions.NewLayoutMatchException("No matching layout found for sheet")
 }
 
-// Check if a layout matches a given header row
-func (ep *ExcelParser) layoutMatches(layout *layout.Layout, lower []string) bool {
-	cellIdx := 0
-	hdrIdx := 0
-	for hdrIdx < len(layout.Headers) && cellIdx < len(lower) {
+func (ep *ExcelParser) layoutMatches(l *layout.Layout, lower []string) bool {
+	cellIdx, hdrIdx := 0, 0
+	for hdrIdx < len(l.Headers) && cellIdx < len(lower) {
 		val := lower[cellIdx]
 		cellIdx++
 		if val == "" {
 			continue
 		}
-		patterns, ok := layout.Patterns[layout.Headers[hdrIdx]]
+		patterns, ok := l.Patterns[l.Headers[hdrIdx]]
 		if !ok {
 			return false
 		}
 		match := false
 		for _, p := range patterns {
-			if strings.Contains(val, strings.ToLower(p)) {
+			if strings.Contains(val, p) { // Eliminada la alocación oculta de strings.ToLower(p)
 				match = true
 				break
 			}
@@ -256,7 +216,7 @@ func (ep *ExcelParser) layoutMatches(layout *layout.Layout, lower []string) bool
 		}
 		hdrIdx++
 	}
-	return hdrIdx == len(layout.Headers)
+	return hdrIdx == len(l.Headers)
 }
 
 func (ep *ExcelParser) buildLowerHeader(row []string) []string {
@@ -267,17 +227,8 @@ func (ep *ExcelParser) buildLowerHeader(row []string) []string {
 	return lower
 }
 
-// ================================
-// =           Helpers            =
-// ================================
-
 func (ep *ExcelParser) isHeaderRow(row []string) bool {
 	for _, val := range row {
-		if len(val) == 0 {
-			continue
-		}
-
-		// Normalize and check
 		trimmed := strings.TrimSpace(val)
 		if len(trimmed) == 0 {
 			continue
@@ -304,7 +255,6 @@ func (ep *ExcelParser) isEmptyRow(row []string) bool {
 func (ep *ExcelParser) calculateStartingCell(row []string) int {
 	for i, val := range row {
 		if len(val) > 0 {
-			// Check if it's not just whitespace
 			for _, r := range val {
 				if !unicode.IsSpace(r) {
 					return i
@@ -319,47 +269,26 @@ func (ep *ExcelParser) shouldParseSheet(name string) bool {
 	if len(name) == 0 {
 		return false
 	}
-
 	lower := strings.ToLower(strings.TrimSpace(name))
-
-	// whitelist exact match codes
 	valid := map[string]struct{}{
-		"iae":        {},
-		"icm":        {},
-		"iek":        {},
-		"iel":        {},
-		"ien":        {},
-		"iin":        {},
-		"imk":        {},
-		"isp":        {},
-		"lca":        {},
-		"lci":        {},
-		"lcik":       {},
-		"lel":        {},
-		"lgh":        {},
-		"tse":        {},
-		"villarrica": {},
+		"iae": {}, "icm": {}, "iek": {}, "iel": {}, "ien": {}, "iin": {}, "imk": {}, "isp": {},
+		"lca": {}, "lci": {}, "lcik": {}, "lel": {}, "lgh": {}, "tse": {}, "villarrica": {},
 	}
-
 	if _, ok := valid[lower]; ok {
 		return true
 	}
-
-	// special case: Coronel Oviedo (flexible matching)
-	if strings.Contains(lower, "oviedo") {
-		return true
-	}
-
-	return false
+	return strings.Contains(lower, "oviedo")
 }
 
-// buildFieldSetters creates a map of field setters for SubjectDTO
 func buildFieldSetters() map[string]func(*SubjectDTO, string) {
 	return map[string]func(*SubjectDTO, string){
 		"departamento":       func(d *SubjectDTO, v string) { d.SetDepartment(v) },
+		"enfasis":            func(d *SubjectDTO, v string) { d.SetEmphases(v) },
+		"plan":               func(d *SubjectDTO, v string) { d.SetPlan(v) },
 		"asignatura":         func(d *SubjectDTO, v string) { d.SetSubjectName(v) },
 		"nivel":              func(d *SubjectDTO, v string) { d.SetLevel(v) },
 		"semestre":           func(d *SubjectDTO, v string) { d.SetSemester(v) },
+		"turno":              func(d *SubjectDTO, v string) { d.SetShift(v) },
 		"seccion":            func(d *SubjectDTO, v string) { d.SetSection(v) },
 		"titulo":             func(d *SubjectDTO, v string) { d.SetTeachersTitles(v) },
 		"apellido":           func(d *SubjectDTO, v string) { d.SetTeachersLastNames(v) },
@@ -384,18 +313,18 @@ func buildFieldSetters() map[string]func(*SubjectDTO, string) {
 		"mesaPresidente":     func(d *SubjectDTO, v string) { d.SetCommitteePresident(v) },
 		"mesaMiembro1":       func(d *SubjectDTO, v string) { d.SetCommitteeMember1(v) },
 		"mesaMiembro2":       func(d *SubjectDTO, v string) { d.SetCommitteeMember2(v) },
-		"aulaLunes":          func(d *SubjectDTO, v string) { d.SetDayRoom(Monday, v) },
-		"horaLunes":          func(d *SubjectDTO, v string) { d.SetDayTime(Monday, v) },
-		"aulaMartes":         func(d *SubjectDTO, v string) { d.SetDayRoom(Tuesday, v) },
-		"horaMartes":         func(d *SubjectDTO, v string) { d.SetDayTime(Tuesday, v) },
-		"aulaMiercoles":      func(d *SubjectDTO, v string) { d.SetDayRoom(Wednesday, v) },
-		"horaMiercoles":      func(d *SubjectDTO, v string) { d.SetDayTime(Wednesday, v) },
-		"aulaJueves":         func(d *SubjectDTO, v string) { d.SetDayRoom(Thursday, v) },
-		"horaJueves":         func(d *SubjectDTO, v string) { d.SetDayTime(Thursday, v) },
-		"aulaViernes":        func(d *SubjectDTO, v string) { d.SetDayRoom(Friday, v) },
-		"horaViernes":        func(d *SubjectDTO, v string) { d.SetDayTime(Friday, v) },
-		"aulaSabado":         func(d *SubjectDTO, v string) { d.SetDayRoom(Saturday, v) },
-		"horaSabado":         func(d *SubjectDTO, v string) { d.SetDayTime(Saturday, v) },
+		"aulaLunes":          func(d *SubjectDTO, v string) { d.SetDayRoom(academic.Monday, v) },
+		"horaLunes":          func(d *SubjectDTO, v string) { d.SetDayTime(academic.Monday, v) },
+		"aulaMartes":         func(d *SubjectDTO, v string) { d.SetDayRoom(academic.Tuesday, v) },
+		"horaMartes":         func(d *SubjectDTO, v string) { d.SetDayTime(academic.Tuesday, v) },
+		"aulaMiercoles":      func(d *SubjectDTO, v string) { d.SetDayRoom(academic.Wednesday, v) },
+		"horaMiercoles":      func(d *SubjectDTO, v string) { d.SetDayTime(academic.Wednesday, v) },
+		"aulaJueves":         func(d *SubjectDTO, v string) { d.SetDayRoom(academic.Thursday, v) },
+		"horaJueves":         func(d *SubjectDTO, v string) { d.SetDayTime(academic.Thursday, v) },
+		"aulaViernes":        func(d *SubjectDTO, v string) { d.SetDayRoom(academic.Friday, v) },
+		"horaViernes":        func(d *SubjectDTO, v string) { d.SetDayTime(academic.Friday, v) },
+		"aulaSabado":         func(d *SubjectDTO, v string) { d.SetDayRoom(academic.Saturday, v) },
+		"horaSabado":         func(d *SubjectDTO, v string) { d.SetDayTime(academic.Saturday, v) },
 		"fechasSabado":       func(d *SubjectDTO, v string) { d.SetSaturdayDates(v) },
 	}
 }

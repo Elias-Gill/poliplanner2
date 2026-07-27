@@ -1,0 +1,176 @@
+{{ define "dashboard/schedule_exams" }}
+<div
+  x-data="{ examType: 'p1' }"
+  class="bg-white rounded-sm shadow-sm border border-gray-200 overflow-hidden">
+  <!-- Encabezado Exámenes -->
+  <div
+    class="p-4 bg-gray-700 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <h2 class="font-semibold text-sm tracking-wide">
+      Cronograma de Exámenes
+    </h2>
+
+    <div
+      class="flex overflow-x-auto no-scrollbar gap-1 bg-gray-800/60 p-1 rounded-sm text-xs">
+      <button
+        @click="examType = 'p1'"
+        :class="examType === 'p1' ? 'bg-primary-500 text-white font-bold' : 'text-gray-300 hover:text-white'"
+        class="px-3 py-1.5 rounded-sm transition shrink-0 cursor-pointer">
+        1° Parcial
+      </button>
+      <button
+        @click="examType = 'p2'"
+        :class="examType === 'p2' ? 'bg-primary-500 text-white font-bold' : 'text-gray-300 hover:text-white'"
+        class="px-3 py-1.5 rounded-sm transition shrink-0 cursor-pointer">
+        2° Parcial
+      </button>
+      <button
+        @click="examType = 'f1'"
+        :class="examType === 'f1' ? 'bg-amber-600 text-white font-bold' : 'text-gray-300 hover:text-white'"
+        class="px-3 py-1.5 rounded-sm transition shrink-0 cursor-pointer">
+        1° Final
+      </button>
+      <button
+        @click="examType = 'f2'"
+        :class="examType === 'f2' ? 'bg-amber-600 text-white font-bold' : 'text-gray-300 hover:text-white'"
+        class="px-3 py-1.5 rounded-sm transition shrink-0 cursor-pointer">
+        2° Final
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenido Exámenes -->
+  <div class="p-4 md:p-6 min-h-[180px]">
+    <!-- 1er Parcial -->
+    <div x-show="examType === 'p1'">
+      {{ if .Exams.Partial1 }}
+        <div class="flex flex-col gap-3 max-h-[500px] overflow-y-auto pr-1">
+          {{ range .Exams.Partial1 }}
+            <div
+              class="p-3 bg-gray-50 border-l-4 border-l-primary-500 border-y border-r border-gray-200 rounded-r-sm space-y-1">
+              <div class="text-xs font-bold text-gray-900 leading-tight">
+                {{ .CourseName }}
+              </div>
+              <p class="text-[11px] text-gray-600">
+                <span class="font-semibold text-gray-700">Aula:</span> {{ .Room }}
+              </p>
+              <p class="text-[11px] text-gray-600">
+                <span class="font-semibold text-gray-700">Fecha:</span> {{ .Date }}
+              </p>
+              {{ if .Revision }}
+                <div class="text-[11px] text-gray-500 pt-1 border-t border-gray-200 flex flex-wrap gap-x-4 gap-y-0.5">
+                  <span>
+                    <strong class="text-gray-700">Rev:</strong> {{ .Revision }}
+                  </span>
+                </div>
+              {{ end }}
+            </div>
+          {{ end }}
+        </div>
+      {{ else }}
+        <div class="text-center py-8 text-gray-400 text-xs italic">
+          No hay fechas registradas para el 1er Parcial
+        </div>
+      {{ end }}
+    </div>
+
+    <!-- 2do Parcial -->
+    <div x-show="examType === 'p2'" x-cloak>
+      {{ if .Exams.Partial2 }}
+        <div class="flex flex-col gap-3 max-h-[500px] overflow-y-auto pr-1">
+          {{ range .Exams.Partial2 }}
+            <div
+              class="p-3 bg-gray-50 border-l-4 border-l-primary-500 border-y border-r border-gray-200 rounded-r-sm space-y-1">
+              <div class="text-xs font-bold text-gray-900 leading-tight">
+                {{ .CourseName }}
+              </div>
+              <p class="text-[11px] text-gray-600">
+                <span class="font-semibold text-gray-700">Aula:</span> {{ .Room }}
+              </p>
+              <p class="text-[11px] text-gray-600">
+                <span class="font-semibold text-gray-700">Fecha:</span> {{ .Date }}
+              </p>
+              {{ if .Revision }}
+                <div class="text-[11px] text-gray-500 pt-1 border-t border-gray-200 flex flex-wrap gap-x-4 gap-y-0.5">
+                  <span>
+                    <strong class="text-gray-700">Rev:</strong> {{ .Revision }}
+                  </span>
+                </div>
+              {{ end }}
+            </div>
+          {{ end }}
+        </div>
+      {{ else }}
+        <div class="text-center py-8 text-gray-400 text-xs italic">
+          No hay fechas registradas para el 2do Parcial
+        </div>
+      {{ end }}
+    </div>
+
+    <!-- 1er Final -->
+    <div x-show="examType === 'f1'" x-cloak>
+      {{ if .Exams.Final1 }}
+        <div class="flex flex-col gap-3 max-h-[500px] overflow-y-auto pr-1">
+          {{ range .Exams.Final1 }}
+            <div
+              class="p-3 bg-amber-50/50 border-l-4 border-l-amber-500 border-y border-r border-gray-200 rounded-r-sm space-y-1">
+              <div class="text-xs font-bold text-gray-900 leading-tight">
+                {{ .CourseName }}
+              </div>
+              <p class="text-[11px] text-gray-600">
+                <span class="font-semibold text-gray-700">Aula:</span> {{ .Room }}
+              </p>
+              <p class="text-[11px] text-gray-600">
+                <span class="font-semibold text-gray-700">Fecha:</span> {{ .Date }}
+              </p>
+              {{ if .Revision }}
+                <div class="text-[11px] text-gray-500 pt-1 border-t border-gray-200 flex flex-wrap gap-x-4 gap-y-0.5">
+                  <span>
+                    <strong class="text-gray-700">Rev:</strong> {{ .Revision }}
+                  </span>
+                </div>
+              {{ end }}
+            </div>
+          {{ end }}
+        </div>
+      {{ else }}
+        <div class="text-center py-8 text-gray-400 text-xs italic">
+          No hay fechas registradas para el 1er Final
+        </div>
+      {{ end }}
+    </div>
+
+    <!-- 2do Final -->
+    <div x-show="examType === 'f2'" x-cloak>
+      {{ if .Exams.Final2 }}
+        <div class="flex flex-col gap-3 max-h-[500px] overflow-y-auto pr-1">
+          {{ range .Exams.Final2 }}
+            <div
+              class="p-3 bg-amber-50/50 border-l-4 border-l-amber-500 border-y border-r border-gray-200 rounded-r-sm space-y-1">
+              <div class="text-xs font-bold text-gray-900 leading-tight">
+                {{ .CourseName }}
+              </div>
+              <p class="text-[11px] text-gray-600">
+                <span class="font-semibold text-gray-700">Aula:</span> {{ .Room }}
+              </p>
+              <p class="text-[11px] text-gray-600">
+                <span class="font-semibold text-gray-700">Fecha:</span> {{ .Date }}
+              </p>
+              {{ if .Revision }}
+                <div class="text-[11px] text-gray-500 pt-1 border-t border-gray-200 flex flex-wrap gap-x-4 gap-y-0.5">
+                  <span>
+                    <strong class="text-gray-700">Rev:</strong> {{ .Revision }}
+                  </span>
+                </div>
+              {{ end }}
+            </div>
+          {{ end }}
+        </div>
+      {{ else }}
+        <div class="text-center py-8 text-gray-400 text-xs italic">
+          No hay fechas registradas para el 2do Final
+        </div>
+      {{ end }}
+    </div>
+  </div>
+</div>
+{{ end }}

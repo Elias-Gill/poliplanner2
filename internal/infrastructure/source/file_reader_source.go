@@ -9,21 +9,21 @@ import (
 // It is intended for manually provided Excel files (e.g., uploaded via a web form)
 // and wraps an io.ReadCloser for the file content along with metadata like name, URI, period, and upload date.
 type ReaderExcelSource struct {
-	Reader   io.ReadCloser
-	Metadata ExcelSourceMetadata
+	reader   io.ReadCloser
+	metadata ExcelSourceMetadata
 }
 
 func NewExcelSourceFromReader(reader io.ReadCloser, meta ExcelSourceMetadata) ExcelSource {
 	return &ReaderExcelSource{
-		Reader:   reader,
-		Metadata: meta,
+		reader:   reader,
+		metadata: meta,
 	}
 }
 
-func (m *ReaderExcelSource) GetContent(ctx context.Context) (io.ReadCloser, error) {
-	return m.Reader, nil
+func (m *ReaderExcelSource) Content(ctx context.Context) (io.ReadCloser, error) {
+	return m.reader, nil
 }
 
-func (m *ReaderExcelSource) GetMetadata() ExcelSourceMetadata {
-	return m.Metadata
+func (m *ReaderExcelSource) Metadata() ExcelSourceMetadata {
+	return m.metadata
 }

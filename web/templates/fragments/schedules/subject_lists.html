@@ -1,0 +1,235 @@
+{{ define "subjects_list" }}
+  <div
+    x-data="{
+    filterMode: 'semester', // 'semester' | 'level' | 'all'
+    selectedSemester: 'all', 
+    selectedLevel: 'all',
+    selectedPlan: 'all',
+    selectedEmphasis: 'all',
+
+    matchesSubject(subject) {
+        // 1. Filtro por Plan
+        if (this.selectedPlan !== 'all' && subject.plan !== this.selectedPlan) {
+            return false;
+        }
+
+        // 2. Filtro por Modo (Semestre vs Nivel)
+        if (this.filterMode === 'semester') {
+            if (this.selectedSemester !== 'all' && Number(subject.semester) !== Number(this.selectedSemester)) {
+                return false;
+            }
+        } else if (this.filterMode === 'level') {
+            if (this.selectedLevel !== 'all' && Number(subject.level) !== Number(this.selectedLevel)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}"
+    class="space-y-4">
+    <!-- PANEL DE FILTROS COMPLETO -->
+    <div
+      class="bg-white p-3.5 rounded-sm border border-gray-200 shadow-xs space-y-3">
+      <!-- Fila Superior: Selectores de Plan y Énfasis -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <!-- Filtro por Plan -->
+        <div>
+          <label
+            class="block text-[11px] font-semibold text-gray-600 uppercase tracking-wider mb-1">
+            Plan de Estudio
+          </label>
+          <select
+            x-model="selectedPlan"
+            class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded-sm bg-white focus:ring-1 focus:ring-gray-400">
+            <option value="all">Todos los planes</option>
+            {{ range .Plans }}
+              <option value="{{ .Code }}">Plan {{ .Code }}</option>
+            {{ end }}
+          </select>
+        </div>
+
+        <!--  Filtro por Énfasis -->
+        <!-- <div> -->
+        <!--     <label class="block text-[11px] font-semibold text-gray-600 uppercase tracking-wider mb-1"> -->
+        <!--         Énfasis -->
+        <!--     </label> -->
+        <!--     <select  -->
+        <!--         x-model="selectedEmphasis" -->
+        <!--         class="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded-sm bg-white focus:ring-1 focus:ring-gray-400"> -->
+        <!--         <option value="all">Todos (Troncales y Énfasis)</option> -->
+        <!--         <option value="troncal">Solo Troncales (Sin Énfasis)</option> -->
+        <!--         <option value="Software">Énfasis Software</option> -->
+        <!--         <option value="Redes">Énfasis Redes</option> -->
+        <!--     </select> -->
+        <!-- </div> -->
+      </div>
+
+      <hr class="border-gray-100" />
+
+      <!-- Fila Inferior: Tabs de Modo (Semestre / Nivel / Todas) y Píldoras -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <div class="flex items-center bg-gray-100 p-0.5 rounded-sm">
+            <button
+              type="button"
+              @click="filterMode = 'semester'"
+              :class="filterMode === 'semester' ? 'bg-white font-bold text-gray-900 shadow-xs' : 'text-gray-600 hover:text-gray-900'"
+              class="px-2.5 py-1 text-xs rounded-xs transition cursor-pointer">
+              Por Semestre
+            </button>
+            <button
+              type="button"
+              @click="filterMode = 'level'"
+              :class="filterMode === 'level' ? 'bg-white font-bold text-gray-900 shadow-xs' : 'text-gray-600 hover:text-gray-900'"
+              class="px-2.5 py-1 text-xs rounded-xs transition cursor-pointer">
+              Por Nivel
+            </button>
+            <button
+              type="button"
+              @click="filterMode = 'all'"
+              :class="filterMode === 'all' ? 'bg-white font-bold text-gray-900 shadow-xs' : 'text-gray-600 hover:text-gray-900'"
+              class="px-2.5 py-1 text-xs rounded-xs transition cursor-pointer">
+              Ver Todas
+            </button>
+          </div>
+        </div>
+
+        <!-- Píldoras de Semestres -->
+        <div
+          x-show="filterMode === 'semester'"
+          class="flex flex-wrap gap-1 pt-1">
+          <button
+            type="button"
+            @click="selectedSemester = 'all'"
+            :class="selectedSemester === 'all' ? 'bg-gray-900 text-white font-semibold' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 font-medium'"
+            class="px-2.5 py-1 text-xs rounded-sm transition cursor-pointer">
+            Todos
+          </button>
+          {{ range .Semesters }}
+            <button
+              type="button"
+              @click="selectedSemester = {{ . }}"
+              :class="Number(selectedSemester) === {{ . }} ? 'bg-gray-900 text-white font-semibold' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 font-medium'"
+              class="px-2.5 py-1 text-xs rounded-sm transition cursor-pointer">
+              {{ if eq . 0 }}Sin Semestre{{ else }}{{ . }}º Sem{{ end }}
+            </button>
+          {{ end }}
+        </div>
+
+        <!-- Píldoras de Niveles -->
+        <div x-show="filterMode === 'level'" class="flex flex-wrap gap-1 pt-1">
+          <button
+            type="button"
+            @click="selectedLevel = 'all'"
+            :class="selectedLevel === 'all' ? 'bg-gray-900 text-white font-semibold' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 font-medium'"
+            class="px-2.5 py-1 text-xs rounded-sm transition cursor-pointer">
+            Todos
+          </button>
+          {{ range .Levels }}
+            <button
+              type="button"
+              @click="selectedLevel = {{ . }}"
+              :class="Number(selectedLevel) === {{ . }} ? 'bg-gray-900 text-white font-semibold' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 font-medium'"
+              class="px-2.5 py-1 text-xs rounded-sm transition cursor-pointer">
+              {{ if eq . 0 }}Sin Nivel{{ else }}Nivel {{ . }}{{ end }}
+            </button>
+          {{ end }}
+        </div>
+      </div>
+    </div>
+
+    <!-- CATÁLOGO DE MATERIAS (Diseño original sobrio en grises) -->
+    <div class="space-y-2">
+      {{ $careerCode := .CareerCode }}
+      {{ range .Subjects }}
+        <div
+          x-data="{ open: false }"
+          x-show="matchesSubject({
+                semester: {{ .Semester }},
+                level: {{ .Level }},
+                plan: '{{ .Plan }}'
+            })"
+          class="bg-white border border-gray-200 rounded-sm shadow-xs overflow-hidden transition-all">
+          <!-- Encabezado de la Materia -->
+          <button
+            type="button"
+            @click="open = !open"
+            hx-get="/schedule/malla/{{ .ID }}/courses?career_code={{ $careerCode }}"
+            hx-target="#courses-{{ .ID }}"
+            hx-trigger="click once"
+            class="w-full px-4 py-3 bg-gray-50/80 hover:bg-gray-100/80 flex items-center justify-between text-left transition cursor-pointer select-none">
+            <div class="flex flex-col gap-1 min-w-0 pr-2">
+              <!-- Fila Superior: Solo el Título limpio -->
+              <h3 class="font-bold text-gray-900 text-sm truncate">
+                {{ .Name }}
+              </h3>
+
+              <!-- Fila Inferior: Metadata agrupada (Plan + Semestre + Nivel) -->
+              <div class="flex items-center gap-1.5 pt-0.5 flex-wrap">
+                {{ if .Plan }}
+                  <span
+                    class="text-[11px] font-semibold text-gray-500 bg-gray-100 border border-gray-200 px-1.5 py-0.5 rounded-sm shrink-0">
+                    Plan:
+                    {{ .Plan }}
+                  </span>
+                {{ end }}
+
+                {{ if gt .Semester 0 }}
+                  <span
+                    class="text-[11px] font-semibold text-gray-600 bg-gray-200/80 px-1.5 py-0.5 rounded-sm shrink-0">
+                    {{ .Semester }}º Semestre
+                  </span>
+                {{ end }}
+
+                {{ if gt .Level 0 }}
+                  <span
+                    class="text-[11px] font-semibold text-gray-600 bg-gray-200/80 px-1.5 py-0.5 rounded-sm shrink-0">
+                    Nivel
+                    {{ .Level }}
+                  </span>
+                {{ end }}
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+              <span
+                class="text-[11px] text-gray-400 font-medium hidden sm:inline"
+                x-show="!open">
+                Ver secciones
+              </span>
+              <svg
+                class="w-4 h-4 text-gray-500 transition-transform duration-200"
+                :class="open ? 'rotate-180' : ''"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </button>
+
+          <!-- Contenido Desplegable (HTMX) -->
+          <div
+            x-show="open"
+            x-collapse
+            class="border-t border-gray-100 bg-white">
+            <div
+              id="courses-{{ .ID }}"
+              hx-on::after-settle="Alpine.initTree($el)"></div>
+          </div>
+        </div>
+      {{ else }}
+        <div class="bg-white p-8 rounded-sm border border-gray-200 text-center">
+          <p class="text-sm text-gray-600 font-medium">
+            No se encontraron materias para la carrera elegida.
+          </p>
+        </div>
+      {{ end }}
+    </div>
+  </div>
+{{ end }}

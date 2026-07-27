@@ -3,12 +3,11 @@ package main
 import (
 	"context"
 	"net/http"
-	"path"
 
-	service "github.com/elias-gill/poliplanner2/internal/app"
 	"github.com/elias-gill/poliplanner2/internal/config"
-	utils "github.com/elias-gill/poliplanner2/internal/http"
 	"github.com/elias-gill/poliplanner2/internal/http/middleware"
+	"github.com/elias-gill/poliplanner2/internal/http/render"
+	"github.com/elias-gill/poliplanner2/internal/http/routes"
 	"github.com/elias-gill/poliplanner2/internal/http/routes/auth"
 	"github.com/elias-gill/poliplanner2/internal/http/routes/dashboard"
 	"github.com/elias-gill/poliplanner2/internal/http/routes/excel"
@@ -17,8 +16,11 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/http/routes/tools"
 	"github.com/elias-gill/poliplanner2/internal/http/routes/user"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/persistence"
-	"github.com/elias-gill/poliplanner2/internal/infrastructure/persistence/sqlite"
 	log "github.com/elias-gill/poliplanner2/logger"
+
+	services "github.com/elias-gill/poliplanner2/internal/service"
+
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/persistence/sqlite"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -47,56 +49,35 @@ func main() {
 		panic(err)
 	}
 
-	useCases := service.NewUseCases(
-		sqlite.NewSqliteUserStore(conn.GetConnection()),
-		sqlite.NewSqliteSheetVersionStore(conn.GetConnection()),
-		sqlite.NewSqliteExcelImportStore(conn.GetConnection()),
-		sqlite.NewSqliteScheduleStore(conn.GetConnection()),
-		sqlite.NewSqliteAcademicPlanStore(conn.GetConnection()),
-		sqlite.NewSqliteCourseOfferingStore(conn.GetConnection()),
-		sqlite.NewSqliteSessionStore(conn.GetConnection()),
-	)
+	// Instantiate repositories
+	sqliteStore := sqlite.NewSQLiteStorage(conn.GetConnection())
 
-	r := chi.NewRouter()
+	// Start services
+	servs := services.NewAppServices(services.RepositoriesInput{
+		ExcelRepo:      sqliteStore.ExcelRepo,
+		SyncRepo:       sqliteStore.SyncRepo,
+		CourseRepo:     sqliteStore.CourseRepo,
+		TeacherRepo:    sqliteStore.TeacherRepo,
+		CurriculumRepo: sqliteStore.CurriculumRepo,
+		PeriodRepo:     sqliteStore.PeriodRepo,
+		SubjectRepo:    sqliteStore.SubjectRepo,
+		CareerRepo:     sqliteStore.CareerRepo,
+		AuthRepo:       sqliteStore.AuthRepo,
+		UserRepo:       sqliteStore.UserRepo,
+		TxManager:      sqliteStore.TxManager,
+		ScheduleRepo:   sqliteStore.ScheduleRepo,
+	})
 
-	// Register middlewares
-	r.Use(middleware.NewSessionMiddleware(useCases.Auth))
+	// Setup http routers
+	r := initRouter(servs)
 
-	// REFACTOR: separate special routes into more routers
-	// login, special pages and auth router
-	r.Route("/", auth.NewAuthRouter(useCases.User, useCases.Auth, useCases.Email))
-
-	r.Route("/dashboard", dashboard.NewDashboardRouter(useCases.Schedule, useCases.AcademicPlan))
-	r.Route("/schedule", schedules.NewSchedulesRouter(useCases.Schedule, useCases.AcademicPlan))
-
-	// User administration router
-	r.Route("/user", user.NewUserRouter(useCases.Auth))
-
-	// Misc routers
-	r.Route("/tools", tools.NewToolsRouter())
-	r.Route("/guides", guides.NewGuidesRouter())
-	// r.Route("/courses", router.NewCourseRouter(services.CoursesService, services.CareerService))
-
-	// Admin routers
-	r.Route("/excel", excel.NewExcelRouter(useCases.ExcelImport))
-
-	// Static files
-	staticDir := http.Dir(path.Join(config.Get().Paths.BaseDir, "web", "static"))
-	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(staticDir)))
-	r.Handle("/sitemap.xml", http.FileServer(staticDir))
-	r.Handle("/robots.txt", http.FileServer(staticDir))
-	r.Handle("/favicon.ico", http.FileServer(staticDir))
-
-	// 404 - Not found
-	r.NotFound(NotFoundHandler)
-
-	// Auto import new excel versions on startup
+	// Auto import new excel versions on startup (concurrently)
 	go func() {
 		// 30 seconds has to be more than enough, even when google drive is slow
 		ctx, cancel := context.WithTimeout(context.Background(), config.Get().Excel.ScraperTimeout)
 		defer cancel()
 		// The result of this operation is irrelevant
-		useCases.ExcelImport.AutoSync(ctx)
+		servs.SyncService.AutoSync(ctx)
 	}()
 
 	// Start Server
@@ -107,10 +88,49 @@ func main() {
 	}
 }
 
-// REFACTOR: que mierda hace esto aca
-func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
-	baseDir := path.Join(config.Get().Paths.BaseDir, "web", "templates", "pages")
-	w.Header().Set("Content-Type", "text/html")
+// initRouter builds, configs middlewares, and maps all the routes for the application.
+func initRouter(srvs *services.AppServices) chi.Router {
+	// Start template manager
+	tmplManager, err := render.NewTemplateManager(config.Get().Paths.TemplatesDir)
+	if err != nil {
+		log.Fatal("Error al cargar las plantillas", "error", err)
+	}
 
-	utils.ParseTemplateWithBaseLayout(path.Join(baseDir, "404.html")).Execute(w, nil)
+	r := chi.NewRouter()
+
+	// Register middlewares
+	r.Use(middleware.NewSessionMiddleware(srvs.SessionService))
+
+	r.Mount("/", auth.NewHandler(tmplManager, srvs.UserService, srvs.SessionService, srvs.EmailService).Routes())
+
+	r.Mount("/dashboard", dashboard.NewHandler(tmplManager, srvs.ScheduleService, srvs.CourseService).Routes())
+
+	r.Mount("/schedule", schedules.NewHandler(
+		tmplManager,
+		srvs.ScheduleService,
+		srvs.CareerService,
+		srvs.CourseService,
+		srvs.CurriculumService,
+	).Routes())
+
+	r.Mount("/user", user.NewHandler(tmplManager, srvs.SessionService).Routes())
+
+	// Misc routers
+	r.Mount("/tools", tools.NewHandler(tmplManager).Routes())
+	r.Mount("/guides", guides.NewHandler(tmplManager).Routes())
+
+	// Admin routers
+	r.Mount("/excel", excel.NewHandler(tmplManager, srvs.ExcelService, srvs.SyncService).Routes())
+
+	// Static files and assets mapping
+	staticDir := http.Dir(config.Get().Paths.AssetsDir)
+	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(staticDir)))
+	r.Handle("/sitemap.xml", http.FileServer(staticDir))
+	r.Handle("/robots.txt", http.FileServer(staticDir))
+	r.Handle("/favicon.ico", http.FileServer(staticDir))
+
+	// Fallback 404 handler
+	r.NotFound(routes.NotFound(tmplManager))
+
+	return r
 }

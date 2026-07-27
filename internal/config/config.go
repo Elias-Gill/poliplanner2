@@ -58,8 +58,10 @@ type DatabaseConfig struct {
 type PathsConfig struct {
 	BaseDir                string
 	ExcelParsingLayoutsDir string
-	SubjectsMetadataDir    string
+	MetadataDir            string
 	DownloadsDir           string
+	TemplatesDir           string
+	AssetsDir              string
 }
 
 type ExcelConfig struct {
@@ -160,8 +162,10 @@ func load() (*Config, error) {
 		Paths: PathsConfig{
 			BaseDir:                baseDir,
 			ExcelParsingLayoutsDir: filepath.Join(baseDir, "internal", "infrastructure", "parser", "layouts"),
-			SubjectsMetadataDir:    filepath.Join(baseDir, "internal", "infrastructure", "parser", "metadata"),
+			MetadataDir:            filepath.Join(baseDir, "internal", "service", "metadata", "data"),
 			DownloadsDir:           resolveOrDefaultPath(baseDir, "DOWNLOADS_DIR", filepath.Join("tmp", "poliplanner")),
+			TemplatesDir:           filepath.Join(baseDir, "web", "templates"),
+			AssetsDir:              filepath.Join(baseDir, "web", "static"),
 		},
 
 		Excel: ExcelConfig{

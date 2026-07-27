@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 	"time"
+
+	"github.com/elias-gill/poliplanner2/internal/config"
 )
 
 const (
@@ -14,7 +16,7 @@ const (
 )
 
 var (
-	testPath          = filepath.Join("..", "..", "test_data", "excel")
+	testPath          = filepath.Join(config.Get().Paths.BaseDir, "test_data", "webscraper")
 	htmlNoDrivePath   = filepath.Join(testPath, "page_without_drive_folders.html")
 	htmlWithDrivePath = filepath.Join(testPath, "page_with_drive_folders.html")
 	expectedDirectURL = directDownloadURL

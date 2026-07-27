@@ -13,10 +13,6 @@ import (
 	log "github.com/elias-gill/poliplanner2/logger"
 )
 
-// ================================
-// ======== Data Structures =======
-// ================================
-
 type GoogleDriveHelper struct {
 	apiKey               string
 	folderIDPattern      *regexp.Regexp

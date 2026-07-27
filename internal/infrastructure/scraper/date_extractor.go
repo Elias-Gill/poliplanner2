@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/config/timezone"
+	"github.com/elias-gill/poliplanner2/internal/model/academic"
 )
 
 func extractDateFromFilename(filename string) (time.Time, error) {
@@ -70,19 +71,19 @@ func extractDateFromFilename(filename string) (time.Time, error) {
 	return time.Time{}, fmt.Errorf("no date found in filename: %s", filename)
 }
 
-func extractPeriodFromFilename(filename string) int {
+func extractPeriodFromFilename(filename string) academic.YearSemester {
 	lower := strings.ToLower(filename)
 
 	if strings.Contains(lower, "segundo") ||
 		strings.Contains(lower, "2do") ||
 		strings.Contains(lower, "semestre 2") {
-		return 2
+		return academic.SecondSemester
 	}
 
 	if strings.Contains(lower, "primero") ||
 		strings.Contains(lower, "1ro") ||
 		strings.Contains(lower, "semestre 1") {
-		return 1
+		return academic.FirstSemester
 	}
 
 	// If not found anything, then use the local date
@@ -90,8 +91,8 @@ func extractPeriodFromFilename(filename string) int {
 	month := now.Month()
 
 	if month >= time.August {
-		return 1
+		return academic.FirstSemester
 	}
 
-	return 2
+	return academic.SecondSemester
 }

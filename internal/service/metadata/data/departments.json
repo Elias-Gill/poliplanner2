@@ -1,0 +1,18 @@
+[
+  {
+    "Code": "DCB",
+    "Name": "Departamento de Ciencias Básicas"
+  },
+  {
+    "Code": "DG",
+    "Name": "Departamento de Gestión"
+  },
+  {
+    "Code": "DEI",
+    "Name": "Departamento de Informática"
+  },
+  {
+    "Code": "DEE",
+    "Name": "Departamento de Electricidad y Electrónica"
+  }
+]

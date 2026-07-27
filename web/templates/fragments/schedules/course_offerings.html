@@ -1,0 +1,95 @@
+{{ define "course_offerings" }}
+  {{ if .Courses }}
+    <div class="divide-y divide-gray-100">
+      {{ range .Courses }}
+        <div
+          class="p-3 sm:px-4 flex items-center justify-between gap-3 hover:bg-gray-50/80 transition">
+          <!-- Información de Cátedra, Docente y Horarios -->
+          <div class="space-y-1.5 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span
+                class="font-bold text-xs text-primary-700 bg-primary-50 px-2 py-0.5 rounded-sm border border-primary-100 shrink-0">
+                Sección
+                {{ .Section }}
+              </span>
+
+              {{ if eq .Type 1 }}
+                <span
+                  class="font-semibold text-xs text-red-700 bg-red-50 px-2 py-0.5 rounded-sm shrink-0">
+                  Solo Examen
+                </span>
+              {{ end }}
+
+
+              <span class="text-xs font-medium text-gray-700 truncate">
+                {{ if .Teachers }}
+                  {{ range $i, $t := .Teachers }}
+                    {{- if $i }},{{ end -}}
+                    {{- if $t.Title }}{{ $t.Title }}{{ end -}}
+                    {{- $t.FirstName }}
+                    {{ $t.LastName -}}
+                  {{ end }}
+                {{ else }}
+                  <span class="text-gray-400 italic">Docente no asignado</span>
+                {{ end }}
+              </span>
+            </div>
+
+            <p class="text-xs font-mono text-gray-500">
+              {{ .FormattedSchedule }}
+            </p>
+          </div>
+
+          <!-- Botón para Agregar al Carrito -->
+          <div class="flex items-center justify-end shrink-0">
+            <button
+              type="button"
+              @click="addSubject({
+                            id: {{ .ID }},
+                            careerCode: '{{ $.CareerCode }}',
+                            name: '{{ $.SubjectName }}',
+                            section: '{{ .Section }}',
+                            teachers: '{{ range $i, $t := .Teachers }}
+                {{ if $i }},{{ end }}{{ if $t.Title }}
+                  {{ $t.Title }}
+                {{ end }}{{ $t.FirstName }}
+                {{ $t.LastName }}
+              {{ end }}',
+                            schedule: '{{ .FormattedSchedule }}'
+                            })"
+              :class="isSubjectAdded({{ .ID }}) 
+                            ? 'bg-green-50 text-green-700 border-green-300 hover:bg-green-100' 
+                            : 'bg-primary-600 text-white hover:bg-primary-700 border-transparent'"
+              class="border px-3 py-1.5 text-xs font-semibold rounded-sm transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
+              <template x-if="isSubjectAdded({{ .ID }})">
+                <span class="flex items-center gap-1">
+                  <svg
+                    class="w-3.5 h-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2.5"
+                      d="M5 13l4 4L19 7" />
+                  </svg>
+                  Agregada
+                </span>
+              </template>
+
+              <template x-if="!isSubjectAdded({{ .ID }})">
+                <span>+ Agregar</span>
+              </template>
+            </button>
+          </div>
+        </div>
+      {{ end }}
+    </div>
+  {{ else }}
+    <div class="p-4 text-center text-xs text-gray-500 italic bg-gray-50/50">
+      No hay secciones ni comisiones habilitadas para esta materia en el periodo
+      actual.
+    </div>
+  {{ end }}
+{{ end }}

@@ -1,37 +1,71 @@
 package http
 
 import (
+	"context"
 	"fmt"
-	"html/template"
 	"net/http"
 	"strconv"
 	"strings"
 
-	"github.com/elias-gill/poliplanner2/web"
+	"github.com/elias-gill/poliplanner2/internal/model/user"
 )
 
-// REFACTOR: move to a dedicated cookies section or something
-const LatestSelectionCookie = "latestSelectedSchedule"
+type contextKey string
+
+const userIDKey contextKey = "userID"
+
+// ==================================
+// = 		Middleware utils        =
+// ==================================
+
+func InjectUserID(r *http.Request, userID user.UserID) *http.Request {
+	ctx := context.WithValue(r.Context(), userIDKey, userID)
+	return r.WithContext(ctx)
+}
+
+func ExtractUserID(r *http.Request) (user.UserID, bool) {
+	id, ok := r.Context().Value(userIDKey).(user.UserID)
+	return id, ok
+}
+
+// This function should never fail or panic if the session middleware is functioning correctly.
+// If a protected endpoint is reached without a userID set in the request context,
+// the application is in an invalid state and something unexpected has occurred.
+//
+// If this is the case, then probably the endpoint has not been added to the "protected
+// endpoints" array list in the middleware configuration.
+func MustExtractUserID(r *http.Request) user.UserID {
+	id, ok := ExtractUserID(r)
+	if !ok {
+		panic("HTTP context error: userID no encontrado en una ruta protegida. Revisa el middleware de sesión.")
+	}
+	return id
+}
+
+// ========================================
+// =         Redirection helpers          =
+// ========================================
 
 // Makes a correct redirect if the request is from htmx or is a simple http request
-func CustomRedirect(w http.ResponseWriter, r *http.Request, target string) {
-	if isHtmx(r) {
-		w.Header().Add("HX-redirect", target)
-	} else {
-		http.Redirect(w, r, target, http.StatusFound)
+func Redirect(w http.ResponseWriter, r *http.Request, target string) {
+	if IsHtmx(r) {
+		// HTMX needs HX-Redirect header and status 200 or 204
+		w.Header().Set("HX-Redirect", target)
+		w.WriteHeader(http.StatusOK)
+		return
 	}
+
+	// Standard HTTP redirection
+	http.Redirect(w, r, target, http.StatusSeeOther)
 }
 
-func ParseTemplateWithBaseLayout(path string) *template.Template {
-	layout := template.Must(web.BaseLayout.Clone())
-	return template.Must(layout.ParseFiles(path))
+func IsHtmx(r *http.Request) bool {
+	return r.Header.Get("HX-Request") == "true"
 }
 
-func ParseComponentTemplate(path string) *template.Template {
-	return template.Must(template.ParseFiles(path))
-}
-
-// ---------- validation helpers ----------
+// ========================================
+// =          Validation helpers          =
+// ========================================
 
 func RequiredString(v string) (string, error) {
 	v = strings.TrimSpace(v)
@@ -64,8 +98,4 @@ func ParseIDList(ids []string) ([]int64, error) {
 	}
 
 	return out, nil
-}
-
-func isHtmx(r *http.Request) bool {
-	return r.Header.Get("HX-Request") == "true"
 }

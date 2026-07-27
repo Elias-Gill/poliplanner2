@@ -1,0 +1,351 @@
+{{ define "dashboard/schedule_week" }}
+<div class="bg-white rounded-sm shadow-sm border border-gray-200 overflow-hidden">
+  
+  <!-- VISTA MÓVIL (Pestañas con Alpine.js) -->
+  <div x-data="{ activeDay: 'lun' }" class="block md:hidden">
+    <!-- Encabezado y Selector de Días -->
+    <div class="p-4 bg-gray-700 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <h2 class="font-semibold text-sm tracking-wide">Horario de Clases</h2>
+
+      <div class="flex overflow-x-auto no-scrollbar gap-1 bg-gray-800/60 p-1 rounded-sm text-xs">
+        <button
+          @click="activeDay = 'lun'"
+          :class="activeDay === 'lun' ? 'bg-primary-500 text-white font-bold' : 'text-gray-300 hover:text-white'"
+          class="px-3 py-1.5 rounded-sm transition shrink-0 cursor-pointer">
+          Lun
+        </button>
+        <button
+          @click="activeDay = 'mar'"
+          :class="activeDay === 'mar' ? 'bg-primary-500 text-white font-bold' : 'text-gray-300 hover:text-white'"
+          class="px-3 py-1.5 rounded-sm transition shrink-0 cursor-pointer">
+          Mar
+        </button>
+        <button
+          @click="activeDay = 'mie'"
+          :class="activeDay === 'mie' ? 'bg-primary-500 text-white font-bold' : 'text-gray-300 hover:text-white'"
+          class="px-3 py-1.5 rounded-sm transition shrink-0 cursor-pointer">
+          Mié
+        </button>
+        <button
+          @click="activeDay = 'jue'"
+          :class="activeDay === 'jue' ? 'bg-primary-500 text-white font-bold' : 'text-gray-300 hover:text-white'"
+          class="px-3 py-1.5 rounded-sm transition shrink-0 cursor-pointer">
+          Jue
+        </button>
+        <button
+          @click="activeDay = 'vie'"
+          :class="activeDay === 'vie' ? 'bg-primary-500 text-white font-bold' : 'text-gray-300 hover:text-white'"
+          class="px-3 py-1.5 rounded-sm transition shrink-0 cursor-pointer">
+          Vie
+        </button>
+        <button
+          @click="activeDay = 'sab'"
+          :class="activeDay === 'sab' ? 'bg-primary-500 text-white font-bold' : 'text-gray-300 hover:text-white'"
+          class="px-3 py-1.5 rounded-sm transition shrink-0 cursor-pointer">
+          Sáb
+        </button>
+      </div>
+    </div>
+
+    <!-- Contenido de las Pestañas de Días -->
+    <div class="p-4 min-h-[220px]">
+      <!-- LUNES -->
+      <div x-show="activeDay === 'lun'">
+        {{ if .Weekly.Monday }}
+          <div class="grid grid-cols-1 gap-3">
+            {{ range .Weekly.Monday }}
+              <div class="p-3 bg-gray-50 border border-gray-200 rounded-sm space-y-2">
+                <div>
+                  <div class="text-xs font-bold text-gray-900 leading-tight">{{ .Course }}</div>
+                  <div class="text-[11px] text-gray-500">Aula: {{ .Room }}</div>
+                </div>
+                <div>
+                  <span class="inline-block px-2 py-0.5 bg-primary-50 text-primary-700 border border-primary-200 font-mono text-[11px] font-medium rounded-xs">
+                    {{ .Time.String }}
+                  </span>
+                </div>
+              </div>
+            {{ end }}
+          </div>
+        {{ else }}
+          <div class="text-center py-10 text-gray-400 text-xs italic">No hay clases programadas para el Lunes</div>
+        {{ end }}
+      </div>
+
+      <!-- MARTES -->
+      <div x-show="activeDay === 'mar'" x-cloak>
+        {{ if .Weekly.Tuesday }}
+          <div class="grid grid-cols-1 gap-3">
+            {{ range .Weekly.Tuesday }}
+              <div class="p-3 bg-gray-50 border border-gray-200 rounded-sm space-y-2">
+                <div>
+                  <div class="text-xs font-bold text-gray-900 leading-tight">{{ .Course }}</div>
+                  <div class="text-[11px] text-gray-500">Aula: {{ .Room }}</div>
+                </div>
+                <div>
+                  <span class="inline-block px-2 py-0.5 bg-primary-50 text-primary-700 border border-primary-200 font-mono text-[11px] font-medium rounded-xs">
+                    {{ .Time.String }}
+                  </span>
+                </div>
+              </div>
+            {{ end }}
+          </div>
+        {{ else }}
+          <div class="text-center py-10 text-gray-400 text-xs italic">No hay clases programadas para el Martes</div>
+        {{ end }}
+      </div>
+
+      <!-- MIÉRCOLES -->
+      <div x-show="activeDay === 'mie'" x-cloak>
+        {{ if .Weekly.Wednesday }}
+          <div class="grid grid-cols-1 gap-3">
+            {{ range .Weekly.Wednesday }}
+              <div class="p-3 bg-gray-50 border border-gray-200 rounded-sm space-y-2">
+                <div>
+                  <div class="text-xs font-bold text-gray-900 leading-tight">{{ .Course }}</div>
+                  <div class="text-[11px] text-gray-500">Aula: {{ .Room }}</div>
+                </div>
+                <div>
+                  <span class="inline-block px-2 py-0.5 bg-primary-50 text-primary-700 border border-primary-200 font-mono text-[11px] font-medium rounded-xs">
+                    {{ .Time.String }}
+                  </span>
+                </div>
+              </div>
+            {{ end }}
+          </div>
+        {{ else }}
+          <div class="text-center py-10 text-gray-400 text-xs italic">No hay clases programadas para el Miércoles</div>
+        {{ end }}
+      </div>
+
+      <!-- JUEVES -->
+      <div x-show="activeDay === 'jue'" x-cloak>
+        {{ if .Weekly.Thursday }}
+          <div class="grid grid-cols-1 gap-3">
+            {{ range .Weekly.Thursday }}
+              <div class="p-3 bg-gray-50 border border-gray-200 rounded-sm space-y-2">
+                <div>
+                  <div class="text-xs font-bold text-gray-900 leading-tight">{{ .Course }}</div>
+                  <div class="text-[11px] text-gray-500">Aula: {{ .Room }}</div>
+                </div>
+                <div>
+                  <span class="inline-block px-2 py-0.5 bg-primary-50 text-primary-700 border border-primary-200 font-mono text-[11px] font-medium rounded-xs">
+                    {{ .Time.String }}
+                  </span>
+                </div>
+              </div>
+            {{ end }}
+          </div>
+        {{ else }}
+          <div class="text-center py-10 text-gray-400 text-xs italic">No hay clases programadas para el Jueves</div>
+        {{ end }}
+      </div>
+
+      <!-- VIERNES -->
+      <div x-show="activeDay === 'vie'" x-cloak>
+        {{ if .Weekly.Friday }}
+          <div class="grid grid-cols-1 gap-3">
+            {{ range .Weekly.Friday }}
+              <div class="p-3 bg-gray-50 border border-gray-200 rounded-sm space-y-2">
+                <div>
+                  <div class="text-xs font-bold text-gray-900 leading-tight">{{ .Course }}</div>
+                  <div class="text-[11px] text-gray-500">Aula: {{ .Room }}</div>
+                </div>
+                <div>
+                  <span class="inline-block px-2 py-0.5 bg-primary-50 text-primary-700 border border-primary-200 font-mono text-[11px] font-medium rounded-xs">
+                    {{ .Time.String }}
+                  </span>
+                </div>
+              </div>
+            {{ end }}
+          </div>
+        {{ else }}
+          <div class="text-center py-10 text-gray-400 text-xs italic">No hay clases programadas para el Viernes</div>
+        {{ end }}
+      </div>
+
+      <!-- SÁBADO -->
+      <div x-show="activeDay === 'sab'" x-cloak>
+        {{ if .Weekly.Saturday }}
+          <div class="grid grid-cols-1 gap-3">
+            {{ range .Weekly.Saturday }}
+              <div class="p-3 bg-gray-50 border border-gray-200 rounded-sm space-y-2">
+                <div>
+                  <div class="text-xs font-bold text-gray-900 leading-tight">{{ .Course }}</div>
+                  <div class="text-[11px] text-gray-500">Aula: {{ .Room }}</div>
+                </div>
+                <div>
+                  <span class="inline-block px-2 py-0.5 bg-primary-50 text-primary-700 border border-primary-200 font-mono text-[11px] font-medium rounded-xs">
+                    {{ .Time.String }}
+                  </span>
+                </div>
+              </div>
+            {{ end }}
+          </div>
+        {{ else }}
+          <div class="text-center py-10 text-gray-400 text-xs italic">No hay clases programadas para el Sábado</div>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+
+  <!-- VISTA DESKTOP (Grid Scrolleable Horizontalmente) -->
+  <div class="hidden md:block">
+    <div class="p-4 bg-gray-700 text-white">
+      <h2 class="font-semibold text-sm tracking-wide">Horario de Clases</h2>
+    </div>
+
+    <!-- Contenedor con scroll horizontal -->
+    <div class="p-6 overflow-x-auto">
+      <div class="grid grid-cols-[repeat(6,minmax(220px,1fr))] gap-4">
+        
+        <!-- LUNES -->
+        <div class="space-y-2">
+          <div class="bg-gray-100 p-2 text-center border border-gray-200 rounded-xs">
+            <span class="text-xs font-bold text-gray-700 uppercase tracking-wider">Lunes</span>
+          </div>
+          <div class="space-y-2 max-h-[500px] overflow-y-auto pr-1">
+            {{ range .Weekly.Monday }}
+              <div class="p-3 bg-gray-50 border border-gray-200 rounded-sm space-y-2">
+                <div>
+                  <div class="text-xs font-bold text-gray-900 leading-tight">{{ .Course }}</div>
+                  <div class="text-[11px] text-gray-500">Aula: {{ .Room }}</div>
+                </div>
+                <div>
+                  <span class="inline-block px-2 py-0.5 bg-primary-50 text-primary-700 border border-primary-200 font-mono text-[11px] font-medium rounded-xs">
+                    {{ .Time.String }}
+                  </span>
+                </div>
+              </div>
+            {{ else }}
+              <div class="p-3 text-center text-gray-400 text-xs italic">Sin clases</div>
+            {{ end }}
+          </div>
+        </div>
+
+        <!-- MARTES -->
+        <div class="space-y-2">
+          <div class="bg-gray-100 p-2 text-center border border-gray-200 rounded-xs">
+            <span class="text-xs font-bold text-gray-700 uppercase tracking-wider">Martes</span>
+          </div>
+          <div class="space-y-2 max-h-[500px] overflow-y-auto pr-1">
+            {{ range .Weekly.Tuesday }}
+              <div class="p-3 bg-gray-50 border border-gray-200 rounded-sm space-y-2">
+                <div>
+                  <div class="text-xs font-bold text-gray-900 leading-tight">{{ .Course }}</div>
+                  <div class="text-[11px] text-gray-500">Aula: {{ .Room }}</div>
+                </div>
+                <div>
+                  <span class="inline-block px-2 py-0.5 bg-primary-50 text-primary-700 border border-primary-200 font-mono text-[11px] font-medium rounded-xs">
+                    {{ .Time.String }}
+                  </span>
+                </div>
+              </div>
+            {{ else }}
+              <div class="p-3 text-center text-gray-400 text-xs italic">Sin clases</div>
+            {{ end }}
+          </div>
+        </div>
+
+        <!-- MIÉRCOLES -->
+        <div class="space-y-2">
+          <div class="bg-gray-100 p-2 text-center border border-gray-200 rounded-xs">
+            <span class="text-xs font-bold text-gray-700 uppercase tracking-wider">Miércoles</span>
+          </div>
+          <div class="space-y-2 max-h-[500px] overflow-y-auto pr-1">
+            {{ range .Weekly.Wednesday }}
+              <div class="p-3 bg-gray-50 border border-gray-200 rounded-sm space-y-2">
+                <div>
+                  <div class="text-xs font-bold text-gray-900 leading-tight">{{ .Course }}</div>
+                  <div class="text-[11px] text-gray-500">Aula: {{ .Room }}</div>
+                </div>
+                <div>
+                  <span class="inline-block px-2 py-0.5 bg-primary-50 text-primary-700 border border-primary-200 font-mono text-[11px] font-medium rounded-xs">
+                    {{ .Time.String }}
+                  </span>
+                </div>
+              </div>
+            {{ else }}
+              <div class="p-3 text-center text-gray-400 text-xs italic">Sin clases</div>
+            {{ end }}
+          </div>
+        </div>
+
+        <!-- JUEVES -->
+        <div class="space-y-2">
+          <div class="bg-gray-100 p-2 text-center border border-gray-200 rounded-xs">
+            <span class="text-xs font-bold text-gray-700 uppercase tracking-wider">Jueves</span>
+          </div>
+          <div class="space-y-2 max-h-[500px] overflow-y-auto pr-1">
+            {{ range .Weekly.Thursday }}
+              <div class="p-3 bg-gray-50 border border-gray-200 rounded-sm space-y-2">
+                <div>
+                  <div class="text-xs font-bold text-gray-900 leading-tight">{{ .Course }}</div>
+                  <div class="text-[11px] text-gray-500">Aula: {{ .Room }}</div>
+                </div>
+                <div>
+                  <span class="inline-block px-2 py-0.5 bg-primary-50 text-primary-700 border border-primary-200 font-mono text-[11px] font-medium rounded-xs">
+                    {{ .Time.String }}
+                  </span>
+                </div>
+              </div>
+            {{ else }}
+              <div class="p-3 text-center text-gray-400 text-xs italic">Sin clases</div>
+            {{ end }}
+          </div>
+        </div>
+
+        <!-- VIERNES -->
+        <div class="space-y-2">
+          <div class="bg-gray-100 p-2 text-center border border-gray-200 rounded-xs">
+            <span class="text-xs font-bold text-gray-700 uppercase tracking-wider">Viernes</span>
+          </div>
+          <div class="space-y-2 max-h-[500px] overflow-y-auto pr-1">
+            {{ range .Weekly.Friday }}
+              <div class="p-3 bg-gray-50 border border-gray-200 rounded-sm space-y-2">
+                <div>
+                  <div class="text-xs font-bold text-gray-900 leading-tight">{{ .Course }}</div>
+                  <div class="text-[11px] text-gray-500">Aula: {{ .Room }}</div>
+                </div>
+                <div>
+                  <span class="inline-block px-2 py-0.5 bg-primary-50 text-primary-700 border border-primary-200 font-mono text-[11px] font-medium rounded-xs">
+                    {{ .Time.String }}
+                  </span>
+                </div>
+              </div>
+            {{ else }}
+              <div class="p-3 text-center text-gray-400 text-xs italic">Sin clases</div>
+            {{ end }}
+          </div>
+        </div>
+
+        <!-- SÁBADO -->
+        <div class="space-y-2">
+          <div class="bg-gray-100 p-2 text-center border border-gray-200 rounded-xs">
+            <span class="text-xs font-bold text-gray-700 uppercase tracking-wider">Sábado</span>
+          </div>
+          <div class="space-y-2 max-h-[500px] overflow-y-auto pr-1">
+            {{ range .Weekly.Saturday }}
+              <div class="p-3 bg-gray-50 border border-gray-200 rounded-sm space-y-2">
+                <div>
+                  <div class="text-xs font-bold text-gray-900 leading-tight">{{ .Course }}</div>
+                  <div class="text-[11px] text-gray-500">Aula: {{ .Room }}</div>
+                </div>
+                <div>
+                  <span class="inline-block px-2 py-0.5 bg-primary-50 text-primary-700 border border-primary-200 font-mono text-[11px] font-medium rounded-xs">
+                    {{ .Time.String }}
+                  </span>
+                </div>
+              </div>
+            {{ else }}
+              <div class="p-3 text-center text-gray-400 text-xs italic">Sin clases</div>
+            {{ end }}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+{{ end }}

@@ -1,119 +1,156 @@
 {{ define "custom_head" }}
   <title>Dashboard - PoliPlanner</title>
+  <script src="/static/bundle/htmx/htmx.min.js" defer></script>
+  <script src="/static/bundle/alpinejs/alpine.min.js" defer></script>
 {{ end }}
 
 {{ define "content" }}
-  <div class="space-y-6">
-    <!-- Header compacto dentro de tarjeta -->
-    <div class="bg-gray-50 border border-gray-300 rounded-sm shadow-sm p-6">
-      <div
-        class="flex flex-col md:flex-row md:items-start md:justify-between gap-3 md:gap-6">
-        <div>
-          <h1 class="text-2xl md:text-3xl font-semibold text-gray-900">
-            Dashboard
-          </h1>
-          <p class="text-sm mt-3 text-gray-600 max-w-sm">
-            Revisa tu horario semanal, exámenes y mas información de tus
-            secciones.
-          </p>
-        </div>
-
-        {{ if .Schedules }}
-          <div class="flex flex-col md:items-end gap-2 w-full md:w-auto">
-            <div class="w-full md:w-64 flex flex-col gap-2">
-              <div class="flex gap-2 w-full">
-                <select
-                  id="schedule-select"
-                  class="flex-1 border border-gray-300 rounded-sm px-3 py-2 text-gray-900"
-                  onchange="window.location.href='?id='+this.value+'&mode=overview'">
-                  {{ range .Schedules }}
-                    <option
-                      value="{{ .ID }}"
-                      {{ if eq $.SelectedID .ID }}selected{{ end }}>
-                      {{ .Title }}
-                    </option>
-                  {{ end }}
-                </select>
-                <a
-                  href="/schedule/"
-                  class="inline-flex items-center justify-center bg-primary-600 text-white px-3 py-2 rounded-sm hover:bg-primary-700 transition-colors"
-                  title="Nuevo horario">
-                  <i class="bi bi-plus-lg"></i>
-                </a>
-                <form
-                  action="/schedule/delete"
-                  method="POST"
-                  class="inline-block"
-                  onsubmit="return confirm('¿Estás seguro de eliminar este horario?');">
-                  <input type="hidden" name="id" value="{{ .SelectedID }}" />
-                  <button
-                    type="submit"
-                    class="inline-flex items-center justify-center border
-                                border-red-300 text-red-400 px-3 py-2 rounded-sm hover:bg-red-200 transition-colors"
-                    title="Eliminar horario">
-                    <i class="bi bi-trash text-red-400"></i>
-                  </button>
-                </form>
-              </div>
-              <div
-                class="flex bg-gray-50 rounded-sm p-1 w-full mt-2 border border-gray-300">
-                <a
-                  href="?id={{ .SelectedID }}&mode=overview"
-                  class="flex-1 px-3 py-2 {{ if eq .Mode "overview" }}
-                    bg-gray-300 text-gray-900
-                  {{ else }}
-                    text-gray-600
-                  {{ end }} rounded-sm text-sm font-medium">
-                  Overview
-                </a>
-                <a
-                  href="?id={{ .SelectedID }}&mode=calendar"
-                  class="flex-1 px-3 py-2 {{ if eq .Mode "calendar" }}
-                    bg-gray-300 text-gray-900
-                  {{ else }}
-                    text-gray-600
-                  {{ end }} text-sm font-medium">
-                  Calendario
-                </a>
-              </div>
-            </div>
-          </div>
-        {{ end }}
+  <div
+    class="min-h-[calc(100vh-4rem)] flex flex-col gap-6">
+    <!-- Header principal de la página -->
+    <div
+      class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-sm shadow-sm border border-gray-200">
+      <div>
+        <h1 class="text-xl font-bold text-gray-900">Dashboard</h1>
+        <p class="text-xs text-gray-500">
+          Revisa tu horario semanal, exámenes y secciones inscritas
+        </p>
       </div>
-    </div>
 
-    <!-- Contenido principal -->
-    {{ if .Schedules }}
-      {{ block "dashboard/content" .Data }}{{ end }}
-    {{ else }}
-      <!-- Empty State coherente con dashboard -->
-      <div class="bg-gray-50 border border-gray-300 rounded-sm shadow-sm mb-6">
-        <div class="p-6 border-b border-gray-300">
-          <h2 class="text-lg font-semibold text-gray-900">Horarios</h2>
-          <p class="text-sm text-gray-600 mt-1">
-            Aquí aparecerán tus horarios creados.
-          </p>
-        </div>
-
-        <div class="p-10 flex flex-col items-center text-center">
-          <div
-            class="w-14 h-14 bg-gray-200 rounded-sm flex items-center justify-center mb-5">
-            <i class="bi bi-calendar-x text-2xl text-gray-600"></i>
+      {{ if .Schedules }}
+        <div class="flex items-center gap-2 w-full md:w-auto">
+          <!-- Selector de Horarios con HTMX -->
+          <div class="relative flex-1 md:w-64">
+            <select
+              id="schedule-select"
+              name="id"
+              hx-get="/dashboard/"
+              hx-target="#dashboard-content"
+              hx-indicator="#loading-spinner"
+              hx-trigger="change"
+              hx-on::after-settle="Alpine.initTree(document.getElementById('dashboard-content'))"
+              class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-sm bg-white focus:ring-2 focus:ring-primary-500 text-gray-800 font-medium cursor-pointer">
+              {{ range .Schedules }}
+                <option
+                  value="{{ .ID }}"
+                  {{ if eq $.SelectedID .ID }}selected{{ end }}>
+                  {{ .Title }}
+                </option>
+              {{ end }}
+            </select>
           </div>
 
-          <p class="text-gray-700 mb-6 max-w-sm">
-            Aún no tienes horarios. Crea uno para visualizar tu calendario,
-            exámenes y overview de materias.
-          </p>
-
+          <!-- Botón Nuevo Horario -->
           <a
             href="/schedule/"
-            class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-sm text-sm font-medium transition-colors">
-            <i class="bi bi-plus-lg"></i>
+            class="inline-flex items-center justify-center bg-primary-600 hover:bg-primary-700 text-white p-2 rounded-sm transition-colors text-sm"
+            title="Crear nuevo horario">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4" />
+            </svg>
+          </a>
+
+          <!-- Botón Eliminar Horario -->
+          <form
+            action="/schedule/delete"
+            method="POST"
+            class="inline-block"
+            onsubmit="return confirm('¿Estás seguro de eliminar este horario?');">
+            <input
+              type="hidden"
+              id="delete-schedule-id"
+              name="id"
+              value="{{ .SelectedID }}" />
+            <button
+              type="submit"
+              class="inline-flex items-center justify-center border border-red-200 text-red-500 hover:bg-red-50 p-2 rounded-sm transition-colors text-sm"
+              title="Eliminar horario">
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </form>
+        </div>
+      {{ end }}
+    </div>
+
+    <!-- Contenido dinámico del Dashboard -->
+    <div id="dashboard-content">
+      {{ if .Schedules }}
+        {{ if .ActiveSchedule }}
+          {{ template "dashboard/schedule_content" .ActiveSchedule }}
+        {{ end }}
+      {{ else }}
+        <!-- Empty State en caso de no tener horarios -->
+        <div
+          class="bg-white p-12 rounded-sm border border-dashed border-gray-300 text-center max-w-md mx-auto my-8">
+          <div
+            class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h3 class="text-base font-semibold text-gray-900 mb-1">
+            Sin horarios creados
+          </h3>
+          <p class="text-xs text-gray-500 mb-6">
+            Aún no dispones de un horario guardado. Crea uno nuevo para empezar
+            a coordinar tus asignaturas y exámenes.
+          </p>
+          <a
+            href="/schedule/"
+            class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-sm text-xs font-semibold transition-colors">
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4" />
+            </svg>
             Crear horario
           </a>
         </div>
-      </div>
-    {{ end }}
+      {{ end }}
+    </div>
   </div>
+
+  <script>
+    // Sincroniza el ID del horario seleccionado con el formulario de eliminación
+    document
+      .getElementById("schedule-select")
+      ?.addEventListener("change", function () {
+        const deleteInput = document.getElementById("delete-schedule-id");
+        if (deleteInput) {
+          deleteInput.value = this.value;
+        }
+      });
+  </script>
 {{ end }}
