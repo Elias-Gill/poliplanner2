@@ -28,8 +28,8 @@ const (
 	// classes are taught; it is used strictly to manage and sit for final exams.
 	ExamOnly CourseType = 1
 
-	// FUTURE: If laboratory schedules are ever available, they could be represented
-	// as a new types here
+	// A course that is imparted specifically on Laboratory rooms
+	Laboratory CourseType = 3
 )
 
 func (d CourseType) String() string {

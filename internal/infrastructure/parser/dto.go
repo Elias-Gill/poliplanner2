@@ -120,11 +120,10 @@ func (s *SubjectDTO) SetSubjectName(val string) {
 	s.RawSubjectName = strings.TrimSpace(val)
 	s.CourseType = academic.Normal
 
-	for i := len(val) - 1; i >= 0; i-- {
-		if val[i] == '*' {
-			s.CourseType = academic.ExamOnly
-			break
-		}
+	if strings.Contains(s.RawSubjectName, "(**)") {
+		s.CourseType = academic.Laboratory
+	} else if strings.Contains(s.RawSubjectName, "(*)") {
+		s.CourseType = academic.ExamOnly
 	}
 }
 
