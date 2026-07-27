@@ -36,6 +36,8 @@ func (d CourseType) String() string {
 	switch d {
 	case ExamOnly:
 		return "Solo Examen Final"
+	case Laboratory:
+		return "En laboratorio"
 	default:
 		return "Normal"
 	}
