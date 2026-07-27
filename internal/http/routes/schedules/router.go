@@ -157,12 +157,7 @@ func (h *Handler) listOffering(w http.ResponseWriter, r *http.Request) {
 
 // REFACTOR: simplificar, demasiado json medio para nada a mi parecer
 type selectedItem struct {
-	ID         int64  `json:"id"`
-	CareerCode string `json:"careerCode"`
-	Name       string `json:"name"`
-	Section    string `json:"section"`
-	Teachers   string `json:"teachers"`
-	Schedule   string `json:"schedule"`
+	ID int64 `json:"id"`
 }
 
 func (h *Handler) saveSchedule(w http.ResponseWriter, r *http.Request) {

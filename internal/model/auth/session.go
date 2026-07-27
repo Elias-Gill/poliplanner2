@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	sessionExtension = 5 * time.Minute
-	refreshThreshold = 5 * time.Minute // si queda menos que esto, se extiende
+	sessionExtension = 15 * 24 * time.Hour
+	refreshThreshold = 15 * 24 * time.Hour // si queda menos que esto, se extiende
 )
 
 type SessionID string

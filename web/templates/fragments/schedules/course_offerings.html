@@ -13,27 +13,29 @@
                 {{ .Section }}
               </span>
 
+            <span class="text-xs">{{.Name}}</span>
+
               {{ if eq .Type 1 }}
                 <span
                   class="font-semibold text-xs text-red-700 bg-red-50 px-2 py-0.5 rounded-sm shrink-0">
                   Solo Examen
                 </span>
               {{ end }}
-
-
-              <span class="text-xs font-medium text-gray-700 truncate">
-                {{ if .Teachers }}
-                  {{ range $i, $t := .Teachers }}
+            </div>
+            <p>
+                <span class="text-xs font-medium text-gray-700 truncate">
+                    {{ if .Teachers }}
+                    {{ range $i, $t := .Teachers }}
                     {{- if $i }},{{ end -}}
                     {{- if $t.Title }}{{ $t.Title }}{{ end -}}
                     {{- $t.FirstName }}
                     {{ $t.LastName -}}
-                  {{ end }}
-                {{ else }}
-                  <span class="text-gray-400 italic">Docente no asignado</span>
-                {{ end }}
-              </span>
-            </div>
+                    {{ end }}
+                    {{ else }}
+                    <span class="text-gray-400 italic">Docente no asignado</span>
+                    {{ end }}
+                </span>
+            </p>
 
             <p class="text-xs font-mono text-gray-500">
               {{ .FormattedSchedule }}

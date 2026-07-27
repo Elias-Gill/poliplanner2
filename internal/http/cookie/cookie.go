@@ -37,7 +37,7 @@ func SetSessionCookie(w http.ResponseWriter, token auth.SessionID) {
 		HttpOnly: true,
 		Secure:   config.Get().Security.SecureHTTP,
 		SameSite: http.SameSiteLaxMode,
-		Expires:  time.Now().In(timezone.ParaguayTZ).Add(30 * time.Minute),
+		Expires:  time.Now().In(timezone.ParaguayTZ).Add(15 * 24 * time.Hour),
 	})
 }
 

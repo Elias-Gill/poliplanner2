@@ -15,8 +15,6 @@ RUN go mod download && go mod verify
 
 COPY . .
 
-RUN go build -v -o /migrate_schedule_data ./cmd/schedules_migration/main.go
-
 RUN go build -v -o /run-app . \
     && npm install \
     && npm run build:css
@@ -31,20 +29,11 @@ RUN apt-get update && apt-get install -y sqlite3 vim
 
 ENV APP_BASE_DIR=/var/poliplanner
 
+COPY --from=builder /usr/src/app/internal/ /var/poliplanner/internal
+
+COPY --from=builder /usr/src/app/web /var/poliplanner/web
+
 COPY --from=builder /run-app /usr/local/bin/run-app
-COPY --from=builder /migrate_schedule_data /usr/local/bin/migrate_schedule_data
-
-COPY --from=builder /usr/src/app/internal/infrastructure/persistence/migrations \
-    /var/poliplanner/internal/infrastructure/persistence/migrations
-
-COPY --from=builder /usr/src/app/internal/infrastructure/parser/layout/layouts \
-    /var/poliplanner/internal/infrastructure/parser/layout/layouts
-
-COPY --from=builder /usr/src/app/internal/infrastructure/parser/metadata \
-    /var/poliplanner/internal/infrastructure/parser/metadata
-
-COPY --from=builder /usr/src/app/web \
-    /var/poliplanner/web
 
 WORKDIR /var/poliplanner
 

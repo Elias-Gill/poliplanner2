@@ -117,7 +117,7 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 			c.id, 
 			c.seccion, 
 			c.turno, 
-			a.nombre, 
+			c.nombre, 
 			c.tipo
 		FROM horarios_detalle hd
 		JOIN cursos c ON hd.curso_id = c.id
