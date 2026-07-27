@@ -57,7 +57,7 @@ func buildOfferingFromDTO(data parser.SubjectDTO) academic.Course {
 		Name:     strings.TrimSpace(data.RawSubjectName),
 		Section:  data.Section,
 		Shift:    data.Shift,
-		Type:     mapCourseType(data.CourseType),
+		Type:     data.CourseType,
 		Exams:    buildExams(data),
 		Schedule: generateSchedule(data.Schedule),
 		Comitee: academic.Committee{
@@ -107,13 +107,6 @@ func generateSchedule(s [7]parser.WeekDayData) []academic.ClassSession {
 	}
 
 	return entries
-}
-
-func mapCourseType(t academic.CourseType) academic.CourseType {
-	if t == academic.ExamOnly {
-		return academic.ExamOnly
-	}
-	return academic.Normal
 }
 
 // ============================================================

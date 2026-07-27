@@ -12,14 +12,19 @@
                 Sección {{ .Section }}
               </span>
 
-              <span class="text-xs font-semibold text-gray-800">{{ .Name }}</span>
+                <span class="text-xs font-semibold text-gray-800">{{ .Name }}</span>
 
-              {{ if eq .Type 1 }}
+                {{ if eq .Type 1 }}
                 <span
-                  class="font-semibold text-xs text-red-700 bg-red-50 px-2 py-0.5 rounded-sm shrink-0">
-                  Solo Examen
+                    class="font-semibold text-xs text-red-700 bg-red-50 px-2 py-0.5 rounded-sm shrink-0">
+                    {{ .Type.String }}
                 </span>
-              {{ end }}
+                {{ else if eq .Type 3 }}
+                <span
+                    class="font-semibold text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded-sm shrink-0">
+                    {{ .Type.String }}
+                </span>
+                {{ end }}
             </div>
 
             <p>
