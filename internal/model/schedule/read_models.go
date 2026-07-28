@@ -45,6 +45,7 @@ type ExamSlotView struct {
 	CourseName string
 	Room       string
 	Date       string
+	Revision   string
 }
 
 type ExamMapView struct {

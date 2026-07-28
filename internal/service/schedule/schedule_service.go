@@ -178,7 +178,21 @@ func (s ScheduleService) extractExams(courses []academic.CourseSummaryView) sche
 			slot := schedule.ExamSlotView{
 				CourseName: course.Name,
 				Room:       exam.Room,
-				Date:       "nada",
+			}
+
+			if exam.HasDate() {
+				if exam.HasHour() {
+					slot.Date = exam.Date().Format("2006/01/02 - 15:04hs")
+				} else {
+					slot.Date = exam.Date().Format("2006/01/02")
+				}
+			}
+			if exam.HasRevisionDate() {
+				if exam.HasHour() {
+					slot.Revision = exam.Revision().Format("2006/01/02 - 15:04hs")
+				} else {
+					slot.Revision = exam.Revision().Format("2006/01/02")
+				}
 			}
 
 			// Agrupación según el tipo e instancia del examen

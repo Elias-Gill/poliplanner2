@@ -51,18 +51,19 @@
                 {{ .CourseName }}
               </div>
               <p class="text-[11px] text-gray-600">
-                <span class="font-semibold text-gray-700">Aula:</span> {{ .Room }}
+                <span class="font-semibold text-gray-700">Aula:</span>
+                {{ if .Room }}{{ .Room }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
               </p>
               <p class="text-[11px] text-gray-600">
-                <span class="font-semibold text-gray-700">Fecha:</span> {{ .Date }}
+                <span class="font-semibold text-gray-700">Fecha:</span>
+                {{ if .Date }}{{ .Date }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
               </p>
-              {{ if .Revision }}
-                <div class="text-[11px] text-gray-500 pt-1 border-t border-gray-200 flex flex-wrap gap-x-4 gap-y-0.5">
-                  <span>
-                    <strong class="text-gray-700">Rev:</strong> {{ .Revision }}
-                  </span>
-                </div>
-              {{ end }}
+              <div class="text-[11px] text-gray-500 pt-1 border-t border-gray-200 flex flex-wrap gap-x-4 gap-y-0.5">
+                <span>
+                  <strong class="text-gray-700">Rev:</strong>
+                  {{ if .Revision }}{{ .Revision.Date }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
+                </span>
+              </div>
             </div>
           {{ end }}
         </div>
@@ -84,18 +85,19 @@
                 {{ .CourseName }}
               </div>
               <p class="text-[11px] text-gray-600">
-                <span class="font-semibold text-gray-700">Aula:</span> {{ .Room }}
+                <span class="font-semibold text-gray-700">Aula:</span>
+                {{ if .Room }}{{ .Room }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
               </p>
               <p class="text-[11px] text-gray-600">
-                <span class="font-semibold text-gray-700">Fecha:</span> {{ .Date }}
+                <span class="font-semibold text-gray-700">Fecha:</span>
+                {{ if .Date }}{{ .Date }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
               </p>
-              {{ if .Revision }}
-                <div class="text-[11px] text-gray-500 pt-1 border-t border-gray-200 flex flex-wrap gap-x-4 gap-y-0.5">
-                  <span>
-                    <strong class="text-gray-700">Rev:</strong> {{ .Revision }}
-                  </span>
-                </div>
-              {{ end }}
+              <div class="text-[11px] text-gray-500 pt-1 border-t border-gray-200 flex flex-wrap gap-x-4 gap-y-0.5">
+                <span>
+                  <strong class="text-gray-700">Rev:</strong>
+                  {{ if .Revision }}{{ .Revision.Date }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
+                </span>
+              </div>
             </div>
           {{ end }}
         </div>
@@ -117,18 +119,19 @@
                 {{ .CourseName }}
               </div>
               <p class="text-[11px] text-gray-600">
-                <span class="font-semibold text-gray-700">Aula:</span> {{ .Room }}
+                <span class="font-semibold text-gray-700">Aula:</span>
+                {{ if .Room }}{{ .Room }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
               </p>
               <p class="text-[11px] text-gray-600">
-                <span class="font-semibold text-gray-700">Fecha:</span> {{ .Date }}
+                <span class="font-semibold text-gray-700">Fecha:</span>
+                {{ if .Date }}{{ .Date }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
               </p>
-              {{ if .Revision }}
-                <div class="text-[11px] text-gray-500 pt-1 border-t border-gray-200 flex flex-wrap gap-x-4 gap-y-0.5">
-                  <span>
-                    <strong class="text-gray-700">Rev:</strong> {{ .Revision }}
-                  </span>
-                </div>
-              {{ end }}
+              <div class="text-[11px] text-gray-500 pt-1 border-t border-gray-200 flex flex-wrap gap-x-4 gap-y-0.5">
+                <span>
+                  <strong class="text-gray-700">Rev:</strong>
+                  {{ if .Revision }}{{ .Revision.Date }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
+                </span>
+              </div>
             </div>
           {{ end }}
         </div>
@@ -150,18 +153,19 @@
                 {{ .CourseName }}
               </div>
               <p class="text-[11px] text-gray-600">
-                <span class="font-semibold text-gray-700">Aula:</span> {{ .Room }}
+                <span class="font-semibold text-gray-700">Aula:</span>
+                {{ if .Room }}{{ .Room }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
               </p>
               <p class="text-[11px] text-gray-600">
-                <span class="font-semibold text-gray-700">Fecha:</span> {{ .Date }}
+                <span class="font-semibold text-gray-700">Fecha:</span>
+                {{ if .Date }}{{ .Date }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
               </p>
-              {{ if .Revision }}
-                <div class="text-[11px] text-gray-500 pt-1 border-t border-gray-200 flex flex-wrap gap-x-4 gap-y-0.5">
-                  <span>
-                    <strong class="text-gray-700">Rev:</strong> {{ .Revision }}
-                  </span>
-                </div>
-              {{ end }}
+              <div class="text-[11px] text-gray-500 pt-1 border-t border-gray-200 flex flex-wrap gap-x-4 gap-y-0.5">
+                <span>
+                  <strong class="text-gray-700">Rev:</strong>
+                  {{ if .Revision }}{{ .Revision.Date }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
+                </span>
+              </div>
             </div>
           {{ end }}
         </div>

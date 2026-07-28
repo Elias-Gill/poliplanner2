@@ -111,14 +111,18 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 	t, _ := time.Parse("2006-01-02 15:04:05", created)
 	sch.CreatedAt = t
 
-	// Get courses details
+	// Get courses details (incluyendo comite y fechas de sabados)
 	coursesQuery := `
 		SELECT 
 			c.id, 
 			c.seccion, 
 			c.turno, 
 			c.nombre, 
-			c.tipo
+			c.tipo,
+			COALESCE(c.fechas_sabados, ''),
+			COALESCE(c.comite_presidente, ''),
+			COALESCE(c.comite_miembro1, ''),
+			COALESCE(c.comite_miembro2, '')
 		FROM horarios_detalle hd
 		JOIN cursos c ON hd.curso_id = c.id
 		JOIN mallas m ON c.malla = m.id
@@ -138,15 +142,33 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 		var c academic.CourseSummaryView
 		var courseID int64
 		var courseType int
+		var satDates, pres, m1, m2 string
 
-		if err := rows.Scan(&courseID, &c.Section, &c.Shift, &c.Name, &courseType); err != nil {
+		if err := rows.Scan(
+			&courseID,
+			&c.Section,
+			&c.Shift,
+			&c.Name,
+			&courseType,
+			&satDates,
+			&pres,
+			&m1,
+			&m2,
+		); err != nil {
 			return nil, fmt.Errorf("failed to scan course: %w", err)
 		}
 
 		c.ID = academic.CourseID(courseID)
 		c.Type = academic.CourseType(courseType)
+		c.SaturdayDates = satDates
+		c.Committee = academic.Committee{
+			President: pres,
+			Member1:   m1,
+			Member2:   m2,
+		}
 		c.Teachers = []academic.Teacher{}
 		c.Schedules = []academic.ClassSession{}
+		c.Exams = []academic.Exam{}
 
 		sch.Courses = append(sch.Courses, c)
 		courseIDs = append(courseIDs, courseID)
@@ -207,12 +229,14 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 	}
 
 	// Load class sessions
+	// FIX: QUITAR esto y hacer una migracino para directamente 
+	// dejar como text fecha y hora
 	schedulesQuery := fmt.Sprintf(`
 		SELECT 
 			curso_id,
 			dia,
-			desde,
-			hasta,
+			CAST(desde AS TEXT),
+			CAST(hasta AS TEXT),
 			COALESCE(aula, '')
 		FROM curso_horarios
 		WHERE curso_id IN (%s)
@@ -250,6 +274,63 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 		}
 	}
 
+	// Load exams - Se usa CAST(... AS TEXT) para evitar la conversión automática de SQLite
+	examsQuery := fmt.Sprintf(`
+		SELECT 
+			curso_id,
+			tipo,
+			instancia,
+			COALESCE(CAST(fecha AS TEXT), ''),
+			COALESCE(CAST(hora AS TEXT), ''),
+			COALESCE(aula, ''),
+			COALESCE(CAST(revision_fecha AS TEXT), ''),
+			COALESCE(CAST(revision_hora AS TEXT), '')
+		FROM examenes
+		WHERE curso_id IN (%s)
+		ORDER BY fecha ASC, hora ASC`, placeholders)
+
+	eRows, err := s.db.QueryContext(ctx, examsQuery, courseIDs...)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query exams: %w", err)
+	}
+	defer eRows.Close()
+
+	for eRows.Next() {
+		var courseID int64
+		var examTypeStr string
+		var instance int
+		var examDateStr, examTimeStr, room string
+		var revDateStr, revTimeStr string
+
+		if err := eRows.Scan(
+			&courseID,
+			&examTypeStr,
+			&instance,
+			&examDateStr,
+			&examTimeStr,
+			&room,
+			&revDateStr,
+			&revTimeStr,
+		); err != nil {
+			return nil, fmt.Errorf("failed to scan exam: %w", err)
+		}
+
+		examDate := parseExamDateTime(examDateStr, examTimeStr)
+		revDate := parseExamDateTime(revDateStr, revTimeStr)
+
+		exam := academic.Exam{
+			Room:     room,
+			Type:     academic.ExamType(examTypeStr),
+			Instance: academic.ExamInstance(instance),
+		}
+		exam.SetDate(examDate)
+		exam.SetRevision(revDate)
+
+		if course, ok := courseMap[academic.CourseID(courseID)]; ok {
+			course.Exams = append(course.Exams, exam)
+		}
+	}
+
 	return &sch, nil
 }
 
@@ -277,7 +358,35 @@ func (s *SqliteScheduleStore) Delete(ctx context.Context, scheduleID schedule.Sc
 //  Helper functions
 // ==================
 
+func parseExamDateTime(dateStr, timeStr string) *time.Time {
+	dateStr = strings.TrimSpace(dateStr)
+	timeStr = strings.TrimSpace(timeStr)
+
+	// Requiere al menos los 10 caracteres de la fecha "YYYY-MM-DD"
+	if len(dateStr) < 10 {
+		return nil
+	}
+
+	// Extrae la parte YYYY-MM-DD ignorando la 'T' e ISO strings si existieran
+	cleanDate := dateStr[:10]
+	fullStr := cleanDate
+	layout := "2006-01-02"
+
+	// Si se cuenta con una hora válida (ej: "18:30" o "18:30:00")
+	if len(timeStr) >= 5 {
+		fullStr += " " + timeStr[:5]
+		layout += " 15:04"
+	}
+
+	t, err := time.Parse(layout, fullStr)
+	if err != nil {
+		return nil
+	}
+	return &t
+}
+
 func parseTimeOnly(timeStr string) *time.Time {
+	timeStr = strings.TrimSpace(timeStr)
 	if timeStr == "" {
 		return nil
 	}
