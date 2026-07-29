@@ -1,10 +1,12 @@
 package config
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -83,7 +85,43 @@ type EmailConfig struct {
 }
 
 // ================================
-// =         Global state         =
+// =         Load .env file       =
+// ================================
+
+func loadDotenv(path string) {
+	f, err := os.Open(path)
+	if err != nil {
+		return
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		eq := strings.IndexByte(line, '=')
+		if eq == -1 {
+			continue
+		}
+		key := strings.TrimSpace(line[:eq])
+		if key == "" {
+			continue
+		}
+		if os.Getenv(key) != "" {
+			continue
+		}
+		raw := strings.TrimSpace(line[eq+1:])
+		if comment := strings.IndexByte(raw, '#'); comment != -1 {
+			raw = strings.TrimSpace(raw[:comment])
+		}
+		os.Setenv(key, raw)
+	}
+}
+
+// ================================
+// =        Resolve base dir      =
 // ================================
 
 var (
@@ -122,6 +160,8 @@ func Load() (*Config, error) {
 // ================================
 
 func load() (*Config, error) {
+	loadDotenv(".env")
+
 	env := Environment(getEnv("APP_ENV", "dev"))
 	if env != EnvDev && env != EnvProd {
 		env = EnvDev

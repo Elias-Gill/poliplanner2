@@ -1,66 +1,65 @@
 {{ define "fragments/sidebar" }}
   <aside
     :class="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
-    class="-translate-x-full md:translate-x-0 fixed md:static inset-y-0 left-0 z-50 flex flex-col w-64 border-r bg-sidebar-bg text-sidebar-text border-gray-500 transition-transform duration-300 ease-in-out shadow-xl md:shadow-none">
-    
-    <!-- Header del Sidebar -->
-    <div class="p-5 border-b transition-colors bg-sidebar-bg hover:bg-sidebar-hover border-gray-500 flex items-start justify-between">
-      <a href="/guides/about" class="block flex-1">
-        <div class="flex items-center gap-3">
-          <img
-            src="/static/favicon.ico"
-            class="w-8 h-8 bg-white rounded-sm shadow-xs"
-            alt="Logo" />
-          <span class="text-xl font-semibold tracking-tight">PoliPlanner</span>
-        </div>
-        <div class="mt-1 text-xs text-sidebar-text-muted">
-          Por estudiantes y para estudiantes
+    class="-translate-x-full md:translate-x-0 fixed md:static inset-y-0 left-0 z-50 flex flex-col w-64 bg-white text-gray-800 border-r border-gray-200 transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none">
+
+    <div class="p-5 border-b border-gray-200 flex items-center justify-between">
+      <a href="/guides/about" class="flex items-center gap-3 group flex-1">
+        <img
+          src="/static/favicon.ico"
+          class="w-7 h-7"
+          alt="Logo" />
+        <div>
+          <span class="text-lg font-medium tracking-tight text-gray-900 transition-colors group-hover:text-blue-500">PoliPlanner</span>
+          <span class="block text-xs text-gray-500">Por y para estudiantes</span>
         </div>
       </a>
 
-      <!-- Botón de cierre explícito para móvil -->
-      <button 
-        @click="sidebarOpen = false" 
-        class="md:hidden p-1.5 rounded-sm hover:bg-sidebar-hover text-sidebar-text focus:outline-none transition-colors"
+      <button
+        @click="sidebarOpen = false"
+        class="md:hidden p-1.5 rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:outline-none transition-colors"
         aria-label="Cerrar menú">
-        <i class="bi bi-x-lg text-lg"></i>
+        <svg class="text-base" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
       </button>
     </div>
 
-    <!-- Navegación principal -->
     <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
       <a
         href="/dashboard"
         @click="sidebarOpen = false"
-        class="nav-link flex items-center gap-3 px-4 py-3 rounded-sm transition-colors text-sidebar-text hover:bg-sidebar-hover">
-        <i class="bi bi-speedometer2 text-lg"></i>
+        class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-md transition-all text-gray-700 hover:bg-gray-100 hover:text-gray-900 group">
+        <svg class="text-lg text-gray-400 group-hover:text-gray-900 transition-colors" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16"><path d="M8 4a.5.5 0 0 1 .5.5V6a.5.5 0 0 1-1 0V4.5A.5.5 0 0 1 8 4M3.732 5.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707M2 10a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 10m9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5m.754-4.246a.39.39 0 0 0-.527-.02L7.547 9.31a.91.91 0 1 0 1.302 1.258l3.434-4.297a.39.39 0 0 0-.029-.518z"/><path fill-rule="evenodd" d="M0 10a8 8 0 1 1 15.547 2.661c-.442 1.253-1.845 1.602-2.932 1.25C11.309 13.488 9.475 13 8 13c-1.474 0-3.31.488-4.615.911-1.087.352-2.49.003-2.932-1.25A8 8 0 0 1 0 10m8-7a7 7 0 0 0-6.603 9.329c.203.575.923.876 1.68.63C4.397 12.533 6.358 12 8 12s3.604.532 4.923.96c.757.245 1.477-.056 1.68-.631A7 7 0 0 0 8 3"/></svg>
         <span class="text-sm font-medium">Dashboard</span>
       </a>
 
       <a
         href="/guides"
         @click="sidebarOpen = false"
-        class="nav-link flex items-center gap-3 px-4 py-3 rounded-sm transition-colors text-sidebar-text hover:bg-sidebar-hover">
-        <i class="bi bi-book text-lg"></i>
+        class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-md transition-all text-gray-700 hover:bg-gray-100 hover:text-gray-900 group">
+        <svg class="text-lg text-gray-400 group-hover:text-gray-900 transition-colors" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783"/></svg>
         <span class="text-sm font-medium">Guías universitarias</span>
       </a>
 
       <a
-        href="/tools"
+        href="/tools/interactive_graph"
         @click="sidebarOpen = false"
-        class="nav-link flex items-center gap-3 px-4 py-3 rounded-sm transition-colors text-sidebar-text hover:bg-sidebar-hover">
-        <i class="bi bi-tools text-lg"></i>
-        <span class="text-sm font-medium">Herramientas</span>
+        class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-md transition-all text-gray-700 hover:bg-gray-100 hover:text-gray-900 group">
+        <svg class="text-lg text-gray-400 group-hover:text-gray-900 transition-colors" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H14a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 2 7h5.5V6A1.5 1.5 0 0 1 6 4.5zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5zM0 11.5A1.5 1.5 0 0 1 1.5 10h1A1.5 1.5 0 0 1 4 11.5v1A1.5 1.5 0 0 1 2.5 14h-1A1.5 1.5 0 0 1 0 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5A1.5 1.5 0 0 1 7.5 10h1a1.5 1.5 0 0 1 1.5 1.5v1A1.5 1.5 0 0 1 8.5 14h-1A1.5 1.5 0 0 1 6 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"/></svg>
+        <span class="text-sm font-medium">Mallas curriculares</span>
+      </a>
+
+      <a
+        href="/tools/calculator"
+        @click="sidebarOpen = false"
+        class="nav-link flex items-center gap-3 px-3.5 py-2.5 rounded-md transition-all text-gray-700 hover:bg-gray-100 hover:text-gray-900 group">
+        <svg class="text-lg text-gray-400 group-hover:text-gray-900 transition-colors" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16"><path d="M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/><path d="M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/></svg>
+        <span class="text-sm font-medium">Calculadora de notas</span>
       </a>
     </nav>
 
-    <!-- Zona inferior -->
-    <div class="p-5 border-t space-y-4 border-gray-500 bg-sidebar-bg">
-      <div class="flex justify-center">
-        {{ template "fragments/theme-toggle" "theme-toggle-desktop" }}
-      </div>
-      <div class="text-[11px] text-center text-sidebar-text-muted">
-        Parte de la Iniciativa PoliPlanner
+    <div class="p-4 border-t border-gray-200 bg-white text-center">
+      <div class="text-xs text-gray-500">
+        Iniciativa PoliPlanner
       </div>
     </div>
   </aside>

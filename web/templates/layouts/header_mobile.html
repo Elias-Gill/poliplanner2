@@ -1,11 +1,29 @@
 {{ define "fragments/header_mobile" }}
-<header class="flex md:hidden items-center justify-between px-4 py-3 bg-sidebar-bg border-b border-gray-500 text-sidebar-text z-30 shadow-xs">
-    <!-- Botón hamburguesa para abrir el sidebar -->
-    <button 
-        @click="sidebarOpen = !sidebarOpen" 
-        class="p-1.5 rounded-sm hover:bg-sidebar-hover focus:outline-none transition-colors"
-        aria-label="Abrir menú">
-        <i class="bi bi-list text-xl"></i>
-    </button>
+<header class="flex items-center justify-between px-4 md:px-8 py-3 border-b border-gray-200 z-30 bg-white/95 text-gray-800 backdrop-blur-sm shadow-sm sticky top-0">
+    <div class="flex items-center gap-4">
+      <button
+          @click="sidebarOpen = !sidebarOpen"
+          class="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:outline-none transition-colors"
+          aria-label="Abrir menú">
+          <svg class="text-xl" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/></svg>
+      </button>
+
+      <a href="/dashboard" class="md:hidden flex items-center gap-2">
+        <img src="/static/favicon.ico" class="w-6 h-6" alt="Logo" />
+        <span class="text-base font-semibold text-gray-900">PoliPlanner</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-2 text-sm" id="header-breadcrumbs">
+        <a href="/dashboard" class="text-gray-500 hover:opacity-80 transition-opacity">
+          <svg width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16"><path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4z"/></svg>
+        </a>
+        <svg class="text-gray-500 text-xs mx-1" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg>
+        <span class="font-medium text-gray-900" id="header-page-title">Cargando...</span>
+      </nav>
+    </div>
+
+    <div class="flex items-center gap-3 ml-auto">
+      {{ template "fragments/theme-toggle" "theme-toggle-header" }}
+    </div>
 </header>
 {{ end }}

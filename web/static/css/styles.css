@@ -1,13 +1,6 @@
 @import "tailwindcss";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
-/* Fuerza escaneo de tus templates Go */
-@source "./web/templates/**/*.html";
-@source "./web/templates/**/*.tmpl";
-@source "./web/templates/**/*.gohtml";
-@source "./web/templates/**/*.gotmpl";
+@source "../../../web";
 
 @theme {
   --color-primary-50:  #f4f7fb;
@@ -20,84 +13,70 @@
   --color-primary-700: #2f4c6d;
   --color-primary-800: #1f3550;
   --color-primary-900: #142536;
-
-  --color-sidebar-bg: #1f3550;      /* primary-800 */
-  --color-sidebar-text: #f3f4f6;    /* gray-100 */
-  --color-sidebar-text-muted: #9ca3af; /* gray-400 */
-  --color-sidebar-hover: #2f4c6d;   /* primary-700 */
 }
 
 .dark-mode {
-    /* Sidebar - modo oscuro (blanco y negro) */
-    --color-sidebar-bg: #111111;
-    --color-sidebar-text: #f5f5f5;
-    --color-sidebar-text-muted: #888888;
-    --color-sidebar-hover: #1a1a1a;
+    --color-bg: #111827;
+    --color-surface: #1f2937;
+    --color-border: #374151;
+    --color-text: #f9fafb;
+    --color-text-muted: #9ca3af;
 
-    /* ===== BASE ===== */
-    --color-bg: #0a0a0a;
-    --color-surface: #141414;
-    --color-border: #2a2a2a;
-    --color-text: #f5f5f5;
-    --color-text-muted: #a3a3a3;
+    --color-primary-50:  #1e3a5f;
+    --color-primary-600: #93c5fd;
 
-    /* ===== PRIMARY - Azul oscuro elegante (como el original pero adaptado) ===== */
-    --color-primary-50:  #1a1a1a;   /* casi negro con un toque azul */
-    --color-primary-600: #7fa3c4;
+    --color-yellow-50:  #1c1917;
+    --color-yellow-100: #292524;
+    --color-yellow-200: #3d3832;
+    --color-yellow-800: #d97706;
+    --color-yellow-900: #f59e0b;
 
-    /* ===== YELLOW - escala de grises también ===== */
-    --color-yellow-50:  #1a1a1a;
-    --color-yellow-100: #262626;
-    --color-yellow-200: #333333;
-    --color-yellow-800: #bfbfbf;
-    --color-yellow-900: #d9d9d9;
+    --color-green-50:  #052e16;
+    --color-green-100: #14532d;
+    --color-green-200: #166534;
+    --color-green-300: #15803d;
+    --color-green-400: #16a34a;
+    --color-green-500: #22c55e;
+    --color-green-600: #4ade80;
+    --color-green-700: #86efac;
+    --color-green-800: #bbf7d0;
+    --color-green-900: #dcfce7;
 
-    /* ===== GREEN - Verde apagado, natural ===== */
-    --color-green-50:  #0f2418;
-    --color-green-100: #14301f;
-    --color-green-200: #193c26;
-    --color-green-300: #1e482d;
-    --color-green-400: #235434;
-    --color-green-500: #2a6040;
-    --color-green-600: #357a52;
-    --color-green-700: #409464;
-    --color-green-800: #4bae76;
-    --color-green-900: #5cc88a;
+    --color-gray-50:  #111827;
+    --color-gray-100: #1f2937;
+    --color-gray-200: #374151;
+    --color-gray-300: #4b5563;
+    --color-gray-400: #6b7280;
+    --color-gray-500: #9ca3af;
+    --color-gray-600: #d1d5db;
+    --color-gray-700: #e5e7eb;
+    --color-gray-800: #f3f4f6;
+    --color-gray-900: #f9fafb;
 
-    /* ===== GRAY (escala completa de grises) ===== */
-    --color-gray-50:  #0a0a0a;
-    --color-gray-100: #141414;
-    --color-gray-200: #1f1f1f;
-    --color-gray-300: #2a2a2a;
-    --color-gray-400: #404040;
-    --color-gray-500: #595959;
-    --color-gray-600: #737373;
-    --color-gray-700: #a3a3a3;
-    --color-gray-800: #d4d4d4;
-    --color-gray-900: #f5f5f5;
-
-    /* ===== WHITE ===== */
-    --color-white: #141414;
-}
-/* Safe area support */
-.pb-safe {
-    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    --color-white: #1f2937;
 }
 
-/* Mejor altura del nav + safe area */
-nav.pb-safe {
-    padding-bottom: env(safe-area-inset-bottom);
-}
-
-/* Active state para los links (opcional pero recomendado) */
-.active-state-dashboard[href="/dashboard"] i,
-.active-state-guides[href="/guides"] i,
-.active-state-tools[href="/tools"] i {
-    color: #60a5fa; /* azul más visible */
-    transform: scale(1.1);
-}
-
-/* Evitar highlight azul en iOS al tocar */
 a {
     -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.dark-mode nav a.nav-link.bg-white\/10 {
+    background-color: #2563eb20;
+    color: #93c5fd;
+}
+.dark-mode nav a.nav-link.bg-white\/10 i {
+    color: #93c5fd;
+}
+
+.dark-mode body {
+    background-color: #111827;
+    color: #f9fafb;
 }
