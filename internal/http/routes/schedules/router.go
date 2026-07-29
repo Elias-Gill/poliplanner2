@@ -12,6 +12,7 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/http/cookie"
 	"github.com/elias-gill/poliplanner2/internal/http/render"
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
+	"github.com/elias-gill/poliplanner2/internal/model/schedule"
 	academicSrvs "github.com/elias-gill/poliplanner2/internal/service/academic"
 	scheduleSrvs "github.com/elias-gill/poliplanner2/internal/service/schedule"
 	"github.com/elias-gill/poliplanner2/logger"
@@ -51,6 +52,8 @@ func (h *Handler) Routes() chi.Router {
 	r.Get("/malla/{id}/courses", h.listOffering)
 
 	r.Post("/", h.saveSchedule)
+
+	r.Post("/delete", h.deleteSchedule)
 
 	return r
 }
@@ -227,6 +230,71 @@ func (h *Handler) saveSchedule(w http.ResponseWriter, r *http.Request) {
 	cookie.SetLatestScheduleCookie(w, scheduleID)
 
 	// 6. Redireccionar al Dashboard (Soporte HTMX y HTTP nativo)
+	if r.Header.Get("HX-Request") == "true" {
+		w.Header().Set("HX-Redirect", "/dashboard")
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	utils.Redirect(w, r, "/dashboard")
+}
+
+func (h *Handler) deleteSchedule(w http.ResponseWriter, r *http.Request) {
+	userID := utils.MustExtractUserID(r)
+	if userID == 0 {
+		if r.Header.Get("HX-Request") == "true" {
+			w.Header().Set("HX-Redirect", "/login")
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		utils.Redirect(w, r, "/login")
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		logger.Error("error al parsear formulario de eliminación", "error", err)
+		w.Header().Set("HX-Redirect", "/bad_form")
+		utils.Redirect(w, r, "/bad_form")
+		return
+	}
+
+	// 1. Obtener y validar el ID del horario
+	idStr := r.Form.Get("id")
+	if idStr == "" {
+		logger.Error("id de horario no provisto para eliminación")
+		w.Header().Set("HX-Redirect", "/bad_form")
+		utils.Redirect(w, r, "/bad_form")
+		return
+	}
+
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		logger.Error("id de horario inválido", "id", idStr, "error", err)
+		w.Header().Set("HX-Redirect", "/bad_form")
+		utils.Redirect(w, r, "/bad_form")
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(r.Context(), 500*time.Millisecond)
+	defer cancel()
+
+	// 2. Ejecutar borrado a través del servicio
+	err = h.scheduleService.Delete(ctx, userID, schedule.ScheduleID(id))
+	if err != nil {
+		if errors.Is(err, scheduleSrvs.ErrPermissionDenied) {
+			logger.Error("permiso denegado para eliminar horario", "user_id", userID, "schedule_id", id)
+			w.Header().Set("HX-Redirect", "/403")
+			utils.Redirect(w, r, "/403")
+			return
+		}
+
+		logger.Error("falló la eliminación del horario", "schedule_id", id, "error", err)
+		w.Header().Set("HX-Redirect", "/500")
+		utils.Redirect(w, r, "/500")
+		return
+	}
+
+	// 3. Redirección exitosa (Soporte HTMX y HTTP nativo)
 	if r.Header.Get("HX-Request") == "true" {
 		w.Header().Set("HX-Redirect", "/dashboard")
 		w.WriteHeader(http.StatusOK)
