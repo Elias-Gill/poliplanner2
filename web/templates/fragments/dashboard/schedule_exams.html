@@ -48,17 +48,13 @@
   .fc .fc-event:hover {
     filter: brightness(0.95);
   }
-  .fc-event-selected-custom {
-    box-shadow: 0 0 0 2px #1f2937, 0 2px 4px rgba(0,0,0,0.2) !important;
-    font-weight: bold !important;
-  }
 </style>
 
 <div 
   x-data="examScheduleApp()" 
   class="bg-white rounded-sm shadow-sm border border-gray-200 overflow-hidden">
   
-  <!-- Script JSON seguro para transferir eventos a Alpine sin romper HTML -->
+  <!-- Script JSON seguro para eventos -->
   <script type="application/json" x-ref="eventsData">
   [
     {{ $comma := false }}
@@ -136,17 +132,11 @@
           {{ range $i, $e := .Exams.Partial1 }}
             <div 
                id="exam-card-p1-{{ $i }}"
-               @click="selectExamFromList('p1-{{ $i }}', '{{ $e.ISODate }}')"
-               :class="selectedExamId === 'p1-{{ $i }}' ? 'bg-blue-50/80 ring-2 ring-blue-500 border-transparent' : 'hover:bg-gray-50'"
-               class="p-3 block cursor-pointer transition rounded-xs group">
-              <div class="flex items-center justify-between gap-2">
-                <span class="text-xs font-bold text-gray-900">
-                  {{ $e.CourseName }}
-                </span>
-                <span class="text-[10px] text-gray-400 group-hover:text-blue-600 transition-colors">
-                  Ver fecha →
-                </span>
-              </div>
+               :class="selectedExamId === 'p1-{{ $i }}' ? 'bg-blue-100/80 ring-2 ring-blue-500' : ''"
+               class="p-3 block transition rounded-xs">
+              <span class="text-xs font-bold text-gray-900 block">
+                {{ $e.CourseName }}
+              </span>
               <div class="mt-1 flex flex-wrap gap-x-3 text-[11px] text-gray-600">
                 <span><strong>Aula:</strong> {{ if $e.Room }}{{ $e.Room }}{{ else }}A definir{{ end }}</span>
                 <span><strong>Fecha:</strong> {{ if $e.Date }}{{ $e.Date }}{{ else }}A definir{{ end }}</span>
@@ -172,17 +162,11 @@
           {{ range $i, $e := .Exams.Partial2 }}
             <div 
                id="exam-card-p2-{{ $i }}"
-               @click="selectExamFromList('p2-{{ $i }}', '{{ $e.ISODate }}')"
-               :class="selectedExamId === 'p2-{{ $i }}' ? 'bg-indigo-50/80 ring-2 ring-indigo-500 border-transparent' : 'hover:bg-gray-50'"
-               class="p-3 block cursor-pointer transition rounded-xs group">
-              <div class="flex items-center justify-between gap-2">
-                <span class="text-xs font-bold text-gray-900">
-                  {{ $e.CourseName }}
-                </span>
-                <span class="text-[10px] text-gray-400 group-hover:text-indigo-600 transition-colors">
-                  Ver fecha →
-                </span>
-              </div>
+               :class="selectedExamId === 'p2-{{ $i }}' ? 'bg-indigo-100/80 ring-2 ring-indigo-500' : ''"
+               class="p-3 block transition rounded-xs">
+              <span class="text-xs font-bold text-gray-900 block">
+                {{ $e.CourseName }}
+              </span>
               <div class="mt-1 flex flex-wrap gap-x-3 text-[11px] text-gray-600">
                 <span><strong>Aula:</strong> {{ if $e.Room }}{{ $e.Room }}{{ else }}A definir{{ end }}</span>
                 <span><strong>Fecha:</strong> {{ if $e.Date }}{{ $e.Date }}{{ else }}A definir{{ end }}</span>
@@ -208,17 +192,11 @@
           {{ range $i, $e := .Exams.Final1 }}
             <div 
                id="exam-card-f1-{{ $i }}"
-               @click="selectExamFromList('f1-{{ $i }}', '{{ $e.ISODate }}')"
-               :class="selectedExamId === 'f1-{{ $i }}' ? 'bg-amber-50/80 ring-2 ring-amber-500 border-transparent' : 'hover:bg-gray-50'"
-               class="p-3 block cursor-pointer transition rounded-xs group">
-              <div class="flex items-center justify-between gap-2">
-                <span class="text-xs font-bold text-gray-900">
-                  {{ $e.CourseName }}
-                </span>
-                <span class="text-[10px] text-gray-400 group-hover:text-amber-600 transition-colors">
-                  Ver fecha →
-                </span>
-              </div>
+               :class="selectedExamId === 'f1-{{ $i }}' ? 'bg-amber-100/80 ring-2 ring-amber-500' : ''"
+               class="p-3 block transition rounded-xs">
+              <span class="text-xs font-bold text-gray-900 block">
+                {{ $e.CourseName }}
+              </span>
               <div class="mt-1 flex flex-wrap gap-x-3 text-[11px] text-gray-600">
                 <span><strong>Aula:</strong> {{ if $e.Room }}{{ $e.Room }}{{ else }}A definir{{ end }}</span>
                 <span><strong>Fecha:</strong> {{ if $e.Date }}{{ $e.Date }}{{ else }}A definir{{ end }}</span>
@@ -244,17 +222,11 @@
           {{ range $i, $e := .Exams.Final2 }}
             <div 
                id="exam-card-f2-{{ $i }}"
-               @click="selectExamFromList('f2-{{ $i }}', '{{ $e.ISODate }}')"
-               :class="selectedExamId === 'f2-{{ $i }}' ? 'bg-rose-50/80 ring-2 ring-rose-500 border-transparent' : 'hover:bg-gray-50'"
-               class="p-3 block cursor-pointer transition rounded-xs group">
-              <div class="flex items-center justify-between gap-2">
-                <span class="text-xs font-bold text-gray-900">
-                  {{ $e.CourseName }}
-                </span>
-                <span class="text-[10px] text-gray-400 group-hover:text-rose-600 transition-colors">
-                  Ver fecha →
-                </span>
-              </div>
+               :class="selectedExamId === 'f2-{{ $i }}' ? 'bg-rose-100/80 ring-2 ring-rose-500' : ''"
+               class="p-3 block transition rounded-xs">
+              <span class="text-xs font-bold text-gray-900 block">
+                {{ $e.CourseName }}
+              </span>
               <div class="mt-1 flex flex-wrap gap-x-3 text-[11px] text-gray-600">
                 <span><strong>Aula:</strong> {{ if $e.Room }}{{ $e.Room }}{{ else }}A definir{{ end }}</span>
                 <span><strong>Fecha:</strong> {{ if $e.Date }}{{ $e.Date }}{{ else }}A definir{{ end }}</span>
