@@ -1,7 +1,9 @@
 {{ define "custom_head" }}
   <title>Dashboard - PoliPlanner</title>
   <script src="/static/bundle/htmx/htmx.min.js" defer></script>
-  <script src="/static/bundle/alpinejs/alpine.min.js" defer></script>
+<!-- NOTE: fullcalendar must render before alpine.js -->
+<script src="/static/bundle/fullcalendar/index.global.min.js" defer></script>
+<script src="/static/bundle/alpinejs/alpine.min.js" defer></script>
 {{ end }}
 
 {{ define "content" }}

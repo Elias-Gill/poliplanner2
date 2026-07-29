@@ -182,16 +182,23 @@ func (s ScheduleService) extractExams(courses []academic.CourseSummaryView) sche
 
 			if exam.HasDate() {
 				if exam.HasHour() {
-					slot.Date = exam.Date().Format("2006/01/02 - 15:04hs")
+					// Formato para mostrar al usuario en el HTML
+					slot.Date = exam.Date().Format("02/01/2006 - 15:04hs")
+					// Formato estándar ISO para FullCalendar en JS
+					slot.ISODate = exam.Date().Format("2006-01-02T15:04:00")
 				} else {
-					slot.Date = exam.Date().Format("2006/01/02")
+					slot.Date = exam.Date().Format("02/01/2006")
+					slot.ISODate = exam.Date().Format("2006-01-02")
 				}
 			}
+
 			if exam.HasRevisionDate() {
 				if exam.HasHour() {
-					slot.Revision = exam.Revision().Format("2006/01/02 - 15:04hs")
+					slot.Revision = exam.Revision().Format("02/01/2006 - 15:04hs")
+					slot.ISORevision = exam.Revision().Format("2006-01-02T15:04:00")
 				} else {
-					slot.Revision = exam.Revision().Format("2006/01/02")
+					slot.Revision = exam.Revision().Format("02/01/2006")
+					slot.ISORevision = exam.Revision().Format("2006-01-02")
 				}
 			}
 

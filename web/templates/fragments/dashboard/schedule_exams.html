@@ -1,180 +1,402 @@
 {{ define "dashboard/schedule_exams" }}
-<div
-  x-data="{ examType: 'p1' }"
+<!-- Estilos personalizados para adaptar FullCalendar al diseño de la app -->
+<style>
+  .fc {
+    --fc-border-color: #e5e7eb;
+    --fc-button-bg-color: #ffffff;
+    --fc-button-border-color: #d1d5db;
+    --fc-button-text-color: #374151;
+    --fc-button-hover-bg-color: #f3f4f6;
+    --fc-button-hover-border-color: #9ca3af;
+    --fc-button-active-bg-color: #2563eb;
+    --fc-button-active-border-color: #1d4ed8;
+    --fc-button-active-text-color: #ffffff;
+    --fc-event-border-radius: 4px;
+    font-family: inherit;
+  }
+  .fc .fc-toolbar-title {
+    font-size: 0.95rem !important;
+    font-weight: 700;
+    color: #1f2937;
+  }
+  .fc .fc-button {
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    padding: 0.3rem 0.6rem !important;
+    border-radius: 0.25rem !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    text-transform: capitalize;
+  }
+  .fc .fc-col-header-cell-cushion {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #4b5563;
+    text-transform: uppercase;
+    padding: 6px 0;
+  }
+  .fc .fc-daygrid-day-number {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #374151;
+    padding: 4px 6px;
+  }
+  .fc .fc-event {
+    cursor: pointer;
+    padding: 2px 4px;
+    font-size: 0.75rem;
+    transition: all 0.15s ease;
+  }
+  .fc .fc-event:hover {
+    filter: brightness(0.95);
+  }
+  /* Resaltado del evento seleccionado en el calendario */
+  .fc-event-selected-custom {
+    box-shadow: 0 0 0 2px #1f2937, 0 2px 4px rgba(0,0,0,0.2) !important;
+    font-weight: bold !important;
+  }
+</style>
+
+<div 
+  x-data="examScheduleApp()" 
+  x-init="initCalendar()"
   class="bg-white rounded-sm shadow-sm border border-gray-200 overflow-hidden">
-  <!-- Encabezado Exámenes -->
-  <div
-    class="p-4 bg-gray-700 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-    <h2 class="font-semibold text-sm tracking-wide">
+  
+  <!-- Encabezado / Selector Mobile -->
+  <div class="p-4 bg-gray-700 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <h2 class="font-semibold text-sm tracking-wide flex items-center gap-2">
+      <svg class="w-4 h-4 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
       Cronograma de Exámenes
     </h2>
 
-    <div
-      class="flex overflow-x-auto no-scrollbar gap-1 bg-gray-800/60 p-1 rounded-sm text-xs">
+    <div class="flex lg:hidden bg-gray-800 p-1 rounded-sm text-xs font-medium self-start sm:self-auto">
       <button
-        @click="examType = 'p1'"
-        :class="examType === 'p1' ? 'bg-primary-500 text-white font-bold' : 'text-gray-300 hover:text-white'"
-        class="px-3 py-1.5 rounded-sm transition shrink-0 cursor-pointer">
-        1° Parcial
+        @click="activeTab = 'calendar'"
+        :class="activeTab === 'calendar' ? 'bg-primary-500 text-white font-bold' : 'text-gray-300 hover:text-white'"
+        class="px-3 py-1.5 rounded-sm transition">
+        Calendario
       </button>
       <button
-        @click="examType = 'p2'"
-        :class="examType === 'p2' ? 'bg-primary-500 text-white font-bold' : 'text-gray-300 hover:text-white'"
-        class="px-3 py-1.5 rounded-sm transition shrink-0 cursor-pointer">
-        2° Parcial
-      </button>
-      <button
-        @click="examType = 'f1'"
-        :class="examType === 'f1' ? 'bg-amber-600 text-white font-bold' : 'text-gray-300 hover:text-white'"
-        class="px-3 py-1.5 rounded-sm transition shrink-0 cursor-pointer">
-        1° Final
-      </button>
-      <button
-        @click="examType = 'f2'"
-        :class="examType === 'f2' ? 'bg-amber-600 text-white font-bold' : 'text-gray-300 hover:text-white'"
-        class="px-3 py-1.5 rounded-sm transition shrink-0 cursor-pointer">
-        2° Final
+        @click="activeTab = 'list'"
+        :class="activeTab === 'list' ? 'bg-primary-500 text-white font-bold' : 'text-gray-300 hover:text-white'"
+        class="px-3 py-1.5 rounded-sm transition">
+        Lista de Exámenes
       </button>
     </div>
   </div>
 
-  <!-- Contenido Exámenes -->
-  <div class="p-4 md:p-6 min-h-[180px]">
-    <!-- 1er Parcial -->
-    <div x-show="examType === 'p1'">
-      {{ if .Exams.Partial1 }}
-        <div class="flex flex-col gap-3 max-h-[500px] overflow-y-auto pr-1">
-          {{ range .Exams.Partial1 }}
-            <div
-              class="p-3 bg-gray-50 border-l-4 border-l-primary-500 border-y border-r border-gray-200 rounded-r-sm space-y-1">
-              <div class="text-xs font-bold text-gray-900 leading-tight">
-                {{ .CourseName }}
-              </div>
-              <p class="text-[11px] text-gray-600">
-                <span class="font-semibold text-gray-700">Aula:</span>
-                {{ if .Room }}{{ .Room }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
-              </p>
-              <p class="text-[11px] text-gray-600">
-                <span class="font-semibold text-gray-700">Fecha:</span>
-                {{ if .Date }}{{ .Date }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
-              </p>
-              <div class="text-[11px] text-gray-500 pt-1 border-t border-gray-200 flex flex-wrap gap-x-4 gap-y-0.5">
-                <span>
-                  <strong class="text-gray-700">Rev:</strong>
-                  {{ if .Revision }}{{ .Revision.Date }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
-                </span>
-              </div>
-            </div>
-          {{ end }}
-        </div>
-      {{ else }}
-        <div class="text-center py-8 text-gray-400 text-xs italic">
-          No hay fechas registradas para el 1er Parcial
-        </div>
-      {{ end }}
+  <!-- Layout Principal -->
+  <div class="p-3 md:p-5 grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+    <!-- 1. COLUMNA CALENDARIO -->
+    <div 
+      :class="activeTab === 'calendar' ? 'block' : 'hidden lg:block'"
+      class="lg:col-span-7 xl:col-span-8 bg-gray-50/50 p-2 md:p-4 rounded border border-gray-200">
+      <div id="examCalendar" class="min-h-[420px] text-xs"></div>
     </div>
 
-    <!-- 2do Parcial -->
-    <div x-show="examType === 'p2'" x-cloak>
-      {{ if .Exams.Partial2 }}
-        <div class="flex flex-col gap-3 max-h-[500px] overflow-y-auto pr-1">
-          {{ range .Exams.Partial2 }}
-            <div
-              class="p-3 bg-gray-50 border-l-4 border-l-primary-500 border-y border-r border-gray-200 rounded-r-sm space-y-1">
-              <div class="text-xs font-bold text-gray-900 leading-tight">
-                {{ .CourseName }}
-              </div>
-              <p class="text-[11px] text-gray-600">
-                <span class="font-semibold text-gray-700">Aula:</span>
-                {{ if .Room }}{{ .Room }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
-              </p>
-              <p class="text-[11px] text-gray-600">
-                <span class="font-semibold text-gray-700">Fecha:</span>
-                {{ if .Date }}{{ .Date }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
-              </p>
-              <div class="text-[11px] text-gray-500 pt-1 border-t border-gray-200 flex flex-wrap gap-x-4 gap-y-0.5">
-                <span>
-                  <strong class="text-gray-700">Rev:</strong>
-                  {{ if .Revision }}{{ .Revision.Date }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
+    <!-- 2. COLUMNA LISTA DE EXÁMENES -->
+    <div 
+      :class="activeTab === 'list' ? 'block' : 'hidden lg:block'"
+      class="lg:col-span-5 xl:col-span-4 space-y-4 max-h-[600px] overflow-y-auto pr-1">
+      
+      <!-- 1° PARCIAL (AZUL) -->
+      <div class="border border-blue-100 rounded bg-white overflow-hidden shadow-2xs">
+        <div class="p-2.5 bg-blue-50/80 border-b border-blue-100 flex justify-between items-center">
+          <span class="text-xs font-bold text-blue-700">1° Parcial</span>
+        </div>
+        <div class="divide-y divide-gray-100">
+          {{ range $i, $e := .Exams.Partial1 }}
+            <div 
+               id="exam-card-p1-{{ $i }}"
+               @click="selectExamFromList('p1-{{ $i }}', '{{ $e.ISODate }}')"
+               :class="selectedExamId === 'p1-{{ $i }}' ? 'bg-blue-50/80 ring-2 ring-blue-500 border-transparent' : 'hover:bg-gray-50'"
+               class="p-3 block cursor-pointer transition rounded-xs group">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-bold text-gray-900">
+                  {{ $e.CourseName }}
+                </span>
+                <span class="text-[10px] text-gray-400 group-hover:text-blue-600 transition-colors">
+                  Ver fecha →
                 </span>
               </div>
+              <div class="mt-1 flex flex-wrap gap-x-3 text-[11px] text-gray-600">
+                <span><strong>Aula:</strong> {{ if $e.Room }}{{ $e.Room }}{{ else }}A definir{{ end }}</span>
+                <span><strong>Fecha:</strong> {{ if $e.Date }}{{ $e.Date }}{{ else }}A definir{{ end }}</span>
+              </div>
+              {{ if $e.Revision }}
+                <div class="mt-1 text-[10px] text-gray-500 italic">
+                  <strong>Revisión:</strong> {{ $e.Revision }}
+                </div>
+              {{ end }}
             </div>
+          {{ else }}
+            <div class="p-3 text-center text-xs text-gray-400 italic">No hay fechas registradas</div>
           {{ end }}
         </div>
-      {{ else }}
-        <div class="text-center py-8 text-gray-400 text-xs italic">
-          No hay fechas registradas para el 2do Parcial
+      </div>
+
+      <!-- 2° PARCIAL (INDIGO / VIOLETA) -->
+      <div class="border border-indigo-100 rounded bg-white overflow-hidden shadow-2xs">
+        <div class="p-2.5 bg-indigo-50/80 border-b border-indigo-100 flex justify-between items-center">
+          <span class="text-xs font-bold text-indigo-700">2° Parcial</span>
         </div>
-      {{ end }}
+        <div class="divide-y divide-gray-100">
+          {{ range $i, $e := .Exams.Partial2 }}
+            <div 
+               id="exam-card-p2-{{ $i }}"
+               @click="selectExamFromList('p2-{{ $i }}', '{{ $e.ISODate }}')"
+               :class="selectedExamId === 'p2-{{ $i }}' ? 'bg-indigo-50/80 ring-2 ring-indigo-500 border-transparent' : 'hover:bg-gray-50'"
+               class="p-3 block cursor-pointer transition rounded-xs group">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-bold text-gray-900">
+                  {{ $e.CourseName }}
+                </span>
+                <span class="text-[10px] text-gray-400 group-hover:text-indigo-600 transition-colors">
+                  Ver fecha →
+                </span>
+              </div>
+              <div class="mt-1 flex flex-wrap gap-x-3 text-[11px] text-gray-600">
+                <span><strong>Aula:</strong> {{ if $e.Room }}{{ $e.Room }}{{ else }}A definir{{ end }}</span>
+                <span><strong>Fecha:</strong> {{ if $e.Date }}{{ $e.Date }}{{ else }}A definir{{ end }}</span>
+              </div>
+              {{ if $e.Revision }}
+                <div class="mt-1 text-[10px] text-gray-500 italic">
+                  <strong>Revisión:</strong> {{ $e.Revision }}
+                </div>
+              {{ end }}
+            </div>
+          {{ else }}
+            <div class="p-3 text-center text-xs text-gray-400 italic">No hay fechas registradas</div>
+          {{ end }}
+        </div>
+      </div>
+
+      <!-- 1° FINAL (ÁMBAR / NARANJA) -->
+      <div class="border border-amber-100 rounded bg-white overflow-hidden shadow-2xs">
+        <div class="p-2.5 bg-amber-50/80 border-b border-amber-100 flex justify-between items-center">
+          <span class="text-xs font-bold text-amber-800">1° Final</span>
+        </div>
+        <div class="divide-y divide-gray-100">
+          {{ range $i, $e := .Exams.Final1 }}
+            <div 
+               id="exam-card-f1-{{ $i }}"
+               @click="selectExamFromList('f1-{{ $i }}', '{{ $e.ISODate }}')"
+               :class="selectedExamId === 'f1-{{ $i }}' ? 'bg-amber-50/80 ring-2 ring-amber-500 border-transparent' : 'hover:bg-gray-50'"
+               class="p-3 block cursor-pointer transition rounded-xs group">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-bold text-gray-900">
+                  {{ $e.CourseName }}
+                </span>
+                <span class="text-[10px] text-gray-400 group-hover:text-amber-600 transition-colors">
+                  Ver fecha →
+                </span>
+              </div>
+              <div class="mt-1 flex flex-wrap gap-x-3 text-[11px] text-gray-600">
+                <span><strong>Aula:</strong> {{ if $e.Room }}{{ $e.Room }}{{ else }}A definir{{ end }}</span>
+                <span><strong>Fecha:</strong> {{ if $e.Date }}{{ $e.Date }}{{ else }}A definir{{ end }}</span>
+              </div>
+              {{ if $e.Revision }}
+                <div class="mt-1 text-[10px] text-gray-500 italic">
+                  <strong>Revisión:</strong> {{ $e.Revision }}
+                </div>
+              {{ end }}
+            </div>
+          {{ else }}
+            <div class="p-3 text-center text-xs text-gray-400 italic">No hay fechas registradas</div>
+          {{ end }}
+        </div>
+      </div>
+
+      <!-- 2° FINAL (ROJO / ROSE) -->
+      <div class="border border-rose-100 rounded bg-white overflow-hidden shadow-2xs">
+        <div class="p-2.5 bg-rose-50/80 border-b border-rose-100 flex justify-between items-center">
+          <span class="text-xs font-bold text-rose-800">2° Final</span>
+        </div>
+        <div class="divide-y divide-gray-100">
+          {{ range $i, $e := .Exams.Final2 }}
+            <div 
+               id="exam-card-f2-{{ $i }}"
+               @click="selectExamFromList('f2-{{ $i }}', '{{ $e.ISODate }}')"
+               :class="selectedExamId === 'f2-{{ $i }}' ? 'bg-rose-50/80 ring-2 ring-rose-500 border-transparent' : 'hover:bg-gray-50'"
+               class="p-3 block cursor-pointer transition rounded-xs group">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-bold text-gray-900">
+                  {{ $e.CourseName }}
+                </span>
+                <span class="text-[10px] text-gray-400 group-hover:text-rose-600 transition-colors">
+                  Ver fecha →
+                </span>
+              </div>
+              <div class="mt-1 flex flex-wrap gap-x-3 text-[11px] text-gray-600">
+                <span><strong>Aula:</strong> {{ if $e.Room }}{{ $e.Room }}{{ else }}A definir{{ end }}</span>
+                <span><strong>Fecha:</strong> {{ if $e.Date }}{{ $e.Date }}{{ else }}A definir{{ end }}</span>
+              </div>
+              {{ if $e.Revision }}
+                <div class="mt-1 text-[10px] text-gray-500 italic">
+                  <strong>Revisión:</strong> {{ $e.Revision }}
+                </div>
+              {{ end }}
+            </div>
+          {{ else }}
+            <div class="p-3 text-center text-xs text-gray-400 italic">No hay fechas registradas</div>
+          {{ end }}
+        </div>
+      </div>
+
     </div>
 
-    <!-- 1er Final -->
-    <div x-show="examType === 'f1'" x-cloak>
-      {{ if .Exams.Final1 }}
-        <div class="flex flex-col gap-3 max-h-[500px] overflow-y-auto pr-1">
-          {{ range .Exams.Final1 }}
-            <div
-              class="p-3 bg-amber-50/50 border-l-4 border-l-amber-500 border-y border-r border-gray-200 rounded-r-sm space-y-1">
-              <div class="text-xs font-bold text-gray-900 leading-tight">
-                {{ .CourseName }}
-              </div>
-              <p class="text-[11px] text-gray-600">
-                <span class="font-semibold text-gray-700">Aula:</span>
-                {{ if .Room }}{{ .Room }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
-              </p>
-              <p class="text-[11px] text-gray-600">
-                <span class="font-semibold text-gray-700">Fecha:</span>
-                {{ if .Date }}{{ .Date }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
-              </p>
-              <div class="text-[11px] text-gray-500 pt-1 border-t border-gray-200 flex flex-wrap gap-x-4 gap-y-0.5">
-                <span>
-                  <strong class="text-gray-700">Rev:</strong>
-                  {{ if .Revision }}{{ .Revision.Date }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
-                </span>
-              </div>
-            </div>
-          {{ end }}
-        </div>
-      {{ else }}
-        <div class="text-center py-8 text-gray-400 text-xs italic">
-          No hay fechas registradas para el 1er Final
-        </div>
-      {{ end }}
-    </div>
-
-    <!-- 2do Final -->
-    <div x-show="examType === 'f2'" x-cloak>
-      {{ if .Exams.Final2 }}
-        <div class="flex flex-col gap-3 max-h-[500px] overflow-y-auto pr-1">
-          {{ range .Exams.Final2 }}
-            <div
-              class="p-3 bg-amber-50/50 border-l-4 border-l-amber-500 border-y border-r border-gray-200 rounded-r-sm space-y-1">
-              <div class="text-xs font-bold text-gray-900 leading-tight">
-                {{ .CourseName }}
-              </div>
-              <p class="text-[11px] text-gray-600">
-                <span class="font-semibold text-gray-700">Aula:</span>
-                {{ if .Room }}{{ .Room }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
-              </p>
-              <p class="text-[11px] text-gray-600">
-                <span class="font-semibold text-gray-700">Fecha:</span>
-                {{ if .Date }}{{ .Date }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
-              </p>
-              <div class="text-[11px] text-gray-500 pt-1 border-t border-gray-200 flex flex-wrap gap-x-4 gap-y-0.5">
-                <span>
-                  <strong class="text-gray-700">Rev:</strong>
-                  {{ if .Revision }}{{ .Revision.Date }}{{ else }}<span class="italic text-gray-400">A definir</span>{{ end }}
-                </span>
-              </div>
-            </div>
-          {{ end }}
-        </div>
-      {{ else }}
-        <div class="text-center py-8 text-gray-400 text-xs italic">
-          No hay fechas registradas para el 2do Final
-        </div>
-      {{ end }}
-    </div>
   </div>
 </div>
+
+<script>
+window.examScheduleApp = function() {
+  return {
+    activeTab: 'calendar',
+    calendarInstance: null,
+    selectedExamId: null,
+
+    events: [
+      {{ range $i, $e := .Exams.Partial1 }}
+        {{ if $e.ISODate }}
+        {
+          id: 'p1-{{ $i }}',
+          title: "{{ $e.CourseName | js }}",
+          start: "{{ $e.ISODate }}",
+          allDay: true,
+          color: '#2563eb'
+        },
+        {{ end }}
+      {{ end }}
+
+      {{ range $i, $e := .Exams.Partial2 }}
+        {{ if $e.ISODate }}
+        {
+          id: 'p2-{{ $i }}',
+          title: "{{ $e.CourseName | js }}",
+          start: "{{ $e.ISODate }}",
+          allDay: true,
+          color: '#4f46e5'
+        },
+        {{ end }}
+      {{ end }}
+
+      {{ range $i, $e := .Exams.Final1 }}
+        {{ if $e.ISODate }}
+        {
+          id: 'f1-{{ $i }}',
+          title: "{{ $e.CourseName | js }}",
+          start: "{{ $e.ISODate }}",
+          allDay: true,
+          color: '#d97706'
+        },
+        {{ end }}
+      {{ end }}
+
+      {{ range $i, $e := .Exams.Final2 }}
+        {{ if $e.ISODate }}
+        {
+          id: 'f2-{{ $i }}',
+          title: "{{ $e.CourseName | js }}",
+          start: "{{ $e.ISODate }}",
+          allDay: true,
+          color: '#dc2626'
+        },
+        {{ end }}
+      {{ end }}
+    ],
+
+    selectExamFromList(examId, isoDate) {
+      this.selectedExamId = examId;
+      this.activeTab = 'calendar';
+
+      if (this.calendarInstance) {
+        if (isoDate) {
+          this.calendarInstance.gotoDate(isoDate);
+        }
+        this.calendarInstance.render();
+      }
+
+      const calEl = document.getElementById('examCalendar');
+      if (calEl && window.innerWidth < 1024) {
+        calEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    },
+
+    selectExamFromCalendar(examId) {
+      this.selectedExamId = examId;
+      this.activeTab = 'list';
+
+      if (this.calendarInstance) {
+        this.calendarInstance.render();
+      }
+
+      this.$nextTick(() => {
+        const cardEl = document.getElementById('exam-card-' + examId);
+        if (cardEl) {
+          cardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+    },
+
+    initCalendar() {
+      this.$nextTick(() => {
+        const calendarEl = document.getElementById('examCalendar');
+        if (!calendarEl || typeof FullCalendar === 'undefined') return;
+
+        if (this.calendarInstance) {
+          this.calendarInstance.destroy();
+        }
+
+        // Determina la fecha del primer examen para ubicar el calendario en ese mes
+        let initialDate = undefined;
+        if (this.events && this.events.length > 0) {
+          const sorted = [...this.events].sort((a, b) => new Date(a.start) - new Date(b.start));
+          initialDate = sorted[0].start;
+        }
+
+        const self = this;
+
+        this.calendarInstance = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          initialDate: initialDate,
+          locale: 'es',
+          eventDisplay: 'list-item',
+          displayEventTime: false,
+          headerToolbar: {
+            left: 'prev,next',
+            center: 'title',
+            right: 'today'
+          },
+          events: this.events,
+          eventClassNames: function(arg) {
+            if (arg.event.id === self.selectedExamId) {
+              return ['fc-event-selected-custom'];
+            }
+            return [];
+          },
+          eventClick: function(info) {
+            info.jsEvent.preventDefault();
+            self.selectExamFromCalendar(info.event.id);
+          },
+          height: 'auto'
+        });
+
+        this.calendarInstance.render();
+
+        setTimeout(() => {
+          if (self.calendarInstance) {
+            self.calendarInstance.updateSize();
+          }
+        }, 150);
+      });
+
+      this.$watch('activeTab', (value) => {
+        if (value === 'calendar' && this.calendarInstance) {
+          setTimeout(() => this.calendarInstance.updateSize(), 50);
+        }
+      });
+    }
+  };
+};
+</script>
 {{ end }}

@@ -46,6 +46,10 @@ type ExamSlotView struct {
 	Room       string
 	Date       string
 	Revision   string
+
+	// For FullCalendar JS
+	ISODate     string
+	ISORevision string
 }
 
 type ExamMapView struct {

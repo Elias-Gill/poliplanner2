@@ -229,7 +229,7 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 	}
 
 	// Load class sessions
-	// FIX: QUITAR esto y hacer una migracino para directamente 
+	// FIX: QUITAR esto de horas con cast text y hacer una migracino para directamente 
 	// dejar como text fecha y hora
 	schedulesQuery := fmt.Sprintf(`
 		SELECT 
@@ -240,7 +240,7 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 			COALESCE(aula, '')
 		FROM curso_horarios
 		WHERE curso_id IN (%s)
-		ORDER BY dia ASC, desde ASC`, placeholders)
+		ORDER BY desde ASC`, placeholders)
 
 	sRows, err := s.db.QueryContext(ctx, schedulesQuery, courseIDs...)
 	if err != nil {

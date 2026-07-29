@@ -5,7 +5,10 @@
   <div x-data="{ activeDay: 'lun' }" class="block md:hidden">
     <!-- Encabezado y Selector de Días -->
     <div class="p-4 bg-gray-700 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-      <h2 class="font-semibold text-sm tracking-wide">Horario de Clases</h2>
+      <h2 class="font-semibold text-sm tracking-wide flex items-center gap-2">
+        <svg class="w-4 h-4 text-primary-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        <span>Horario de Clases</span>
+      </h2>
 
       <div class="flex overflow-x-auto no-scrollbar gap-1 bg-gray-800/60 p-1 rounded-sm text-xs">
         <button
@@ -191,7 +194,8 @@
 
   <!-- VISTA DESKTOP (Grid Scrolleable Horizontalmente) -->
   <div class="hidden md:block">
-    <div class="p-4 bg-gray-700 text-white">
+    <div class="p-4 bg-gray-700 text-white flex items-center gap-2">
+      <svg class="w-4 h-4 text-primary-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
       <h2 class="font-semibold text-sm tracking-wide">Horario de Clases</h2>
     </div>
 
