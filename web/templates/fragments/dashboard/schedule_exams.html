@@ -1,5 +1,4 @@
 {{ define "dashboard/schedule_exams" }}
-<!-- Estilos personalizados para adaptar FullCalendar al diseño de la app -->
 <style>
   .fc {
     --fc-border-color: #e5e7eb;
@@ -49,7 +48,6 @@
   .fc .fc-event:hover {
     filter: brightness(0.95);
   }
-  /* Resaltado del evento seleccionado en el calendario */
   .fc-event-selected-custom {
     box-shadow: 0 0 0 2px #1f2937, 0 2px 4px rgba(0,0,0,0.2) !important;
     font-weight: bold !important;
@@ -58,13 +56,43 @@
 
 <div 
   x-data="examScheduleApp()" 
-  x-init="initCalendar()"
   class="bg-white rounded-sm shadow-sm border border-gray-200 overflow-hidden">
   
+  <!-- Script JSON seguro para transferir eventos a Alpine sin romper HTML -->
+  <script type="application/json" x-ref="eventsData">
+  [
+    {{ $comma := false }}
+    {{ range $i, $e := .Exams.Partial1 }}
+      {{ if $e.ISODate }}
+        {{ if $comma }},{{ end }}{ "id": "p1-{{ $i }}", "title": "{{ $e.CourseName | js }}", "start": "{{ $e.ISODate }}", "allDay": true, "color": "#2563eb" }
+        {{ $comma = true }}
+      {{ end }}
+    {{ end }}
+    {{ range $i, $e := .Exams.Partial2 }}
+      {{ if $e.ISODate }}
+        {{ if $comma }},{{ end }}{ "id": "p2-{{ $i }}", "title": "{{ $e.CourseName | js }}", "start": "{{ $e.ISODate }}", "allDay": true, "color": "#4f46e5" }
+        {{ $comma = true }}
+      {{ end }}
+    {{ end }}
+    {{ range $i, $e := .Exams.Final1 }}
+      {{ if $e.ISODate }}
+        {{ if $comma }},{{ end }}{ "id": "f1-{{ $i }}", "title": "{{ $e.CourseName | js }}", "start": "{{ $e.ISODate }}", "allDay": true, "color": "#d97706" }
+        {{ $comma = true }}
+      {{ end }}
+    {{ end }}
+    {{ range $i, $e := .Exams.Final2 }}
+      {{ if $e.ISODate }}
+        {{ if $comma }},{{ end }}{ "id": "f2-{{ $i }}", "title": "{{ $e.CourseName | js }}", "start": "{{ $e.ISODate }}", "allDay": true, "color": "#dc2626" }
+        {{ $comma = true }}
+      {{ end }}
+    {{ end }}
+  ]
+  </script>
+
   <!-- Encabezado / Selector Mobile -->
   <div class="p-4 bg-gray-700 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
     <h2 class="font-semibold text-sm tracking-wide flex items-center gap-2">
-      <svg class="w-4 h-4 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+      <svg class="w-4 h-4 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
       Cronograma de Exámenes
     </h2>
 
@@ -91,7 +119,7 @@
     <div 
       :class="activeTab === 'calendar' ? 'block' : 'hidden lg:block'"
       class="lg:col-span-7 xl:col-span-8 bg-gray-50/50 p-2 md:p-4 rounded border border-gray-200">
-      <div id="examCalendar" class="min-h-[420px] text-xs"></div>
+      <div x-ref="calendarContainer" class="min-h-[420px] text-xs"></div>
     </div>
 
     <!-- 2. COLUMNA LISTA DE EXÁMENES -->
@@ -99,7 +127,7 @@
       :class="activeTab === 'list' ? 'block' : 'hidden lg:block'"
       class="lg:col-span-5 xl:col-span-4 space-y-4 max-h-[600px] overflow-y-auto pr-1">
       
-      <!-- 1° PARCIAL (AZUL) -->
+      <!-- 1° PARCIAL -->
       <div class="border border-blue-100 rounded bg-white overflow-hidden shadow-2xs">
         <div class="p-2.5 bg-blue-50/80 border-b border-blue-100 flex justify-between items-center">
           <span class="text-xs font-bold text-blue-700">1° Parcial</span>
@@ -135,7 +163,7 @@
         </div>
       </div>
 
-      <!-- 2° PARCIAL (INDIGO / VIOLETA) -->
+      <!-- 2° PARCIAL -->
       <div class="border border-indigo-100 rounded bg-white overflow-hidden shadow-2xs">
         <div class="p-2.5 bg-indigo-50/80 border-b border-indigo-100 flex justify-between items-center">
           <span class="text-xs font-bold text-indigo-700">2° Parcial</span>
@@ -171,7 +199,7 @@
         </div>
       </div>
 
-      <!-- 1° FINAL (ÁMBAR / NARANJA) -->
+      <!-- 1° FINAL -->
       <div class="border border-amber-100 rounded bg-white overflow-hidden shadow-2xs">
         <div class="p-2.5 bg-amber-50/80 border-b border-amber-100 flex justify-between items-center">
           <span class="text-xs font-bold text-amber-800">1° Final</span>
@@ -207,7 +235,7 @@
         </div>
       </div>
 
-      <!-- 2° FINAL (ROJO / ROSE) -->
+      <!-- 2° FINAL -->
       <div class="border border-rose-100 rounded bg-white overflow-hidden shadow-2xs">
         <div class="p-2.5 bg-rose-50/80 border-b border-rose-100 flex justify-between items-center">
           <span class="text-xs font-bold text-rose-800">2° Final</span>
@@ -247,156 +275,4 @@
 
   </div>
 </div>
-
-<script>
-window.examScheduleApp = function() {
-  return {
-    activeTab: 'calendar',
-    calendarInstance: null,
-    selectedExamId: null,
-
-    events: [
-      {{ range $i, $e := .Exams.Partial1 }}
-        {{ if $e.ISODate }}
-        {
-          id: 'p1-{{ $i }}',
-          title: "{{ $e.CourseName | js }}",
-          start: "{{ $e.ISODate }}",
-          allDay: true,
-          color: '#2563eb'
-        },
-        {{ end }}
-      {{ end }}
-
-      {{ range $i, $e := .Exams.Partial2 }}
-        {{ if $e.ISODate }}
-        {
-          id: 'p2-{{ $i }}',
-          title: "{{ $e.CourseName | js }}",
-          start: "{{ $e.ISODate }}",
-          allDay: true,
-          color: '#4f46e5'
-        },
-        {{ end }}
-      {{ end }}
-
-      {{ range $i, $e := .Exams.Final1 }}
-        {{ if $e.ISODate }}
-        {
-          id: 'f1-{{ $i }}',
-          title: "{{ $e.CourseName | js }}",
-          start: "{{ $e.ISODate }}",
-          allDay: true,
-          color: '#d97706'
-        },
-        {{ end }}
-      {{ end }}
-
-      {{ range $i, $e := .Exams.Final2 }}
-        {{ if $e.ISODate }}
-        {
-          id: 'f2-{{ $i }}',
-          title: "{{ $e.CourseName | js }}",
-          start: "{{ $e.ISODate }}",
-          allDay: true,
-          color: '#dc2626'
-        },
-        {{ end }}
-      {{ end }}
-    ],
-
-    selectExamFromList(examId, isoDate) {
-      this.selectedExamId = examId;
-      this.activeTab = 'calendar';
-
-      if (this.calendarInstance) {
-        if (isoDate) {
-          this.calendarInstance.gotoDate(isoDate);
-        }
-        this.calendarInstance.render();
-      }
-
-      const calEl = document.getElementById('examCalendar');
-      if (calEl && window.innerWidth < 1024) {
-        calEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    },
-
-    selectExamFromCalendar(examId) {
-      this.selectedExamId = examId;
-      this.activeTab = 'list';
-
-      if (this.calendarInstance) {
-        this.calendarInstance.render();
-      }
-
-      this.$nextTick(() => {
-        const cardEl = document.getElementById('exam-card-' + examId);
-        if (cardEl) {
-          cardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-      });
-    },
-
-    initCalendar() {
-      this.$nextTick(() => {
-        const calendarEl = document.getElementById('examCalendar');
-        if (!calendarEl || typeof FullCalendar === 'undefined') return;
-
-        if (this.calendarInstance) {
-          this.calendarInstance.destroy();
-        }
-
-        // Determina la fecha del primer examen para ubicar el calendario en ese mes
-        let initialDate = undefined;
-        if (this.events && this.events.length > 0) {
-          const sorted = [...this.events].sort((a, b) => new Date(a.start) - new Date(b.start));
-          initialDate = sorted[0].start;
-        }
-
-        const self = this;
-
-        this.calendarInstance = new FullCalendar.Calendar(calendarEl, {
-          initialView: 'dayGridMonth',
-          initialDate: initialDate,
-          locale: 'es',
-          eventDisplay: 'list-item',
-          displayEventTime: false,
-          headerToolbar: {
-            left: 'prev,next',
-            center: 'title',
-            right: 'today'
-          },
-          events: this.events,
-          eventClassNames: function(arg) {
-            if (arg.event.id === self.selectedExamId) {
-              return ['fc-event-selected-custom'];
-            }
-            return [];
-          },
-          eventClick: function(info) {
-            info.jsEvent.preventDefault();
-            self.selectExamFromCalendar(info.event.id);
-          },
-          height: 'auto'
-        });
-
-        this.calendarInstance.render();
-
-        setTimeout(() => {
-          if (self.calendarInstance) {
-            self.calendarInstance.updateSize();
-          }
-        }, 150);
-      });
-
-      this.$watch('activeTab', (value) => {
-        if (value === 'calendar' && this.calendarInstance) {
-          setTimeout(() => this.calendarInstance.updateSize(), 50);
-        }
-      });
-    }
-  };
-};
-</script>
 {{ end }}

@@ -1,17 +1,125 @@
 {{ define "custom_head" }}
   <title>Dashboard - PoliPlanner</title>
   <script src="/static/bundle/htmx/htmx.min.js" defer></script>
-<!-- NOTE: fullcalendar must render before alpine.js -->
-<script src="/static/bundle/fullcalendar/index.global.min.js" defer></script>
-<script src="/static/bundle/alpinejs/alpine.min.js" defer></script>
+  <script src="/static/bundle/fullcalendar/index.global.min.js" defer></script>
+  <script src="/static/bundle/alpinejs/alpine.min.js" defer></script>
+
+  <script>
+    window.examScheduleApp = function() {
+      return {
+        activeTab: 'calendar',
+        calendarInstance: null,
+        selectedExamId: null,
+        events: [],
+
+        init() {
+          // 1. Extraer los eventos desde el script JSON de forma segura
+          try {
+            if (this.$refs.eventsData) {
+              this.events = JSON.parse(this.$refs.eventsData.textContent);
+            }
+          } catch (e) {
+            console.error("Error al parsear eventos de exámenes:", e);
+            this.events = [];
+          }
+
+          // 2. Dar tiempo a HTMX para asentar el DOM y calcular dimensiones
+          this.$nextTick(() => {
+            setTimeout(() => {
+              this.initCalendar();
+            }, 60);
+          });
+        },
+
+        initCalendar() {
+          const calendarEl = this.$refs.calendarContainer;
+          if (!calendarEl || typeof FullCalendar === 'undefined') return;
+
+          // Destruir instancia previa si existe en este nodo
+          if (this.calendarInstance) {
+            this.calendarInstance.destroy();
+            this.calendarInstance = null;
+          }
+
+          let initialDate = undefined;
+          if (this.events && this.events.length > 0) {
+            const sorted = [...this.events].sort((a, b) => new Date(a.start) - new Date(b.start));
+            initialDate = sorted[0].start;
+          }
+
+          const self = this;
+
+          this.calendarInstance = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            initialDate: initialDate,
+            locale: 'es',
+            eventDisplay: 'list-item',
+            displayEventTime: false,
+            headerToolbar: {
+              left: 'prev,next',
+              center: 'title',
+              right: 'today'
+            },
+            events: this.events,
+            eventClassNames: function(arg) {
+              return arg.event.id === self.selectedExamId ? ['fc-event-selected-custom'] : [];
+            },
+            eventClick: function(info) {
+              info.jsEvent.preventDefault();
+              self.selectExamFromCalendar(info.event.id);
+            },
+            height: 'auto'
+          });
+
+          this.calendarInstance.render();
+
+          // Reajustar tamaño tras renderizar
+          setTimeout(() => {
+            if (self.calendarInstance) {
+              self.calendarInstance.updateSize();
+            }
+          }, 100);
+        },
+
+        selectExamFromList(examId, isoDate) {
+          this.selectedExamId = examId;
+          this.activeTab = 'calendar';
+
+          if (this.calendarInstance) {
+            if (isoDate) {
+              this.calendarInstance.gotoDate(isoDate);
+            }
+            this.calendarInstance.render();
+          }
+
+          if (this.$refs.calendarContainer && window.innerWidth < 1024) {
+            this.$refs.calendarContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        },
+
+        selectExamFromCalendar(examId) {
+          this.selectedExamId = examId;
+          this.activeTab = 'list';
+
+          if (this.calendarInstance) {
+            this.calendarInstance.render();
+          }
+
+          this.$nextTick(() => {
+            const cardEl = document.getElementById('exam-card-' + examId);
+            if (cardEl) {
+              cardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+          });
+        }
+      };
+    };
+  </script>
 {{ end }}
 
 {{ define "content" }}
-  <div
-    class="min-h-[calc(100vh-4rem)] flex flex-col gap-6">
-    <!-- Header principal de la página -->
-    <div
-      class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-sm shadow-sm border border-gray-200">
+  <div class="min-h-[calc(100vh-4rem)] flex flex-col gap-6">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-sm shadow-sm border border-gray-200">
       <div>
         <h1 class="text-xl font-bold text-gray-900">Dashboard</h1>
         <p class="text-xs text-gray-500">
@@ -21,16 +129,13 @@
 
       {{ if .Schedules }}
         <div class="flex items-center gap-2 w-full md:w-auto">
-          <!-- Selector de Horarios con HTMX -->
           <div class="relative flex-1 md:w-64">
             <select
               id="schedule-select"
               name="id"
               hx-get="/dashboard/"
               hx-target="#dashboard-content"
-              hx-indicator="#loading-spinner"
               hx-trigger="change"
-              hx-on::after-settle="Alpine.initTree(document.getElementById('dashboard-content'))"
               class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-sm bg-white focus:ring-2 focus:ring-primary-500 text-gray-800 font-medium cursor-pointer">
               {{ range .Schedules }}
                 <option
@@ -42,50 +147,14 @@
             </select>
           </div>
 
-          <!-- Botón Nuevo Horario -->
-          <a
-            href="/schedule/"
-            class="inline-flex items-center justify-center bg-primary-600 hover:bg-primary-700 text-white p-2 rounded-sm transition-colors text-sm"
-            title="Crear nuevo horario">
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 4v16m8-8H4" />
-            </svg>
+          <a href="/schedule/" class="inline-flex items-center justify-center bg-primary-600 hover:bg-primary-700 text-white p-2 rounded-sm transition-colors text-sm" title="Crear nuevo horario">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
           </a>
 
-          <!-- Botón Eliminar Horario -->
-          <form
-            action="/schedule/delete"
-            method="POST"
-            class="inline-block"
-            onsubmit="return confirm('¿Estás seguro de eliminar este horario?');">
-            <input
-              type="hidden"
-              id="delete-schedule-id"
-              name="id"
-              value="{{ .SelectedID }}" />
-            <button
-              type="submit"
-              class="inline-flex items-center justify-center border border-red-200 text-red-500 hover:bg-red-50 p-2 rounded-sm transition-colors text-sm"
-              title="Eliminar horario">
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
+          <form action="/schedule/delete" method="POST" class="inline-block" onsubmit="return confirm('¿Estás seguro de eliminar este horario?');">
+            <input type="hidden" id="delete-schedule-id" name="id" value="{{ .SelectedID }}" />
+            <button type="submit" class="inline-flex items-center justify-center border border-red-200 text-red-500 hover:bg-red-50 p-2 rounded-sm transition-colors text-sm" title="Eliminar horario">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
             </button>
           </form>
         </div>
@@ -99,60 +168,26 @@
           {{ template "dashboard/schedule_content" .ActiveSchedule }}
         {{ end }}
       {{ else }}
-        <!-- Empty State en caso de no tener horarios -->
-        <div
-          class="bg-white p-12 rounded-sm border border-dashed border-gray-300 text-center max-w-md mx-auto my-8">
-          <div
-            class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
-            <svg
-              class="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.5"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <h3 class="text-base font-semibold text-gray-900 mb-1">
-            Sin horarios creados
-          </h3>
-          <p class="text-xs text-gray-500 mb-6">
-            Aún no dispones de un horario guardado. Crea uno nuevo para empezar
-            a coordinar tus asignaturas y exámenes.
-          </p>
-          <a
-            href="/schedule/"
-            class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-sm text-xs font-semibold transition-colors">
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 4v16m8-8H4" />
-            </svg>
-            Crear horario
-          </a>
+        <div class="bg-white p-12 rounded-sm border border-dashed border-gray-300 text-center max-w-md mx-auto my-8">
+          <h3 class="text-base font-semibold text-gray-900 mb-1">Sin horarios creados</h3>
+          <p class="text-xs text-gray-500 mb-6">Aún no dispones de un horario guardado.</p>
+          <a href="/schedule/" class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-sm text-xs font-semibold">Crear horario</a>
         </div>
       {{ end }}
     </div>
   </div>
 
   <script>
-    // Sincroniza el ID del horario seleccionado con el formulario de eliminación
-    document
-      .getElementById("schedule-select")
-      ?.addEventListener("change", function () {
-        const deleteInput = document.getElementById("delete-schedule-id");
-        if (deleteInput) {
-          deleteInput.value = this.value;
-        }
-      });
+    document.getElementById("schedule-select")?.addEventListener("change", function () {
+      const deleteInput = document.getElementById("delete-schedule-id");
+      if (deleteInput) deleteInput.value = this.value;
+    });
+
+    // Re-inicializar Alpine cuando HTMX reemplace el HTML
+    document.body.addEventListener("htmx:afterSettle", function (evt) {
+      if (typeof Alpine !== "undefined" && evt.detail.target && evt.detail.target.id === "dashboard-content") {
+        Alpine.initTree(evt.detail.target);
+      }
+    });
   </script>
 {{ end }}
