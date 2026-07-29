@@ -1,77 +1,66 @@
 {{ define "fragments/sidebar" }}
-  <!-- Sidebar desktop -->
   <aside
-    class="hidden h-screen md:flex md:flex-col md:w-64 border-r 
-         bg-sidebar-bg text-sidebar-text border-gray-500">
-    <!-- Header -->
-    <div
-      class="p-5 border-b transition-colors 
-           bg-sidebar-bg hover:bg-sidebar-hover border-gray-500">
-      <div class="flex items-start justify-between">
-        <a href="/guides/about">
-          <div class="flex items-center gap-3">
-            <img
-              src="/static/favicon.ico"
-              class="w-8 h-8 bg-white rounded rounded-xl"
-              alt="Logo" />
-            <span class="text-xl font-semibold">PoliPlanner</span>
-          </div>
-          <div class="mt-1 text-xs text-sidebar-text-muted">
-            Por estudiantes y para estudiantes
-          </div>
-        </a>
-      </div>
+    :class="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
+    class="-translate-x-full md:translate-x-0 fixed md:static inset-y-0 left-0 z-50 flex flex-col w-64 border-r bg-sidebar-bg text-sidebar-text border-gray-500 transition-transform duration-300 ease-in-out shadow-xl md:shadow-none">
+    
+    <!-- Header del Sidebar -->
+    <div class="p-5 border-b transition-colors bg-sidebar-bg hover:bg-sidebar-hover border-gray-500 flex items-start justify-between">
+      <a href="/guides/about" class="block flex-1">
+        <div class="flex items-center gap-3">
+          <img
+            src="/static/favicon.ico"
+            class="w-8 h-8 bg-white rounded-sm shadow-xs"
+            alt="Logo" />
+          <span class="text-xl font-semibold tracking-tight">PoliPlanner</span>
+        </div>
+        <div class="mt-1 text-xs text-sidebar-text-muted">
+          Por estudiantes y para estudiantes
+        </div>
+      </a>
+
+      <!-- Botón de cierre explícito para móvil -->
+      <button 
+        @click="sidebarOpen = false" 
+        class="md:hidden p-1.5 rounded-sm hover:bg-sidebar-hover text-sidebar-text focus:outline-none transition-colors"
+        aria-label="Cerrar menú">
+        <i class="bi bi-x-lg text-lg"></i>
+      </button>
     </div>
 
-    <!-- Navegación -->
-    <nav class="flex-1 px-3 py-4 space-y-1">
+    <!-- Navegación principal -->
+    <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
       <a
         href="/dashboard"
-        class="nav-link flex items-center gap-3 px-4 py-3 rounded-sm transition-colors 
-             text-sidebar-text hover:bg-sidebar-hover">
+        @click="sidebarOpen = false"
+        class="nav-link flex items-center gap-3 px-4 py-3 rounded-sm transition-colors text-sidebar-text hover:bg-sidebar-hover">
         <i class="bi bi-speedometer2 text-lg"></i>
-        <span>Dashboard</span>
+        <span class="text-sm font-medium">Dashboard</span>
       </a>
 
       <a
         href="/guides"
-        class="nav-link flex items-center gap-3 px-4 py-3 rounded-sm transition-colors 
-             text-sidebar-text hover:bg-sidebar-hover">
+        @click="sidebarOpen = false"
+        class="nav-link flex items-center gap-3 px-4 py-3 rounded-sm transition-colors text-sidebar-text hover:bg-sidebar-hover">
         <i class="bi bi-book text-lg"></i>
-        <span>Guías universitarias</span>
+        <span class="text-sm font-medium">Guías universitarias</span>
       </a>
 
       <a
         href="/tools"
-        class="nav-link flex items-center gap-3 px-4 py-3 rounded-sm transition-colors 
-             text-sidebar-text hover:bg-sidebar-hover">
+        @click="sidebarOpen = false"
+        class="nav-link flex items-center gap-3 px-4 py-3 rounded-sm transition-colors text-sidebar-text hover:bg-sidebar-hover">
         <i class="bi bi-tools text-lg"></i>
-        <span>Herramientas</span>
+        <span class="text-sm font-medium">Herramientas</span>
       </a>
     </nav>
 
     <!-- Zona inferior -->
-    <div class="p-5 border-t space-y-4 border-gray-500">
+    <div class="p-5 border-t space-y-4 border-gray-500 bg-sidebar-bg">
       <div class="flex justify-center">
         {{ template "fragments/theme-toggle" "theme-toggle-desktop" }}
       </div>
-      <div class="text-xs text-center text-sidebar-text-muted">
+      <div class="text-[11px] text-center text-sidebar-text-muted">
         Parte de la Iniciativa PoliPlanner
-      </div>
-
-      <!-- Logout button -->
-      <div class="mt-8 pt-2 w-full">
-        <form action="/user/logout" method="POST" class="flex justify-center">
-          <button
-            type="submit"
-            onclick="return confirm('¿Cerrar sesión?')"
-            class="inline-flex items-center justify-center gap-2 px-4 py-1.5
-                   rounded-sm border border-red-300 hover:bg-red-400 text-sm text-red-200 font-medium 
-                   transition-all duration-150 shadow-sm hover:shadow-md">
-            <i class="bi bi-box-arrow-right text-lg"></i>
-            <span>Cerrar sesión</span>
-          </button>
-        </form>
       </div>
     </div>
   </aside>

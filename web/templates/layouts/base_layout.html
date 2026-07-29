@@ -3,7 +3,6 @@
   <html lang="es" class="h-full">
     <head>
       <meta charset="UTF-8" />
-      <!-- Muy importante para safe-area -->
       <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -13,22 +12,37 @@
         href="/static/bundle/bootstrap-icons/bootstrap-icons.min.css" />
       <link rel="stylesheet" href="/static/output.css" />
 
+        <!-- alpine js -->
+      <script defer src="/static/bundle/alpinejs/collapse/collapse.min.js"></script>
+      <script src="/static/bundle/alpinejs/alpine.min.js" defer></script>
+
       <script src="/static/js/theme_bootstrap.js"></script>
       <script src="/static/js/theme_toggle.js"></script>
 
       {{ block "custom_head" . }}{{ end }}
     </head>
     <body class="h-full bg-gray-100 text-gray-900 antialiased">
-      <div class="flex h-screen overflow-hidden">
+      <div class="flex h-screen overflow-hidden" x-data="{ sidebarOpen: false }">
+        
+        <!-- Backdrop oscuro para móvil -->
+        <div 
+          x-show="sidebarOpen" 
+          @click="sidebarOpen = false"
+          x-transition.opacity
+          class="fixed inset-0 z-40 bg-black/50 md:hidden"
+          style="display: none;">
+        </div>
+
+        <!-- Sidebar Unificado -->
         {{ template "fragments/sidebar" . }}
 
-
         <div class="flex flex-col flex-1 overflow-hidden">
-          {{ template "fragments/navbar_mobile" . }}
+          
+          <!-- Header Móvil Modular -->
+          {{ template "fragments/header_mobile" . }}
 
-
-          <main
-            class="flex-1 overflow-y-auto p-3 pb-20 md:pb-8 md:p-8 lg:p-20 lg:pt-10">
+          <!-- Contenido Principal -->
+          <main class="flex-1 overflow-y-auto p-3 md:p-8 lg:p-20 lg:pt-10">
             {{ block "content" . }}{{ end }}
           </main>
         </div>

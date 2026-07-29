@@ -214,14 +214,15 @@
           </button>
 
           <!-- Contenido Desplegable (HTMX) -->
-          <div
-            x-show="open"
-            x-collapse
-            class="border-t border-gray-100 bg-white">
-            <div
-              id="courses-{{ .ID }}"
-              hx-on::after-settle="Alpine.initTree($el)"></div>
-          </div>
+<!-- Contenido Desplegable (HTMX) -->
+<div
+  x-show="open"
+  x-collapse
+  class="border-t border-gray-100 bg-white">
+  <div
+    id="courses-{{ .ID }}"
+    hx-on:htmx:after-settle="Alpine.initTree(this)"></div>
+</div>
         </div>
       {{ else }}
         <div class="bg-white p-8 rounded-sm border border-gray-200 text-center">

@@ -2,7 +2,6 @@
   <title>Diseñador de Horario - PoliPlanner</title>
   <!-- Scripts locales -->
   <script src="/static/bundle/htmx/htmx.min.js" defer></script>
-  <script src="/static/bundle/alpinejs/alpine.min.js" defer></script>
 {{ end }}
 
 {{ define "content" }}
@@ -53,10 +52,7 @@
         </div>
 
         <!-- Contenedor donde HTMX inyecta la lista de materias con sus filtros -->
-        <div
-          id="subjects-container"
-          hx-on::after-settle="Alpine.initTree($el)"
-          class="space-y-3">
+        <div id="subjects-container" hx-on::after-settle="Alpine.initTree(event.target)" class="space-y-3">
           <!-- Estado inicial cuando no seleccionó carrera aún -->
           <div
             class="bg-white p-8 rounded-sm border border-dashed border-gray-300 text-center">
