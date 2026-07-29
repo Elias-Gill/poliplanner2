@@ -58,14 +58,18 @@ window.examScheduleApp = function() {
         events: this.events,
         height: 'auto',
         
-        // CLICK EN EL CALENDARIO -> RESALTA Y HACE SCROLL EN LA LISTA
+        // CLICK EN EL CALENDARIO -> CAMBIA DE PESTAÑA, RESALTA Y HACE SCROLL
         eventClick: (info) => {
           this.selectedExamId = info.event.id;
-          
-          const cardEl = document.getElementById(`exam-card-${info.event.id}`);
-          if (cardEl) {
-            cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
+          this.activeTab = 'list'; // 1. Cambia a la pestaña de lista en móvil
+
+          // 2. Espera a que Alpine renderice la lista visible antes de hacer scroll
+          this.$nextTick(() => {
+            const cardEl = document.getElementById(`exam-card-${info.event.id}`);
+            if (cardEl) {
+              cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          });
         }
       });
 
