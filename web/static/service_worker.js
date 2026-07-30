@@ -57,6 +57,7 @@ const ERROR_HTML = `<!DOCTYPE html>
                 <a href="/dashboard" class="nav-link"><span>Dashboard</span><span class="arrow">→</span></a>
                 <a href="/guides" class="nav-link"><span>Guías</span><span class="arrow">→</span></a>
                 <a href="/tools/calculator" class="nav-link"><span>Calculadora</span><span class="arrow">→</span></a>
+                <a href="/tools/interactive_graph" class="nav-link"><span>Mallas curriculares</span><span class="arrow">→</span></a>
             </div>
         </div>
     </div>
@@ -70,7 +71,11 @@ self.addEventListener('fetch', (event) => {
 	const path = url.pathname;
 
 	const isStatic = path.startsWith('/static/');
-	const isTarget = path.startsWith('/dashboard') || path.startsWith('/guides') || path.startsWith('/tools/calculator');
+	const isTarget =
+		path.startsWith('/dashboard') ||
+		path.startsWith('/guides') ||
+		path.startsWith('/tools/interactive_graph') ||
+		path.startsWith('/tools/calculator');
 
 	// Static file: Network-First -> Cache Fallback -> 404
 	if (isStatic) {
