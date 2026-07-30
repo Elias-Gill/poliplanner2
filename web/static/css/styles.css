@@ -127,3 +127,11 @@ a {
     background-color: #111827;
     color: #f9fafb;
 }
+
+.dark-mode #resultadoTabla tr.bg-gray-50 {
+    background-color: #1a2330;
+}
+
+.dark-mode #resultadoTabla tr.bg-white {
+    background-color: #1f2937;
+}
