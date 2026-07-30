@@ -2,77 +2,88 @@
   <title>Malla Curricular - PoliPlanner</title>
   <link rel="stylesheet" href="/static/css/interactive_graph.css" />
 {{ end }}
+
 {{ define "content" }}
   <script src="/static/bundle/d3/d3.min.js"></script>
-  <div id="graph-wrapper" class="relative w-full flex flex-col">
-    <!-- ===== HEADER ===== -->
-    <header id="app-header">
-      <div id="header-left">
-        <div id="header-text">
-          <h1 id="career-name">Cargando...</h1>
-          <div id="career-stats">
-            <span class="stat-pill" id="stat-semesters"></span>
-            <span class="stat-pill" id="stat-credits"></span>
-            <span class="stat-pill" id="stat-subjects"></span>
+
+  <!-- Contenedor Raíz: Ocupa todo el ancho/alto con el padding deseado sin desbordar -->
+  <div class="w-full h-screen py-4 px-8 flex flex-col overflow-hidden">
+    <!-- WRAPPER PRINCIPAL -->
+    <div
+      id="graph-wrapper"
+      class="relative w-full h-full flex flex-col flex-1 min-h-0">
+      <!-- ===== HEADER ===== -->
+      <header id="app-header" class="flex-shrink-0 mb-4">
+        <div id="header-left">
+          <div id="header-text">
+            <h1 id="career-name">Cargando...</h1>
+            <div id="career-stats">
+              <span class="stat-pill" id="stat-semesters"></span>
+              <span class="stat-pill" id="stat-credits"></span>
+              <span class="stat-pill" id="stat-subjects"></span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div id="selector-wrapper">
-        <span id="selector-label">Carrera</span>
-        <div id="custom-select">
-          <button id="custom-select-btn" type="button">IIN</button>
-          <ul id="custom-select-list" class="hidden"></ul>
+        <div id="selector-wrapper">
+          <span id="selector-label">Carrera</span>
+          <div id="custom-select">
+            <button id="custom-select-btn" type="button">IIN</button>
+            <ul id="custom-select-list" class="hidden"></ul>
+          </div>
+          <select
+            id="career-selector"
+            class="hidden"
+            aria-label="Seleccionar carrera">
+            <option value="IAE.json">IAE</option>
+            <option value="IEL.json">IEL</option>
+            <option value="IEN.json">IEN</option>
+            <option value="IEK-CI.json">IEK - Control Industrial</option>
+            <option value="IEK-EM.json">IEK - Electrónica Médica</option>
+            <option value="IEK-ME.json">IEK - Mecatrónica</option>
+            <option value="IEK-TI.json">
+              IEK - Teleprocesamiento de Información
+            </option>
+            <option value="IIN.json" selected>IIN</option>
+            <option value="IMK.json">IMK</option>
+            <option value="LCA.json">LCA</option>
+            <option value="LCIK-AS.json">LCIK - Análisis de Sistemas</option>
+            <option value="LCIK-PC.json">
+              LCIK - Programación de Computadoras
+            </option>
+          </select>
         </div>
-        <select
-          id="career-selector"
-          class="hidden"
-          aria-label="Seleccionar carrera">
-          <option value="IAE.json">IAE</option>
-          <option value="IEL.json">IEL</option>
-          <option value="IEN.json">IEN</option>
-          <option value="IEK-CI.json">IEK - Control Industrial</option>
-          <option value="IEK-EM.json">IEK - Electrónica Médica</option>
-          <option value="IEK-ME.json">IEK - Mecatrónica</option>
-          <option value="IEK-TI.json">
-            IEK - Teleprocesamiento de Información
-          </option>
-          <option value="IIN.json" selected>IIN</option>
-          <option value="IMK.json">IMK</option>
-          <option value="LCA.json">LCA</option>
-          <option value="LCIK-AS.json">LCIK - Análisis de Sistemas</option>
-          <option value="LCIK-PC.json">
-            LCIK - Programación de Computadoras
-          </option>
-        </select>
-      </div>
-    </header>
+      </header>
 
-    <!-- ===== GRAPH ===== -->
-    <div id="graph-container">
-      <div id="loading-overlay">
-        <div class="spinner"></div>
-        <div id="loading-text">Cargando malla...</div>
+      <!-- ===== GRAPH (Ocupa todo el espacio vertical restante) ===== -->
+      <div
+        id="graph-container"
+        class="relative flex-1 w-full h-full min-h-0 overflow-hidden shadow-xl">
+        <div id="loading-overlay">
+          <div class="spinner"></div>
+          <div id="loading-text">Cargando malla...</div>
+        </div>
       </div>
-    </div>
 
-    <!-- ===== TOOLTIP FLOTANTE ===== -->
-    <div id="node-tooltip" role="tooltip">
-      <div id="tooltip-name"></div>
-      <div class="tooltip-meta">
-        <span class="tooltip-badge" id="tooltip-badge"></span>
-        <span class="tooltip-chip" id="tooltip-credits"></span>
-        <span class="tooltip-chip" id="tooltip-hours"></span>
+      <!-- ===== TOOLTIP FLOTANTE ===== -->
+      <div id="node-tooltip" role="tooltip">
+        <div id="tooltip-name"></div>
+        <div class="tooltip-meta">
+          <span class="tooltip-badge" id="tooltip-badge"></span>
+          <span class="tooltip-chip" id="tooltip-credits"></span>
+          <span class="tooltip-chip" id="tooltip-hours"></span>
+        </div>
       </div>
-    </div>
 
-    <!-- Error message -->
-    <div
-      id="error"
-      class="fixed bottom-5 left-5 right-5 bg-red-500 text-white p-4 rounded-xl text-center font-medium shadow-lg z-40 hidden">
-      Error al cargar la malla. Intentá de nuevo.
+      <!-- Error message -->
+      <div
+        id="error"
+        class="fixed bottom-5 left-5 right-5 bg-red-500 text-white p-4 rounded-xl text-center font-medium shadow-lg z-40 hidden">
+        Error al cargar la malla. Intentá de nuevo.
+      </div>
     </div>
   </div>
+
   <script src="/static/bundle/interactive_graph/interactive_graph.js?v=23"></script>
   <script src="/static/bundle/interactive_graph/interactive_graph_load.js?v=23"></script>
 {{ end }}
