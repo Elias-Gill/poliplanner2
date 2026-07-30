@@ -3,11 +3,8 @@
   <link rel="stylesheet" href="/static/css/interactive_graph.css" />
 {{ end }}
 {{ define "content" }}
-  <script
-    lazy
-    type="text/javascript"
-    src="/static/bundle/vis-network/vis-network.min.js"></script>
-  <div id="graph-wrapper" class="relative w-full h-[calc(100vh-64px)] flex flex-col overflow-hidden">
+  <script src="/static/bundle/d3/d3.min.js"></script>
+  <div id="graph-wrapper" class="relative w-full flex flex-col">
     <!-- ===== HEADER ===== -->
     <header id="app-header">
       <div id="header-left">
@@ -23,7 +20,11 @@
 
       <div id="selector-wrapper">
         <span id="selector-label">Carrera</span>
-        <select id="career-selector" aria-label="Seleccionar carrera">
+        <div id="custom-select">
+          <button id="custom-select-btn" type="button">IIN</button>
+          <ul id="custom-select-list" class="hidden"></ul>
+        </div>
+        <select id="career-selector" class="hidden" aria-label="Seleccionar carrera">
           <option value="IAE.json">IAE</option>
           <option value="IEL.json">IEL</option>
           <option value="IEN.json">IEN</option>
@@ -62,8 +63,6 @@
       </div>
     </div>
 
-
-
     <!-- Error message -->
     <div
       id="error"
@@ -71,6 +70,6 @@
       Error al cargar la malla. Intentá de nuevo.
     </div>
   </div>
-  <script src="/static/bundle/interactive_graph/interactive_graph.js"></script>
-  <script src="/static/bundle/interactive_graph/interactive_graph_load.js"></script>
+  <script src="/static/bundle/interactive_graph/interactive_graph.js?v=23"></script>
+  <script src="/static/bundle/interactive_graph/interactive_graph_load.js?v=23"></script>
 {{ end }}

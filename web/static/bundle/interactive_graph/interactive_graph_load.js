@@ -79,6 +79,55 @@
     });
   }
 
+  // ── Custom dropdown ──
+  (function initCustomSelect() {
+    const btn = document.getElementById("custom-select-btn");
+    const list = document.getElementById("custom-select-list");
+    if (!btn || !list || !careerSelector) return;
+
+    // populate list from hidden select options
+    Array.from(careerSelector.options).forEach((opt) => {
+      const li = document.createElement("li");
+      li.textContent = opt.textContent;
+      li.dataset.value = opt.value;
+      if (opt.selected) {
+        li.classList.add("selected");
+        btn.textContent = opt.textContent;
+      }
+      list.appendChild(li);
+    });
+
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      list.classList.toggle("hidden");
+    });
+
+    list.addEventListener("click", (e) => {
+      const li = e.target.closest("li");
+      if (!li) return;
+      const value = li.dataset.value;
+      const text = li.textContent;
+
+      // update button
+      btn.textContent = text;
+
+      // update hidden select
+      careerSelector.value = value;
+      careerSelector.dispatchEvent(new Event("change", { bubbles: true }));
+
+      // update selected class
+      list.querySelectorAll("li").forEach((l) => l.classList.remove("selected"));
+      li.classList.add("selected");
+
+      // close list
+      list.classList.add("hidden");
+    });
+
+    document.addEventListener("click", () => {
+      list.classList.add("hidden");
+    });
+  })();
+
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => loadGraph(careerSelector?.value || "IIN.json"));
   } else {
@@ -86,14 +135,26 @@
   }
 
   // ── Re-renderizar cuando cambia el modo oscuro/claro ──
-  const htmlEl = document.documentElement;
-  const observer = new MutationObserver((mutations) => {
-    for (const m of mutations) {
-      if (m.type === "attributes" && m.attributeName === "class") {
-        loadGraph(lastLoadedFile);
-        break;
-      }
-    }
+  // (se reemplazó por una recarga manual en el toggle de tema)
+
+  // ── Orientación en mobile ──
+  function isMobile() {
+    return window.innerWidth < 768;
+  }
+
+  function isPortrait() {
+    return window.innerHeight > window.innerWidth;
+  }
+
+  function fitByOrientation() {
+    if (!isMobile() || typeof fitGraph !== "function") return;
+    setTimeout(() => fitGraph(isPortrait()), 100);
+  }
+
+  window.addEventListener("orientationchange", () => {
+    setTimeout(fitByOrientation, 300);
   });
-  observer.observe(htmlEl, { attributes: true, attributeFilter: ["class"] });
+  window.addEventListener("resize", fitByOrientation);
+
+  fitByOrientation();
 })();
