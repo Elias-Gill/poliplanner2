@@ -23,6 +23,7 @@
     --color-text-muted: #9ca3af;
 
     --color-primary-50:  #1e3a5f;
+    --color-primary-300: #374151;
     --color-primary-600: #93c5fd;
 
     --color-yellow-50:  #1c1917;
@@ -54,6 +55,52 @@
     --color-gray-900: #f9fafb;
 
     --color-white: #1f2937;
+}
+
+.sidebar-bg { background-color: #2f4c6d; }
+.dark-mode .sidebar-bg { background-color: var(--color-white); }
+
+html:not(.dark-mode) .sidebar-bg,
+html:not(.dark-mode) .sidebar-bg .text-gray-800,
+html:not(.dark-mode) .sidebar-bg .text-gray-900 {
+    color: #ffffff;
+}
+
+html:not(.dark-mode) .sidebar-bg .text-gray-700 {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+html:not(.dark-mode) .sidebar-bg .text-gray-500 {
+    color: rgba(255, 255, 255, 0.55);
+}
+
+html:not(.dark-mode) .sidebar-bg .text-gray-400 {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+html:not(.dark-mode) .sidebar-bg .border-gray-200 {
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+html:not(.dark-mode) .sidebar-bg a.nav-link,
+html:not(.dark-mode) .sidebar-bg .group a.nav-link {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+html:not(.dark-mode) .sidebar-bg a.nav-link:hover,
+html:not(.dark-mode) .sidebar-bg a.nav-link.hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+html:not(.dark-mode) .sidebar-bg a.nav-link svg,
+html:not(.dark-mode) .sidebar-bg a.nav-link i {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+html:not(.dark-mode) .sidebar-bg a.nav-link:hover svg,
+html:not(.dark-mode) .sidebar-bg a.nav-link:hover i {
+    color: #ffffff;
 }
 
 a {
