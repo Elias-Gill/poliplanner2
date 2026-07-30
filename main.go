@@ -127,6 +127,7 @@ func initRouter(srvs *services.AppServices) chi.Router {
 	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(staticDir)))
 	r.Handle("/sitemap.xml", http.FileServer(staticDir))
 	r.Handle("/robots.txt", http.FileServer(staticDir))
+	r.Handle("/service_worker.js", http.FileServer(staticDir))
 	r.Handle("/favicon.ico", http.FileServer(staticDir))
 
 	// Fallback 404 handler
