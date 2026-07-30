@@ -1,53 +1,54 @@
 {{ define "fragments/theme-toggle" }}
-  <!-- here the id is setted, so the theme toggle script can modify its value -->
+  <!-- El id es usado por el script de theme_toggle.js -->
   <button
     id="{{ . }}"
     type="button"
-    class="theme-toggle relative w-14 h-7 flex items-center bg-white border border-gray-300 rounded-full transition-colors duration-300 shadow-sm">
+    class="theme-toggle relative w-14 h-7 flex items-center border rounded-full transition-colors duration-300 shadow-sm"
+    aria-label="Alternar modo oscuro">
     <!-- Luna -->
-    <span class="absolute right-2 text-black flex items-center">
-      <i class="bi bi-moon-fill text-sm"></i>
+    <span class="absolute right-2 flex items-center toggle-moon">
+      <svg class="text-sm" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16"><path d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278"/></svg>
     </span>
     <!-- Sol -->
-    <span class="absolute left-2 text-white flex items-center">
-      <i class="bi bi-sun-fill text-sm"></i>
+    <span class="absolute left-2 flex items-center toggle-sun">
+      <svg class="text-sm" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16"><path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5H.5a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"/></svg>
     </span>
     <!-- Thumb -->
-    <span
-      class="theme-thumb absolute left-1 w-5 h-5 bg-gray-800 rounded-full transition-all duration-300"></span>
+    <span class="theme-thumb absolute left-1 w-5 h-5 rounded-full transition-all duration-300"></span>
   </button>
   <style>
+    /* Modo claro - thumb a la izquierda, se ve el SOL (lado derecho visible) */
     .theme-toggle {
-      background-color: white;
+      background-color: #fef9c3; /* amarillo muy suave */
+      border-color: #fde047;
     }
+    .theme-toggle .theme-thumb {
+      background-color: #ca8a04; /* amarillo dorado */
+      left: 1px;
+    }
+    /* Sol a la derecha, visible en modo claro */
+    .theme-toggle .toggle-sun  { color: #ca8a04; opacity: 1; }
+    /* Luna a la izquierda, oculta en modo claro */
+    .theme-toggle .toggle-moon { color: #9ca3af; opacity: 0.3; }
 
-    /* modo oscuro */
+    /* Modo oscuro - thumb a la derecha, se ve la LUNA (lado izquierdo visible) */
     .dark-mode .theme-toggle {
-      background-color: black;
-      border-color: #1f2937;
+      background-color: #1e293b;
+      border-color: #334155;
     }
-
-    /* mover thumb */
-    .dark-mode .theme-thumb {
+    .dark-mode .theme-toggle .theme-thumb {
       transform: translateX(28px);
-      background-color: white;
+      background-color: #e2e8f0;
     }
+    /* Luna a la izquierda, visible en modo oscuro */
+    .dark-mode .theme-toggle .toggle-moon { color: #e2e8f0; opacity: 1; }
+    /* Sol a la derecha, oculto en modo oscuro */
+    .dark-mode .theme-toggle .toggle-sun  { color: #facc15; opacity: 0.25; }
 
-    /* iconos */
-    .theme-toggle .bi-moon-fill {
-      opacity: 1;
-    }
-
-    .theme-toggle .bi-sun-fill {
-      opacity: 0.35;
-    }
-
-    .dark-mode .bi-moon-fill {
-      opacity: 0.35;
-    }
-
-    .dark-mode .bi-sun-fill {
-      opacity: 1;
+    @media (prefers-reduced-motion: reduce) {
+      .theme-toggle, .theme-toggle *, .theme-thumb {
+        transition: none !important;
+      }
     }
   </style>
 {{ end }}

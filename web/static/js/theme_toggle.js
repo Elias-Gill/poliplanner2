@@ -1,9 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const root = document.documentElement;
 
-    const desktopToggle = document.getElementById("theme-toggle-desktop");
-    const mobileToggle = document.getElementById("theme-toggle-mobile");
-
     const storedMode = localStorage.getItem("mode");
 
     if (storedMode === "dark") {
@@ -17,8 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("mode", isDark ? "dark" : "light");
     };
 
-    [desktopToggle, mobileToggle].forEach(btn => {
-        if (!btn) return;
+    document.querySelectorAll(".theme-toggle").forEach(btn => {
         btn.addEventListener("click", toggleTheme);
     });
 });

@@ -1,154 +1,66 @@
 // ================= CONSTANTES DE DIMENSIONES =================
 
 const DIMENSIONS = {
-  SEMESTER_WIDTH: 300, // Ancho asignado por semestre
-  NODE_START_Y: 80, // Posición vertical inicial de los nodos
-  NODE_SPACING_Y: 90, // Separación vertical entre nodos
-  NODE_MARGIN: 10, // Margen interno de los nodos
-  NODE_MAX_WIDTH: 220, // ≈ 28–32 caracteres dependiendo de la fuente
+  SEMESTER_WIDTH: 340,
+  NODE_START_Y: 65,
+  NODE_SPACING_Y: 100,
+  NODE_MAX_WIDTH: 220,
+  NODE_HEIGHT: 38,
+  LINE_HEIGHT: 17,
 };
 
 // ================= CONSTANTES DE COLORES =================
 
-const COLORS = {
-  NODE_TEXT: "#1f2937",
-  NODE_BG_ODD: "#f591b2", // semestres impares (1,3,5...)
-  NODE_BG_EVEN: "#9dc6ac", // semestres pares   (2,4,6...)
-  NODE_BORDER: "#6b7280",
-
-  NODE_HIGHLIGHT_BG: "#b9aeda",
-  NODE_HIGHLIGHT_BORDER: "#6b7280",
-
-  NODE_CHILD_BG: "#60a5fa",
-  NODE_CHILD_BORDER: "#6b7280",
-
-  NODE_PARENT_BG: "#fbbf24",
-  NODE_PARENT_BORDER: "#6b7280",
-
-  EDGE_NORMAL: "#535353",
-  EDGE_OPACITY: 0.8,
-};
-
-// ================= CONSTANTES DE FUENTES =================
+function getColors() {
+  const isDark = document.documentElement.classList.contains("dark-mode");
+  if (isDark) {
+    return {
+      NODE_TEXT:            "#e6edf5",
+      NODE_BG_ODD:          "#142536",
+      NODE_BG_EVEN:         "#2f4c6d",
+      NODE_BORDER:          "#3f638a",
+      NODE_HIGHLIGHT_BG:    "#3f638a",
+      NODE_HIGHLIGHT_BORDER:"#7fa3c4",
+      NODE_CHILD_BG:        "#557fab",
+      NODE_CHILD_BORDER:    "#a9c1da",
+      NODE_PARENT_BG:       "#2f4c6d",
+      NODE_PARENT_BORDER:   "#557fab",
+      EDGE_NORMAL:          "#3f638a",
+      EDGE_OPACITY:         0.85,
+      TITLE_COLOR:          "#60a5fa",
+    };
+  }
+  return {
+    NODE_TEXT:            "#142536",
+    NODE_BG_ODD:          "#f0f4f8",
+    NODE_BG_EVEN:         "#cddaea",
+    NODE_BORDER:          "#a9c1da",
+    NODE_HIGHLIGHT_BG:    "#a9c1da",
+    NODE_HIGHLIGHT_BORDER:"#557fab",
+    NODE_CHILD_BG:        "#7fa3c4",
+    NODE_CHILD_BORDER:    "#3f638a",
+    NODE_PARENT_BG:       "#557fab",
+    NODE_PARENT_BORDER:   "#2f4c6d",
+    EDGE_NORMAL:          "#7fa3c4",
+    EDGE_OPACITY:         0.85,
+    TITLE_COLOR:          "#3f638a",
+  };
+}
 
 const FONTS = {
-  NODE_SIZE: 14,
+  NODE_SIZE: 13,
   NODE_FACE: "Inter, Arial, sans-serif",
-};
-
-// ============== CONFIGURACIÓN BASE PARA NODOS Y ARISTAS ==============
-
-const NODE_COMMON_CONFIG = {
-  shape: "box",
-  fixed: true,
-  physics: false,
-  margin: DIMENSIONS.NODE_MARGIN,
-  font: {
-    size: FONTS.NODE_SIZE,
-    face: FONTS.NODE_FACE,
-    color: COLORS.NODE_TEXT,
-    multi: true, // permite multilínea
-  },
-  borderWidth: 1,
-  widthConstraint: {
-    maximum: DIMENSIONS.NODE_MAX_WIDTH, // fuerza wrap
-  },
-};
-
-const EDGES_COMMON_CONFIG = {
-  arrows: {
-    to: {
-      enabled: true,
-      scaleFactor: 0.8,
-      type: "arrow",
-    },
-  },
-  color: {
-    color: COLORS.EDGE_NORMAL,
-    opacity: COLORS.EDGE_OPACITY,
-    highlight: COLORS.EDGE_NORMAL,
-    hover: COLORS.EDGE_NORMAL, // Añadir estado hover explícito
-    inherit: false, // Importante: evitar herencia de colores
-  },
-  width: 1,
-  hoverWidth: 1,
-  selectionWidth: 0, // Evitar cambio de ancho al seleccionar
-};
-
-const SEMESTERS_TITLE_STYLE = {
-  y: 10,
-  fixed: true,
-  physics: false,
-  font: {
-    size: 28,
-    bold: true,
-    color: "#646464",
-  },
-  shape: "text",
-};
-
-// ================= ESTILOS DE NODOS (para hover / parent / child) =================
-
-const NODE_STYLE_BASE = {
-  font: {
-    color: COLORS.NODE_TEXT,
-    bold: false,
-    size: FONTS.NODE_SIZE,
-  },
-  borderWidth: 1, // valor fijo para todos los estados
-  opacity: 1,
-};
-
-const NODE_STYLE_DEFAULT_FADED = {
-  opacity: 0.12,
-};
-
-const NODE_STYLE_HOVER = {
-  color: {
-    background: COLORS.NODE_HIGHLIGHT_BG,
-    border: COLORS.NODE_HIGHLIGHT_BORDER,
-  },
-  font: {
-    ...NODE_STYLE_BASE.font,
-    bold: true,
-    size: FONTS.NODE_SIZE + 2,
-  },
-  // borderWidth ya viene de NODE_STYLE_BASE → no se sobreescribe
-  opacity: 1,
-};
-
-const NODE_STYLE_PARENT = {
-  color: {
-    background: COLORS.NODE_PARENT_BG,
-    border: COLORS.NODE_PARENT_BORDER,
-  },
-  font: {
-    ...NODE_STYLE_BASE.font,
-    bold: true,
-  },
-  opacity: 1,
-};
-
-const NODE_STYLE_CHILD = {
-  color: {
-    background: COLORS.NODE_CHILD_BG,
-    border: COLORS.NODE_CHILD_BORDER,
-  },
-  font: {
-    ...NODE_STYLE_BASE.font,
-    bold: true,
-  },
-  // borderWidth ya viene de NODE_STYLE_BASE
-  opacity: 1,
 };
 
 // ================= VARIABLES GLOBALES =================
 
 let allSubjects = {};
-let nodes;
-let edges;
-let network;
+let nodePositions = {};
+let edgeList = [];
 let semestersCount = 0;
+let _zoomInstance = null;
+let _graphWidth = 0;
+let _graphHeight = 0;
 
 // ===================== PUBLIC API =====================
 
@@ -159,31 +71,374 @@ function prepareGraphData(data) {
     data.subjects,
     semestersCount,
   );
-  const semesterTitles = _createSemesterTitles();
 
   const created = _createSubjectNodes(subjectsBySemester);
   allSubjects = created.allSubjects;
-
-  nodes = new vis.DataSet([...semesterTitles, ...created.nodesArray]);
-  edges = new vis.DataSet(_createEdges(allSubjects));
+  nodePositions = created.nodePositions;
+  edgeList = _createEdges(allSubjects);
 }
 
 function renderGraph(elementId) {
   const element = document.getElementById(elementId);
   if (!element) return;
+  element.innerHTML = "";
 
-  const options = _createVisOptions();
+  const COLORS = getColors();
+  const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
 
-  network = new vis.Network(element, { nodes, edges }, options);
-  _setupNetworkEvents(network, allSubjects, nodes, edges);
-  network.fit();
+  if (semestersCount === 0 || Object.keys(nodePositions).length === 0) return;
+
+  let maxY = 0;
+  for (const pos of Object.values(nodePositions)) {
+    const bottom = pos.y + (pos.height || DIMENSIONS.NODE_HEIGHT);
+    if (bottom > maxY) maxY = bottom;
+  }
+
+  const padX = 20;
+  const padY = 10;
+  const titleArea = 50;
+  _graphWidth = semestersCount * DIMENSIONS.SEMESTER_WIDTH + padX * 2;
+  _graphHeight = Math.max(maxY + padY, titleArea + 60);
+
+  // ── SVG (sin viewBox — el zoom de D3 escala directamente en CSS) ──
+  const svg = d3.select(element)
+    .append("svg")
+    .attr("width", "100%")
+    .attr("height", "100%")
+    .style("width", "100%")
+    .style("height", "100%")
+    .style("display", "block");
+
+  // ── Defs (arrow marker) ──
+  svg.append("defs")
+    .append("marker")
+    .attr("id", "arrow")
+    .attr("viewBox", "0 -4 8 8")
+    .attr("refX", 14)
+    .attr("refY", 0)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M0,-4L8,0L0,4")
+    .attr("fill", COLORS.EDGE_NORMAL);
+
+  // ── Zoom ──
+  _zoomInstance = d3.zoom()
+    .scaleExtent([0.1, 20])
+    .on("zoom", (event) => {
+      container.attr("transform", event.transform);
+    });
+
+  svg.call(_zoomInstance);
+
+  const container = svg.append("g");
+
+  // ── Semester title columns ──
+  for (let sem = 1; sem <= semestersCount; sem++) {
+    const x = (sem - 1) * DIMENSIONS.SEMESTER_WIDTH + 50;
+    const cx = x + DIMENSIONS.SEMESTER_WIDTH / 2;
+
+    container.append("text")
+      .attr("x", cx)
+      .attr("y", 32)
+      .attr("text-anchor", "middle")
+      .attr("font-size", 22)
+      .attr("font-weight", "700")
+      .attr("font-family", FONTS.NODE_FACE)
+      .attr("fill", COLORS.TITLE_COLOR)
+      .attr("class", "semester-title")
+      .attr("pointer-events", isTouch ? "none" : null)
+      .text(`Semestre ${sem}`);
+  }
+
+  // ── Edges ──
+  const edgePaths = container.append("g")
+    .selectAll("path")
+    .data(edgeList)
+    .enter()
+    .append("path")
+    .attr("d", (d) => {
+      const src = nodePositions[d.from];
+      const tgt = nodePositions[d.to];
+      if (!src || !tgt) return "";
+      const sx = src.x + src.width;
+      const sy = src.y + src.height / 2;
+      const tx = tgt.x;
+      const ty = tgt.y + tgt.height / 2;
+      const cx = (sx + tx) / 2;
+      return `M${sx},${sy}C${cx},${sy} ${cx},${ty} ${tx},${ty}`;
+    })
+    .attr("fill", "none")
+    .attr("stroke", COLORS.EDGE_NORMAL)
+    .attr("stroke-width", 1.2)
+    .attr("opacity", COLORS.EDGE_OPACITY)
+    .attr("marker-end", "url(#arrow)");
+
+  // ── Nodes ──
+  const nodeData = Object.entries(nodePositions).map(([id, pos]) => ({
+    id,
+    ...pos,
+    subject: allSubjects[id],
+  }));
+
+  const nodeGroups = container.append("g")
+    .selectAll("g")
+    .data(nodeData)
+    .enter()
+    .append("g")
+    .attr("data-id", (d) => d.id);
+
+  // tooltip con nombre completo
+  nodeGroups.append("title")
+    .text((d) => d.subject ? d.subject.name : d.id);
+
+  function getNodeBg(d) {
+    return d.subject && d.subject.sem % 2 === 0 ? COLORS.NODE_BG_EVEN : COLORS.NODE_BG_ODD;
+  }
+
+  // rect
+  nodeGroups.append("rect")
+    .attr("x", (d) => d.x)
+    .attr("y", (d) => d.y)
+    .attr("width", (d) => d.width)
+    .attr("height", (d) => d.height)
+    .attr("rx", 6)
+    .attr("ry", 6)
+    .attr("fill", getNodeBg)
+    .attr("stroke", COLORS.NODE_BORDER)
+    .attr("stroke-width", 1)
+    .attr("cursor", "pointer")
+    .attr("class", "node-rect");
+
+  // label (multi-line via tspan)
+  nodeGroups.each(function (d) {
+    const lines = d.lines || [d.subject ? d.subject.name : ""];
+    const lineCount = lines.length;
+    const totalTextH = lineCount * DIMENSIONS.LINE_HEIGHT;
+    const startY = d.y + (d.height - totalTextH) / 2 + DIMENSIONS.LINE_HEIGHT - 3;
+
+    const text = d3.select(this).append("text")
+      .attr("text-anchor", "middle")
+      .attr("font-size", FONTS.NODE_SIZE)
+      .attr("font-family", FONTS.NODE_FACE)
+      .attr("fill", COLORS.NODE_TEXT)
+      .attr("pointer-events", "none")
+      .attr("class", "node-label");
+
+    text.selectAll("tspan")
+      .data(lines)
+      .enter()
+      .append("tspan")
+      .attr("x", d.x + d.width / 2)
+      .attr("dy", (_, i) => i === 0 ? 0 : DIMENSIONS.LINE_HEIGHT)
+      .attr("y", (_, i) => i === 0 ? startY : null)
+      .text((l) => l);
+  });
+
+  // ── Leyenda ──
+  const legendDiv = document.createElement("div");
+  legendDiv.id = "graph-legend";
+  legendDiv.innerHTML = `
+    <div id="legend-title">Navegacion</div>
+    <div class="legend-item">
+      <svg width="8" height="8" viewBox="0 0 8 8" fill="#94a3b8" style="flex-shrink:0;width:8px;height:8px">
+        <rect x="1" y="1" width="2.5" height="2.5" rx=".6"/>
+        <rect x="4.5" y="1" width="2.5" height="2.5" rx=".6"/>
+        <rect x="1" y="4.5" width="2.5" height="2.5" rx=".6"/>
+        <rect x="4.5" y="4.5" width="2.5" height="2.5" rx=".6"/>
+      </svg>
+      Arrastra para mover
+    </div>
+    <div class="legend-item">
+      <svg width="8" height="10" viewBox="0 0 8 10" fill="none" stroke="#94a3b8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;width:8px;height:10px">
+        <path d="M2 1L7 5l-3 .6L3 8z"/>
+      </svg>
+      Clic en materia para detalles
+    </div>`;
+  element.appendChild(legendDiv);
+
+  // ── Ajuste inicial para que cubra todo el alto ──
+  requestAnimationFrame(() => {
+    fitGraph(true);
+  });
+
+  // ── Events ──
+  nodeGroups.on("click", (event, d) => {
+    event.stopPropagation();
+    _openModal(d.id);
+  });
+
+  if (!isTouch) {
+    nodeGroups.on("mouseenter", function (event, d) {
+      _highlightRelations(d.id, nodeGroups, edgePaths, COLORS);
+    });
+    nodeGroups.on("mouseleave", function () {
+      _resetStyles(nodeGroups, edgePaths, COLORS);
+    });
+  }
+
+  svg.on("dblclick", () => {
+    fitGraph(true);
+  });
+}
+
+function fitGraph(fillHeight) {
+  const svg = d3.select("#graph-container svg");
+  if (svg.empty() || !_zoomInstance) return;
+
+  const gc = document.getElementById("graph-container");
+  if (!gc) return;
+  const rect = gc.getBoundingClientRect();
+  const cw = rect.width, ch = rect.height;
+  if (cw <= 0 || ch <= 0) return;
+
+  // alto real del contenido vía bounding box del <g>
+  let contentH = _graphHeight;
+  const gNode = svg.select("g").node();
+  if (gNode) {
+    try {
+      const bb = gNode.getBBox();
+      if (bb.height > 0) contentH = bb.height + 6;
+    } catch (_) {}
+  }
+
+  const effectiveH = ch * 0.85;
+  const k = fillHeight
+    ? effectiveH / contentH
+    : Math.min(cw / _graphWidth, effectiveH / _graphHeight);
+
+  const tx = fillHeight ? 0 : (cw - _graphWidth * k) / 2;
+  const ty = fillHeight ? 0 : Math.max((ch - _graphHeight * k) / 2, 0);
+
+  const t = d3.zoomIdentity.translate(tx, ty).scale(k);
+  svg.call(_zoomInstance.transform, t);
+}
+
+function renderSemesterView() {
+  const tabsEl = document.getElementById("semester-tabs");
+  const cardsEl = document.getElementById("semester-cards");
+  if (!tabsEl || !cardsEl) return;
+
+  const subjectsBySem = {};
+  for (const [id, subj] of Object.entries(allSubjects)) {
+    const sem = subj.sem;
+    if (!subjectsBySem[sem]) subjectsBySem[sem] = [];
+    subjectsBySem[sem].push({ id, ...subj });
+  }
+
+  for (const sem of Object.keys(subjectsBySem)) {
+    subjectsBySem[sem].sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  let activeSem = Math.min(...Object.keys(subjectsBySem).map(Number), 1);
+
+  tabsEl.innerHTML = "";
+  const sortedSems = Object.keys(subjectsBySem).map(Number).sort((a, b) => a - b);
+
+  sortedSems.forEach((sem) => {
+    const tab = document.createElement("button");
+    tab.className = `semester-tab${sem === activeSem ? " active" : ""}`;
+    tab.textContent = `${sem}°`;
+    tab.setAttribute("data-sem", sem);
+    tab.addEventListener("click", () => {
+      activeSem = sem;
+      tabsEl.querySelectorAll(".semester-tab").forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      renderCards(activeSem);
+    });
+    tabsEl.appendChild(tab);
+  });
+
+  function renderCards(sem) {
+    cardsEl.innerHTML = "";
+    const subjects = subjectsBySem[sem] || [];
+
+    subjects.forEach((subj) => {
+      const card = document.createElement("div");
+      card.className = "semester-card";
+      card.addEventListener("click", () => _openModal(subj.id));
+
+      const header = document.createElement("div");
+      header.className = "semester-card-header";
+
+      const name = document.createElement("div");
+      name.className = "semester-card-name";
+      name.textContent = subj.name;
+
+      const badge = document.createElement("span");
+      badge.className = `semester-card-badge badge-${subj.type || "OBL"}`;
+      badge.textContent = subj.type || "OBL";
+
+      header.appendChild(name);
+      header.appendChild(badge);
+
+      const meta = document.createElement("div");
+      meta.className = "semester-card-meta";
+      meta.innerHTML = `
+        <span>${subj.credits || "–"} créd.</span>
+        <span class="meta-sep">·</span>
+        <span>${subj.weekly_hours || "–"} hrs/sem</span>
+      `;
+
+      const prereqs = document.createElement("div");
+      prereqs.className = "semester-card-prereqs";
+
+      const preList = subj.pre || [];
+      if (preList.length === 0) {
+        const none = document.createElement("span");
+        none.className = "semester-card-no-prereqs";
+        none.textContent = "Sin pre-requisitos";
+        prereqs.appendChild(none);
+      } else {
+        preList.forEach((preId) => {
+          const prereqSubject = allSubjects[preId];
+          const chip = document.createElement("button");
+          chip.className = "semester-prereq-chip";
+          chip.textContent = prereqSubject ? prereqSubject.name : preId;
+          if (prereqSubject) {
+            chip.addEventListener("click", (e) => {
+              e.stopPropagation();
+              _openModal(preId);
+            });
+          }
+          prereqs.appendChild(chip);
+        });
+      }
+
+      card.appendChild(header);
+      card.appendChild(meta);
+      card.appendChild(prereqs);
+      cardsEl.appendChild(card);
+    });
+  }
+
+  renderCards(activeSem);
 }
 
 // ================= FUNCIONES AUXILIARES =================
 
+function _wrapText(text, maxWidth, charWidth) {
+  const maxChars = Math.max(Math.floor((maxWidth - 16) / charWidth), 5);
+  const words = text.split(" ");
+  const lines = [];
+  let current = "";
+  for (const word of words) {
+    const test = current ? current + " " + word : word;
+    if (test.length > maxChars && current) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = test;
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
+}
+
 function _createSubjectNodes(semesters) {
   const allSubjectsLocal = {};
-  const nodesArray = [];
+  const positions = {};
 
   for (let sem = 1; sem <= semestersCount; sem++) {
     const subjects = semesters[sem];
@@ -191,7 +446,7 @@ function _createSubjectNodes(semesters) {
       subjects[a].name.localeCompare(subjects[b].name),
     );
 
-    const xBase = (sem - 1) * DIMENSIONS.SEMESTER_WIDTH;
+    const xBase = (sem - 1) * DIMENSIONS.SEMESTER_WIDTH + 50;
 
     ids.forEach((id, i) => {
       const subject = subjects[id];
@@ -202,236 +457,126 @@ function _createSubjectNodes(semesters) {
         pre: subject.prerequisites || [],
       };
 
-      nodesArray.push({
-        id,
-        label: subject.name,
-        group: `sem${sem}`,
-        x: xBase,
+      const charWidth = 7.8;
+      const textWidth = subject.name.length * charWidth + 30;
+      const nodeWidth = Math.min(Math.max(textWidth, 90), DIMENSIONS.NODE_MAX_WIDTH);
+      const lines = _wrapText(subject.name, nodeWidth, charWidth);
+      const nodeHeight = lines.length * DIMENSIONS.LINE_HEIGHT + 10;
+
+      positions[id] = {
+        x: xBase + (DIMENSIONS.SEMESTER_WIDTH - nodeWidth) / 2,
         y: DIMENSIONS.NODE_START_Y + i * DIMENSIONS.NODE_SPACING_Y,
-        ...NODE_COMMON_CONFIG,
-      });
+        width: nodeWidth,
+        height: Math.max(nodeHeight, DIMENSIONS.NODE_HEIGHT),
+        lines,
+      };
     });
   }
 
-  return { allSubjects: allSubjectsLocal, nodesArray };
+  return { allSubjects: allSubjectsLocal, nodePositions: positions };
 }
 
 function _createEdges(allSubjectsLocal) {
-  const edgesArray = [];
-
+  const edges = [];
   for (const [id, subject] of Object.entries(allSubjectsLocal)) {
     for (const pre of subject.pre) {
-      edgesArray.push({
-        from: pre,
-        to: id,
-        ...EDGES_COMMON_CONFIG,
-      });
+      edges.push({ from: pre, to: id });
     }
   }
-
-  return edgesArray;
+  return edges;
 }
 
-function _createSemesterTitles() {
-  const titles = [];
-
-  for (let i = 1; i <= semestersCount; i++) {
-    titles.push({
-      id: `title-sem-${i}`,
-      label: `Semestre ${i}`,
-      x: (i - 1) * DIMENSIONS.SEMESTER_WIDTH,
-      ...SEMESTERS_TITLE_STYLE,
-    });
-  }
-
-  return titles;
-}
-
-function _createVisOptions() {
-  const groups = {};
-
-  for (let i = 1; i <= semestersCount; i++) {
-    const isEven = i % 2 === 0;
-    groups[`sem${i}`] = {
-      color: {
-        background: isEven ? COLORS.NODE_BG_EVEN : COLORS.NODE_BG_ODD,
-        border: COLORS.NODE_BORDER,
-        highlight: {
-          background: COLORS.NODE_HIGHLIGHT_BG,
-          border: COLORS.NODE_HIGHLIGHT_BORDER,
-        },
-        hover: {
-          background: COLORS.NODE_HIGHLIGHT_BG,
-          border: COLORS.NODE_HIGHLIGHT_BORDER,
-        },
-      },
-      font: { color: COLORS.NODE_TEXT },
-    };
-  }
-
-  return {
-    interaction: {
-      hover: true,
-      dragView: true,
-      zoomView: true,
-    },
-    physics: false,
-    layout: { hierarchical: false },
-    groups,
-    edges: {
-      arrows: {
-        to: {
-          enabled: true,
-        },
-      },
-      color: {
-        color: COLORS.EDGE_NORMAL,
-        highlight: COLORS.EDGE_NORMAL,
-        hover: COLORS.EDGE_NORMAL,
-        inherit: false, // Doble seguridad: no heredar colores
-      },
-    },
-  };
-}
-
-// ================= EVENTOS =================
-
-function _setupNetworkEvents(net, allSubs, nodesDs, edgesDs) {
-  const isSemesterTitle = (nodeId) => String(nodeId).startsWith("title-sem-");
-
-  const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-
-  function showRelations(id) {
-    const parents = _getAllParents(id, allSubs); // ancestors
-    const children = _getDirectChildren(id, allSubs); // direct children
-    const relatedNodes = new Set([id, ...parents, ...children]);
-
-    const nodeUpdates = nodesDs.map((node) => {
-      if (String(node.id).startsWith("title-sem-")) return { id: node.id };
-
-      if (node.id === id) return { id: node.id, ...NODE_STYLE_HOVER };
-      if (parents.has(node.id)) return { id: node.id, ...NODE_STYLE_PARENT };
-      if (children.has(node.id)) return { id: node.id, ...NODE_STYLE_CHILD };
-
-      return { id: node.id, ...NODE_STYLE_DEFAULT_FADED };
-    });
-
-    const edgeUpdates = edgesDs.map((edge) => {
-      const fromRelated = relatedNodes.has(edge.from);
-      const toRelated = relatedNodes.has(edge.to);
-      return {
-        id: edge.id,
-        hidden: !(fromRelated && toRelated),
-      };
-    });
-
-    nodesDs.update(nodeUpdates.filter((u) => Object.keys(u).length > 1));
-    edgesDs.update(edgeUpdates);
-  }
-
-  function resetGraphStyles() {
-    const allNodeUpdates = nodesDs.map((node) => {
-      if (isSemesterTitle(node.id)) return { id: node.id };
-      return { id: node.id, ...NODE_STYLE_BASE, opacity: 1 };
-    });
-
-    const allEdgeUpdates = edgesDs.map((edge) => ({
-      id: edge.id,
-      hidden: false,
-    }));
-
-    nodesDs.update(allNodeUpdates.filter((u) => Object.keys(u).length > 1));
-    edgesDs.update(allEdgeUpdates);
-  }
-
-  // ================= DESKTOP =================
-  if (!isTouch) {
-    net.on("hoverNode", (params) => {
-      const id = params.node;
-      if (isSemesterTitle(id)) return;
-      showRelations(id);
-    });
-
-    net.on("blurNode", resetGraphStyles);
-
-    net.on("click", (params) => {
-      if (!params.nodes.length) return;
-      const id = params.nodes[0];
-      if (isSemesterTitle(id)) return;
-
-      _openModal(id);
-    });
-  }
-
-  // ================= MOBILE =================
-  if (isTouch) {
-    net.on("selectNode", (params) => {
-      if (!params.nodes.length) return;
-      const id = params.nodes[0];
-      if (isSemesterTitle(id)) return;
-
-      showRelations(id);
-    });
-
-    net.on("deselectNode", resetGraphStyles);
-
-    // long press → modal
-    net.on("hold", (params) => {
-      if (!params.nodes.length) return;
-      const id = params.nodes[0];
-      if (isSemesterTitle(id)) return;
-
-      _openModal(id);
-    });
-  }
-}
-
-// ================= FUNCIONES PARA NODOS RELACIONADOS =================
-
-// Búsqueda recursiva para obtener todos los pre-requisitos de un nodo. Utiliza "depth first
-// search" para buscar los ancestros del nodo seleccionado.
-function _getAllParents(id, allSubs, visited = new Set()) {
-  if (visited.has(id)) return new Set();
-  visited.add(id);
-
-  const parents = new Set();
-
-  const subject = allSubs[id];
-  if (!subject || !subject.pre) return parents;
-
-  for (const preId of subject.pre) {
-    parents.add(preId);
-    const grandParents = _getAllParents(preId, allSubs, visited);
-    for (const gp of grandParents) parents.add(gp);
-  }
-
-  return parents;
-}
-
-// Obtiene todos los nodos que tengan como pre-requisito al nodo seleccionado
-function _getDirectChildren(id, allSubs) {
-  const children = new Set();
-
-  for (const [sid, subj] of Object.entries(allSubs)) {
-    if (subj.pre.includes(id)) children.add(sid);
-  }
-
-  return children;
-}
-
-// Agrupa las materias por semestre
 function _groupSubjectsBySemester(subjects, count) {
   const grouped = {};
   for (let i = 1; i <= count; i++) grouped[i] = {};
-
   for (const [id, subject] of Object.entries(subjects)) {
     if (grouped[subject.semester]) {
       grouped[subject.semester][id] = subject;
     }
   }
-
   return grouped;
 }
+
+// ================= HIGHLIGHT / RESET =================
+
+function _highlightRelations(id, nodeGroups, edgePaths, COLORS) {
+  const parents = _getAllParents(id, allSubjects);
+  const children = _getDirectChildren(id, allSubjects);
+  const related = new Set([id, ...parents, ...children]);
+
+  nodeGroups.each(function (d) {
+    const rect = this.querySelector(".node-rect");
+    const label = this.querySelector(".node-label");
+    if (!rect) return;
+
+    if (d.id === id) {
+      rect.setAttribute("fill", COLORS.NODE_HIGHLIGHT_BG);
+      rect.setAttribute("stroke", COLORS.NODE_HIGHLIGHT_BORDER);
+      rect.setAttribute("stroke-width", "2");
+      if (label) label.setAttribute("font-weight", "bold");
+    } else if (parents.has(d.id)) {
+      rect.setAttribute("fill", COLORS.NODE_PARENT_BG);
+      rect.setAttribute("stroke", COLORS.NODE_PARENT_BORDER);
+      if (label) label.setAttribute("font-weight", "bold");
+    } else if (children.has(d.id)) {
+      rect.setAttribute("fill", COLORS.NODE_CHILD_BG);
+      rect.setAttribute("stroke", COLORS.NODE_CHILD_BORDER);
+      if (label) label.setAttribute("font-weight", "bold");
+    } else {
+      rect.setAttribute("opacity", "0.12");
+    }
+  });
+
+  edgePaths.attr("opacity", (d) => {
+    const fromRelated = related.has(d.from);
+    const toRelated = related.has(d.to);
+    return fromRelated && toRelated ? COLORS.EDGE_OPACITY : 0.04;
+  });
+}
+
+function _resetStyles(nodeGroups, edgePaths, COLORS) {
+  nodeGroups.each(function (d) {
+    const rect = this.querySelector(".node-rect");
+    const label = this.querySelector(".node-label");
+    if (!rect) return;
+
+    const sem = d.subject ? d.subject.sem : 1;
+    const bg = sem % 2 === 0 ? COLORS.NODE_BG_EVEN : COLORS.NODE_BG_ODD;
+    rect.setAttribute("fill", bg);
+    rect.setAttribute("stroke", COLORS.NODE_BORDER);
+    rect.setAttribute("stroke-width", "1");
+    rect.setAttribute("opacity", "1");
+    if (label) label.setAttribute("font-weight", "normal");
+  });
+
+  edgePaths.attr("opacity", COLORS.EDGE_OPACITY);
+}
+
+// ================= FUNCIONES PARA NODOS RELACIONADOS =================
+
+function _getAllParents(id, allSubs, visited = new Set()) {
+  if (visited.has(id)) return new Set();
+  visited.add(id);
+  const parents = new Set();
+  const subject = allSubs[id];
+  if (!subject || !subject.pre) return parents;
+  for (const preId of subject.pre) {
+    parents.add(preId);
+    const grandParents = _getAllParents(preId, allSubs, visited);
+    for (const gp of grandParents) parents.add(gp);
+  }
+  return parents;
+}
+
+function _getDirectChildren(id, allSubs) {
+  const children = new Set();
+  for (const [sid, subj] of Object.entries(allSubs)) {
+    if (subj.pre.includes(id)) children.add(sid);
+  }
+  return children;
+}
+
+// ================= MODAL =================
 
 function _openModal(id) {
   const subject = allSubjects[id];
@@ -440,115 +585,173 @@ function _openModal(id) {
   const existing = document.getElementById("subject-modal-overlay");
   if (existing) existing.remove();
 
-  // ================= OVERLAY =================
   const overlay = document.createElement("div");
   overlay.id = "subject-modal-overlay";
+  overlay.className = "modal-overlay";
 
-  Object.assign(overlay.style, {
-    position: "fixed",
-    inset: "0",
-    background: "rgba(0,0,0,0.35)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: "9999",
-  });
-
-  // ================= MODAL =================
   const modal = document.createElement("div");
-
-  Object.assign(modal.style, {
-    width: "min(520px, 92vw)",
-    maxHeight: "85vh",
-    overflowY: "auto",
-    background: "#ffffff",
-    borderRadius: "10px",
-    padding: "20px 22px",
-    boxShadow: "0 12px 32px rgba(0,0,0,0.25)",
-    fontFamily: "Inter, Arial, sans-serif",
-    position: "relative",
-  });
-
+  modal.className = "modal-content";
+  modal.style.fontFamily = "Inter, Arial, sans-serif";
   modal.addEventListener("click", (e) => e.stopPropagation());
 
-  // ================= BOTÓN CERRAR =================
-  const close = document.createElement("button");
-  close.textContent = "✕";
-
-  Object.assign(close.style, {
-    position: "absolute",
-    top: "8px",
-    right: "10px",
-    border: "none",
-    background: "transparent",
-    fontSize: "18px",
-    cursor: "pointer",
-    color: "#374151",
-  });
-
-  close.onclick = () => overlay.remove();
-
-  // ================= CONTENIDO =================
+  const header = document.createElement("div");
+  header.className = "modal-header";
+  header.style.color = "#ffffff";
 
   const title = document.createElement("h2");
   title.textContent = subject.name;
-
   Object.assign(title.style, {
-    margin: "0 0 14px 0",
+    margin: "0",
     fontSize: "20px",
-    color: "#111827",
+    fontWeight: "600",
+    lineHeight: "1.3",
+    paddingRight: "24px",
   });
+  header.appendChild(title);
 
-  function createRow(label, value) {
-    const row = document.createElement("div");
-    row.innerHTML = `<strong>${label}:</strong> ${value ?? "-"}`;
+  const close = document.createElement("button");
+  close.innerHTML = "&times;";
+  Object.assign(close.style, {
+    position: "absolute",
+    top: "14px",
+    right: "14px",
+    border: "none",
+    background: "rgba(255,255,255,0.2)",
+    borderRadius: "12px",
+    width: "36px",
+    height: "36px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "20px",
+    cursor: "pointer",
+    color: "#ffffff",
+    transition: "background 0.2s",
+    zIndex: "2",
+  });
+  close.onmouseover = () => close.style.background = "rgba(255,255,255,0.3)";
+  close.onmouseout = () => close.style.background = "rgba(255,255,255,0.2)";
+  close.onclick = () => overlay.remove();
 
-    Object.assign(row.style, {
-      marginBottom: "6px",
-      fontSize: "14px",
-      color: "#374151",
+  const body = document.createElement("div");
+  body.className = "modal-body";
+  body.style.overflowY = "auto";
+
+  const SVG = {
+    book: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#557fab" stroke-width="2" style="vertical-align:middle"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/></svg>`,
+    star: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#557fab" stroke-width="2" style="vertical-align:middle"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"/></svg>`,
+    clock: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#557fab" stroke-width="2" style="vertical-align:middle"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>`,
+    info: `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="vertical-align:middle;flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"/></svg>`,
+  };
+
+  function createStat(label, value, iconSvg) {
+    const col = document.createElement("div");
+    col.className = "modal-stat-card";
+    const icon = document.createElement("div");
+    icon.innerHTML = iconSvg;
+    const v = document.createElement("div");
+    v.textContent = value ?? "-";
+    Object.assign(v.style, {
+      fontWeight: "700",
+      color: "var(--color-text, #142536)",
+      fontSize: "17px",
+      lineHeight: "1",
     });
-
-    return row;
+    const l = document.createElement("div");
+    l.textContent = label;
+    Object.assign(l.style, {
+      fontSize: "11px",
+      color: "var(--color-text-muted, #557fab)",
+      fontWeight: "600",
+      textTransform: "uppercase",
+      letterSpacing: "0.05em",
+    });
+    col.appendChild(icon);
+    col.appendChild(v);
+    col.appendChild(l);
+    return col;
   }
 
-  const semester = createRow("Semestre", subject.semester);
-  const credits = createRow("Créditos", subject.credits);
-  const weekly = createRow("Horas semanales", subject.weekly_hours);
-  const required = createRow("Créditos requeridos", subject.required_credits);
+  const statsGrid = document.createElement("div");
+  statsGrid.className = "modal-stats-row";
+  statsGrid.appendChild(createStat("Semestre", subject.semester, SVG.book));
+  statsGrid.appendChild(createStat("Créditos", subject.credits, SVG.star));
+  statsGrid.appendChild(createStat("Hrs/Sem", subject.weekly_hours, SVG.clock));
 
   const desc = document.createElement("div");
-  desc.innerHTML = `<strong>Descripción:</strong> ${subject.desc ?? "-"}`;
+  desc.className = "modal-desc";
+  desc.innerHTML = `<strong>Descripción:</strong><br/>${subject.desc ?? "Sin descripción disponible."}`;
 
-  Object.assign(desc.style, {
-    marginTop: "10px",
-    fontSize: "14px",
-    lineHeight: "1.4",
-    color: "#1f2937",
-  });
+  const prereqSection = document.createElement("div");
+  prereqSection.className = "modal-prereqs";
 
-  // ensamblar
+  const prereqTitle = document.createElement("div");
+  prereqTitle.className = "modal-section-title";
+  prereqTitle.textContent = "Pre-requisitos";
+  prereqSection.appendChild(prereqTitle);
+
+  const prereqList = subject.pre || [];
+
+  if (prereqList.length === 0) {
+    const none = document.createElement("p");
+    none.className = "modal-no-prereqs";
+    none.textContent = "Esta materia no tiene pre-requisitos.";
+    prereqSection.appendChild(none);
+  } else {
+    const chipsWrapper = document.createElement("div");
+    chipsWrapper.className = "modal-chips";
+    prereqList.forEach((preId) => {
+      const prereqSubject = allSubjects[preId];
+      const chip = document.createElement("button");
+      chip.className = "prereq-chip";
+      chip.textContent = prereqSubject ? prereqSubject.name : preId;
+      chip.style.cursor = prereqSubject ? "pointer" : "default";
+      chip.title = prereqSubject ? `Ver ${prereqSubject.name}` : preId;
+      if (prereqSubject) {
+        chip.innerHTML = prereqSubject.name;
+        chip.addEventListener("mouseenter", () => {
+          chip.style.background = "#cddaea";
+          chip.style.transform = "translateY(-1px)";
+        });
+        chip.addEventListener("mouseleave", () => {
+          chip.style.background = "var(--color-bg, #e6edf5)";
+          chip.style.transform = "translateY(0)";
+        });
+        chip.addEventListener("click", (e) => {
+          e.stopPropagation();
+          overlay.remove();
+          _openModal(preId);
+        });
+      }
+      chipsWrapper.appendChild(chip);
+    });
+    prereqSection.appendChild(chipsWrapper);
+  }
+
+  body.appendChild(desc);
+  body.appendChild(prereqSection);
+
+  if (subject.required_credits) {
+    const req = document.createElement("div");
+    req.className = "modal-warning";
+    req.innerHTML = `${SVG.info} <span><strong>Nota:</strong> Requiere ${subject.required_credits} créditos aprobados.</span>`;
+    body.appendChild(req);
+  }
+
   modal.appendChild(close);
-  modal.appendChild(title);
-  modal.appendChild(semester);
-  modal.appendChild(credits);
-  modal.appendChild(weekly);
-  modal.appendChild(required);
-  modal.appendChild(desc);
-
+  modal.appendChild(header);
+  body.appendChild(statsGrid);
+  modal.appendChild(body);
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
 
-  // cerrar al hacer click fuera
   overlay.addEventListener("click", () => overlay.remove());
 
-  // cerrar con ESC
   const escHandler = (e) => {
     if (e.key === "Escape") {
       overlay.remove();
       document.removeEventListener("keydown", escHandler);
     }
   };
-
   document.addEventListener("keydown", escHandler);
 }

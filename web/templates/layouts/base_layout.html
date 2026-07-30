@@ -8,10 +8,11 @@
       <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+      <meta name="color-scheme" content="dark light" />
 
       <link
         rel="stylesheet"
-        href="/static/bundle/bootstrap-icons/bootstrap-icons.min.css" />
+        href="/static/bundle/bootstrap-icons/bootstrap-icons-subset.css" />
       <link rel="stylesheet" href="/static/output.css" />
 
         <!-- alpine js -->
@@ -32,8 +33,8 @@
         <div 
           x-show="sidebarOpen" 
           @click="sidebarOpen = false"
-          x-transition.opacity
-          class="fixed inset-0 z-40 bg-black/50 md:hidden"
+          x-transition.opacity.duration.200
+          class="fixed inset-0 z-40 bg-black/60 md:hidden"
           style="display: none;">
         </div>
 
@@ -55,9 +56,23 @@
       {{ template "fragments/mobile-modal" . }}
       <script src="/static/bundle/medium_zoom/medium_zoom.js"></script>
       <script>
-        document.querySelectorAll("nav a").forEach((link) => {
-          if (link.href === window.location.href.split("?")[0]) {
-            link.classList.add("text-blue-400");
+        document.querySelectorAll("nav a.nav-link").forEach((link) => {
+          const currentPath = window.location.pathname;
+          const linkPath = new URL(link.href).pathname;
+          if (currentPath === linkPath || (linkPath !== '/' && currentPath.startsWith(linkPath))) {
+            link.classList.add("bg-white/10", "text-blue-400", "font-semibold", "shadow-sm");
+            link.classList.remove("text-gray-700");
+            const icon = link.querySelector("svg");
+            if (icon) {
+              icon.classList.remove("text-gray-400");
+              icon.classList.add("text-blue-400");
+            }
+
+            const titleEl = document.getElementById("header-page-title");
+            const titleText = link.querySelector("span");
+            if (titleEl && titleText) {
+              titleEl.textContent = titleText.textContent;
+            }
           }
         });
       </script>
