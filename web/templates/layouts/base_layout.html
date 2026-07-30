@@ -2,7 +2,9 @@
   <!doctype html>
   <html lang="es" class="h-full">
     <head>
-      <meta name="google-site-verification" content="tlZxTQhxIhdMAsAKUgJFkHkyXs1KhUrHMIFEXLTVuIs" />
+      <meta
+        name="google-site-verification"
+        content="tlZxTQhxIhdMAsAKUgJFkHkyXs1KhUrHMIFEXLTVuIs" />
 
       <meta charset="UTF-8" />
       <meta
@@ -15,8 +17,10 @@
         href="/static/bundle/bootstrap-icons/bootstrap-icons-subset.css" />
       <link rel="stylesheet" href="/static/output.css" />
 
-        <!-- alpine js -->
-      <script defer src="/static/bundle/alpinejs/collapse/collapse.min.js"></script>
+      <!-- alpine js -->
+      <script
+        defer
+        src="/static/bundle/alpinejs/collapse/collapse.min.js"></script>
       <script src="/static/bundle/alpinejs/alpine.min.js" defer></script>
 
       <script src="/static/js/theme_bootstrap.js"></script>
@@ -27,24 +31,25 @@
       {{ block "custom_head" . }}{{ end }}
     </head>
     <body class="h-full bg-gray-100 text-gray-900 antialiased">
-      <div class="flex h-screen overflow-hidden" x-data="{ sidebarOpen: false }">
-        
+      <div
+        class="flex h-screen overflow-hidden"
+        x-data="{ sidebarOpen: false }">
         <!-- Backdrop oscuro para móvil -->
-        <div 
-          x-show="sidebarOpen" 
+        <div
+          x-show="sidebarOpen"
           @click="sidebarOpen = false"
           x-transition.opacity.duration.200
           class="fixed inset-0 z-40 bg-black/60 md:hidden"
-          style="display: none;">
-        </div>
+          style="display: none;"></div>
 
         <!-- Sidebar Unificado -->
         {{ template "fragments/sidebar" . }}
 
+
         <div class="flex flex-col flex-1 overflow-hidden">
-          
           <!-- Header Móvil Modular -->
           {{ template "fragments/header_mobile" . }}
+
 
           <!-- Contenido Principal -->
           <main class="flex-1 overflow-y-auto p-3 md:p-8 lg:p-20 lg:pt-10">
@@ -59,8 +64,16 @@
         document.querySelectorAll("nav a.nav-link").forEach((link) => {
           const currentPath = window.location.pathname;
           const linkPath = new URL(link.href).pathname;
-          if (currentPath === linkPath || (linkPath !== '/' && currentPath.startsWith(linkPath))) {
-            link.classList.add("bg-white/10", "text-blue-400", "font-semibold", "shadow-sm");
+          if (
+            currentPath === linkPath ||
+            (linkPath !== "/" && currentPath.startsWith(linkPath))
+          ) {
+            link.classList.add(
+              "bg-white/10",
+              "text-blue-400",
+              "font-semibold",
+              "shadow-sm",
+            );
             link.classList.remove("text-gray-700");
             const icon = link.querySelector("svg");
             if (icon) {

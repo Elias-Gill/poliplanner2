@@ -19,14 +19,14 @@
                 >Sección: {{ .Section }}</span
               >
             </div>
-                <span
-                    class="text-[10px] font-bold px-2 py-0.5 rounded-xs shrink-0 {{ if eq .Type 1 }}
-                    bg-red-50 text-red-700 border border-red-200
-                    {{ else if eq .Type 3 }}
-                    bg-amber-50 text-amber-700 border border-amber-200
-                    {{ else }}
-                    bg-primary-50 text-primary-700 border border-primary-200
-                    {{ end }}">
+            <span
+              class="text-[10px] font-bold px-2 py-0.5 rounded-xs shrink-0 {{ if eq .Type 1 }}
+                bg-red-50 text-red-700 border border-red-200
+              {{ else if eq .Type 3 }}
+                bg-amber-50 text-amber-700 border border-amber-200
+              {{ else }}
+                bg-primary-50 text-primary-700 border border-primary-200
+              {{ end }}">
               {{ .Type.String }}
             </span>
           </div>
