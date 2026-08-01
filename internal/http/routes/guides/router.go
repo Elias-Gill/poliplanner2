@@ -22,6 +22,7 @@ func (h *Handler) Routes() chi.Router {
 	r := chi.NewRouter()
 
 	r.Get("/calculo_notas", h.calculoNotas)
+	r.Get("/tramites_academicos", h.tramites)
 	r.Get("/about", h.about)
 	r.Get("/manual_del_bicho", h.manualDelBicho)
 	r.Get("/news", h.news)
@@ -38,6 +39,13 @@ func (h *Handler) calculoNotas(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := h.tmpl.RenderPage(w, "guides/calculo_notas.html", nil); err != nil {
 		logger.Error("Cannot render calculo_notas template", "error", err)
+	}
+}
+
+func (h *Handler) tramites(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := h.tmpl.RenderPage(w, "guides/tramites_academicos.html", nil); err != nil {
+		logger.Error("Cannot render tramites_academicos template", "error", err)
 	}
 }
 

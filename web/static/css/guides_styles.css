@@ -34,6 +34,9 @@ GUIDE ARTICLE SCOPE
     font-size: 1.6rem;
     border-bottom: 1px solid var(--color-gray-200);
     padding-bottom: 0.4rem;
+    padding-left: 0.75rem;
+    border-left: 3px solid var(--color-primary-500);
+    border-radius: 2px;
 }
 
 .guide_article h3 {
