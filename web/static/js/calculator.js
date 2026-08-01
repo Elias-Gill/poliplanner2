@@ -1,139 +1,188 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const MIN_EXAM = 50;
-    const UMBRALES = [
-        { nota: 5, min: 91 },
-        { nota: 4, min: 81 },
-        { nota: 3, min: 71 },
-        { nota: 2, min: 60 },
+document.addEventListener('DOMContentLoaded', () => {
+  const toggleDirecto = document.getElementById('toggleDirecto');
+  const panelDirecto = document.getElementById('panelDirecto');
+  const panelDesglose = document.getElementById('panelDesglose');
+  
+  const inputDirecto = document.getElementById('inputPonderadoDirecto');
+  
+  // Parciales
+  const notaP1 = document.getElementById('notaP1');
+  const notaP2 = document.getElementById('notaP2');
+  const pesoParciales = document.getElementById('pesoParciales');
+  
+  // Laboratorio y sus toggles
+  const checkAplicaLab = document.getElementById('checkAplicaLab');
+  const wrapperPesoLab = document.getElementById('wrapperPesoLab');
+  const contentLab = document.getElementById('contentLab');
+  const notaLab = document.getElementById('notaLab');
+  const pesoLab = document.getElementById('pesoLab');
+
+  // Tareas y sus toggles
+  const checkAplicaTareas = document.getElementById('checkAplicaTareas');
+  const wrapperPesoTareas = document.getElementById('wrapperPesoTareas');
+  const contentTareas = document.getElementById('contentTareas');
+  const notaTareas = document.getElementById('notaTareas');
+  const pesoTareas = document.getElementById('pesoTareas');
+
+  // UI
+  const valPromedio = document.getElementById('valPromedio');
+  const badgeEstado = document.getElementById('badgeEstado');
+  const msgEstado = document.getElementById('msgEstado');
+  const tablaResultados = document.getElementById('tablaResultados');
+  const sumaPesosVal = document.getElementById('sumaPesosVal');
+  const alertaPesos = document.getElementById('alertaPesos');
+
+  // Alternar vista Directa vs Desglose
+  toggleDirecto.addEventListener('change', () => {
+    if (toggleDirecto.checked) {
+      panelDirecto.classList.remove('hidden');
+      panelDesglose.classList.add('hidden');
+    } else {
+      panelDirecto.classList.add('hidden');
+      panelDesglose.classList.remove('hidden');
+    }
+    calcular();
+  });
+
+  // Toggle Laboratorio
+  checkAplicaLab.addEventListener('change', () => {
+    if (checkAplicaLab.checked) {
+      wrapperPesoLab.classList.remove('hidden');
+      contentLab.classList.remove('hidden');
+    } else {
+      wrapperPesoLab.classList.add('hidden');
+      contentLab.classList.add('hidden');
+      notaLab.value = '';
+    }
+    calcular();
+  });
+
+  // Toggle Tareas
+  checkAplicaTareas.addEventListener('change', () => {
+    if (checkAplicaTareas.checked) {
+      wrapperPesoTareas.classList.remove('hidden');
+      contentTareas.classList.remove('hidden');
+    } else {
+      wrapperPesoTareas.classList.add('hidden');
+      contentTareas.classList.add('hidden');
+      notaTareas.value = '';
+    }
+    calcular();
+  });
+
+  // Escuchar eventos en todos los inputs
+  document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', calcular);
+  });
+
+  function calcular() {
+    let promedio = 0;
+
+    if (toggleDirecto.checked) {
+      promedio = parseFloat(inputDirecto.value) || 0;
+    } else {
+      const pParciales = parseFloat(pesoParciales.value) || 0;
+      
+      const aplicaLab = checkAplicaLab.checked;
+      const pLab = aplicaLab ? (parseFloat(pesoLab.value) || 0) : 0;
+      const nLab = aplicaLab ? (parseFloat(notaLab.value) || 0) : 0;
+
+      const aplicaTareas = checkAplicaTareas.checked;
+      const pTareas = aplicaTareas ? (parseFloat(pesoTareas.value) || 0) : 0;
+      const nTareas = aplicaTareas ? (parseFloat(notaTareas.value) || 0) : 0;
+
+      const sumaPesos = pParciales + pLab + pTareas;
+      sumaPesosVal.textContent = sumaPesos;
+
+      if (sumaPesos !== 100) {
+        alertaPesos.className = "text-xs text-center py-1.5 px-3 rounded-sm bg-red-100 text-red-700 font-medium";
+      } else {
+        alertaPesos.className = "text-xs text-center py-1.5 px-3 rounded-sm bg-gray-100 text-gray-600 font-medium";
+      }
+
+      // Promedio de Parciales
+      const np1 = parseFloat(notaP1.value);
+      const np2 = parseFloat(notaP2.value);
+      let promParciales = 0;
+
+      if (!isNaN(np1) && !isNaN(np2)) {
+        promParciales = (np1 + np2) / 2;
+      } else if (!isNaN(np1)) {
+        promParciales = np1;
+      } else if (!isNaN(np2)) {
+        promParciales = np2;
+      }
+
+      promedio = (promParciales * (pParciales / 100)) + 
+                 (nLab * (pLab / 100)) + 
+                 (nTareas * (pTareas / 100));
+    }
+
+    promedio = Math.min(100, Math.max(0, promedio));
+    valPromedio.textContent = `${promedio.toFixed(1)}%`;
+
+    actualizarFirmas(promedio);
+    actualizarTablaExamen(promedio);
+  }
+
+  function actualizarFirmas(promedio) {
+    if (promedio < 50) {
+      badgeEstado.className = "inline-block px-3 py-1 rounded-sm text-xs font-bold bg-red-100 text-red-700 mb-4";
+      badgeEstado.textContent = "Sin Firma (Reprobado)";
+      msgEstado.textContent = "No alcanzas el mínimo (50%) para habilitar el examen final.";
+    } else if (promedio < 60) {
+      badgeEstado.className = "inline-block px-3 py-1 rounded-sm text-xs font-bold bg-yellow-100 text-yellow-800 mb-4";
+      badgeEstado.textContent = "Media Firma (2do final)";
+      msgEstado.textContent = "Habilitado únicamente para rendir el 2do examen final.";
+    } else {
+      badgeEstado.className = "inline-block px-3 py-1 rounded-sm text-xs font-bold bg-green-100 text-green-700 mb-4";
+      badgeEstado.textContent = "Dos Firmas (Ambos Llamados)";
+      msgEstado.textContent = "Habilitado para rendir el 1er y 2do examen final.";
+    }
+  }
+
+  function actualizarTablaExamen(promedio) {
+    if (promedio < 50) {
+      tablaResultados.innerHTML = `
+        <tr>
+          <td colspan="2" class="px-3 py-4 text-center text-xs text-red-500 font-medium">
+            Se requiere al menos 50% de promedio ponderado para rendir el examen final.
+          </td>
+        </tr>`;
+      return;
+    }
+
+    const limitesNotas = [
+      { nota: 2, minFinal: 60 },
+      { nota: 3, minFinal: 71 },
+      { nota: 4, minFinal: 81 },
+      { nota: 5, minFinal: 91 }
     ];
 
-    const inputPonderado = document.getElementById('inputPonderado');
-    const btnPonderado = document.getElementById('btnPonderado');
-    const btnComponentes = document.getElementById('btnComponentes');
-    const resultadoTabla = document.getElementById('resultadoTabla');
-    const resultados = document.getElementById('resultados');
+    let html = '';
 
-    if (!btnPonderado || !btnComponentes || !resultadoTabla || !resultados) {
-        console.error('No se encontraron algunos elementos necesarios');
-        return;
-    }
+    limitesNotas.forEach(item => {
+      let reqExamen = (item.minFinal - (promedio * 0.4)) / 0.6;
+      let examenFinalRequerido = Math.max(50, Math.ceil(reqExamen));
 
-    function examenNecesario(ponderado, nota) {
-        const u = UMBRALES.find(x => x.nota === nota);
-        if (!u) return '-';
-        let ex = (u.min - 0.4 * ponderado) / 0.6;
-        ex = Math.max(ex, MIN_EXAM);
-        ex = Math.floor(ex);
-        return ex > 100 ? '-' : ex;
-    }
-
-    function renderTabla(ponderado) {
-        resultadoTabla.innerHTML = '';
-        for (let n = 5; n >= 2; n--) {
-            const examenReq = examenNecesario(ponderado, n);
-            const fila = document.createElement('tr');
-            const esPar = (5 - n) % 2 === 0;
-            fila.className = esPar ? 'bg-gray-50' : 'bg-white';
-            fila.innerHTML = `
-                <td class="px-4 py-3 text-gray-900 font-medium">${n}</td>
-                <td class="px-4 py-3 text-gray-700">
-                    ${examenReq === '-' ? '<span class="text-red-500 font-medium">—</span>' : '<span class="font-semibold text-gray-900">' + examenReq + '</span>'}
-                </td>
-            `;
-            resultadoTabla.appendChild(fila);
-        }
-    }
-
-    function mostrarResultados(seccionId) {
-        const seccion = document.getElementById(seccionId);
-        if (!seccion) return;
-
-        seccion.parentNode.insertBefore(resultados, seccion.nextSibling);
-        resultados.classList.remove('hidden');
-        resultados.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-
-    btnPonderado.addEventListener('click', function(event) {
-        event.preventDefault();
-        const v = parseFloat(inputPonderado.value);
-        if (isNaN(v)) {
-            alert('Por favor ingresa un número válido');
-            return;
-        }
-        if (v < 40 || v > 100) {
-            alert('El promedio debe estar entre 40 y 100');
-            return;
-        }
-        renderTabla(v);
-        mostrarResultados('seccionA');
+      if (examenFinalRequerido > 100) {
+        html += `
+          <tr>
+            <td class="px-3 py-2 text-center font-bold text-gray-400">Nota ${item.nota}</td>
+            <td class="px-3 py-2 text-right text-xs text-gray-400">Inalcanzable</td>
+          </tr>`;
+      } else {
+        html += `
+          <tr>
+            <td class="px-3 py-2 text-center font-bold text-gray-800">Nota ${item.nota}</td>
+            <td class="px-3 py-2 text-right font-bold text-primary-600">${examenFinalRequerido}%</td>
+          </tr>`;
+      }
     });
 
-    btnComponentes.addEventListener('click', function(event) {
-        event.preventDefault();
-        const notaP1 = document.getElementById('notaP1');
-        const notaP2 = document.getElementById('notaP2');
-        const pesoParciales = document.getElementById('pesoParciales');
-        const notaT = document.getElementById('notaT');
-        const pesoT = document.getElementById('pesoT');
-        const notaL = document.getElementById('notaL');
-        const pesoL = document.getElementById('pesoL');
+    tablaResultados.innerHTML = html;
+  }
 
-        const inputs = [notaP1, notaP2, pesoParciales, notaT, pesoT, notaL, pesoL];
-        for (let i = 0; i < inputs.length; i++) {
-            if (!inputs[i]) {
-                alert('Error: No se encontraron todos los campos del formulario');
-                return;
-            }
-        }
-
-        const p1Val = parseFloat(notaP1.value);
-        const p2Val = parseFloat(notaP2.value);
-        const pesoParVal = parseFloat(pesoParciales.value);
-        const tVal = parseFloat(notaT.value);
-        const pesoTVal = parseFloat(pesoT.value);
-        const lVal = parseFloat(notaL.value);
-        const pesoLVal = parseFloat(pesoL.value);
-
-        if (isNaN(p1Val) || isNaN(p2Val) || isNaN(pesoParVal) || 
-            isNaN(tVal) || isNaN(pesoTVal) || isNaN(lVal) || isNaN(pesoLVal)) {
-            alert('Por favor completa todos los campos');
-            return;
-        }
-
-        const notas = [p1Val, p2Val, tVal, lVal];
-        for (let i = 0; i < notas.length; i++) {
-            if (notas[i] < 0 || notas[i] > 100) {
-                alert('Las notas deben estar entre 0 y 100');
-                return;
-            }
-        }
-
-        const pesos = [pesoParVal, pesoTVal, pesoLVal];
-        for (let i = 0; i < pesos.length; i++) {
-            if (pesos[i] < 0 || pesos[i] > 100) {
-                alert('Los pesos deben estar entre 0 y 100');
-                return;
-            }
-        }
-
-        const totalPesos = pesoParVal + pesoTVal + pesoLVal;
-        if (Math.abs(totalPesos - 100) > 0.01) {
-            alert('Los pesos deben sumar 100% (actual: ' + totalPesos.toFixed(1) + '%)');
-            return;
-        }
-
-        const promedioParciales = (p1Val + p2Val) / 2;
-        const ponderado = (promedioParciales * pesoParVal + tVal * pesoTVal + lVal * pesoLVal) / 100;
-
-        renderTabla(ponderado);
-        mostrarResultados('seccionB');
-    });
-
-    const forms = document.querySelectorAll('form');
-    forms.forEach(form => {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-            return false;
-        });
-    });
+  // Ejecutar primera evaluación
+  calcular();
 });
