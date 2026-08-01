@@ -3,187 +3,285 @@
 {{ end }}
 
 {{ define "content" }}
-<div class="max-w-4xl mx-auto px-4 py-8">
-<!-- Header de sección -->
-  <div class="mb-10">
-    <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
-      Calculadora de notas
-    </h1>
-    <p class="mt-3 text-base text-gray-500 leading-relaxed max-w-2xl">
-      Calculá tu promedio ponderado, verificá tus firmas y descubrí cuánto necesitás en el
-      examen final. Podes consultar nuestra 
-      <a href="/guides/calculo_notas" class="text-primary-600 hover:text-primary-700 font-medium underline">guía de cálculo de notas</a>
-      para saber como es el proceso.
-    </p>
-  </div>
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Header de sección -->
+    <div class="mb-10">
+      <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
+        Calculadora de notas
+      </h1>
+      <p class="mt-3 text-base text-gray-500 leading-relaxed max-w-2xl">
+        Calculá tu promedio ponderado, verificá tus firmas y descubrí cuánto
+        necesitás en el examen final. Podes consultar nuestra
+        <a
+          href="/guides/calculo_notas"
+          class="text-primary-600 hover:text-primary-700 font-medium underline"
+          >guía de cálculo de notas</a
+        >
+        para saber como es el proceso.
+      </p>
+    </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-    
-    <!-- COLUMNA IZQUIERDA: FORMULARIO DE ENTRADA -->
-    <div class="lg:col-span-7 space-y-6">
-      
-      <!-- Card: Entrada de Datos -->
-      <section class="bg-white border border-gray-200 shadow-sm rounded-sm p-6">
-        
-        <!-- Tab / Mode Switch -->
-        <div class="flex items-center justify-between border-b border-gray-200 pb-4 mb-6">
-          <h2 class="text-lg font-bold text-gray-900">Ingreso de Calificaciones</h2>
-          <label class="inline-flex items-center cursor-pointer">
-            <input type="checkbox" id="toggleDirecto" class="sr-only peer">
-            <div class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-600"></div>
-            <span class="ms-2 text-xs font-medium text-gray-600">Ya tengo mi ponderado</span>
-          </label>
-        </div>
-
-        <!-- MODO A: INGRESO DIRECTO DE PONDERADO -->
-        <div id="panelDirecto" class="hidden space-y-4">
-          <div>
-            <label for="inputPonderadoDirecto" class="block text-sm font-semibold text-gray-700 mb-1.5">
-              Promedio Ponderado Acumulado (%)
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- COLUMNA IZQUIERDA: FORMULARIO DE ENTRADA -->
+      <div class="lg:col-span-7 space-y-6">
+        <!-- Card: Entrada de Datos -->
+        <section
+          class="bg-white border border-gray-200 shadow-sm rounded-sm p-6">
+          <!-- Tab / Mode Switch -->
+          <div
+            class="flex items-center justify-between border-b border-gray-200 pb-4 mb-6">
+            <h2 class="text-lg font-bold text-gray-900">
+              Ingreso de Calificaciones
+            </h2>
+            <label class="inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="toggleDirecto" class="sr-only peer" />
+              <div
+                class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-600"></div>
+              <span class="ms-2 text-xs font-medium text-gray-600"
+                >Ya tengo mi ponderado</span
+              >
             </label>
-            <input 
-              type="number" 
-              id="inputPonderadoDirecto" 
-              min="0" 
-              max="100" 
-              placeholder="Ej: 65"
-              class="block w-full border border-gray-200 rounded-sm px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
-            />
           </div>
-        </div>
 
-        <!-- MODO B: DESGLOSE COMPLETO -->
-        <div id="panelDesglose" class="space-y-6">
-          
-          <!-- Bloque 1: Parciales (Siempre presente - Inicia en 100%) -->
-          <div class="bg-gray-50 border border-gray-200 rounded-sm p-4 space-y-3">
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-sm text-gray-800">1. Exámenes Parciales</span>
-              <div class="flex items-center gap-1.5">
-                <label class="text-xs text-gray-500">Peso:</label>
-                <input type="number" id="pesoParciales" value="100" min="0" max="100" class="w-16 border border-gray-300 rounded-sm px-2 py-1 text-xs text-center font-bold focus:ring-primary-500 outline-none">
-                <span class="text-xs text-gray-500">%</span>
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Parcial 1</label>
-                <input type="number" id="notaP1" min="0" max="100" placeholder="Nota" class="input-nota w-full border border-gray-200 rounded-sm px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-primary-500">
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Parcial 2</label>
-                <input type="number" id="notaP2" min="0" max="100" placeholder="Nota" class="input-nota w-full border border-gray-200 rounded-sm px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-primary-500">
-              </div>
+          <!-- MODO A: INGRESO DIRECTO DE PONDERADO -->
+          <div id="panelDirecto" class="hidden space-y-4">
+            <div>
+              <label
+                for="inputPonderadoDirecto"
+                class="block text-sm font-semibold text-gray-700 mb-1.5">
+                Promedio Ponderado Acumulado (%)
+              </label>
+              <input
+                type="number"
+                id="inputPonderadoDirecto"
+                min="0"
+                max="100"
+                placeholder="Ej: 65"
+                class="block w-full border border-gray-200 rounded-sm px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow" />
             </div>
           </div>
 
-          <!-- Bloque 2: Laboratorios (Desactivado y oculto por defecto) -->
-          <div class="bg-gray-50 border border-gray-200 rounded-sm p-4 space-y-3">
-            <div class="flex justify-between items-center">
-              <div class="flex items-center gap-2">
-                <label class="inline-flex items-center cursor-pointer">
-                  <input type="checkbox" id="checkAplicaLab" class="sr-only peer">
-                  <div class="relative w-8 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-primary-600"></div>
-                </label>
-                <span class="font-bold text-sm text-gray-800">2. Laboratorios</span>
+          <!-- MODO B: DESGLOSE COMPLETO -->
+          <div id="panelDesglose" class="space-y-6">
+            <!-- Bloque 1: Parciales (Siempre presente - Inicia en 100%) -->
+            <div
+              class="bg-gray-50 border border-gray-200 rounded-sm p-4 space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="font-bold text-sm text-gray-800"
+                  >1. Exámenes Parciales</span
+                >
+                <div class="flex items-center gap-1.5">
+                  <label class="text-xs text-gray-500">Peso:</label>
+                  <input
+                    type="number"
+                    id="pesoParciales"
+                    value="100"
+                    min="0"
+                    max="100"
+                    class="w-16 border border-gray-300 rounded-sm px-2 py-1 text-xs text-center font-bold focus:ring-primary-500 outline-none" />
+                  <span class="text-xs text-gray-500">%</span>
+                </div>
               </div>
-              <div id="wrapperPesoLab" class="hidden flex items-center gap-1.5">
-                <label class="text-xs text-gray-500">Peso:</label>
-                <input type="number" id="pesoLab" value="20" min="0" max="100" class="w-16 border border-gray-300 rounded-sm px-2 py-1 text-xs text-center font-bold focus:ring-primary-500 outline-none">
-                <span class="text-xs text-gray-500">%</span>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1"
+                    >Parcial 1</label
+                  >
+                  <input
+                    type="number"
+                    id="notaP1"
+                    min="0"
+                    max="100"
+                    placeholder="Nota"
+                    class="input-nota w-full border border-gray-200 rounded-sm px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-600 mb-1"
+                    >Parcial 2</label
+                  >
+                  <input
+                    type="number"
+                    id="notaP2"
+                    min="0"
+                    max="100"
+                    placeholder="Nota"
+                    class="input-nota w-full border border-gray-200 rounded-sm px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-primary-500" />
+                </div>
               </div>
             </div>
-            
-            <div id="contentLab" class="hidden">
-              <input type="number" id="notaLab" min="0" max="100" placeholder="Nota promedio de laboratorios" class="input-nota w-full border border-gray-200 rounded-sm px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-primary-500">
+
+            <!-- Bloque 2: Laboratorios (Desactivado y oculto por defecto) -->
+            <div
+              class="bg-gray-50 border border-gray-200 rounded-sm p-4 space-y-3">
+              <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      id="checkAplicaLab"
+                      class="sr-only peer" />
+                    <div
+                      class="relative w-8 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-primary-600"></div>
+                  </label>
+                  <span class="font-bold text-sm text-gray-800"
+                    >2. Laboratorios</span
+                  >
+                </div>
+                <div
+                  id="wrapperPesoLab"
+                  class="hidden flex items-center gap-1.5">
+                  <label class="text-xs text-gray-500">Peso:</label>
+                  <input
+                    type="number"
+                    id="pesoLab"
+                    value="20"
+                    min="0"
+                    max="100"
+                    class="w-16 border border-gray-300 rounded-sm px-2 py-1 text-xs text-center font-bold focus:ring-primary-500 outline-none" />
+                  <span class="text-xs text-gray-500">%</span>
+                </div>
+              </div>
+
+              <div id="contentLab" class="hidden">
+                <input
+                  type="number"
+                  id="notaLab"
+                  min="0"
+                  max="100"
+                  placeholder="Nota promedio de laboratorios"
+                  class="input-nota w-full border border-gray-200 rounded-sm px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-primary-500" />
+              </div>
+            </div>
+
+            <!-- Bloque 3: Tareas / Proceso (Desactivado y oculto por defecto) -->
+            <div
+              class="bg-gray-50 border border-gray-200 rounded-sm p-4 space-y-3">
+              <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      id="checkAplicaTareas"
+                      class="sr-only peer" />
+                    <div
+                      class="relative w-8 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-primary-600"></div>
+                  </label>
+                  <span class="font-bold text-sm text-gray-800"
+                    >3. Tareas y Trabajos</span
+                  >
+                </div>
+                <div
+                  id="wrapperPesoTareas"
+                  class="hidden flex items-center gap-1.5">
+                  <label class="text-xs text-gray-500">Peso:</label>
+                  <input
+                    type="number"
+                    id="pesoTareas"
+                    value="20"
+                    min="0"
+                    max="100"
+                    class="w-16 border border-gray-300 rounded-sm px-2 py-1 text-xs text-center font-bold focus:ring-primary-500 outline-none" />
+                  <span class="text-xs text-gray-500">%</span>
+                </div>
+              </div>
+
+              <div id="contentTareas" class="hidden">
+                <input
+                  type="number"
+                  id="notaTareas"
+                  min="0"
+                  max="100"
+                  placeholder="Nota promedio de tareas"
+                  class="input-nota w-full border border-gray-200 rounded-sm px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-primary-500" />
+              </div>
+            </div>
+
+            <!-- Validador de suma de pesos -->
+            <div
+              id="alertaPesos"
+              class="text-xs text-center py-1.5 px-3 rounded-sm bg-gray-100 text-gray-600 font-medium">
+              Suma de pesos: <span id="sumaPesosVal">100</span>%
             </div>
           </div>
+        </section>
+      </div>
 
-          <!-- Bloque 3: Tareas / Proceso (Desactivado y oculto por defecto) -->
-          <div class="bg-gray-50 border border-gray-200 rounded-sm p-4 space-y-3">
-            <div class="flex justify-between items-center">
-              <div class="flex items-center gap-2">
-                <label class="inline-flex items-center cursor-pointer">
-                  <input type="checkbox" id="checkAplicaTareas" class="sr-only peer">
-                  <div class="relative w-8 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-primary-600"></div>
-                </label>
-                <span class="font-bold text-sm text-gray-800">3. Tareas y Trabajos</span>
-              </div>
-              <div id="wrapperPesoTareas" class="hidden flex items-center gap-1.5">
-                <label class="text-xs text-gray-500">Peso:</label>
-                <input type="number" id="pesoTareas" value="20" min="0" max="100" class="w-16 border border-gray-300 rounded-sm px-2 py-1 text-xs text-center font-bold focus:ring-primary-500 outline-none">
-                <span class="text-xs text-gray-500">%</span>
-              </div>
-            </div>
-            
-            <div id="contentTareas" class="hidden">
-              <input type="number" id="notaTareas" min="0" max="100" placeholder="Nota promedio de tareas" class="input-nota w-full border border-gray-200 rounded-sm px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-primary-500">
-            </div>
+      <!-- COLUMNA DERECHA: RESULTADOS EN TIEMPO REAL -->
+      <div class="lg:col-span-5 space-y-6">
+        <!-- Card: Estado de Firmas / Habilitación -->
+        <section
+          id="cardEstado"
+          class="bg-white border border-gray-200 shadow-sm rounded-sm p-6 text-center transition-all">
+          <span
+            class="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1"
+            >Promedio Ponderado</span
+          >
+          <div
+            id="valPromedio"
+            class="text-4xl font-extrabold text-gray-900 mb-3">
+            -- %
           </div>
 
-          <!-- Validador de suma de pesos -->
-          <div id="alertaPesos" class="text-xs text-center py-1.5 px-3 rounded-sm bg-gray-100 text-gray-600 font-medium">
-            Suma de pesos: <span id="sumaPesosVal">100</span>%
+          <!-- Badge de Estado -->
+          <div
+            id="badgeEstado"
+            class="inline-block px-3 py-1 rounded-sm text-xs font-bold bg-gray-100 text-gray-600 mb-4">
+            Ingresa tus notas
           </div>
 
-        </div>
+          <p id="msgEstado" class="text-xs text-gray-500 leading-relaxed">
+            Ingresa tus calificaciones para conocer tu condición de firma para
+            los exámenes finales.
+          </p>
+        </section>
 
-      </section>
+        <!-- Card: Escala de Examen Final -->
+        <section
+          class="bg-white border border-gray-200 shadow-sm rounded-sm p-6">
+          <h3
+            class="font-bold text-gray-900 text-sm mb-4 flex items-center gap-2">
+            <svg
+              class="w-4 h-4 text-primary-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            Escala de notas
+          </h3>
+
+          <div class="overflow-hidden border border-gray-200 rounded-sm">
+            <table class="w-full text-sm text-left">
+              <thead
+                class="bg-gray-50 text-gray-600 font-semibold border-b border-gray-200 text-xs">
+                <tr>
+                  <th class="px-3 py-2 text-center">Nota</th>
+                  <th class="px-3 py-2 text-right">Puntaje Mínimo</th>
+                </tr>
+              </thead>
+              <tbody id="tablaResultados" class="divide-y divide-gray-100">
+                <tr>
+                  <td
+                    colspan="2"
+                    class="px-3 py-4 text-center text-xs text-gray-400 italic">
+                    Ingresa un promedio válido
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-[11px] text-gray-400 mt-2">
+            * Requiere un mínimo del 50% en el examen final para aprobar la
+            materia.
+          </p>
+        </section>
+      </div>
     </div>
-
-    <!-- COLUMNA DERECHA: RESULTADOS EN TIEMPO REAL -->
-    <div class="lg:col-span-5 space-y-6">
-      
-      <!-- Card: Estado de Firmas / Habilitación -->
-      <section id="cardEstado" class="bg-white border border-gray-200 shadow-sm rounded-sm p-6 text-center transition-all">
-        <span class="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1">Promedio Ponderado</span>
-        <div id="valPromedio" class="text-4xl font-extrabold text-gray-900 mb-3">-- %</div>
-
-        <!-- Badge de Estado -->
-        <div id="badgeEstado" class="inline-block px-3 py-1 rounded-sm text-xs font-bold bg-gray-100 text-gray-600 mb-4">
-          Ingresa tus notas
-        </div>
-
-        <p id="msgEstado" class="text-xs text-gray-500 leading-relaxed">
-          Ingresa tus calificaciones para conocer tu condición de firma para los exámenes finales.
-        </p>
-      </section>
-
-      <!-- Card: Escala de Examen Final -->
-      <section class="bg-white border border-gray-200 shadow-sm rounded-sm p-6">
-        <h3 class="font-bold text-gray-900 text-sm mb-4 flex items-center gap-2">
-          <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-          Escala de notas
-        </h3>
-
-        <div class="overflow-hidden border border-gray-200 rounded-sm">
-          <table class="w-full text-sm text-left">
-            <thead class="bg-gray-50 text-gray-600 font-semibold border-b border-gray-200 text-xs">
-              <tr>
-                <th class="px-3 py-2 text-center">Nota</th>
-                <th class="px-3 py-2 text-right">Puntaje Mínimo</th>
-              </tr>
-            </thead>
-            <tbody id="tablaResultados" class="divide-y divide-gray-100">
-              <tr>
-                <td colspan="2" class="px-3 py-4 text-center text-xs text-gray-400 italic">
-                  Ingresa un promedio válido
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="text-[11px] text-gray-400 mt-2">
-          * Requiere un mínimo del 50% en el examen final para aprobar la materia.
-        </p>
-      </section>
-
-    </div>
-
   </div>
-</div>
 
-<script src="/static/js/calculator.js"></script>
+  <script src="/static/js/calculator.js"></script>
 {{ end }}
