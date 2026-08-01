@@ -5,90 +5,103 @@
   <script src="/static/bundle/alpinejs/alpine.min.js" defer></script>
 
   <script>
-    window.examScheduleApp = function () {
-      return {
-        activeTab: "calendar",
-        selectedExamId: null,
-        calendarInstance: null,
-        events: [],
+  window.examScheduleApp = function () {
+    return {
+      activeTab: "list",
+      selectedExamId: null,
+      calendarInstance: null,
+      events: [],
 
-        init() {
-          try {
-            if (this.$refs.eventsData) {
-              this.events = JSON.parse(this.$refs.eventsData.textContent);
-            }
-          } catch (e) {
-            console.error("Error al parsear eventos:", e);
-            this.events = [];
+      init() {
+        try {
+          if (this.$refs.eventsData) {
+            this.events = JSON.parse(this.$refs.eventsData.textContent);
           }
+        } catch (e) {
+          console.error("Error al parsear eventos:", e);
+          this.events = [];
+        }
 
-          this.$nextTick(() => {
-            setTimeout(() => {
-              this.initCalendar();
-            }, 60);
-          });
-        },
-
-        initCalendar() {
-          const calendarEl = this.$refs.calendarContainer;
-          if (!calendarEl || typeof FullCalendar === "undefined") return;
-
-          if (this.calendarInstance) {
-            this.calendarInstance.destroy();
-            this.calendarInstance = null;
-          }
-
-          let initialDate = undefined;
-          if (this.events && this.events.length > 0) {
-            const sorted = [...this.events].sort(
-              (a, b) => new Date(a.start) - new Date(b.start),
-            );
-            initialDate = sorted[0].start;
-          }
-
-          this.calendarInstance = new FullCalendar.Calendar(calendarEl, {
-            initialView: "dayGridMonth",
-            initialDate: initialDate,
-            locale: "es",
-            eventDisplay: "list-item",
-            displayEventTime: false,
-            headerToolbar: {
-              left: "prev,next",
-              center: "title",
-              right: "today",
-            },
-            events: this.events,
-            height: "auto",
-
-            eventClick: (info) => {
-              this.selectedExamId = info.event.id;
-              this.activeTab = "list";
-
-              this.$nextTick(() => {
-                const cardEl = document.getElementById(
-                  `exam-card-${info.event.id}`,
-                );
-                if (cardEl) {
-                  cardEl.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center",
-                  });
-                }
-              });
-            },
-          });
-
-          this.calendarInstance.render();
-
+        this.$nextTick(() => {
           setTimeout(() => {
-            if (this.calendarInstance) {
-              this.calendarInstance.updateSize();
-            }
-          }, 100);
-        },
-      };
+            this.initCalendar();
+          }, 60);
+        });
+
+        // REPARACIÓN CLAVE:
+        // Observamos cuando la pestaña cambia a 'calendar' para refrescar el tamaño
+        this.$watch("activeTab", (value) => {
+          if (value === "calendar" && this.calendarInstance) {
+            this.$nextTick(() => {
+              // Pequeña espera para asegurar que el DOM aplicó el cambio de la clase 'block'
+              setTimeout(() => {
+                this.calendarInstance.updateSize();
+              }, 50);
+            });
+          }
+        });
+      },
+
+      initCalendar() {
+        const calendarEl = this.$refs.calendarContainer;
+        if (!calendarEl || typeof FullCalendar === "undefined") return;
+
+        if (this.calendarInstance) {
+          this.calendarInstance.destroy();
+          this.calendarInstance = null;
+        }
+
+        let initialDate = undefined;
+        if (this.events && this.events.length > 0) {
+          const sorted = [...this.events].sort(
+            (a, b) => new Date(a.start) - new Date(b.start),
+          );
+          initialDate = sorted[0].start;
+        }
+
+        this.calendarInstance = new FullCalendar.Calendar(calendarEl, {
+          initialView: "dayGridMonth",
+          initialDate: initialDate,
+          locale: "es",
+          eventDisplay: "list-item",
+          displayEventTime: false,
+          headerToolbar: {
+            left: "prev,next",
+            center: "title",
+            right: "today",
+          },
+          events: this.events,
+          height: "auto",
+
+          eventClick: (info) => {
+            this.selectedExamId = info.event.id;
+            this.activeTab = "list";
+
+            this.$nextTick(() => {
+              const cardEl = document.getElementById(
+                `exam-card-${info.event.id}`,
+              );
+              if (cardEl) {
+                cardEl.scrollIntoView({
+                  behavior: "smooth",
+                  block: "center",
+                });
+              }
+            });
+          },
+        });
+
+        this.calendarInstance.render();
+
+        setTimeout(() => {
+          if (this.calendarInstance) {
+            this.calendarInstance.updateSize();
+          }
+        }, 100);
+      },
     };
-  </script>
+  };
+</script>
 {{ end }}
 
 {{ define "content" }}
