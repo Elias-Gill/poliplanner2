@@ -59,18 +59,9 @@
               @click="addSubject({
                 id: {{ .ID }},
                 careerCode: '{{ $.CareerCode }}',
-                name: '{{ if .Name }}
-                {{ .Name }}
-              {{ else }}
-                {{ $.SubjectName }}
-              {{ end }}',
+                name: '{{ if .Name }}{{ .Name }}{{ else }}{{ $.SubjectName }}{{ end }}',
                 section: '{{ .Section }}',
-                teachers: '{{ range $i, $t := .Teachers }}
-                {{ if $i }},{{ end }}{{ if $t.Title }}
-                  {{ $t.Title }}
-                {{ end }}{{ $t.FirstName }}
-                {{ $t.LastName }}
-              {{ end }}',
+                teachers: '{{ range $i, $t := .Teachers }}{{ if $i }}, {{ end }}{{ if $t.Title }}{{ $t.Title }} {{ end }}{{ $t.FirstName }} {{ $t.LastName }}{{ end }}',
                 schedule: '{{ .FormattedSchedule }}'
               })"
               :class="isSubjectAdded({{ .ID }}) 
