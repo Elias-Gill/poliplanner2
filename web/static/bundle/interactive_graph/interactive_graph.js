@@ -15,7 +15,7 @@ function getColors() {
   const isDark = document.documentElement.classList.contains("dark-mode");
   if (isDark) {
     return {
-      NODE_TEXT:            "#e6edf5",
+      NODE_TEXT:             "#e6edf5",
       NODE_BG_ODD:          "#142536",
       NODE_BG_EVEN:         "#2f4c6d",
       NODE_BORDER:          "#3f638a",
@@ -31,7 +31,7 @@ function getColors() {
     };
   }
   return {
-    NODE_TEXT:            "#142536",
+    NODE_TEXT:             "#142536",
     NODE_BG_ODD:          "#f0f4f8",
     NODE_BG_EVEN:         "#cddaea",
     NODE_BORDER:          "#a9c1da",
@@ -62,6 +62,9 @@ let _zoomInstance = null;
 let _graphWidth = 0;
 let _graphHeight = 0;
 
+// Estado de selección táctil en mobile
+let _selectedMobileNodeId = null;
+
 // ===================== PUBLIC API =====================
 
 function prepareGraphData(data) {
@@ -82,6 +85,8 @@ function renderGraph(elementId) {
   const element = document.getElementById(elementId);
   if (!element) return;
   element.innerHTML = "";
+
+  _selectedMobileNodeId = null; // Reiniciar selección
 
   const COLORS = getColors();
   const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
@@ -236,11 +241,16 @@ function renderGraph(elementId) {
       .text((l) => l);
   });
 
-  // ── Leyenda ──
+  // ── Leyenda adaptada según dispositivo ──
   const legendDiv = document.createElement("div");
   legendDiv.id = "graph-legend";
+
+  const actionLegendText = isTouch
+    ? "Toca para conexiones / Toca de nuevo para detalles"
+    : "Clic en materia para detalles";
+
   legendDiv.innerHTML = `
-    <div id="legend-title">Navegacion</div>
+    <div id="legend-title">Navegación</div>
     <div class="legend-item">
       <svg width="8" height="8" viewBox="0 0 8 8" fill="#94a3b8" style="flex-shrink:0;width:8px;height:8px">
         <rect x="1" y="1" width="2.5" height="2.5" rx=".6"/>
@@ -254,7 +264,7 @@ function renderGraph(elementId) {
       <svg width="8" height="10" viewBox="0 0 8 10" fill="none" stroke="#94a3b8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;width:8px;height:10px">
         <path d="M2 1L7 5l-3 .6L3 8z"/>
       </svg>
-      Clic en materia para detalles
+      ${actionLegendText}
     </div>`;
   element.appendChild(legendDiv);
 
@@ -264,15 +274,40 @@ function renderGraph(elementId) {
   });
 
   // ── Events ──
-  nodeGroups.on("click", (event, d) => {
-    event.stopPropagation();
-    _openModal(d.id);
-  });
+  if (isTouch) {
+    // LÓGICA MOBILE / TÁCTIL
+    nodeGroups.on("click", (event, d) => {
+      event.stopPropagation();
 
-  if (!isTouch) {
+      // Si se toca el mismo nodo que ya está enfocado -> Abrir Modal
+      if (_selectedMobileNodeId === d.id) {
+        _openModal(d.id);
+        return;
+      }
+
+      // Si se toca un nodo distinto -> Resaltar sus conexiones
+      _selectedMobileNodeId = d.id;
+      _highlightRelations(d.id, nodeGroups, edgePaths, COLORS);
+    });
+
+    // Tap en el fondo del mapa -> Limpiar resaltado
+    svg.on("click", () => {
+      if (_selectedMobileNodeId !== null) {
+        _selectedMobileNodeId = null;
+        _resetStyles(nodeGroups, edgePaths, COLORS);
+      }
+    });
+  } else {
+    // LÓGICA DESKTOP (Hover + Clic directo)
+    nodeGroups.on("click", (event, d) => {
+      event.stopPropagation();
+      _openModal(d.id);
+    });
+
     nodeGroups.on("mouseenter", function (event, d) {
       _highlightRelations(d.id, nodeGroups, edgePaths, COLORS);
     });
+
     nodeGroups.on("mouseleave", function () {
       _resetStyles(nodeGroups, edgePaths, COLORS);
     });
@@ -617,7 +652,7 @@ function _openModal(id) {
     right: "14px",
     border: "none",
     background: "rgba(255,255,255,0.2)",
-    borderRadius: "12px",
+    borderRadius: "4px",
     width: "36px",
     height: "36px",
     display: "flex",
