@@ -94,7 +94,6 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 	var sch schedule.ScheduleDetails
 	var created string
 
-	// Get schedule details
 	row := s.db.QueryRowContext(ctx, `
 		SELECT usuario_id, titulo, creado_en
 		FROM horarios
@@ -111,7 +110,6 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 	t, _ := time.Parse("2006-01-02 15:04:05", created)
 	sch.CreatedAt = t
 
-	// Get courses details (incluyendo comite y fechas de sabados)
 	coursesQuery := `
 		SELECT 
 			c.id, 
@@ -127,7 +125,8 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 		JOIN cursos c ON hd.curso_id = c.id
 		JOIN mallas m ON c.malla = m.id
 		JOIN asignaturas a ON m.asignatura = a.id
-		WHERE hd.horario_id = ?`
+		WHERE hd.horario_id = ?
+		ORDER BY c.id ASC`
 
 	rows, err := s.db.QueryContext(ctx, coursesQuery, ID)
 	if err != nil {
@@ -135,8 +134,8 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 	}
 	defer rows.Close()
 
-	courseMap := make(map[academic.CourseID]*academic.CourseSummaryView)
 	var courseIDs []any
+	courseIdxMap := make(map[int64]int)
 
 	for rows.Next() {
 		var c academic.CourseSummaryView
@@ -170,6 +169,7 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 		c.Schedules = []academic.ClassSession{}
 		c.Exams = []academic.Exam{}
 
+		courseIdxMap[courseID] = len(sch.Courses)
 		sch.Courses = append(sch.Courses, c)
 		courseIDs = append(courseIDs, courseID)
 	}
@@ -178,18 +178,12 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 		return nil, err
 	}
 
-	// Return empty if schedule has no course associated
 	if len(sch.Courses) == 0 {
 		return &sch, nil
 	}
 
-	for i := range sch.Courses {
-		courseMap[sch.Courses[i].ID] = &sch.Courses[i]
-	}
-
 	placeholders := strings.Repeat("?,", len(courseIDs)-1) + "?"
 
-	// Load teachers
 	teachersQuery := fmt.Sprintf(`
 		SELECT 
 			dc.id_curso,
@@ -200,7 +194,8 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 			d.correo
 		FROM docentes_curso dc
 		JOIN docentes d ON dc.id_docente = d.id
-		WHERE dc.id_curso IN (%s)`, placeholders)
+		WHERE dc.id_curso IN (%s)
+		ORDER BY dc.id_curso ASC`, placeholders)
 
 	tRows, err := s.db.QueryContext(ctx, teachersQuery, courseIDs...)
 	if err != nil {
@@ -223,14 +218,11 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 			teacher.Title = title.String
 		}
 
-		if course, ok := courseMap[academic.CourseID(courseID)]; ok {
-			course.Teachers = append(course.Teachers, teacher)
+		if idx, ok := courseIdxMap[courseID]; ok {
+			sch.Courses[idx].Teachers = append(sch.Courses[idx].Teachers, teacher)
 		}
 	}
 
-	// Load class sessions
-	// FIX: QUITAR esto de horas con cast text y hacer una migracino para directamente
-	// dejar como text fecha y hora
 	schedulesQuery := fmt.Sprintf(`
 		SELECT 
 			curso_id,
@@ -240,7 +232,7 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 			COALESCE(aula, '')
 		FROM curso_horarios
 		WHERE curso_id IN (%s)
-		ORDER BY desde ASC`, placeholders)
+		ORDER BY curso_id ASC`, placeholders)
 
 	sRows, err := s.db.QueryContext(ctx, schedulesQuery, courseIDs...)
 	if err != nil {
@@ -257,24 +249,20 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 			return nil, fmt.Errorf("failed to scan class schedule: %w", err)
 		}
 
-		startTime := parseTimeOnly(startTimeStr)
-		endTime := parseTimeOnly(endTimeStr)
-
 		session := academic.ClassSession{
 			Day:  academic.WeekDay(day),
 			Room: room,
 			Time: academic.TimeSlot{
-				Start: startTime,
-				End:   endTime,
+				Start: parseTimeOnly(startTimeStr),
+				End:   parseTimeOnly(endTimeStr),
 			},
 		}
 
-		if course, ok := courseMap[academic.CourseID(courseID)]; ok {
-			course.Schedules = append(course.Schedules, session)
+		if idx, ok := courseIdxMap[courseID]; ok {
+			sch.Courses[idx].Schedules = append(sch.Courses[idx].Schedules, session)
 		}
 	}
 
-	// Load exams - Se usa CAST(... AS TEXT) para evitar la conversión automática de SQLite
 	examsQuery := fmt.Sprintf(`
 		SELECT 
 			curso_id,
@@ -287,7 +275,7 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 			COALESCE(CAST(revision_hora AS TEXT), '')
 		FROM examenes
 		WHERE curso_id IN (%s)
-		ORDER BY fecha ASC, hora ASC`, placeholders)
+		ORDER BY curso_id ASC`, placeholders)
 
 	eRows, err := s.db.QueryContext(ctx, examsQuery, courseIDs...)
 	if err != nil {
@@ -315,19 +303,16 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 			return nil, fmt.Errorf("failed to scan exam: %w", err)
 		}
 
-		examDate := parseExamDateTime(examDateStr, examTimeStr)
-		revDate := parseExamDateTime(revDateStr, revTimeStr)
-
 		exam := academic.Exam{
 			Room:     room,
 			Type:     academic.ExamType(examTypeStr),
 			Instance: academic.ExamInstance(instance),
 		}
-		exam.SetDate(examDate)
-		exam.SetRevision(revDate)
+		exam.SetDate(parseExamDateTime(examDateStr, examTimeStr))
+		exam.SetRevision(parseExamDateTime(revDateStr, revTimeStr))
 
-		if course, ok := courseMap[academic.CourseID(courseID)]; ok {
-			course.Exams = append(course.Exams, exam)
+		if idx, ok := courseIdxMap[courseID]; ok {
+			sch.Courses[idx].Exams = append(sch.Courses[idx].Exams, exam)
 		}
 	}
 

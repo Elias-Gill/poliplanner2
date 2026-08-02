@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sort"
 
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
 	"github.com/elias-gill/poliplanner2/internal/model/schedule"
@@ -51,6 +52,10 @@ func (s ScheduleService) GetScheduleOverview(ctx context.Context, userID user.Us
 	if sche.Owner != userID {
 		logger.Debug("permission denied for schedule", "scheduleID", scheduleID, "userID", userID)
 		return nil, ErrPermissionDenied
+	}
+
+	for _, c := range sche.Courses {
+		fmt.Printf("Curso: %s, seccion: %s, horarios: %s\n", c.Name, c.Section, c.FormattedSchedule())
 	}
 
 	// Map info into our view models
@@ -136,7 +141,6 @@ func (s ScheduleService) TitleIsAvailable(ctx context.Context, userID user.UserI
 	return true, nil
 }
 
-// 1. Armado de la grilla semanal para el dashboard
 func (s ScheduleService) buildWeeklySchedule(courses []academic.CourseSummaryView) schedule.WeekScheduleView {
 	var weekly schedule.WeekScheduleView
 
@@ -148,7 +152,6 @@ func (s ScheduleService) buildWeeklySchedule(courses []academic.CourseSummaryVie
 				Time:   session.Time,
 			}
 
-			// Map slot to specific day
 			switch session.Day {
 			case 1:
 				weekly.Monday = append(weekly.Monday, classInfo)
@@ -166,10 +169,22 @@ func (s ScheduleService) buildWeeklySchedule(courses []academic.CourseSummaryVie
 		}
 	}
 
+	sortSlots(weekly.Monday)
+	sortSlots(weekly.Tuesday)
+	sortSlots(weekly.Wednesday)
+	sortSlots(weekly.Thursday)
+	sortSlots(weekly.Friday)
+	sortSlots(weekly.Saturday)
+
 	return weekly
 }
 
-// 2. Extracción y ordenamiento cronológico de exámenes (si aplican a las materias)
+func sortSlots(slots []schedule.ClassSlotView) {
+	sort.Slice(slots, func(i, j int) bool {
+		return slots[i].Time.Start.Before(*slots[j].Time.Start)
+	})
+}
+
 func (s ScheduleService) extractExams(courses []academic.CourseSummaryView) schedule.ExamMapView {
 	var examMap schedule.ExamMapView
 
@@ -181,28 +196,27 @@ func (s ScheduleService) extractExams(courses []academic.CourseSummaryView) sche
 			}
 
 			if exam.HasDate() {
+				examDate := exam.Date()
 				if exam.HasHour() {
-					// Formato para mostrar al usuario en el HTML
-					slot.Date = exam.Date().Format("02/01/2006 - 15:04hs")
-					// Formato estándar ISO para FullCalendar en JS
-					slot.ISODate = exam.Date().Format("2006-01-02T15:04:00")
+					slot.Date = examDate.Format("02/01/2006 - 15:04hs")
+					slot.ISODate = examDate.Format("2006-01-02T15:04:00")
 				} else {
-					slot.Date = exam.Date().Format("02/01/2006")
-					slot.ISODate = exam.Date().Format("2006-01-02")
+					slot.Date = examDate.Format("02/01/2006")
+					slot.ISODate = examDate.Format("2006-01-02")
 				}
 			}
 
 			if exam.HasRevisionDate() {
-				if exam.HasHour() {
-					slot.Revision = exam.Revision().Format("02/01/2006 - 15:04hs")
-					slot.ISORevision = exam.Revision().Format("2006-01-02T15:04:00")
+				revDate := exam.Revision()
+				if exam.HasRevHour() {
+					slot.Revision = revDate.Format("02/01/2006 - 15:04hs")
+					slot.ISORevision = revDate.Format("2006-01-02T15:04:00")
 				} else {
-					slot.Revision = exam.Revision().Format("02/01/2006")
-					slot.ISORevision = exam.Revision().Format("2006-01-02")
+					slot.Revision = revDate.Format("02/01/2006")
+					slot.ISORevision = revDate.Format("2006-01-02")
 				}
 			}
 
-			// Agrupación según el tipo e instancia del examen
 			switch exam.Type {
 			case academic.ExamPartial:
 				switch exam.Instance {
@@ -222,7 +236,24 @@ func (s ScheduleService) extractExams(courses []academic.CourseSummaryView) sche
 		}
 	}
 
+	sortExamSlots(examMap.Partial1)
+	sortExamSlots(examMap.Partial2)
+	sortExamSlots(examMap.Final1)
+	sortExamSlots(examMap.Final2)
+
 	return examMap
+}
+
+func sortExamSlots(slots []schedule.ExamSlotView) {
+	sort.Slice(slots, func(i, j int) bool {
+		if slots[i].ISODate == "" {
+			return false
+		}
+		if slots[j].ISODate == "" {
+			return true
+		}
+		return slots[i].ISODate < slots[j].ISODate
+	})
 }
 
 func (s ScheduleService) buildCoursesInfo(courses []academic.CourseSummaryView) []schedule.CourseDetailView {
