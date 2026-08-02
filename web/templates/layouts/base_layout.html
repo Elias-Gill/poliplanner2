@@ -2,55 +2,51 @@
   <!doctype html>
   <html lang="es" class="h-full">
     <head>
-      <meta
-        name="google-site-verification"
-        content="tlZxTQhxIhdMAsAKUgJFkHkyXs1KhUrHMIFEXLTVuIs" />
-
       <meta charset="UTF-8" />
       <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
       <meta name="color-scheme" content="dark light" />
 
-      <link rel="stylesheet" href="/static/output.css" />
+      <!-- Meta Base, SEO y Favicons -->
+      {{ template "fragments/seo_meta" . }}
 
-      <!-- alpine js -->
-      <script
-        defer
-        src="/static/bundle/alpinejs/collapse/collapse.min.js"></script>
-      <script src="/static/bundle/alpinejs/alpine.min.js" defer></script>
+      <!-- Etiquetas dinámicas de cada página (Title, Meta Description, OG) -->
+      {{ block "custom_tags" . }}
+        <title>PoliPlanner — Planificador de Horarios Universitario</title>
+        <meta name="description" content="Organiza tu semestre, horarios y mallas universitarias de forma rápida e intuitiva con PoliPlanner." />
+      {{ end }}
 
-      <script src="/static/js/theme_bootstrap.js"></script>
-      <script src="/static/js/theme_toggle.js"></script>
+      <!-- CSS y Scripts Globales del Head -->
+      {{ template "fragments/head_scripts" . }}
 
-      <script src="/static/js/worker_initializer.js"></script>
-
-      <script src="/static/js/versions_banner.js"></script>
-
+      <!-- Scripts y Estilos Específicos de cada Página -->
       {{ block "custom_head" . }}{{ end }}
     </head>
     <body class="h-full bg-gray-100 text-gray-900 antialiased">
-      {{template "fragments/versions"}}
+      {{ template "fragments/versions" . }}
 
       <div
         class="flex h-screen overflow-hidden"
         x-data="{ sidebarOpen: false }">
         {{ template "fragments/sidebar" . }}
+
         <div class="flex flex-col flex-1 overflow-hidden">
           <!-- Header Móvil Modular -->
           {{ template "fragments/header_mobile" . }}
+
           <!-- Contenido Principal -->
           <main class="flex-1 overflow-y-auto p-3 md:p-8 lg:p-20 lg:pt-10">
             {{ block "content" . }}{{ end }}
           </main>
         </div>
+
       </div>
 
       {{ template "fragments/mobile-modal" . }}
-      <script src="/static/bundle/medium_zoom/medium_zoom.js"></script>
 
-      <!-- Links de navegacion en la parte superior de la pagina -->
-      <script src="/static/js/bread_crumbs.js"></script>
+      <!-- Scripts Globales del Body -->
+      {{ template "fragments/body_scripts" . }}
     </body>
   </html>
 {{ end }}

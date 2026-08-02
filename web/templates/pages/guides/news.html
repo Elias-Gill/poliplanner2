@@ -1,9 +1,37 @@
+{{ define "custom_tags" }}
+  <!-- Título y Descripción centrados en las búsquedas de actualizaciones -->
+  <title>Novedades y Actualizaciones del Sistema — PoliPlanner</title>
+  <meta name="description" content="Enterate de las últimas mejoras en PoliPlanner: soporte de modo offline, horarios multi-carrera, renovaciones de interfaz y correcciones." />
+
+  <!-- Canonical para evitar contenido duplicado -->
+  <link rel="canonical" href="https://poliplanner.fly.dev/guides/news" />
+
+  <!-- Open Graph para cuando compartan las novedades en redes o grupos -->
+  <meta property="og:title" content="Novedades y Actualizaciones del Sistema — PoliPlanner" />
+  <meta property="og:description" content="Enterate de las últimas mejoras en PoliPlanner: soporte offline, horarios multi-carrera y renovaciones de interfaz." />
+  <meta property="og:url" content="https://poliplanner.fly.dev/guides/news" />
+  <meta property="og:type" content="article" />
+
+  <!-- Schema para que Google reconozca esta página como un registro de cambios/noticias -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Novedades y Actualizaciones en PoliPlanner",
+    "description": "Historial de versiones y registro de cambios en PoliPlanner.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "PoliPlanner"
+    }
+  }
+  </script>
+{{ end }}
+
 {{ define "custom_head" }}
-  <title>Novedades recientes en PoliPlanner</title>
+<link rel="stylesheet" href="/static/css/guides_styles.css" />
 {{ end }}
 
 {{ define "content" }}
-  <link rel="stylesheet" href="/static/css/guides_styles.css" />
   <div class="guide_article">
     <h1>Novedades recientes en PoliPlanner</h1>
 

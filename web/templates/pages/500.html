@@ -1,6 +1,16 @@
-{{ define "custom_head" }}
-  <title>Error 500 - PoliPlanner</title>
+{{ define "custom_tags" }}
+  <title>Error del Servidor (500) — PoliPlanner</title>
+  <meta name="description" content="Ocurrió un problema en nuestros servidores. Estamos trabajando para solucionarlo en PoliPlanner." />
+  
+  <!-- Bloqueo estricto para buscadores -->
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Error del Servidor (500) — PoliPlanner" />
+  <meta property="og:description" content="Ocurrió un error interno en el servidor." />
+  <meta property="og:type" content="website" />
 {{ end }}
+
 {{ define "content" }}
   <div
     class="flex flex-col items-center justify-center min-h-screen px-4 text-center">

@@ -1,10 +1,37 @@
+{{ define "custom_tags" }}
+  <!-- Título y Descripción centrados en las gestiones de la facultad -->
+  <title>Guía de Trámites Académicos y Gestiones Universitarias — PoliPlanner</title>
+  <meta name="description" content="Aprende cómo realizar tus trámites universitarios paso a paso: inscripciones, rectificaciones, certificados, homologaciones y gestiones académicas." />
+
+  <!-- Canonical para evitar contenido duplicado -->
+  <link rel="canonical" href="https://poliplanner.fly.dev/guides/tramites_academicos" />
+
+  <!-- Open Graph para compartir por grupos o redes -->
+  <meta property="og:title" content="Guía de Trámites Académicos y Gestiones Universitarias — PoliPlanner" />
+  <meta property="og:description" content="Paso a paso para gestionar tus inscripciones, certificados y trámites académicos sin complicaciones." />
+  <meta property="og:url" content="https://poliplanner.fly.dev/guides/tramites_academicos" />
+  <meta property="og:type" content="article" />
+
+  <!-- Schema para indicarle a Google que es un manual o tutorial paso a paso -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Cómo realizar trámites académicos universitarios",
+    "description": "Manual paso a paso para la gestión de trámites y solicitudes en la facultad.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "PoliPlanner"
+    }
+  }
+  </script>
+{{ end }}
+
 {{ define "custom_head" }}
-  <title>Guías - Trámites Académicos</title>
+<link rel="stylesheet" href="/static/css/guides_styles.css" />
 {{ end }}
 
 {{ define "content" }}
-  <link rel="stylesheet" href="/static/css/guides_styles.css" />
-
   <article class="guide_article">
     <h1>Trámites Académicos y Gestiones</h1>
 

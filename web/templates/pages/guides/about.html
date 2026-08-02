@@ -1,8 +1,38 @@
-{{ define "custom_head" }}
-  <title>Cálculo de Notas</title>
+{{ define "custom_tags" }}
+  <!-- Título y Descripción orientados a la marca y propósito -->
+  <title>Sobre PoliPlanner — Herramienta Universitaria para Estudiantes</title>
+  <meta name="description" content="Conoce qué es PoliPlanner, la plataforma diseñada para ayudar a los estudiantes a organizar sus horarios, consultar mallas curriculares y calcular notas fácilmente." />
+
+  <!-- Canonical para evitar contenido duplicado -->
+  <link rel="canonical" href="https://poliplanner.fly.dev/guides/about" />
+
+  <!-- Open Graph para cuando compartan la página en redes o grupos -->
+  <meta property="og:title" content="Sobre PoliPlanner — Herramienta Universitaria para Estudiantes" />
+  <meta property="og:description" content="Conoce la plataforma diseñada para simplificar la vida académica de los estudiantes universitarios." />
+  <meta property="og:url" content="https://poliplanner.fly.dev/guides/about" />
+  <meta property="og:type" content="website" />
+
+  <!-- Schema de Organización para reforzar la identidad del sitio en Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "Sobre PoliPlanner",
+    "description": "Información sobre la plataforma PoliPlanner y sus herramientas para estudiantes universitarios.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "PoliPlanner",
+      "url": "https://poliplanner.fly.dev"
+    }
+  }
+  </script>
 {{ end }}
+
+{{ define "custom_head" }}
+<link rel="stylesheet" href="/static/css/guides_styles.css" />
+{{ end }}
+
 {{ define "content" }}
-  <link rel="stylesheet" href="/static/css/guides_styles.css" />
   <div class="guide_article">
     <h1>Sobre este proyecto</h1>
     <h2>¿Como nació?</h2>

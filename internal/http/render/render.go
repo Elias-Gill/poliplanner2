@@ -65,8 +65,10 @@ func NewTemplateManager(templatesDir string) (*TemplateManager, error) {
 		}
 		key := filepath.ToSlash(relPath) // Normalize slashes for cross-platform compatibility (Windows/Linux)
 
-		// Files for this page: the page itself + all shared layouts and fragments
-		files := append([]string{p}, sharedFiles...)
+		// Shared files FIRST, page LAST (so page blocks override base blocks)
+		files := make([]string, 0, len(sharedFiles)+1)
+		files = append(files, sharedFiles...)
+		files = append(files, p)
 
 		// Important: Register funcMap BEFORE ParseFiles
 		tmpl := template.New(filepath.Base(p)).Funcs(funcMap)

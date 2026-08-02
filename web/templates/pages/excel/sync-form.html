@@ -1,7 +1,17 @@
-{{ define "custom_head" }}
-  <head>
-    <title>Excel Dashboard - PoliPlanner</title>
-  </head>
+{{ define "custom_tags" }}
+  <title>Excel Dashboard — PoliPlanner</title>
+  <meta name="description" content="Vista de administrador para carga de hojas excel manuales." />
+  
+  <!-- Bloqueo estricto para buscadores -->
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="canonical" href="https://poliplanner.fly.dev/excel" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Excel Dashboard — PoliPlanner" />
+  <meta property="og:description" content="Panel de control de carga de Excel de PoliPlanner." />
+  <meta property="og:url" content="https://poliplanner.fly.dev/excel" />
+  <meta property="og:type" content="website" />
 {{ end }}
 {{ define "content" }}
   <div

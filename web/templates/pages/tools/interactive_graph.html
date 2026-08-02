@@ -1,11 +1,29 @@
+{{ define "custom_tags" }}
+  <title>Malla Curricular Interactiva — PoliPlanner</title>
+  <meta name="description" content="Explora el plan de estudios, correlativas y la malla curricular interactiva de tu carrera en PoliPlanner." />
+  
+  <!-- Indexable para captar tráfico orgánico -->
+  <meta name="robots" content="index, follow" />
+
+  <!-- Ajusta la ruta exacta si varía (ej. /malla-curricular o /malla) -->
+  <link rel="canonical" href="https://poliplanner.fly.dev/interactive_graph" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Malla Curricular Interactiva — PoliPlanner" />
+  <meta property="og:description" content="Visualiza de forma interactiva la malla curricular y correlativas de tu carrera." />
+  <meta property="og:url" content="https://poliplanner.fly.dev/interactive_graph" />
+  <meta property="og:type" content="website" />
+{{ end }}
+
 {{ define "custom_head" }}
-  <title>Malla Curricular - PoliPlanner</title>
-  <link rel="stylesheet" href="/static/css/interactive_graph.css" />
+<link rel="stylesheet" href="/static/css/interactive_graph.css" />
+
+<script src="/static/bundle/d3/d3.min.js" defer></script>
+<script src="/static/bundle/interactive_graph/interactive_graph.js?v=23" defer></script>
+<script src="/static/bundle/interactive_graph/interactive_graph_load.js?v=23" defer></script>
 {{ end }}
 
 {{ define "content" }}
-  <script src="/static/bundle/d3/d3.min.js"></script>
-
   <!-- Contenedor Raíz: Ocupa todo el ancho/alto con el padding deseado sin desbordar -->
   <div class="w-full h-screen py-4 px-1 md:px-8 flex flex-col overflow-hidden">
     <!-- WRAPPER PRINCIPAL -->
@@ -83,7 +101,4 @@
       </div>
     </div>
   </div>
-
-  <script src="/static/bundle/interactive_graph/interactive_graph.js?v=23"></script>
-  <script src="/static/bundle/interactive_graph/interactive_graph_load.js?v=23"></script>
 {{ end }}

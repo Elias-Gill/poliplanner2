@@ -1,8 +1,37 @@
-{{ define "custom_head" }}
-  <title>Cálculo de Notas</title>
+{{ define "custom_tags" }}
+  <!-- Título y Descripción centrados en la intención de búsqueda del estudiante -->
+  <title>Cómo Calcular tus Notas y Promedio Universitario — PoliPlanner</title>
+  <meta name="description" content="Aprende a calcular tu promedio académico, notas requeridas para finales y ponderaciones con esta guía práctica en PoliPlanner." />
+
+  <!-- Canonical para evitar contenido duplicado -->
+  <link rel="canonical" href="https://poliplanner.fly.dev/guides/calculo_notas" />
+
+  <!-- Open Graph para cuando compartan la guía por WhatsApp o redes -->
+  <meta property="og:title" content="Cómo Calcular tus Notas y Promedio Universitario — PoliPlanner" />
+  <meta property="og:description" content="Aprende a calcular tu promedio académico, notas requeridas para finales y ponderaciones paso a paso." />
+  <meta property="og:url" content="https://poliplanner.fly.dev/guides/calculo_notas" />
+  <meta property="og:type" content="article" />
+
+  <!-- Schema para que Google reconozca esta página como una guía educativa -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Cómo Calcular tus Notas y Promedio Universitario",
+    "description": "Guía práctica sobre cómo calcular promedios ponderados y notas necesarias para aprobar materias.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "PoliPlanner"
+    }
+  }
+  </script>
 {{ end }}
+
+{{ define "custom_head" }}
+<link rel="stylesheet" href="/static/css/guides_styles.css" />
+{{ end }}
+
 {{ define "content" }}
-  <link rel="stylesheet" href="/static/css/guides_styles.css" />
   <div class="guide_article">
     <h1>Cálculo de Notas</h1>
     <p>

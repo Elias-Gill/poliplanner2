@@ -1,5 +1,19 @@
-{{ define "custom_head" }}
-  <title>Registrarse - PoliPlanner</title>
+{{ define "custom_tags" }}
+  <!-- Título y descripción orientados al registro de nuevos usuarios -->
+  <title>Crear Cuenta — PoliPlanner</title>
+  <meta name="description" content="Regístrate en PoliPlanner para organizar tu horario universitario, gestionar tus materias y armar tu plan de estudios." />
+
+  <!-- Evita que los buscadores indexen la pantalla de registro -->
+  <meta name="robots" content="noindex, follow" />
+
+  <!-- Canonical para consolidar la URL del registro -->
+  <link rel="canonical" href="https://poliplanner.fly.dev/signup" />
+
+  <!-- Open Graph para cuando compartan el enlace de registro -->
+  <meta property="og:title" content="Crear Cuenta — PoliPlanner" />
+  <meta property="og:description" content="Súmate a PoliPlanner y organiza tu semestre universitario de forma simple e intuitiva." />
+  <meta property="og:url" content="https://poliplanner.com/signup" />
+  <meta property="og:type" content="website" />
 {{ end }}
 
 {{ define "content" }}

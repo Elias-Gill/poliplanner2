@@ -1,5 +1,19 @@
-{{ define "custom_head" }}
-  <title>Iniciar Sesión - PoliPlanner</title>
+{{ define "custom_tags" }}
+  <!-- Título directo y descripción enfocada en la acción de acceso -->
+  <title>Iniciar Sesión — PoliPlanner</title>
+  <meta name="description" content="Accede a tu cuenta de PoliPlanner para gestionar tu horario universitario, consultar tus mallas curriculares y personalizar tu semestre." />
+
+  <!-- Directiva para buscadores en páginas de autenticación -->
+  <meta name="robots" content="noindex, follow" />
+
+  <!-- Canonical para evitar parámetros de consulta duplicados (?redirect=...) -->
+  <link rel="canonical" href="https://poliplanner.fly.dev/login" />
+
+  <!-- Open Graph básico -->
+  <meta property="og:title" content="Iniciar Sesión — PoliPlanner" />
+  <meta property="og:description" content="Accede a tu cuenta de PoliPlanner y organiza tu semestre académico." />
+  <meta property="og:url" content="https://poliplanner.fly.dev/login" />
+  <meta property="og:type" content="website" />
 {{ end }}
 
 {{ define "content" }}

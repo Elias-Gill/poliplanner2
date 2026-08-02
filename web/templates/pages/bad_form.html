@@ -1,6 +1,16 @@
-{{ define "custom_head" }}
-  <title>BAD FORM - PoliPlanner</title>
+{{ define "custom_tags" }}
+  <title>Solicitud Inválida — PoliPlanner</title>
+  <meta name="description" content="Los datos enviados en el formulario no son válidos o están incompletos en PoliPlanner." />
+  
+  <!-- Bloqueo estricto para no indexar páginas de error de formulario -->
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Solicitud Inválida — PoliPlanner" />
+  <meta property="og:description" content="Ocurrió un problema al procesar el formulario enviado." />
+  <meta property="og:type" content="website" />
 {{ end }}
+
 {{ define "content" }}
   <div
     class="flex flex-col items-center justify-center min-h-screen text-center">

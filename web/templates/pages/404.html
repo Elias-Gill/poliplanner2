@@ -1,6 +1,16 @@
-{{ define "custom_head" }}
-  <title>Error 404 - PoliPlanner</title>
+{{ define "custom_tags" }}
+  <title>Página No Encontrada (404) — PoliPlanner</title>
+  <meta name="description" content="La página que estás buscando no existe o ha sido movida en PoliPlanner." />
+  
+  <!-- Bloqueo estricto para no indexar páginas de error -->
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Página No Encontrada (404) — PoliPlanner" />
+  <meta property="og:description" content="La página solicitada no está disponible." />
+  <meta property="og:type" content="website" />
 {{ end }}
+
 {{ define "content" }}
   <div
     class="flex flex-col items-center justify-center min-h-screen px-4 text-center bg-gray-50">

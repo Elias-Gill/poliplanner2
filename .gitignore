@@ -61,3 +61,4 @@ poliplanner.db-wal
 node_modules/
 
 web/static/output.css
+web/static/css/output.css

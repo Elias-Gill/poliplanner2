@@ -1,6 +1,33 @@
-{{ define "custom_head" }}
-  <title>Guías y Ayudas — PoliPlanner</title>
+{{ define "custom_tags" }}
+  <!-- Título y Descripción orientados a búsquedas de tutoriales y recursos -->
+  <title>Centro de Guías y Ayuda Universitaria — PoliPlanner</title>
+  <meta name="description" content="Explora tutoriales, manuales académicos, guías de trámites y preguntas frecuentes para sacarle el máximo provecho a PoliPlanner." />
+
+  <!-- Canonical para evitar contenido duplicado -->
+  <link rel="canonical" href="https://poliplanner.fly.dev/guides/" />
+
+  <!-- Open Graph para cuando compartan el centro de guías -->
+  <meta property="og:title" content="Centro de Guías y Ayuda Universitaria — PoliPlanner" />
+  <meta property="og:description" content="Tutoriales, manuales académicos y guías paso a paso para estudiantes en PoliPlanner." />
+  <meta property="og:url" content="https://poliplanner.fly.dev/guides/" />
+  <meta property="og:type" content="website" />
+
+  <!-- Schema para indicarle a Google que es una página de colección de recursos/ayuda -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Centro de Guías y Ayuda — PoliPlanner",
+    "description": "Recopilatorio de tutoriales, manuales y recursos de ayuda para estudiantes universitarios.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "PoliPlanner",
+      "url": "https://poliplanner.fly.dev"
+    }
+  }
+  </script>
 {{ end }}
+
 {{ define "content" }}
   <div class="max-w-4xl mx-auto px-4 py-8">
     <!-- Header de sección -->

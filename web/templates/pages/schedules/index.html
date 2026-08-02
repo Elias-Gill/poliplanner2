@@ -1,7 +1,19 @@
 {{ define "custom_head" }}
-  <title>Arma tu Horario - PoliPlanner</title>
-  <!-- Scripts locales -->
   <script src="/static/bundle/htmx/htmx.min.js" defer></script>
+{{ end }}
+
+{{ define "custom_tags" }}
+  <title>Arma tu Horario — PoliPlanner</title>
+  <meta name="description" content="Diseña y personaliza tu horario de clases universitario de forma rápida e intuitiva con PoliPlanner." />
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Si tu ruta es /arma-tu-horario o /builder, ajusta el path al final de la URL -->
+  <link rel="canonical" href="https://poliplanner.fly.dev/schedule" />
+
+  <meta property="og:title" content="Arma tu Horario — PoliPlanner" />
+  <meta property="og:description" content="Genera y organiza tu horario académico en PoliPlanner." />
+  <meta property="og:url" content="https://poliplanner.fly.dev/schedule" />
+  <meta property="og:type" content="website" />
 {{ end }}
 
 {{ define "content" }}

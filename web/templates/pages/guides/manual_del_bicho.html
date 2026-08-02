@@ -1,6 +1,34 @@
 {{ define "custom_head" }}
   <link rel="stylesheet" href="/static/css/guides_styles.css" />
-  <title>Manual del bicho — PoliPlanner</title>
+{{ end }}
+
+{{ define "custom_tags" }}
+<!-- Título y Descripción pensados para ingresantes / cachimbos / bichos -->
+<title>Manual del Bicho: Guía de Sobrevivencia para Ingresantes — PoliPlanner</title>
+<meta name="description" content="Todo lo que necesitas saber como ingresante: mapas interactivos del campus, mallas curriculares, trámites clave y consejos de sobrevivencia en PoliPlanner." />
+
+<!-- Canonical para evitar contenido duplicado -->
+<link rel="canonical" href="https://poliplanner.fly.dev/guides/manual_bicho" />
+
+<!-- Open Graph para cuando compartan la guía en grupos de ingresantes o WhatsApp -->
+<meta property="og:title" content="Manual del Bicho: Guía de Sobrevivencia para Ingresantes — PoliPlanner" />
+<meta property="og:description" content="Mapas interactivos, trámites clave, mallas curriculares y consejos esenciales para tu primer semestre universitario." />
+<meta property="og:url" content="https://poliplanner.fly.dev/guides/manual_bicho" />
+<meta property="og:type" content="article" />
+
+<!-- Schema para indicarle a Google que es una guía educativa para estudiantes -->
+<script type="application/ld+json">
+{
+"@context": "https://schema.org",
+"@type": "TechArticle",
+"headline": "Manual del Bicho: Guía de Sobrevivencia para Ingresantes Universitarios",
+"description": "Manual completo con información sobre el campus, trámites, mapas y consejos clave para estudiantes de primer año.",
+"publisher": {
+"@type": "Organization",
+"name": "PoliPlanner"
+}
+}
+</script>
 {{ end }}
 
 {{ define "content" }}

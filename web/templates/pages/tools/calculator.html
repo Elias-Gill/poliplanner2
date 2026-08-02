@@ -1,5 +1,21 @@
+{{ define "custom_tags" }}
+  <title>Calculadora de Notas — PoliPlanner</title>
+  <meta name="description" content="Calcula tu promedio académico, ponderaciones de exámenes y la nota exacta que necesitas para aprobar tus materias con la Calculadora de Notas de PoliPlanner." />
+  
+  <!-- Indexable para posicionamiento SEO -->
+  <meta name="robots" content="index, follow" />
+
+  <link rel="canonical" href="https://poliplanner.fly.dev/tools/calculator" />
+
+  <!-- Open Graph / Redes Sociales -->
+  <meta property="og:title" content="Calculadora de Notas — PoliPlanner" />
+  <meta property="og:description" content="Herramienta para calcular tu promedio académico y proyectar tus notas de examen." />
+  <meta property="og:url" content="https://poliplanner.fly.dev/tools/calculator" />
+  <meta property="og:type" content="website" />
+{{ end }}
+
 {{ define "custom_head" }}
-  <title>Calculadora de Notas - PoliPlanner</title>
+  <script src="/static/js/calculator.js" defer></script>
 {{ end }}
 
 {{ define "content" }}
@@ -282,6 +298,4 @@
       </div>
     </div>
   </div>
-
-  <script src="/static/js/calculator.js"></script>
 {{ end }}
