@@ -1,6 +1,18 @@
 {
-    "latest": "2.0.2",
+    "latest": "2.0.3",
     "entries": [
+        {
+            "version": "2.0.3",
+            "date": "2026-08-02",
+            "important": false,
+            "title": "Modo offline y correcion de errores",
+            "changes": [
+                "Se habilitó un MODO OFFLINE, que permite consultar las guías universitarias, las herramientas y tu último horario visitado, incluso sin conexion (debes haber visitado previamente dicha pagina).",
+                "Se corrigieron errores en el orden de los horarios.",
+                "Ahora los exámenes y clases están ordenados correctamente por fecha y hora.",
+                "Se corrigieron pequeños errores visuales y de interfaz."
+            ]
+        },
         {
             "version": "2.0.2",
             "date": "2026-08-02",

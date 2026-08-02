@@ -25,6 +25,15 @@
         si cursás mas de una carrera a la vez. Además, con la interfaz renovada es mas
         fácil acceder a la información sobre tus materias y horarios.
       </p>
+        <h3>
+            Soporte de modo Offline
+        </h3>
+        <p>
+            Ahora podes visitar las guias universitarias, las herramientas y tu ultimo horario
+            visualizado, inclusive sin conexion.
+
+            Estaran disponibles siempre y cuando hayas visitado dichas paginas previamente.
+        </p>
     </div>
 
     <!-- VERSIÓN 2.0.2 DETALLADA -->
@@ -95,8 +104,8 @@
     </section>
 
     <script>
-    // automaticamente cargado desde "versions.json"
-    fetch('/static/versions.json')
+    // automaticamente cargado desde "versions.json" (?v= para evitar cache del navegador)
+    fetch('/static/versions.json?v=')
         .then(res => res.json())
         .then(data => {
             const historyContainer = document.getElementById('news-history');

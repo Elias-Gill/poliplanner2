@@ -54,10 +54,6 @@ func (s ScheduleService) GetScheduleOverview(ctx context.Context, userID user.Us
 		return nil, ErrPermissionDenied
 	}
 
-	for _, c := range sche.Courses {
-		fmt.Printf("Curso: %s, seccion: %s, horarios: %s\n", c.Name, c.Section, c.FormattedSchedule())
-	}
-
 	// Map info into our view models
 	view := &schedule.StudentScheduleView{
 		Weekly: s.buildWeeklySchedule(sche.Courses),

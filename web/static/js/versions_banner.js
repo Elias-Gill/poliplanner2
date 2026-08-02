@@ -29,7 +29,11 @@ window.newsApp = function () {
 
         async init() {
             try {
-                const res = await fetch('/static/versions.json');
+                // Se agrega cache-busting con timestamp y cache: 'no-store'
+                const res = await fetch('/static/versions.json?v=' + Date.now(), {
+                    cache: 'no-store'
+                });
+                
                 if (!res.ok) return;
 
                 const data = await res.json();
