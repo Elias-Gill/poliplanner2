@@ -1,0 +1,49 @@
+{
+    "latest": "2.0.2",
+    "entries": [
+        {
+            "version": "2.0.2",
+            "date": "2026-08-02",
+            "important": false,
+            "title": "Mejoras de UI y Correcciones",
+            "changes": [
+                "Se corrigieron errores de despliegue en los horarios.",
+                "Mejoras de interfaz visual en la calculadora y en toda la aplicación.",
+                "Se optimizó la visualización y experiencia en las mallas universitarias.",
+                "Se actualizaron las guías de uso y los manuales de usuario."
+            ]
+        },
+        {
+            "version": "2.0.0",
+            "date": "2026-07-20",
+            "important": true,
+            "title": "Gran Rediseño y Nueva Arquitectura",
+            "changes": [
+                "Reescritura completa del sistema y limpieza profunda de la arquitectura.",
+                "Renovación estética total de la interfaz de usuario.",
+                "Adaptación al nuevo formato de Excel (nota: docentes y laboratorios se añadirán próximamente)."
+            ]
+        },
+        {
+            "version": "1.4.0",
+            "date": "2026-06-28",
+            "important": true,
+            "title": "Soporte IEK y Mallas Interactivas",
+            "changes": [
+                "Se agregaron las carreras IEK.",
+                "Ahora es posible cambiar la carrera directamente desde la malla.",
+                "Se corrigieron errores en el cálculo de correlatividades."
+            ]
+        },
+        {
+            "version": "1.0.0",
+            "date": "2026-04-22",
+            "important": false,
+            "title": "Lanzamiento Inicial v1.0",
+            "changes": [
+                "Se corrigió un problema con el zoom del grafo.",
+                "Mejoras generales de rendimiento."
+            ]
+        }
+    ]
+}

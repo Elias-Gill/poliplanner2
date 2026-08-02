@@ -8,59 +8,116 @@
     <h1>Novedades recientes en PoliPlanner</h1>
 
     <p>
-      Estas últimas actualizaciones se enfocan en mejorar la experiencia de
-      usuario y ofrecer nuevas herramientas que faciliten la vida académica.
+      Estas últimas actualizaciones representan un salto enorme en el rendimiento, la interfaz y las funcionalidades clave de PoliPlanner, enfocadas en ofrecerte una experiencia más fluida tanto en tu computadora como en tu teléfono.
     </p>
 
-    <section>
-      <h2>Mejora visual integral</h2>
+    <!-- ANUNCIO DESTACADO (SUPER EN GRANDE) -->
+    <div class="my-6 p-6 bg-primary-50 border-2 border-primary-500 rounded-sm shadow-md">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="px-2 py-0.5 bg-primary-600 text-white text-xs font-bold uppercase tracking-wider rounded-sm">Novedad Principal</span>
+        <span class="text-xs font-mono text-primary-700 font-semibold">v2.0.2</span>
+      </div>
+      <h3>
+        Soporte de horarios multi-carrera en el flujo de creación
+      </h3>
       <p>
-        Implementamos un <strong>cambio visual significativo</strong> en toda la
-        plataforma, diseñado para que las secciones más importantes estén
-        siempre accesibles y las funciones clave sean fáciles de encontrar.
-        Entre las mejoras destacan:
+        Ahora podés combinar materias de distintas carreras dentro de un mismo horario. Ideal
+        si cursás mas de una carrera a la vez. Además, con la interfaz renovada es mas
+        fácil acceder a la información sobre tus materias y horarios.
       </p>
-      <ul>
-        <li>
-          Dashboard renovado con información y accesos directos más claros.
-        </li>
-        <li>
-          Flujo de creación de horarios optimizado para que organizar materias
-          sea más rápido e intuitivo.
-        </li>
-        <li>
-          Interfaz más clara y coherente, con mejor tipografía, contraste y
-          disposición de elementos.
-        </li>
-        <li>
-          Secciones y herramientas visualmente destacadas para mejorar la
-          navegación y reducir clics innecesarios.
-        </li>
-      </ul>
-    </section>
+    </div>
 
+    <!-- VERSIÓN 2.0.2 DETALLADA -->
     <section>
-      <h2>Nuevas herramientas destacadas</h2>
+      <h2>Detalles de la versión 2.0.2</h2>
+      
+      <h3>Interfaz y Experiencia de Usuario (UI/UX)</h3>
       <ul>
         <li>
-          <strong>Mallas interactivas:</strong> ahora podés explorar las mallas
-          de cada carrera de forma dinámica, con información de materias y
-          correlativas (no todas las carreras se encuentran disponibles, pero
-          seguimos agregando constantemente nuevas mallas).
+          <strong>Barra lateral (Sidebar) totalmente nueva:</strong> Menú lateral rediseñado para una navegación más rápida y ordenada entre las herramientas.
         </li>
         <li>
-          <strong>Preparación para la API:</strong> estamos trabajando en una
-          API que permitirá consumir nuestros datos históricos y parseados de
-          materias y docentes, abriendo posibilidades para desarrolladores,
-          nuevas herramientas e integraciones con otros proyectos.
+          <strong>Diseño renovado para Mobile:</strong> Se optimizó completamente la experiencia en celulares, haciendo que los horarios, la navegación y las herramientas sean cómodos de usar en pantallas pequeñas.
+        </li>
+        <li>
+          <strong>Mejora visual integral:</strong> Tipografía mejorada, contraste optimizado y una interfaz más limpia con botones y elementos unificados.
         </li>
       </ul>
+
+      <h3>Herramientas Actualizadas</h3>
+      <ul>
+        <li>
+          <strong>Mallas Interactivas mejoradas:</strong> Mayor estabilidad en el grafo, mejor navegación visual de correlatividades y correcciones en la visualización de materias.
+        </li>
+        <li>
+          <strong>Calculadora optimizada:</strong> Interfaz pulida para que el cálculo de promedios y notas requeridas sea más rápido e intuitivo.
+        </li>
+      </ul>
+
+      <h3>Guías y Recursos de la Comunidad</h3>
+      <ul>
+        <li>
+          <strong>Nueva Guía de Trámites Académicos:</strong> Agregamos un manual paso a paso con los procesos y gestiones administrativas más comunes.
+        </li>
+        <li>
+          <strong>Actualización completa del "Manual del Bicho":</strong>
+          <ul>
+            <li>Inclusión de mapas interactivos y de ubicación.</li>
+            <li>Información detallada sobre la nueva malla curricular.</li>
+            <li>Recopilación de nuevos recursos, enlaces útiles y accesos directos.</li>
+            <li>Experiencia de lectura y navegación significativamente mejorada.</li>
+          </ul>
+        </li>
+      </ul>
+
+        <h3>Backend y Datos de Horarios</h3>
+        <ul>
+            <li>
+                <strong>Reescritura completa del Backend:</strong> Reestructuramos el código interno desde cero para lograr respuestas más rápidas, menor consumo de recursos y una base sólida para futuras funciones.
+            </li>
+            <li>
+                <strong>Soporte para el nuevo formato de Excel:</strong> Adaptación completa del motor de procesamiento para leer los archivos de horarios más recientes emitidos por la facultad.
+            </li>
+        </ul>
+
+      <p style="margin-top: 2rem;">
+        <a href="/guides/">← Volver a Guías y Ayuda</a>
+      </p>
+
     </section>
 
-    <p>
-      Estas mejoras forman parte de nuestro objetivo de hacer PoliPlanner más
-      práctico, accesible y potente, siempre pensando en resolver necesidades
-      reales de los estudiantes.
-    </p>
+    <hr style="margin-top: 12vh;" />
+
+    <!-- HISTORIAL DE VERSIONES -->
+    <section>
+        <h1>Historial de versiones</h1>
+        <div id="news-history"></div>
+    </section>
+
+    <script>
+    // automaticamente cargado desde "versions.json"
+    fetch('/static/versions.json')
+        .then(res => res.json())
+        .then(data => {
+            const historyContainer = document.getElementById('news-history');
+            if (!historyContainer || !data.entries) return;
+
+            // Omitimos la versión actual y tomamos las anteriores
+            const olderEntries = data.entries.filter(entry => entry.version !== data.latest);
+
+            let html = '';
+            olderEntries.forEach(entry => {
+                html += `<h3>Versión ${entry.version} (${entry.date}) — ${entry.title}</h3>`;
+                html += '<ul>';
+                entry.changes.forEach(change => {
+                    html += `<li>${change}</li>`;
+                });
+                html += '</ul>';
+            });
+
+            historyContainer.innerHTML = html;
+        })
+        .catch(err => console.error('Error al cargar historial de noticias:', err));
+    </script>
   </div>
 {{ end }}

@@ -173,15 +173,17 @@ func load() (*Config, error) {
 	}
 
 	googleAPIKey := getEnv("GOOGLE_API_KEY", "")
-	emailAPIKey := getEnv("EMAIL_API_KEY", "")
-	updateKey := getEnv("UPDATE_KEY", "")
 
+	emailAPIKey := getEnv("EMAIL_API_KEY", "")
+
+	updateKey := getEnv("UPDATE_KEY", "")
 	if updateKey == "" {
 		return nil, fmt.Errorf("missing UPDATE_KEY")
 	}
 
-	secureHTTPDefault := env == EnvProd
-	verboseLogsDefault := env == EnvDev
+	secureHTTPDefault := env == EnvProd // secure on production
+
+	verboseLogsDefault := env == EnvDev // verbose on development
 
 	cfg := &Config{
 		App: AppData{

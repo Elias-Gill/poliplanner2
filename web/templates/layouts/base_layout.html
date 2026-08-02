@@ -25,9 +25,13 @@
 
       <script src="/static/js/worker_initializer.js"></script>
 
+      <script src="/static/js/versions_banner.js"></script>
+
       {{ block "custom_head" . }}{{ end }}
     </head>
     <body class="h-full bg-gray-100 text-gray-900 antialiased">
+      {{template "fragments/versions"}}
+
       <div
         class="flex h-screen overflow-hidden"
         x-data="{ sidebarOpen: false }">
