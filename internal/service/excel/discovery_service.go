@@ -3,6 +3,7 @@ package excel
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/scraper"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/source"
@@ -20,7 +21,12 @@ func NewDiscoveryService(googleApikey string) *DiscoveryService {
 	}
 }
 
-func (i DiscoveryService) FindLatestSource(ctx context.Context) (source.ExcelSource, error) {
+type sourcesResult struct {
+	Sources []source.ExcelSource
+	Date    time.Time
+}
+
+func (i DiscoveryService) FindLatestSources(ctx context.Context) (*sourcesResult, error) {
 	if i.scraper == nil {
 		return nil, fmt.Errorf("error searching for Excel versions: web scraper not initialized")
 	}
@@ -31,12 +37,28 @@ func (i DiscoveryService) FindLatestSource(ctx context.Context) (source.ExcelSou
 		return nil, fmt.Errorf("error searching for Excel versions: %w", err)
 	}
 
-	var newest source.ExcelSource = nil
+	if len(sources) == 0 {
+		return nil, nil
+	}
+
+	var latestSources []source.ExcelSource
+	var newestDate time.Time
+
 	for _, s := range sources {
-		if newest == nil || s.Metadata().Date.After(newest.Metadata().Date) {
-			newest = s
+		currentDate := s.Metadata().Date
+
+		if len(latestSources) == 0 || currentDate.After(newestDate) {
+			// A newer date is found
+			newestDate = currentDate
+			latestSources = []source.ExcelSource{s}
+		} else if currentDate.Equal(newestDate) {
+			// Same date as the newest date, then append the source
+			latestSources = append(latestSources, s)
 		}
 	}
 
-	return newest, nil
+	return &sourcesResult{
+		Sources: latestSources,
+		Date:    newestDate,
+	}, nil
 }

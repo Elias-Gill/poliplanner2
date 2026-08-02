@@ -8,11 +8,12 @@ import (
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/config/timezone"
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/source"
 	"github.com/elias-gill/poliplanner2/internal/repository/excel"
 	"github.com/elias-gill/poliplanner2/logger"
 )
 
-const autoSyncInterval = 8 * time.Hour
+const autoSyncInterval = 6 * time.Hour
 
 var (
 	CheckLastSyncError = errors.New("Failed to retrieve last sync date")
@@ -69,47 +70,73 @@ func (e SyncService) AutoSync(ctx context.Context) error {
 func (e SyncService) Sync(ctx context.Context) error {
 	logger.Info("Starting Excel sync")
 
-	// Buscar la version mas nueva en la web
-	webSource, err := e.importService.FindLatestSource(ctx)
+	// Fetch the most recent sources from the web
+	webSources, err := e.importService.FindLatestSources(ctx)
 	if err != nil {
 		logger.Error("Error retrieving latest source from web", "error", err)
 		return fmt.Errorf("error retrieving latest source from web: %w", err)
 	}
 
-	// Obtener la version mas nueva del server
+	if webSources == nil {
+		logger.Error("No sources found in the web")
+		return fmt.Errorf("No sources found in the web")
+	}
+
+	// Get the newest version already stored in the database
 	serverVersion, err := e.excelService.GetLatestValidVersion(ctx)
 	if err != nil && err != ErrNoSheetVersion {
 		logger.Error("Failed to get newest version from database", "error", err)
 		return fmt.Errorf("error retrieving latest version from db: %w", err)
 	}
 
-	// Actualizar la fecha de sincronizacion del sistema
+	// Record the sync attempt timestamp
 	err = e.syncRepository.SetLastSyncAttempt(ctx, time.Now().In(timezone.ParaguayTZ))
 	if err != nil {
 		logger.Error("Failed to set sync date on database", "error", err)
 		return fmt.Errorf("error setting sync date on database: %w", err)
 	}
 
+	// If no version exists in DB, perform initial import of all sources
 	if serverVersion == nil {
 		logger.Info("No previous version found in database, starting initial import")
-		return e.excelService.PersistSource(ctx, webSource)
+		return e.persistAllSources(ctx, webSources.Sources)
 	}
 
-	// Comparar la version de la web con la version del server mas nueva
-	if !webSource.Metadata().Date.After(serverVersion.ParsedAt) {
+	// Compare the overall latest date from web with the DB's latest parsed date
+	if !webSources.Date.After(serverVersion.ParsedAt) {
 		logger.Info(
 			"Current excel source is up to date",
-			"source_date", webSource.Metadata().Date,
+			"source_date", webSources.Date,
 			"db_parsed_at", serverVersion.ParsedAt,
 		)
 		return nil
 	}
 
 	logger.Info(
-		"Newer excel source found, starting import",
-		"source_date", webSource.Metadata().Date,
+		"Newer excel sources found, starting import",
+		"date", webSources.Date,
 		"db_parsed_at", serverVersion.ParsedAt,
+		"count", len(webSources.Sources),
 	)
 
-	return e.excelService.PersistSource(ctx, webSource)
+	// Persist all sources from the web (loop over each source)
+	return e.persistAllSources(ctx, webSources.Sources)
+}
+
+// persistAllSources iterates over the given sources and persists each one.
+// It aggregates any errors and returns a combined error if at least one fails.
+func (e SyncService) persistAllSources(ctx context.Context, sources []source.ExcelSource) error {
+	var errs []error
+	for i, src := range sources {
+		logger.Info("Persisting source", "index", i, "uri", src.Metadata().URI)
+		if err := e.excelService.PersistSource(ctx, src); err != nil {
+			logger.Error("Failed to persist source", "index", i, "error", err)
+			errs = append(errs, fmt.Errorf("source %d: %w", i, err))
+		}
+	}
+
+	if len(errs) > 0 {
+		return fmt.Errorf("errors persisting sources: %w", errors.Join(errs...))
+	}
+	return nil
 }

@@ -119,7 +119,7 @@ func (g *GoogleDriveHelper) GetSourceFromSpreadsheetLink(
 		return nil, err
 	}
 
-	if !g.containsExamKeyword(metadata.Name) {
+	if !g.containsKeywords(metadata.Name) {
 		return nil, fmt.Errorf("spreadsheet name does not match expected keywords")
 	}
 
@@ -234,7 +234,7 @@ func (g *GoogleDriveHelper) isExcelFile(name string) bool {
 	return strings.HasSuffix(strings.ToLower(name), ".xlsx")
 }
 
-func (g *GoogleDriveHelper) containsExamKeyword(name string) bool {
+func (g *GoogleDriveHelper) containsKeywords(name string) bool {
 	n := strings.ToLower(name)
 	for _, k := range []string{"examen", "exame", "exam", "horario", "clases"} {
 		if strings.Contains(n, k) {

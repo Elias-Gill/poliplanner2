@@ -82,6 +82,7 @@ func extractPeriodFromFilename(filename string) academic.YearSemester {
 
 	if strings.Contains(lower, "primero") ||
 		strings.Contains(lower, "1ro") ||
+		strings.Contains(lower, "primer") ||
 		strings.Contains(lower, "semestre 1") {
 		return academic.FirstSemester
 	}
@@ -91,8 +92,8 @@ func extractPeriodFromFilename(filename string) academic.YearSemester {
 	month := now.Month()
 
 	if month >= time.August {
-		return academic.FirstSemester
+		return academic.SecondSemester
 	}
 
-	return academic.SecondSemester
+	return academic.FirstSemester
 }
