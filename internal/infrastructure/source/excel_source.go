@@ -8,16 +8,7 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
 )
 
-type SourceScraper interface {
-	Discover(ctx context.Context) ([]ExcelSource, error)
-}
-
-type ExcelSource interface {
-	Content(ctx context.Context) (io.ReadCloser, error)
-	Metadata() ExcelSourceMetadata
-}
-
-type ExcelSourceMetadata struct {
+type SourceMetadata struct {
 	Name string
 
 	URI string
@@ -25,8 +16,8 @@ type ExcelSourceMetadata struct {
 	// Semester represents the current academic period of the year.
 	// The university operates on a semestral cycle calculated as follows:
 	//
-	//	- First Semester:  August to December
-	//	- Second Semester: January to July
+	//	- First Semester:  January to July
+	//	- Second Semester: August to December
 	Semester academic.YearSemester
 
 	// Date identifies the version of the source data.
@@ -37,4 +28,18 @@ type ExcelSourceMetadata struct {
 	// This value is used to determine whether the source is newer than the
 	// latest successfully parsed version stored in the database.
 	Date time.Time
+}
+
+type sourceInterface interface {
+	Content(ctx context.Context) (io.ReadCloser, error)
+	Metadata() SourceMetadata
+}
+
+type ScheduleSource sourceInterface
+
+type LabSource sourceInterface
+
+type SourceScraper interface {
+	DiscoverSchedules(ctx context.Context) ([]ScheduleSource, error)
+	DiscoverLabs(ctx context.Context) ([]LabSource, error)
 }

@@ -82,7 +82,7 @@ func (e ExcelService) GetLatestValidVersion(ctx context.Context) (*excel.SheetVe
 	return nil, ErrNoSheetVersion
 }
 
-func (e ExcelService) PersistSource(ctx context.Context, source source.ExcelSource) error {
+func (e ExcelService) PersistSource(ctx context.Context, source source.ScheduleSource) error {
 	content, err := source.Content(ctx)
 	if err != nil {
 		return fmt.Errorf("cannot open Excel source: %w", err)

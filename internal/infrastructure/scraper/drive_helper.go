@@ -29,10 +29,6 @@ type GoogleFilesResponse struct {
 	Files []GoogleFile `json:"files"`
 }
 
-// ================================
-// =        Public API            =
-// ================================
-
 func NewGoogleDriveHelper(apiKey string) *GoogleDriveHelper {
 	if apiKey == "" {
 		log.Warn("GOOGLE_API_KEY not set, Google Drive integration disabled")
@@ -55,10 +51,7 @@ func NewGoogleDriveHelper(apiKey string) *GoogleDriveHelper {
 	}
 }
 
-func (g *GoogleDriveHelper) ListSourcesInURL(
-	ctx context.Context,
-	url string,
-) ([]*ExcelWebSource, error) {
+func (g *GoogleDriveHelper) ListSourcesInURL(ctx context.Context, url string) ([]*webSource, error) {
 	log.Info("Listing Google Drive folder sources", "url", url)
 
 	folderID := g.extractFolderID(url)
@@ -71,7 +64,7 @@ func (g *GoogleDriveHelper) ListSourcesInURL(
 		return nil, err
 	}
 
-	sources := make([]*ExcelWebSource, 0, len(files))
+	sources := make([]*webSource, 0, len(files))
 	for _, file := range files {
 		select {
 		case <-ctx.Done():
@@ -89,12 +82,12 @@ func (g *GoogleDriveHelper) ListSourcesInURL(
 			continue
 		}
 
-		source := NewExcelDownloadSource(
-			"https://drive.google.com/uc?export=download&id="+file.ID,
-			file.Name,
-			fileDate,
-			extractPeriodFromFilename(file.Name),
-		)
+		source := &webSource{
+			URL:        "https://drive.google.com/uc?export=download&id=" + file.ID,
+			Name:       file.Name,
+			UploadDate: fileDate,
+			Semester:   extractPeriodFromFilename(file.Name),
+		}
 		sources = append(sources, source)
 
 		log.Info("Google Drive source found", "url", source.URL, "date", source.UploadDate.String())
@@ -103,10 +96,7 @@ func (g *GoogleDriveHelper) ListSourcesInURL(
 	return sources, nil
 }
 
-func (g *GoogleDriveHelper) GetSourceFromSpreadsheetLink(
-	ctx context.Context,
-	url string,
-) (*ExcelWebSource, error) {
+func (g *GoogleDriveHelper) GetSourceFromSpreadsheetLink(ctx context.Context, url string) (*webSource, error) {
 	log.Info("Processing Google Spreadsheet link", "url", url)
 
 	spreadsheetID := g.extractSpreadsheetID(url)
@@ -119,33 +109,22 @@ func (g *GoogleDriveHelper) GetSourceFromSpreadsheetLink(
 		return nil, err
 	}
 
-	if !g.containsKeywords(metadata.Name) {
-		return nil, fmt.Errorf("spreadsheet name does not match expected keywords")
-	}
-
 	date, err := extractDateFromFilename(metadata.Name)
 	if err != nil {
 		return nil, err
 	}
 
-	source := NewExcelDownloadSource(
-		"https://docs.google.com/spreadsheets/d/"+spreadsheetID+"/export?format=xlsx",
-		metadata.Name,
-		date,
-		extractPeriodFromFilename(metadata.Name),
-	)
+	log.Info("Spreadsheet info", "name", metadata.Name, "date", date)
 
-	return source, nil
+	return &webSource{
+		URL:        "https://docs.google.com/spreadsheets/d/" + spreadsheetID + "/export?format=xlsx",
+		Name:       metadata.Name,
+		UploadDate: date,
+		Semester:   extractPeriodFromFilename(metadata.Name),
+	}, nil
 }
 
-// =====================================
-// =        Private methods            =
-// =====================================
-
-func (g *GoogleDriveHelper) listFilesInFolder(
-	ctx context.Context,
-	folderID string,
-) ([]GoogleFile, error) {
+func (g *GoogleDriveHelper) listFilesInFolder(ctx context.Context, folderID string) ([]GoogleFile, error) {
 	if g.apiKey == "" {
 		return nil, fmt.Errorf("GOOGLE_API_KEY not set")
 	}
@@ -180,10 +159,7 @@ func (g *GoogleDriveHelper) listFilesInFolder(
 	return result.Files, nil
 }
 
-func (g *GoogleDriveHelper) fetchSpreadsheetMetadata(
-	ctx context.Context,
-	spreadsheetID string,
-) (*GoogleFile, error) {
+func (g *GoogleDriveHelper) fetchSpreadsheetMetadata(ctx context.Context, spreadsheetID string) (*GoogleFile, error) {
 	reqURL := fmt.Sprintf(
 		"https://www.googleapis.com/drive/v3/files/%s?fields=name&key=%s",
 		spreadsheetID,
@@ -232,14 +208,4 @@ func (g *GoogleDriveHelper) extractSpreadsheetID(url string) string {
 
 func (g *GoogleDriveHelper) isExcelFile(name string) bool {
 	return strings.HasSuffix(strings.ToLower(name), ".xlsx")
-}
-
-func (g *GoogleDriveHelper) containsKeywords(name string) bool {
-	n := strings.ToLower(name)
-	for _, k := range []string{"examen", "exame", "exam", "horario", "clases"} {
-		if strings.Contains(n, k) {
-			return true
-		}
-	}
-	return false
 }
