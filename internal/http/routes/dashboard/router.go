@@ -1,17 +1,14 @@
 package dashboard
 
 import (
-	"fmt"
+	// FIX: deberia de usar mi logger, no esto
 	"log"
 	"net/http"
 	"strconv"
-	"time"
 
-	pdf "github.com/elias-gill/poliplanner2/internal/pdf"
 
 	utils "github.com/elias-gill/poliplanner2/internal/http"
 	"github.com/elias-gill/poliplanner2/internal/http/cookie"
-	"github.com/elias-gill/poliplanner2/internal/http/middleware"
 	"github.com/elias-gill/poliplanner2/internal/http/render"
 	scheduleModel "github.com/elias-gill/poliplanner2/internal/model/schedule"
 	"github.com/elias-gill/poliplanner2/internal/service/academic"
@@ -46,10 +43,6 @@ func (h *Handler) Routes() chi.Router {
 	r.Get("/", h.dashboard)
 
 	r.Get("/{id}", h.dashboardSchedule)
-
-	pdfLimiter := middleware.NewGlobalPDFLimiter(1, 10*time.Minute)
-
-	r.With(pdfLimiter.Limit).Get("/pdf/{id}", h.DownloadPDF)
 
 	return r
 }
@@ -164,30 +157,4 @@ func (h *Handler) dashboardSchedule(w http.ResponseWriter, r *http.Request) {
 	h.tmpl.RenderPartial(w, "dashboard/index.html", "dashboard/schedule_content", details)
 }
 
-func (h *Handler) DownloadPDF(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	userID := utils.MustExtractUserID(r)
 
-	idStr := chi.URLParam(r, "id")
-	scheduleID, err := strconv.ParseInt(idStr, 10, 64)
-	if err != nil {
-		http.Error(w, "Invalid schedule ID", http.StatusBadRequest)
-		return
-	}
-
-	studentView, err := h.scheduleService.GetScheduleOverview(ctx, userID, scheduleModel.ScheduleID(scheduleID))
-	if err != nil {
-		http.Error(w, "Error generando vista", http.StatusInternalServerError)
-		return
-	}
-
-	// 2. Configurar Headers HTTP
-	w.Header().Set("Content-Type", "application/pdf")
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"horario_%d.pdf\"", scheduleID))
-
-	// 3. Exportar directamente al ResponseWriter
-	exporter := pdf.NewSchedulePDFExporter()
-	if _, err := exporter.Export(studentView, w); err != nil {
-		log.Printf("Error al escribir el PDF: %v", err)
-	}
-}

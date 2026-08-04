@@ -1,6 +1,17 @@
 {
-    "latest": "2.0.4",
+    "latest": "2.0.5",
     "entries": [
+        {
+            "version": "2.0.5",
+            "date": "2026-08-04",
+            "important": false,
+            "title": "Exportacion de horarios a PDF",
+            "changes": [
+                "Añadida la opcion de exportar tu horario a formato PDF.",
+                "Correccion de pequeños errores graficos.",
+                "EN PROGRESO: soporte para horarios de laboratorios."
+            ]
+        },
         {
             "version": "2.0.4",
             "date": "2026-08-04",

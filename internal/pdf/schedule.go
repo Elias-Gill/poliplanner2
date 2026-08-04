@@ -21,7 +21,7 @@ func NewSchedulePDFExporter() *SchedulePDFExporter {
 	return &SchedulePDFExporter{}
 }
 
-func (e *SchedulePDFExporter) Export(view *model.StudentScheduleView, w io.Writer) (int64, error) {
+func (e *SchedulePDFExporter) Export(view *model.StudentScheduleView, w io.Writer) error {
 	pdf := gopdf.GoPdf{}
 
 	// A4 Dimensions: 595.28 x 841.89 points
@@ -31,7 +31,7 @@ func (e *SchedulePDFExporter) Export(view *model.StudentScheduleView, w io.Write
 	pdf.AddPage()
 
 	if err := pdf.AddTTFFontData("custom-font", defaultFont); err != nil {
-		return 0, fmt.Errorf("failed to register TTF font: %w", err)
+		return fmt.Errorf("failed to register TTF font: %w", err)
 	}
 
 	const (
@@ -298,7 +298,9 @@ func (e *SchedulePDFExporter) Export(view *model.StudentScheduleView, w io.Write
 		currentY += cardHeight + 10
 	}
 
-	return pdf.WriteTo(w)
+	_, err := pdf.WriteTo(w)
+
+	return err
 }
 
 // ---------------------------------------------------------

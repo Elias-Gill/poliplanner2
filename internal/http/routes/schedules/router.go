@@ -4,12 +4,18 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
+	scheduleModel "github.com/elias-gill/poliplanner2/internal/model/schedule"
+
+	pdf "github.com/elias-gill/poliplanner2/internal/pdf"
+
 	utils "github.com/elias-gill/poliplanner2/internal/http"
 	"github.com/elias-gill/poliplanner2/internal/http/cookie"
+	"github.com/elias-gill/poliplanner2/internal/http/middleware"
 	"github.com/elias-gill/poliplanner2/internal/http/render"
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
 	"github.com/elias-gill/poliplanner2/internal/model/schedule"
@@ -54,6 +60,9 @@ func (h *Handler) Routes() chi.Router {
 	r.Post("/", h.saveSchedule)
 
 	r.Post("/delete", h.deleteSchedule)
+
+	pdfLimiter := middleware.NewGlobalPDFLimiter(20, 1*time.Minute)
+	r.With(pdfLimiter.Limit).Get("/export/pdf", h.downloadPDF)
 
 	return r
 }
@@ -302,4 +311,53 @@ func (h *Handler) deleteSchedule(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.Redirect(w, r, "/dashboard")
+}
+
+func (h *Handler) downloadPDF(w http.ResponseWriter, r *http.Request) {
+	userID := utils.MustExtractUserID(r)
+	if userID == 0 {
+		utils.Redirect(w, r, "/login")
+		return
+	}
+
+	// get scheduleID
+	idStr := r.URL.Query().Get("id")
+	if idStr == "" {
+		logger.Error("id de horario no provisto para exportación a PDF")
+		utils.Redirect(w, r, "/bad_form")
+		return
+	}
+
+	scheduleID, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		logger.Error("id de horario inválido para PDF", "id", idStr, "error", err)
+		utils.Redirect(w, r, "/bad_form")
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(r.Context(), 3*time.Second)
+	defer cancel()
+
+	// Get schedule details
+	studentView, err := h.scheduleService.GetScheduleOverview(ctx, userID, scheduleModel.ScheduleID(scheduleID))
+	if err != nil {
+		if errors.Is(err, scheduleSrvs.ErrPermissionDenied) {
+			logger.Error("permiso denegado para exportar PDF", "user_id", userID, "schedule_id", scheduleID)
+			utils.Redirect(w, r, "/403")
+			return
+		}
+
+		logger.Error("falló la obtención del horario para PDF", "schedule_id", scheduleID, "error", err)
+		utils.Redirect(w, r, "/500")
+		return
+	}
+
+	// Response with the pdf
+	w.Header().Set("Content-Type", "application/pdf")
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"horario_%d.pdf\"", scheduleID))
+
+	exporter := pdf.NewSchedulePDFExporter()
+	if err := exporter.Export(studentView, w); err != nil {
+		logger.Error("error al generar o escribir el PDF", "schedule_id", scheduleID, "error", err)
+	}
 }
