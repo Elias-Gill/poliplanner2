@@ -258,7 +258,7 @@ func (h *Handler) deleteSchedule(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 1. Obtener y validar el ID del horario
+	// Validate User ID
 	idStr := r.Form.Get("id")
 	if idStr == "" {
 		logger.Error("id de horario no provisto para eliminación")
@@ -278,7 +278,7 @@ func (h *Handler) deleteSchedule(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), 500*time.Millisecond)
 	defer cancel()
 
-	// 2. Ejecutar borrado a través del servicio
+	// Delete
 	err = h.scheduleService.Delete(ctx, userID, schedule.ScheduleID(id))
 	if err != nil {
 		if errors.Is(err, scheduleSrvs.ErrPermissionDenied) {
@@ -294,7 +294,7 @@ func (h *Handler) deleteSchedule(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 3. Redirección exitosa (Soporte HTMX y HTTP nativo)
+	// redirect
 	if r.Header.Get("HX-Request") == "true" {
 		w.Header().Set("HX-Redirect", "/dashboard")
 		w.WriteHeader(http.StatusOK)

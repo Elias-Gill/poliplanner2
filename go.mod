@@ -11,6 +11,8 @@ require (
 
 require (
 	github.com/antihax/optional v1.0.0 // indirect
+	github.com/phpdave11/gofpdi v1.0.14-0.20211212211723-1f10f9844311 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.4 // indirect
 	github.com/tiendc/go-deepcopy v1.7.1 // indirect
@@ -37,6 +39,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.32
 	github.com/nlnwa/whatwg-url v0.6.1 // indirect
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
+	github.com/signintech/gopdf v0.38.0
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	github.com/xuri/excelize/v2 v2.10.0
 	golang.org/x/crypto v0.44.0
