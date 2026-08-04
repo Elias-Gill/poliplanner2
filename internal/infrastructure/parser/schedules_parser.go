@@ -3,10 +3,12 @@ package parser
 import (
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"unicode"
 
+	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/exceptions"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/layout"
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
@@ -35,7 +37,9 @@ type ParsedSheet struct {
 }
 
 func NewParser(file io.ReadCloser) (*ExcelParser, error) {
-	loader := layout.NewJsonLayoutLoader()
+	// Initialize layout loader
+	layoutsDir := filepath.Join(config.Get().Paths.BaseDir, "internal", "infrastructure", "parser", "layout", "schedules")
+	loader := layout.NewJsonLayoutLoader(layoutsDir)
 	layouts, err := loader.LoadJsonLayouts()
 	if err != nil {
 		return nil, exceptions.NewExcelParserConfigurationException("Failed to load layouts", err)

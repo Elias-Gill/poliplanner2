@@ -1,12 +1,12 @@
-package parser
+package commons
 
 import (
 	"strconv"
 	"strings"
 )
 
-// parseTime prescinde de expresiones regulares y hereda 0 alocaciones
-func parseTime(timeStr string) Hour {
+// ParseTime convierte texto a Hour sin alocaciones de Regex.
+func ParseTime(timeStr string) Hour {
 	timeStr = strings.TrimSpace(timeStr)
 	timeStr = strings.TrimRight(timeStr, "hs h.")
 	timeStr = strings.TrimSpace(timeStr)
@@ -15,8 +15,8 @@ func parseTime(timeStr string) Hour {
 	}
 
 	if before, after, ok := strings.Cut(timeStr, ":"); ok {
-		hours := parseDigits(before)
-		minutes := parseDigits(after)
+		hours := ParseDigits(before)
+		minutes := ParseDigits(after)
 
 		if hours > 23 {
 			hours = 23
@@ -35,8 +35,8 @@ func parseTime(timeStr string) Hour {
 	return Hour{}
 }
 
-// parseDate analiza numéricamente la cadena evitando compilar Regex dinámicos
-func parseDate(value string) Date {
+// ParseDate analiza numéricamente una cadena de fecha.
+func ParseDate(value string) Date {
 	value = strings.TrimSpace(value)
 	if value == "" {
 		return Date{}
@@ -74,14 +74,15 @@ func parseDate(value string) Date {
 		year += 2000
 	}
 
-	if !isValidDate(day, month, year) {
+	if !IsValidDate(day, month, year) {
 		return Date{}
 	}
 
 	return Date{Year: year, Month: month, Day: day, Valid: true}
 }
 
-func parseTimeSlot(val string) TimeSlot {
+// ParseTimeSlot parsea un rango de horarios (ej: "07:30 - 09:00").
+func ParseTimeSlot(val string) TimeSlot {
 	val = strings.TrimSpace(val)
 	val = strings.TrimRight(strings.ToLower(val), "hs h.")
 	val = strings.TrimSpace(val)
@@ -92,12 +93,13 @@ func parseTimeSlot(val string) TimeSlot {
 	}
 
 	return TimeSlot{
-		Start: parseTime(before),
-		End:   parseTime(after),
+		Start: ParseTime(before),
+		End:   ParseTime(after),
 	}
 }
 
-func convertStringToNumber(str string) int {
+// ConvertStringToNumber limpia y convierte una cadena a número entero.
+func ConvertStringToNumber(str string) int {
 	str = strings.TrimSpace(str)
 	if str == "" || str == "-" {
 		return 0
@@ -130,7 +132,7 @@ func convertStringToNumber(str string) int {
 	return int(val + 0.5)
 }
 
-func parseDigits(s string) int {
+func ParseDigits(s string) int {
 	res := 0
 	for i := 0; i < len(s); i++ {
 		if s[i] >= '0' && s[i] <= '9' {
@@ -140,7 +142,7 @@ func parseDigits(s string) int {
 	return res
 }
 
-func isValidDate(day, month, year int) bool {
+func IsValidDate(day, month, year int) bool {
 	if month < 1 || month > 12 || day < 1 {
 		return false
 	}
@@ -156,4 +158,32 @@ func isValidDate(day, month, year int) bool {
 		daysInMonth = 30
 	}
 	return day <= daysInMonth
+}
+
+// ScanLines escanea texto multilínea sin alocar slices intermedios.
+func ScanLines(input string, assign func(idx int, line string)) int {
+	input = strings.TrimSpace(input)
+	if input == "" {
+		return 0
+	}
+	idx := 0
+	for idx < 4 {
+		next := strings.IndexByte(input, '\n')
+		var line string
+		if next == -1 {
+			line = strings.TrimSpace(input)
+		} else {
+			line = strings.TrimSpace(input[:next])
+		}
+
+		if line != "" {
+			assign(idx, line)
+			idx++
+		}
+		if next == -1 {
+			break
+		}
+		input = input[next+1:]
+	}
+	return idx
 }

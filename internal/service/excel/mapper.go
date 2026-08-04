@@ -9,6 +9,7 @@ import (
 
 	"github.com/elias-gill/poliplanner2/internal/config/timezone"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser"
+	parserCommons "github.com/elias-gill/poliplanner2/internal/infrastructure/parser/commons"
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
 )
 
@@ -68,7 +69,7 @@ func buildOfferingFromDTO(data parser.SubjectDTO) academic.Course {
 	}
 }
 
-func buildTeachers(src [4]parser.TeacherDTO, count int) []academic.Teacher {
+func buildTeachers(src [4]parserCommons.TeacherDTO, count int) []academic.Teacher {
 	var teachers []academic.Teacher
 
 	for i := range count {
@@ -76,6 +77,13 @@ func buildTeachers(src [4]parser.TeacherDTO, count int) []academic.Teacher {
 		if src[i].Email == "" && src[i].FirstName == "" {
 			continue
 		}
+
+		// NOTE: en el caso de los docentes "A CONFIRMAR", simplemente los metemos en la base
+		// de datos. Tampoco representan problema alguno dentro de nuestro parser, y nos
+		// permite mostrar el caso real de nuestros horarios.
+		//
+		// Tampoco ensucia significativamente nuestra base de datos de Docentes. Simplemente
+		// podemos filtrar dichos nombres a la hora de hacer una API sobre eso.
 
 		teachers = append(teachers, academic.Teacher{
 			Title:     src[i].Title,
@@ -119,14 +127,14 @@ func buildExams(data parser.SubjectDTO) []academic.Exam {
 	configs := []struct {
 		eType academic.ExamType
 		inst  academic.ExamInstance
-		d     parser.Date
-		h     parser.Hour
-		rd    parser.Date
-		rh    parser.Hour
+		d     parserCommons.Date
+		h     parserCommons.Hour
+		rd    parserCommons.Date
+		rh    parserCommons.Hour
 		room  string
 	}{
-		{academic.ExamPartial, 1, data.Partial1Date, data.Partial1Time, parser.Date{}, parser.Hour{}, data.Partial1Room},
-		{academic.ExamPartial, 2, data.Partial2Date, data.Partial2Time, parser.Date{}, parser.Hour{}, data.Partial2Room},
+		{academic.ExamPartial, 1, data.Partial1Date, data.Partial1Time, parserCommons.Date{}, parserCommons.Hour{}, data.Partial1Room},
+		{academic.ExamPartial, 2, data.Partial2Date, data.Partial2Time, parserCommons.Date{}, parserCommons.Hour{}, data.Partial2Room},
 		{academic.ExamFinal, 1, data.Final1Date, data.Final1Time, data.Final1RevDate, data.Final1RevTime, data.Final1Room},
 		{academic.ExamFinal, 2, data.Final2Date, data.Final2Time, data.Final2RevDate, data.Final2RevTime, data.Final2Room},
 	}
@@ -155,7 +163,7 @@ func buildExams(data parser.SubjectDTO) []academic.Exam {
 // Time Utils
 // ============================================================
 
-func combineDateHour(d parser.Date, h parser.Hour) *time.Time {
+func combineDateHour(d parserCommons.Date, h parserCommons.Hour) *time.Time {
 	if !d.Valid {
 		return nil
 	}
@@ -170,7 +178,7 @@ func combineDateHour(d parser.Date, h parser.Hour) *time.Time {
 	return &t
 }
 
-func hourToTime(h parser.Hour) *time.Time {
+func hourToTime(h parserCommons.Hour) *time.Time {
 	if !h.Valid {
 		return nil
 	}

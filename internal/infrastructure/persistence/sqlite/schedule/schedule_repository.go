@@ -175,7 +175,7 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error iterating course rows: %w", err)
 	}
 
 	if len(sch.Courses) == 0 {
@@ -184,14 +184,15 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 
 	placeholders := strings.Repeat("?,", len(courseIDs)-1) + "?"
 
+	// Use COALESCE for title and email to safely handle NULL database values
 	teachersQuery := fmt.Sprintf(`
 		SELECT 
 			dc.id_curso,
 			d.id,
-			d.titulo,
+			COALESCE(d.titulo, ''),
 			d.nombre,
 			d.apellido,
-			d.correo
+			COALESCE(d.correo, '')
 		FROM docentes_curso dc
 		JOIN docentes d ON dc.id_docente = d.id
 		WHERE dc.id_curso IN (%s)
@@ -207,20 +208,19 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 		var courseID int64
 		var teacher academic.Teacher
 		var teacherID int64
-		var title sql.NullString
 
-		if err := tRows.Scan(&courseID, &teacherID, &title, &teacher.FirstName, &teacher.LastName, &teacher.Email); err != nil {
+		if err := tRows.Scan(&courseID, &teacherID, &teacher.Title, &teacher.FirstName, &teacher.LastName, &teacher.Email); err != nil {
 			return nil, fmt.Errorf("failed to scan teacher: %w", err)
 		}
 
 		teacher.ID = academic.TeacherID(teacherID)
-		if title.Valid {
-			teacher.Title = title.String
-		}
 
 		if idx, ok := courseIdxMap[courseID]; ok {
 			sch.Courses[idx].Teachers = append(sch.Courses[idx].Teachers, teacher)
 		}
+	}
+	if err := tRows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating teacher rows: %w", err)
 	}
 
 	schedulesQuery := fmt.Sprintf(`
@@ -261,6 +261,9 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 		if idx, ok := courseIdxMap[courseID]; ok {
 			sch.Courses[idx].Schedules = append(sch.Courses[idx].Schedules, session)
 		}
+	}
+	if err := sRows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating schedule rows: %w", err)
 	}
 
 	examsQuery := fmt.Sprintf(`
@@ -314,6 +317,9 @@ func (s *SqliteScheduleStore) GetDetailsByID(ctx context.Context, ID schedule.Sc
 		if idx, ok := courseIdxMap[courseID]; ok {
 			sch.Courses[idx].Exams = append(sch.Courses[idx].Exams, exam)
 		}
+	}
+	if err := eRows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating exam rows: %w", err)
 	}
 
 	return &sch, nil
