@@ -5,11 +5,13 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	pdf "github.com/elias-gill/poliplanner2/internal/pdf"
 
 	utils "github.com/elias-gill/poliplanner2/internal/http"
 	"github.com/elias-gill/poliplanner2/internal/http/cookie"
+	"github.com/elias-gill/poliplanner2/internal/http/middleware"
 	"github.com/elias-gill/poliplanner2/internal/http/render"
 	scheduleModel "github.com/elias-gill/poliplanner2/internal/model/schedule"
 	"github.com/elias-gill/poliplanner2/internal/service/academic"
@@ -45,7 +47,9 @@ func (h *Handler) Routes() chi.Router {
 
 	r.Get("/{id}", h.dashboardSchedule)
 
-	r.Get("/pdf/{id}", h.DownloadPDF)
+	pdfLimiter := middleware.NewGlobalPDFLimiter(1, 10*time.Minute)
+
+	r.With(pdfLimiter.Limit).Get("/pdf/{id}", h.DownloadPDF)
 
 	return r
 }

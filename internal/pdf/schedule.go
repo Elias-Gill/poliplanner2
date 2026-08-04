@@ -10,6 +10,8 @@ import (
 	"github.com/signintech/gopdf"
 )
 
+// NOTE: las fuentes para la generacion de pdf ya van embebidas en el compilado final
+
 //go:embed fonts/Roboto-Regular.ttf
 var defaultFont []byte
 
