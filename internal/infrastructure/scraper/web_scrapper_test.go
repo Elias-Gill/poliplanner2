@@ -12,7 +12,6 @@ import (
 
 const (
 	directDownloadURL = "https://www.pol.una.py/wp-content/uploads/Horario-de-clases-y-examenes-Segundo-Academico-2024-version-web-19122024.xlsx"
-	driveDownloadURL  = "https://drive.google.com/uc?export=download&id=1BVbZHZ6w01MLzGYBRBx2mbDkJ3-7QtLZ"
 )
 
 var (
