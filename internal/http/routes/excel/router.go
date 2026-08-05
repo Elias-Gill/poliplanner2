@@ -1,10 +1,6 @@
 package excel
 
 import (
-	"github.com/elias-gill/poliplanner2/internal/http/render"
-	"github.com/elias-gill/poliplanner2/internal/service/excel"
-	"github.com/go-chi/chi/v5"
-
 	"context"
 	"fmt"
 	"net/http"
@@ -14,9 +10,12 @@ import (
 
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/config/timezone"
+	"github.com/elias-gill/poliplanner2/internal/http/render"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/source"
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
+	"github.com/elias-gill/poliplanner2/internal/service/excel"
 	"github.com/elias-gill/poliplanner2/logger"
+	"github.com/go-chi/chi/v5"
 )
 
 const maxUploadSize = 8 << 20 // 8 MiB
@@ -44,6 +43,7 @@ func (h *Handler) Routes() chi.Router {
 
 	r.Get("/", h.syncForm)
 	r.Post("/sync", h.sync)
+	r.Get("/list", h.listVersions) // <-- Nuevo endpoint para listar las versiones
 
 	return r
 }
@@ -53,7 +53,7 @@ type handlerConfig struct {
 	scraperTimeout time.Duration
 }
 
-// Helper para obtener configuración localmente dentro del struct Handler ya definido en excel.go
+// Helper para obtener configuración localmente dentro del struct Handler ya definido
 func (h *Handler) getConfig() handlerConfig {
 	cfg := config.Get()
 	return handlerConfig{
@@ -84,6 +84,24 @@ func (h *Handler) sync(w http.ResponseWriter, r *http.Request) {
 		h.handleUpload(w, r)
 	} else {
 		h.handleSync(w, r)
+	}
+}
+
+func (h *Handler) listVersions(w http.ResponseWriter, r *http.Request) {
+	versions, err := h.excelService.ListVersions(r.Context())
+	if err != nil {
+		logger.Error("Error listing excel versions", "error", err)
+		http.Error(w, "No se pudieron obtener las versiones de Excel", http.StatusInternalServerError)
+		return
+	}
+
+	data := map[string]any{
+		"Versions": versions,
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := h.tmpl.RenderPage(w, "excel/list-versions.html", data); err != nil {
+		logger.Error("Cannot render list-versions template", "error", err)
 	}
 }
 

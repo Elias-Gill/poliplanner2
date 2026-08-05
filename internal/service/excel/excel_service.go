@@ -82,6 +82,10 @@ func (e ExcelService) GetLatestValidVersion(ctx context.Context) (*excel.SheetVe
 	return nil, ErrNoSheetVersion
 }
 
+func (e ExcelService) ListVersions(ctx context.Context) ([]*excel.SheetVersion, error) {
+	return e.excelRepository.ListAllVersions(ctx)
+}
+
 func (e ExcelService) PersistSource(ctx context.Context, source source.ScheduleSource) error {
 	content, err := source.Content(ctx)
 	if err != nil {
