@@ -95,8 +95,16 @@ func (h *Handler) listVersions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	lastSync, err := h.syncService.GetLastSyncAttempt(r.Context())
+	if err != nil {
+		logger.Error("Error listing excel versions", "error", err)
+		http.Error(w, "No se pudo obtener el ultimo auto sync de versiones excel", http.StatusInternalServerError)
+		return
+	}
+
 	data := map[string]any{
 		"Versions": versions,
+		"LastSync": lastSync,
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")

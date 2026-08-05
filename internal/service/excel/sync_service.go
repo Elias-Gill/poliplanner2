@@ -35,6 +35,10 @@ func NewSyncService(
 	}
 }
 
+func (s *SyncService) GetLastSyncAttempt(ctx context.Context) (*time.Time, error) {
+	return s.syncRepository.GetLastSyncAttempt(ctx)
+}
+
 func (s *SyncService) AutoSync(ctx context.Context) error {
 	logger.Info("Auto sync check started")
 
