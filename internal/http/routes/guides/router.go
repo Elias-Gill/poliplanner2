@@ -3,7 +3,7 @@ package guides
 import (
 	"net/http"
 
-	"github.com/elias-gill/poliplanner2/internal/http/render"
+	render "github.com/elias-gill/poliplanner2/internal/render/html"
 	"github.com/elias-gill/poliplanner2/logger"
 	"github.com/go-chi/chi/v5"
 )

@@ -7,8 +7,8 @@ import (
 
 	utils "github.com/elias-gill/poliplanner2/internal/http"
 	"github.com/elias-gill/poliplanner2/internal/http/cookie"
-	"github.com/elias-gill/poliplanner2/internal/http/render"
 	userModel "github.com/elias-gill/poliplanner2/internal/model/user"
+	"github.com/elias-gill/poliplanner2/internal/render/html"
 	"github.com/elias-gill/poliplanner2/internal/service/auth"
 	"github.com/elias-gill/poliplanner2/internal/service/email"
 	userService "github.com/elias-gill/poliplanner2/internal/service/user"

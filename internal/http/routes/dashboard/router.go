@@ -6,11 +6,10 @@ import (
 	"net/http"
 	"strconv"
 
-
 	utils "github.com/elias-gill/poliplanner2/internal/http"
 	"github.com/elias-gill/poliplanner2/internal/http/cookie"
-	"github.com/elias-gill/poliplanner2/internal/http/render"
 	scheduleModel "github.com/elias-gill/poliplanner2/internal/model/schedule"
+	render "github.com/elias-gill/poliplanner2/internal/render/html"
 	"github.com/elias-gill/poliplanner2/internal/service/academic"
 	"github.com/elias-gill/poliplanner2/internal/service/schedule"
 	"github.com/go-chi/chi/v5"
@@ -156,5 +155,3 @@ func (h *Handler) dashboardSchedule(w http.ResponseWriter, r *http.Request) {
 	// Render partial HTML fragment for dynamic HTMX updates
 	h.tmpl.RenderPartial(w, "dashboard/index.html", "dashboard/schedule_content", details)
 }
-
-

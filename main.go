@@ -6,7 +6,6 @@ import (
 
 	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/http/middleware"
-	"github.com/elias-gill/poliplanner2/internal/http/render"
 	"github.com/elias-gill/poliplanner2/internal/http/routes"
 	"github.com/elias-gill/poliplanner2/internal/http/routes/auth"
 	"github.com/elias-gill/poliplanner2/internal/http/routes/dashboard"
@@ -16,6 +15,7 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/http/routes/tools"
 	"github.com/elias-gill/poliplanner2/internal/http/routes/user"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/persistence"
+	render "github.com/elias-gill/poliplanner2/internal/render/html"
 	log "github.com/elias-gill/poliplanner2/logger"
 
 	services "github.com/elias-gill/poliplanner2/internal/service"

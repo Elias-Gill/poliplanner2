@@ -1,7 +1,7 @@
 package tools
 
 import (
-	"github.com/elias-gill/poliplanner2/internal/http/render"
+	render "github.com/elias-gill/poliplanner2/internal/render/html"
 	"github.com/go-chi/chi/v5"
 
 	"net/http"

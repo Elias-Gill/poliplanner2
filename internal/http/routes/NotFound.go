@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/elias-gill/poliplanner2/internal/http/render"
+	render "github.com/elias-gill/poliplanner2/internal/render/html"
 	"net/http"
 )
 

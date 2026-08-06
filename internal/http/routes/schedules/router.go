@@ -11,14 +11,14 @@ import (
 
 	scheduleModel "github.com/elias-gill/poliplanner2/internal/model/schedule"
 
-	pdf "github.com/elias-gill/poliplanner2/internal/pdf"
+	pdf "github.com/elias-gill/poliplanner2/internal/render/pdf"
 
 	utils "github.com/elias-gill/poliplanner2/internal/http"
 	"github.com/elias-gill/poliplanner2/internal/http/cookie"
 	"github.com/elias-gill/poliplanner2/internal/http/middleware"
-	"github.com/elias-gill/poliplanner2/internal/http/render"
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
 	"github.com/elias-gill/poliplanner2/internal/model/schedule"
+	render "github.com/elias-gill/poliplanner2/internal/render/html"
 	academicSrvs "github.com/elias-gill/poliplanner2/internal/service/academic"
 	scheduleSrvs "github.com/elias-gill/poliplanner2/internal/service/schedule"
 	"github.com/elias-gill/poliplanner2/logger"

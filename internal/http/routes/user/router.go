@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github.com/elias-gill/poliplanner2/internal/http/render"
+	render "github.com/elias-gill/poliplanner2/internal/render/html"
 	"github.com/elias-gill/poliplanner2/internal/service/auth"
 	"github.com/go-chi/chi/v5"
 

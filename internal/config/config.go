@@ -9,11 +9,12 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/elias-gill/poliplanner2/logger"
 )
 
 const (
-	appName    = "PoliPlanner"
-	appVersion = "1.0.0"
+	appName = "PoliPlanner"
 )
 
 const (
@@ -48,8 +49,7 @@ type ServerConfig struct {
 }
 
 type AppData struct {
-	Name    string
-	Version string
+	Name string
 }
 
 type DatabaseConfig struct {
@@ -83,46 +83,6 @@ type SecurityConfig struct {
 type EmailConfig struct {
 	APIKey string
 }
-
-// ================================
-// =         Load .env file       =
-// ================================
-
-func loadDotenv(path string) {
-	f, err := os.Open(path)
-	if err != nil {
-		return
-	}
-	defer f.Close()
-
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		if line == "" || strings.HasPrefix(line, "#") {
-			continue
-		}
-		eq := strings.IndexByte(line, '=')
-		if eq == -1 {
-			continue
-		}
-		key := strings.TrimSpace(line[:eq])
-		if key == "" {
-			continue
-		}
-		if os.Getenv(key) != "" {
-			continue
-		}
-		raw := strings.TrimSpace(line[eq+1:])
-		if comment := strings.IndexByte(raw, '#'); comment != -1 {
-			raw = strings.TrimSpace(raw[:comment])
-		}
-		os.Setenv(key, raw)
-	}
-}
-
-// ================================
-// =        Resolve base dir      =
-// ================================
 
 var (
 	cfg  *Config
@@ -160,8 +120,6 @@ func Load() (*Config, error) {
 // ================================
 
 func load() (*Config, error) {
-	loadDotenv(".env")
-
 	env := Environment(getEnv("APP_ENV", "dev"))
 	if env != EnvDev && env != EnvProd {
 		env = EnvDev
@@ -172,23 +130,30 @@ func load() (*Config, error) {
 		return nil, fmt.Errorf("cannot resolve base dir: %w", err)
 	}
 
-	googleAPIKey := getEnv("GOOGLE_API_KEY", "")
+	// Never load .env files if the production flag is set
+	if env == EnvDev {
+		loadDotenv(filepath.Join(baseDir, ".env"))
+	}
 
-	emailAPIKey := getEnv("EMAIL_API_KEY", "")
-
+	// Fail fast on missing critical key
 	updateKey := getEnv("UPDATE_KEY", "")
 	if updateKey == "" {
 		return nil, fmt.Errorf("missing UPDATE_KEY")
 	}
 
-	secureHTTPDefault := env == EnvProd // secure on production
+	googleAPIKey := getEnv("GOOGLE_API_KEY", "")
 
-	verboseLogsDefault := env == EnvDev // verbose on development
+	emailAPIKey := getEnv("EMAIL_API_KEY", "")
+
+	// Secure http on production. Unsecure for dev to avoid local network problems
+	secureHTTPDefault := env == EnvProd
+
+	// Verbose logs disabled on production
+	verboseLogsDefault := env == EnvDev
 
 	cfg := &Config{
 		App: AppData{
-			Name:    appName,
-			Version: appVersion,
+			Name: appName,
 		},
 
 		Server: ServerConfig{
@@ -206,8 +171,8 @@ func load() (*Config, error) {
 			ExcelParsingLayoutsDir: filepath.Join(baseDir, "internal", "infrastructure", "parser", "layouts"),
 			MetadataDir:            filepath.Join(baseDir, "internal", "service", "metadata", "data"),
 			DownloadsDir:           resolveOrDefaultPath(baseDir, "DOWNLOADS_DIR", filepath.Join("tmp", "poliplanner")),
-			TemplatesDir:           filepath.Join(baseDir, "web", "templates"),
-			AssetsDir:              filepath.Join(baseDir, "web", "static"),
+			TemplatesDir:           filepath.Join(baseDir, "internal", "render", "html", "templates"),
+			AssetsDir:              filepath.Join(baseDir, "web"),
 		},
 
 		Excel: ExcelConfig{
@@ -287,4 +252,65 @@ func resolveOrDefaultPath(baseDir, envKey, defaultRel string) string {
 		return filepath.Join(baseDir, raw)
 	}
 	return filepath.Join(baseDir, defaultRel)
+}
+
+func loadDotenv(path string) {
+	f, err := os.Open(path)
+	if err != nil {
+		return
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+
+		// Ignore empty lines and full-line comments
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+
+		// Strip 'export ' prefix if present
+		if after, ok := strings.CutPrefix(line, "export "); ok {
+			line = strings.TrimSpace(after)
+		}
+
+		before, after, ok := strings.Cut(line, "=")
+		if !ok {
+			continue
+		}
+
+		key := strings.TrimSpace(before)
+		if key == "" {
+			continue
+		}
+
+		// Do not overwrite existing system environment variables
+		if _, exists := os.LookupEnv(key); exists {
+			continue
+		}
+
+		raw := strings.TrimSpace(after)
+
+		// Handle quoted values ("val" or 'val')
+		if (strings.HasPrefix(raw, `"`) && strings.HasSuffix(raw, `"`)) ||
+			(strings.HasPrefix(raw, "'") && strings.HasSuffix(raw, "'")) {
+			if len(raw) >= 2 {
+				raw = raw[1 : len(raw)-1]
+			}
+		} else {
+			// Unquoted values: strip inline comments only if preceded by space (" #")
+			// Keeps values with '#' untouched (e.g., DB_PASS=secret#123)
+			if comment := strings.Index(raw, " #"); comment != -1 {
+				raw = strings.TrimSpace(raw[:comment])
+			}
+		}
+
+		os.Setenv(key, raw)
+	}
+
+	// Check for scanner errors after loop finishes
+	if err := scanner.Err(); err != nil {
+		logger.Warn("Error reading .env file", "error", err.Error())
+	}
 }
