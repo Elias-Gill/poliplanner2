@@ -1,6 +1,16 @@
 {
-    "latest": "2.0.5",
+    "latest": "2.0.6",
     "entries": [
+        {
+            "version": "2.0.6",
+            "date": "2026-08-04",
+            "important": false,
+            "title": "Correccion de guias universitarias",
+            "changes": [
+                "Correccion de guias y ayudas para ajustarlas al nuevo reglamento.",
+                "Aumento en la frecuencia del scraper para detectar nuevas versiones del Excel mas rapido."
+            ]
+        },
         {
             "version": "2.0.5",
             "date": "2026-08-04",

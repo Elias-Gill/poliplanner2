@@ -36,15 +36,17 @@ GUIDE ARTICLE SCOPE
     padding-bottom: 0.4rem;
     padding-left: 0.75rem;
     border-left: 3px solid var(--color-primary-500);
-    border-radius: 2px;
 }
 
 .guide_article h3 {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
 }
 
 .guide_article h4 {
-    font-size: 1.1rem;
+  font-size: 1rem;
+  color: #334155;
+  border-left: 4px solid #cbd5e1; /* Línea gris sutil */
+  padding-left: 0.625rem; /* Espaciado interno */
 }
 
 /* Paragraphs */
@@ -56,12 +58,13 @@ GUIDE ARTICLE SCOPE
 /* Links */
 
 .guide_article a {
-    color: var(--color-primary-600);
-    text-decoration: underline;
+    color: var(--color-primary-500);
+    text-decoration: none;
 }
 
 .guide_article a:hover {
-    color: var(--color-primary-700);
+    color: var(--color-primary-600);
+    text-decoration: underline;
 }
 
 /* Lists */
@@ -157,7 +160,7 @@ GUIDE ARTICLE SCOPE
 /* Inline code */
 
 .guide_article code {
-    background: var(--color-gray-100);
+    background: var(--color-gray-300);
     padding: 0.2rem 0.4rem;
     border-radius: 4px;
     font-size: 0.9em;
@@ -168,11 +171,11 @@ GUIDE ARTICLE SCOPE
 /* Code blocks */
 
 .guide_article pre {
-    background: var(--color-gray-900);
-    color: var(--color-gray-50);
+    background: var(--color-gray-300);
+    color: var(--color-gray-800);
     padding: 1rem;
     overflow-x: auto;
-    border-radius: 0.5rem;
+    border-radius: 4px;
     margin: 1.5rem 0;
 }
 
@@ -188,4 +191,4 @@ GUIDE ARTICLE SCOPE
     border: none;
     border-top: 1px solid var(--color-gray-200);
     margin: 2rem 0;
-}
+css style}

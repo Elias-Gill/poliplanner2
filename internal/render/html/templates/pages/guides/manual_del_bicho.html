@@ -36,14 +36,12 @@
     <h1>Manual del BICHO</h1>
 
     <!-- TABLA DE CONTENIDOS -->
-    <nav
-      class="my-6 p-4 md:p-6 bg-slate-50 border border-slate-200 rounded-sm shadow-sm"
-      aria-label="Índice de contenidos">
-      <div class="flex items-center gap-2 mb-3">
-        <h2>Tabla de contenidos</h2>
+    <nav aria-label="Índice de contenidos" class="pl-4">
+      <div class="flex items-center gap-2">
+        <h3>Tabla de contenidos</h3>
       </div>
       <ol
-        class="space-y-1.5 text-sm font-medium text-slate-600 list-decimal list-inside pl-1 m-0">
+        class="text-sm font-medium text-slate-600 list-decimal list-inside pl-1 m-0">
         <li><a href="#bienvenida">¡Bienvenido/a a la FPUNA!</a></li>
         <li>
           <a href="#primeros-pasos">Primeros Pasos e Identidad Digital</a>
@@ -134,11 +132,7 @@
         oficial. Con él recibirás comunicados, ingresarás a la plataforma
         <strong>Educa</strong> y gestionarás tus inscripciones de grado.
       </p>
-      <p>
-        <strong
-          >Qué hacer para habilitarlo y qué hacer si no podés acceder:</strong
-        >
-      </p>
+        <h4>Qué hacer para habilitarlo y qué hacer si no podés acceder:</h4>
       <ul>
         <li>
           Verificá que tu correo institucional esté activo e intentá ingresar
@@ -202,9 +196,16 @@
         </li>
       </ul>
 
-      <span class="text-green-400">ⓘ</span> Si quieres saber más sobre la malla
-      de tu carrera y las correlatividades, puedes visitar nuestra herramienta
-      de <a href="/tools/interactive_graph">mallas interactivas</a>.
+      <!-- BUBBLE: INFO / LINK -->
+      <div class="my-4 p-3 bg-gray-50 border border-gray-200 rounded-sm text-sm text-gray-600 flex items-center gap-2.5">
+        <svg class="w-4 h-4 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span>
+          Si quieres saber más sobre la malla de tu carrera y las correlatividades, puedes visitar nuestra herramienta de 
+          <a href="/tools/interactive_graph" class="font-medium text-gray-900 hover:underline">mallas interactivas</a>.
+        </span>
+      </div>
 
       <h3>Tipos de Materias</h3>
       <ul>
@@ -227,10 +228,18 @@
         </li>
       </ul>
 
-      📝 <strong>Nota:</strong> Que el nombre no te confunda. Tenés que aprobar
-      <strong>sí o sí</strong> tanto las materias electivas como las optativas
-      para poder egresar. No son "opcionales", sino que tenés la libertad de
-      elegir cuáles cursar entre la oferta disponible.
+      <!-- BUBBLE: NOTA (LÁPIZ) -->
+      <div class="my-4 p-3 bg-gray-50 border border-gray-200 rounded-sm text-sm text-gray-600 flex items-center gap-2.5">
+        <svg class="w-4 h-4 text-slate-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+        </svg>
+        <span>
+          <strong class="font-medium text-gray-900">Nota:</strong> Que el nombre no te confunda. Tenés que aprobar
+          <strong>sí o sí</strong> tanto las materias electivas como las optativas
+          para poder egresar. No son "opcionales", sino que tenés la libertad de
+          elegir cuáles cursar entre la oferta disponible.
+        </span>
+      </div>
     </section>
 
     <section id="inscripciones">
@@ -312,78 +321,72 @@
     <section id="examenes">
       <h2>Exámenes, Asistencia y Notas</h2>
 
-      <h3>Promedio de Parciales (PPs)</h3>
+      <h3>Promedio Ponderado (PP) y Habilitación</h3>
       <p>
-        Durante el semestre rendirás evaluaciones parciales y trabajos. Por
-        reglamento, debe haber al menos dos actividades de proceso por etapa. El
-        promedio de estos parciales determina si estás habilitado/a para rendir
-        los exámenes finales:
+        Durante el semestre el proceso de evaluación se divide en dos etapas compuestas por exámenes parciales, trabajos prácticos y laboratorios. De este proceso continuo surge tu <strong>Promedio Ponderado (PP)</strong>.
       </p>
-      <p><code>PPs = (Parcial 1 + Parcial 2) / 2</code></p>
+      <p>
+        Para estar habilitado/a y tener derecho a rendir el Examen Final, tu Promedio Ponderado acumulado debe ser de al menos <strong>60%</strong>.
+      </p>
 
-      <h3>Firmas y Exámenes Finales</h3>
+      <h3>Examen Final y Puntuación Final (PF)</h3>
+      <p>
+        Una vez habilitado/a a rendir, la <strong>Puntuación Final (PF)</strong> que determinará tu nota final se calcula combinando la calificación del Examen Final con tu Promedio Ponderado del proceso:
+      </p>
+      <p><code>PF = 0.6 × EF + 0.4 × PP</code></p>
+      <ul>
+        <li><strong>EF (Examen Final):</strong> Exige obtener como mínimo un <strong>50%</strong> para aprobar la materia, independientemente del puntaje acumulado en el proceso.</li>
+        <li><strong>PP (Promedio Ponderado):</strong> Puntaje total obtenido durante el proceso semestral.</li>
+      </ul>
+      <p>
+        <strong>¿Qué pasa si no alcanzás el 60% de PP?</strong> Si no lográs habilitar de forma directa, podés rendir un <i>tercer parcial (recuperatorio)</i>. Este se rinde en la misma fecha del primer examen final y utiliza la misma prueba para intentar obtener el puntaje requerido.
+      </p>
+
+        <!-- BUBBLE: INFO / LINK -->
+        <div class="my-4 p-3 bg-gray-50 border border-gray-200 rounded-sm text-sm text-gray-600 flex items-center gap-2.5">
+            <svg class="w-4 h-4 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>
+                Si querés ver en detalle la escala de calificaciones y ejemplos de cálculo, podés consultar nuestra guía de 
+                <a href="/guides/calculo_notas" class="font-medium text-gray-900 hover:underline">cálculo de notas</a>.
+            </span>
+        </div>
+
+      <h3>Reglas de Asistencia a Clases Teóricas</h3>
+      <p>
+        El porcentaje de asistencia a las clases teóricas determina las oportunidades disponibles para rendir el examen final:
+      </p>
       <ul>
         <li>
-          <strong>PPs ≥ 60% (Firma Completa / Dos firmas):</strong> Habilitado/a
-          para rendir en la 1.ª y 2.ª oportunidad de examen final.
+          <strong>Asistencia ≥ 70%:</strong> Te habilita a rendir tanto en la 1.ª como en la 2.ª oportunidad de examen final.
         </li>
         <li>
-          <strong>PPs de 50% a 59% (Media Firma / Una firma):</strong>
-          Habilitado/a únicamente para rendir en la 2.ª oportunidad de final.
+          <strong>Asistencia entre 50% y 69%:</strong> Te habilita únicamente a rendir en la 2.ª oportunidad de examen final.
         </li>
         <li>
-          <strong>PPs &lt; 50% (Sin firma directa):</strong> Rendís la 1.ª
-          oportunidad de final en modalidad de
-          <i>Recuperatorio (3.º Parcial)</i>. Se toman tus dos mejores notas de
-          parcial para recalcular tu PPs.
+          <strong>Asistencia &lt; 50%:</strong> Implica la pérdida del derecho a rendir examen final en ese periodo.
         </li>
       </ul>
 
-      <h3>Reglas de Asistencia</h3>
-      <p>
-        La asistencia a las clases teóricas influye directamente en las
-        convocatorias de final:
-      </p>
-      <ul>
-        <li>
-          <strong>Asistencia ≥ 70%:</strong> Te habilita a rendir en ambas
-          convocatorias (1.ª y 2.ª oportunidad).
-        </li>
-        <li>
-          <strong>Asistencia entre 50% y 69%:</strong> Solo te habilita a rendir
-          en la segunda convocatoria.
-        </li>
-      </ul>
-
-      <h4>Laboratorios</h4>
+      <h3>Laboratorios</h3>
       <p>
         Se gestionan de forma independiente a las teóricas. Se exige cumplir el
-        100% de la asistencia y aprobación fijada en el planeamiento para tener
-        derecho a examen final.
+        <strong>100% de la asistencia</strong> a las actividades de laboratorio cuando corresponda para tener derecho a rendir el examen final.
       </p>
 
-      <p>
-        <strong>⚠ Importante:</strong> Las ausencias en laboratorios no se
-        compensan ni se justifican automáticamente. Cualquier sesión de
-        recuperación debe solicitarse y gestionarse formalmente según lo
-        establecido por la cátedra.
-      </p>
-
-      <h3>Diferencia entre PPs y Promedio Ponderado</h3>
-      <p>
-        Tené en cuenta que el PPs únicamente sirve para <i>habilitarte</i> al
-        examen final. Tu <i>nota final</i> dependerá del
-        <strong>promedio ponderado (PP)</strong>, el cual combina parciales,
-        trabajos prácticos, laboratorios y el examen final.
-      </p>
-
-      <p><code>Nota final = (PPs * 0.4) + (PP * 0.6)</code></p>
-
-      <p>
-        <span class="text-green-400">ⓘ</span> Si querés saber más sobre cómo
-        calcular tus notas, podés consultar nuestra guía de
-        <a href="/guides/calculo_notas">cálculo de notas</a>.
-      </p>
+      <!-- BUBBLE: IMPORTANTE (TRIÁNGULO DE ADVERTENCIA) -->
+      <div class="my-4 p-3 bg-gray-50 border border-gray-200 rounded-sm text-sm text-gray-600 flex items-center gap-2.5">
+        <svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        <span>
+          <strong class="font-medium text-gray-900">Importante:</strong> Las ausencias en laboratorios no se
+          compensan ni se justifican automáticamente. Cualquier sesión de
+          recuperación debe solicitarse y gestionarse formalmente según lo
+          establecido por la cátedra.
+        </span>
+      </div>
     </section>
 
     <section id="requisitos-egreso">
@@ -426,10 +429,19 @@
           la FPUNA.
         </li>
       </ul>
-      💡 <strong>Tip:</strong> Completa las horas necesarias en cuanto puedas,
-      no lo dejes para última hora. Tanto la universidad como el centro de
-      estudiantes ofrecen actividades que suman horas de extensión, estate
-      atento a sus comunicados.
+
+      <!-- BUBBLE: TIP (FOCO / AMPOLLETA) -->
+      <div class="my-4 p-3 bg-gray-50 border border-gray-200 rounded-sm text-sm text-gray-600 flex items-center gap-2.5">
+        <svg class="w-4 h-4 text-yellow-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 01-2 2h-0a2 2 0 01-2-2v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+        </svg>
+        <span>
+          <strong class="font-medium text-gray-900">Tip:</strong> Completa las horas necesarias en cuanto puedas,
+          no lo dejes para última hora. Tanto la universidad como el centro de
+          estudiantes ofrecen actividades que suman horas de extensión, estate
+          atento a sus comunicados.
+        </span>
+      </div>
 
       <h3>Pasantía Supervisada</h3>
       <p>
@@ -473,11 +485,18 @@
       <img
         src="/static/images/mapa_campus.svg"
         alt="Mapa del Campus Universitario de la UNA" />
-      <p>
-        💡 <strong>Tip:</strong> No te quedes encerrado en los bloques de la
-        Poli. Conoce el campus, probá las cantinas de otras facultades, conocé
-        gente de distintas carreras y disfrutá de la vida universitaria.
-      </p>
+
+      <!-- BUBBLE: TIP (FOCO / AMPOLLETA) -->
+      <div class="my-4 p-3 bg-gray-50 border border-gray-200 rounded-sm text-sm text-gray-600 flex items-center gap-2.5">
+        <svg class="w-4 h-4 text-yellow-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 01-2 2h-0a2 2 0 01-2-2v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+        </svg>
+        <span>
+          <strong class="font-medium text-gray-900">Tip:</strong> No te quedes encerrado en los bloques de la
+          Poli. Conoce el campus, probá las cantinas de otras facultades, conocé
+          gente de distintas carreras y disfrutá de la vida universitaria.
+        </span>
+      </div>
 
       <p style="margin-top: 2rem;">
         <a href="/guides/">← Volver a Guías y Ayuda</a>
