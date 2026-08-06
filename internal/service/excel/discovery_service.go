@@ -41,6 +41,7 @@ func (i DiscoveryService) FindLatestSources(ctx context.Context) (*sourcesResult
 		logger.Warn("No sources found by scraper")
 		return nil, nil
 	}
+
 	var latestSources []source.ScheduleSource
 	var newestDate time.Time
 
@@ -48,13 +49,25 @@ func (i DiscoveryService) FindLatestSources(ctx context.Context) (*sourcesResult
 		meta := s.Metadata()
 		currentDate := meta.Date
 
-		if len(latestSources) == 0 || currentDate.After(newestDate) {
+		// strip time component to compare calendar days only
+		currDay := time.Date(currentDate.Year(), currentDate.Month(), currentDate.Day(), 0, 0, 0, 0, currentDate.Location())
+		newestDay := time.Date(newestDate.Year(), newestDate.Month(), newestDate.Day(), 0, 0, 0, 0, newestDate.Location())
+
+		if len(latestSources) == 0 || currDay.After(newestDay) {
+			// Found a source from a newer day
 			newestDate = currentDate
 			latestSources = []source.ScheduleSource{s}
-			logger.Info("Newer source date found", "name", meta.Name, "uri", meta.URI, "date", currentDate)
-		} else if currentDate.Equal(newestDate) {
+			logger.Info("Source from a newer day found", "name", meta.Name, "uri", meta.URI, "date", currentDate)
+
+		} else if currDay.Equal(newestDay) {
+			// Source modified on the same day are added to the batch
 			latestSources = append(latestSources, s)
-			logger.Info("Source with matching latest date found", "name", meta.Name, "uri", meta.URI, "date", currentDate)
+
+			// Keep the exact latest timestamp of the day
+			if currentDate.After(newestDate) {
+				newestDate = currentDate
+			}
+			logger.Info("Source matching latest day found", "name", meta.Name, "uri", meta.URI, "date", currentDate)
 		}
 	}
 
