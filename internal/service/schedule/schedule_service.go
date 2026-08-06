@@ -13,9 +13,12 @@ import (
 	"github.com/elias-gill/poliplanner2/logger"
 )
 
+// FIX: RETORNAR ERRORES CORRECTOS DESDE EL SERVICE
+
 var (
 	ErrPermissionDenied  = errors.New("User has no permission")
 	ErrTitleNotAvailable = errors.New("This title is already in use")
+	ErrNotFound          = errors.New("ErrNotFound")
 )
 
 type ScheduleService struct {
@@ -46,7 +49,7 @@ func (s ScheduleService) GetScheduleOverview(ctx context.Context, userID user.Us
 	sche, err := s.scheduleRepository.GetDetailsByID(ctx, scheduleID)
 	if err != nil {
 		logger.Debug("cannot get schedule details", "scheduleID", scheduleID, "error", err)
-		return nil, err
+		return nil, ErrNotFound
 	}
 
 	if sche.Owner != userID {

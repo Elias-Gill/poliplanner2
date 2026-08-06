@@ -7,6 +7,8 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/model/user"
 )
 
+// FIX: RETORNAR ERRORES CORRECTOS DESDE EL REPOSITORY
+
 type ScheduleRepository interface {
 	Save(ctx context.Context, s schedule.Schedule) (schedule.ScheduleID, error)
 	Delete(ctx context.Context, scheduleID schedule.ScheduleID) error

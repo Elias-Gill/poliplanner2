@@ -58,6 +58,13 @@ func (h *Handler) Routes() chi.Router {
 		}
 	})
 
+	r.Get("/permission_denied", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html")
+		if err := h.tmpl.RenderPage(w, "permission_denied.html", nil); err != nil {
+			logger.Error("Cannot render permission_denied template", "error", err)
+		}
+	})
+
 	r.Get("/login", h.loginPage)
 	r.Post("/login", h.login)
 

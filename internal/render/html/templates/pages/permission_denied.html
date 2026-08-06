@@ -1,0 +1,32 @@
+{{ define "custom_tags" }}
+<title>Acceso Denegado — PoliPlanner</title>
+<meta name="description" content="No tienes los permisos necesarios para acceder a este recurso en PoliPlanner." />
+
+<!-- Bloqueo estricto para no indexar páginas de error de permisos -->
+<meta name="robots" content="noindex, nofollow" />
+
+<!-- Open Graph -->
+<meta property="og:title" content="Acceso Denegado — PoliPlanner" />
+<meta property="og:description" content="No tienes los permisos necesarios para realizar esta acción o visualizar este contenido." />
+<meta property="og:type" content="website" />
+{{ end }}
+
+{{ define "content" }}
+<div
+    class="flex flex-col items-center justify-center min-h-screen text-center">
+    <h1 class="text-4xl font-bold text-gray-900 mb-4">
+        Acceso denegado
+    </h1>
+    <p class="text-lg text-gray-700 mb-2">
+        No tenés los permisos necesarios para acceder a este recurso o realizar esta acción.
+    </p>
+    <p class="text-gray-600">
+        Volvé a la
+        <a
+            href="/dashboard"
+            class="text-primary-600 hover:text-primary-700 font-medium"
+        >página principal</a
+        >.
+    </p>
+</div>
+{{ end }}

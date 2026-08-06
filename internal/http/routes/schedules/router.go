@@ -9,16 +9,14 @@ import (
 	"strconv"
 	"time"
 
-	scheduleModel "github.com/elias-gill/poliplanner2/internal/model/schedule"
-
-	pdf "github.com/elias-gill/poliplanner2/internal/render/pdf"
-
 	utils "github.com/elias-gill/poliplanner2/internal/http"
 	"github.com/elias-gill/poliplanner2/internal/http/cookie"
 	"github.com/elias-gill/poliplanner2/internal/http/middleware"
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
 	"github.com/elias-gill/poliplanner2/internal/model/schedule"
+	scheduleModel "github.com/elias-gill/poliplanner2/internal/model/schedule"
 	render "github.com/elias-gill/poliplanner2/internal/render/html"
+	pdf "github.com/elias-gill/poliplanner2/internal/render/pdf"
 	academicSrvs "github.com/elias-gill/poliplanner2/internal/service/academic"
 	scheduleSrvs "github.com/elias-gill/poliplanner2/internal/service/schedule"
 	"github.com/elias-gill/poliplanner2/logger"
@@ -68,7 +66,7 @@ func (h *Handler) Routes() chi.Router {
 }
 
 // ======================================
-// =         Handlers HTTP              =
+// =           HTTP Handlers            =
 // ======================================
 
 func (h *Handler) index(w http.ResponseWriter, r *http.Request) {
@@ -141,7 +139,7 @@ func (h *Handler) listOffering(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Aditional parameters for the shop car
+	// Additional query parameters for shopping cart
 	careerCode := r.URL.Query().Get("career_code")
 	subjectName := r.URL.Query().Get("subject_name")
 
@@ -186,7 +184,7 @@ func (h *Handler) saveSchedule(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 1. Lectura de campos del formulario
+	// 1. Read form fields
 	title, err := utils.RequiredString(r.Form.Get("title"))
 	if err != nil {
 		w.Header().Set("HX-Redirect", "/bad_form")
@@ -201,7 +199,7 @@ func (h *Handler) saveSchedule(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 2. Deserialización del payload enviado por Alpine.js
+	// 2. Unmarshal payload sent by Alpine.js
 	var items []selectedItem
 	if err := json.Unmarshal([]byte(jsonItems), &items); err != nil || len(items) == 0 {
 		logger.Error("error al deserializar selected_items_json", "error", err)
@@ -210,7 +208,7 @@ func (h *Handler) saveSchedule(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 3. Mapeo a []academic.CourseID
+	// 3. Map to []academic.CourseID
 	courses := make([]academic.CourseID, len(items))
 	for i, item := range items {
 		courses[i] = academic.CourseID(item.ID)
@@ -219,10 +217,10 @@ func (h *Handler) saveSchedule(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), 300*time.Millisecond)
 	defer cancel()
 
-	// 4. Delegar la creación completa al Service
+	// 4. Delegate schedule creation to service
 	scheduleID, err := h.scheduleService.CreateSchedule(ctx, userID, title, courses)
 	if err != nil {
-		// Manejo diferencial según si fue un error de formulario/validación o fallo interno
+		// FIX: deberia de dar un mensaje de que titulo no esta disponible
 		if errors.Is(err, scheduleSrvs.ErrTitleNotAvailable) {
 			w.Header().Set("HX-Redirect", "/bad_form")
 			utils.Redirect(w, r, "/bad_form")
@@ -235,10 +233,10 @@ func (h *Handler) saveSchedule(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 5. Guardar Cookie de sesión/último horario
+	// 5. Set latest schedule session cookie
 	cookie.SetLatestScheduleCookie(w, scheduleID)
 
-	// 6. Redireccionar al Dashboard (Soporte HTMX y HTTP nativo)
+	// 6. Redirect to dashboard (supports HTMX and native HTTP)
 	if r.Header.Get("HX-Request") == "true" {
 		w.Header().Set("HX-Redirect", "/dashboard")
 		w.WriteHeader(http.StatusOK)
@@ -267,7 +265,7 @@ func (h *Handler) deleteSchedule(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate User ID
+	// Validate schedule ID from form
 	idStr := r.Form.Get("id")
 	if idStr == "" {
 		logger.Error("id de horario no provisto para eliminación")
@@ -287,7 +285,7 @@ func (h *Handler) deleteSchedule(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), 500*time.Millisecond)
 	defer cancel()
 
-	// Delete
+	// Delete schedule via service
 	err = h.scheduleService.Delete(ctx, userID, schedule.ScheduleID(id))
 	if err != nil {
 		if errors.Is(err, scheduleSrvs.ErrPermissionDenied) {
@@ -303,7 +301,7 @@ func (h *Handler) deleteSchedule(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// redirect
+	// Redirect to dashboard (supports HTMX and native HTTP)
 	if r.Header.Get("HX-Request") == "true" {
 		w.Header().Set("HX-Redirect", "/dashboard")
 		w.WriteHeader(http.StatusOK)
@@ -320,7 +318,7 @@ func (h *Handler) downloadPDF(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get scheduleID
+	// Extract schedule ID from query params
 	idStr := r.URL.Query().Get("id")
 	if idStr == "" {
 		logger.Error("id de horario no provisto para exportación a PDF")
@@ -338,7 +336,7 @@ func (h *Handler) downloadPDF(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), 3*time.Second)
 	defer cancel()
 
-	// Get schedule details
+	// Get schedule overview details
 	studentView, err := h.scheduleService.GetScheduleOverview(ctx, userID, scheduleModel.ScheduleID(scheduleID))
 	if err != nil {
 		if errors.Is(err, scheduleSrvs.ErrPermissionDenied) {
@@ -352,7 +350,7 @@ func (h *Handler) downloadPDF(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Response with the pdf
+	// Respond with PDF file
 	w.Header().Set("Content-Type", "application/pdf")
 	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"horario_%d.pdf\"", scheduleID))
 

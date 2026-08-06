@@ -1,8 +1,7 @@
 package dashboard
 
 import (
-	// FIX: deberia de usar mi logger, no esto
-	"log"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -12,6 +11,7 @@ import (
 	render "github.com/elias-gill/poliplanner2/internal/render/html"
 	"github.com/elias-gill/poliplanner2/internal/service/academic"
 	"github.com/elias-gill/poliplanner2/internal/service/schedule"
+	"github.com/elias-gill/poliplanner2/logger"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -40,7 +40,6 @@ func (h *Handler) Routes() chi.Router {
 	r := chi.NewRouter()
 
 	r.Get("/", h.dashboard)
-
 	r.Get("/{id}", h.dashboardSchedule)
 
 	return r
@@ -53,43 +52,38 @@ type DashboardPageData struct {
 	ActiveSchedule *scheduleModel.StudentScheduleView
 }
 
-// dashboard renders the main dashboard page. If the user has existing schedules,
-// it automatically fetches and loads the first one by default.
+// dashboard renders the main dashboard page or partials if requested via HTMX query parameter.
 func (h *Handler) dashboard(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	userID := utils.MustExtractUserID(r)
 
-	// Si HTMX envía una petición GET a /dashboard/?id=123
+	// Handle HTMX partial requests sent via query parameter (?id=123)
 	if idQuery := r.URL.Query().Get("id"); idQuery != "" && r.Header.Get("HX-Request") == "true" {
 		scheduleID, err := strconv.ParseInt(idQuery, 10, 64)
 		if err != nil {
-			http.Error(w, "Invalid schedule ID", http.StatusBadRequest)
+			utils.Redirect(w, r, "/404")
 			return
 		}
 
 		details, err := h.scheduleService.GetScheduleOverview(ctx, userID, scheduleModel.ScheduleID(scheduleID))
 		if err != nil {
-			log.Printf("Dashboard: error fetching schedule details for ID %d: %v", scheduleID, err)
-			utils.Redirect(w, r, "/500")
+			h.handleOverviewError(w, r, err)
 			return
 		}
 
 		cookie.SetLatestScheduleCookie(w, scheduleModel.ScheduleID(scheduleID))
 
-		// Renderizar SOLO el parcial
 		err = h.tmpl.RenderPartial(w, "dashboard/index.html", "dashboard/schedule_content", details)
 		if err != nil {
-			log.Printf("Dashboard: error fetching schedule details for ID %d: %v", scheduleID, err)
-			utils.Redirect(w, r, "/500")
-			return
+			logger.Error("Failed to render HTMX schedule partial", "scheduleID", scheduleID, "error", err)
 		}
 		return
 	}
 
-	// Carga normal de la página completa
+	// Full page initial load
 	userSchedules, err := h.scheduleService.ListUserSchedules(ctx, userID)
 	if err != nil {
-		log.Printf("[dashboard] Error fetching user schedules for userID %d: %v", userID, err)
+		logger.Error("Failed to fetch user schedules", "userID", userID, "error", err)
 		utils.Redirect(w, r, "/500")
 		return
 	}
@@ -99,10 +93,9 @@ func (h *Handler) dashboard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(userSchedules) > 0 {
-		// 1. Intentar obtener el ID desde la cookie del último horario seleccionado
-		selectedID := userSchedules[0].ID // Fallback por defecto al primero
+		// 1. Try to get default schedule ID from cookie fallback
+		selectedID := userSchedules[0].ID
 		if cookieID, ok := cookie.GetLatestScheduleCookie(r); ok {
-			// Validar que el scheduleID de la cookie pertenezca a la lista del usuario
 			for _, s := range userSchedules {
 				if s.ID == cookieID {
 					selectedID = cookieID
@@ -113,11 +106,10 @@ func (h *Handler) dashboard(w http.ResponseWriter, r *http.Request) {
 
 		data.SelectedID = int64(selectedID)
 
-		// 2. Obtener los detalles del schedule seleccionado
+		// 2. Load active schedule overview
 		details, err := h.scheduleService.GetScheduleOverview(ctx, userID, selectedID)
 		if err != nil {
-			log.Printf("Dashboard: error fetching schedule details for ID %d: %v", selectedID, err)
-			utils.Redirect(w, r, "/500")
+			h.handleOverviewError(w, r, err)
 			return
 		}
 
@@ -126,7 +118,7 @@ func (h *Handler) dashboard(w http.ResponseWriter, r *http.Request) {
 
 	err = h.tmpl.RenderPage(w, "dashboard/index.html", data)
 	if err != nil {
-		log.Printf("Dashboard: error rendering page: %v", err)
+		logger.Error("Failed to render dashboard page", "userID", userID, "error", err)
 	}
 }
 
@@ -138,20 +130,34 @@ func (h *Handler) dashboardSchedule(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
 	scheduleID, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		http.Error(w, "Invalid schedule ID", http.StatusBadRequest)
+		utils.Redirect(w, r, "/404")
 		return
 	}
 
 	details, err := h.scheduleService.GetScheduleOverview(ctx, userID, scheduleModel.ScheduleID(scheduleID))
 	if err != nil {
-		// FIX: DEBERIA  de dieferneciar entre error de server y no autorizado
-		log.Printf("Dashboard: error fetching schedule details for ID %d: %v", scheduleID, err)
-		utils.Redirect(w, r, "/500")
+		h.handleOverviewError(w, r, err)
 		return
 	}
 
 	cookie.SetLatestScheduleCookie(w, scheduleModel.ScheduleID(scheduleID))
 
-	// Render partial HTML fragment for dynamic HTMX updates
-	h.tmpl.RenderPartial(w, "dashboard/index.html", "dashboard/schedule_content", details)
+	err = h.tmpl.RenderPartial(w, "dashboard/index.html", "dashboard/schedule_content", details)
+	if err != nil {
+		logger.Error("Failed to render schedule partial fragment", "scheduleID", scheduleID, "error", err)
+	}
+}
+
+// handleOverviewError logs errors and triggers appropriate HTMX redirects using utils.Redirect.
+func (h *Handler) handleOverviewError(w http.ResponseWriter, r *http.Request, err error) {
+	switch {
+	case errors.Is(err, schedule.ErrNotFound):
+		utils.Redirect(w, r, "/404")
+
+	case errors.Is(err, schedule.ErrPermissionDenied):
+		utils.Redirect(w, r, "/permission_denied")
+
+	default:
+		utils.Redirect(w, r, "/500")
+	}
 }
