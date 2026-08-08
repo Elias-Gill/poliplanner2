@@ -1,0 +1,124 @@
+{{ define "custom_tags" }}
+<!-- Título y Descripción orientados a búsquedas de herramientas y utilidades -->
+<title>Herramientas Universitarias — PoliPlanner</title>
+<meta name="description" content="Utiliza nuestras herramientas académicas interactivas: calculadora de notas y promedios, y visualizador de malla curricular." />
+
+<!-- Canonical para evitar contenido duplicado -->
+<link rel="canonical" href="https://poliplanner.fly.dev/tools/" />
+
+<!-- Open Graph para cuando compartan el centro de herramientas -->
+<meta property="og:title" content="Herramientas Universitarias — PoliPlanner" />
+<meta property="og:description" content="Calculadora de notas, simulación de promedios y gráfico interactivo de malla curricular para estudiantes." />
+<meta property="og:url" content="https://poliplanner.fly.dev/tools/" />
+<meta property="og:type" content="website" />
+
+<!-- Schema de tipo CollectionPage / WebApplication -->
+<script type="application/ld+json">
+{
+"@context": "https://schema.org",
+"@type": "CollectionPage",
+"name": "Herramientas Universitarias — PoliPlanner",
+"description": "Conjunto de utilidades e instrumentos interactivos para la gestión del flujo académico universitario.",
+"publisher": {
+"@type": "Organization",
+"name": "PoliPlanner",
+"url": "https://poliplanner.fly.dev"
+}
+}
+</script>
+{{ end }}
+
+{{ define "content" }}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Header de sección -->
+    <div class="mb-10">
+        <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
+            Herramientas universitarias
+        </h1>
+        <p class="mt-3 text-base text-gray-500 leading-relaxed max-w-2xl">
+            Utilidades interactivas diseñados para ayudarte en el seguimiento de tu vida académica.
+        </p>
+    </div>
+
+    <!-- Cards de herramientas -->
+    <div class="grid gap-4 sm:grid-cols-2">
+        <!-- Calculadora de Notas -->
+        <a
+            href="/tools/calculator"
+            class="group flex flex-col gap-3 p-6 rounded-sm border border-gray-200 bg-white hover:border-primary-400 hover:shadow-lg transition-all duration-200">
+            <div class="flex items-center gap-3">
+                <span
+                    class="flex items-center justify-center w-10 h-10 rounded-sm bg-primary-50 text-primary-500 group-hover:bg-primary-100 transition-colors">
+                    <!-- Icono de Calculadora -->
+                    <svg
+                        class="text-lg"
+                        width="1em"
+                        height="1em"
+                        fill="currentColor"
+                        viewBox="0 0 16 16">
+                        <path
+                            d="M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                        <path
+                            d="M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z" />
+                    </svg>
+                </span>
+                <h2
+                    class="text-base font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">
+                    Calculadora Académica
+                </h2>
+            </div>
+            <p class="text-sm text-gray-500 leading-relaxed">
+                Simula tus promedios ponderados, calcula qué puntaje necesitas para habilitar exámenes finales y proyecta tus calificaciones del semestre.
+            </p>
+            <span
+                class="mt-auto text-xs font-medium text-primary-500 flex items-center gap-1 group-hover:gap-2 transition-all">
+                Usar calculadora
+                <svg width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16">
+                    <path
+                        fill-rule="evenodd"
+                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
+                </svg>
+            </span>
+        </a>
+
+        <!-- Malla Curricular Interactiva -->
+        <a
+            href="/tools/interactive_graph"
+            class="group flex flex-col gap-3 p-6 rounded-sm border border-gray-200 bg-white hover:border-primary-400 hover:shadow-lg transition-all duration-200">
+            <div class="flex items-center gap-3">
+                <span
+                    class="flex items-center justify-center w-10 h-10 rounded-sm bg-primary-50 text-primary-500 group-hover:bg-primary-100 transition-colors">
+                    <!-- Icono de Grafo / Diagrama / Red -->
+                    <svg
+                        class="text-lg"
+                        width="1em"
+                        height="1em"
+                        fill="currentColor"
+                        viewBox="0 0 16 16">
+                        <path
+                            d="M6 3.5a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 1-5 0M0 13.5a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 1-5 0m11 0a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 1-5 0" />
+                        <path
+                            d="M4.1 11.7a3.5 3.5 0 0 1 1.8-4.8l2.1 1.2a1.5 1.5 0 0 0-.7 2l-3.2 1.6zm7.8 0-3.2-1.6a1.5 1.5 0 0 0-.7-2l2.1-1.2a3.5 3.5 0 0 1 1.8 4.8z" />
+                    </svg>
+                </span>
+                <h2
+                    class="text-base font-semibold text-gray-900 group-hover:text-primary-600 transition-colors">
+                    Malla Curricular Interactiva
+                </h2>
+            </div>
+            <p class="text-sm text-gray-500 leading-relaxed">
+                Explora visualmente las materias de tu carrera, analiza prerrequisitos, correlatividades y traza tu camino hacia la graduación.
+            </p>
+            <span
+                class="mt-auto text-xs font-medium text-primary-500 flex items-center gap-1 group-hover:gap-2 transition-all">
+                Abrir gráfico
+                <svg width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16">
+                    <path
+                        fill-rule="evenodd"
+                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8" />
+                </svg>
+            </span>
+        </a>
+    </div>
+</div>
+{{ end }}

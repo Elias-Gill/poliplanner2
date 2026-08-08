@@ -5,34 +5,53 @@ document.addEventListener('DOMContentLoaded', () => {
   
   const inputDirecto = document.getElementById('inputPonderadoDirecto');
   
-  // Parciales
+  // Parciales (Fijo 50%)
   const notaP1 = document.getElementById('notaP1');
   const notaP2 = document.getElementById('notaP2');
-  const pesoParciales = document.getElementById('pesoParciales');
   
-  // Laboratorio y sus toggles
+  // Laboratorio
   const checkAplicaLab = document.getElementById('checkAplicaLab');
   const wrapperPesoLab = document.getElementById('wrapperPesoLab');
   const contentLab = document.getElementById('contentLab');
   const notaLab = document.getElementById('notaLab');
   const pesoLab = document.getElementById('pesoLab');
 
-  // Tareas y sus toggles
+  // Tareas
   const checkAplicaTareas = document.getElementById('checkAplicaTareas');
   const wrapperPesoTareas = document.getElementById('wrapperPesoTareas');
   const contentTareas = document.getElementById('contentTareas');
   const notaTareas = document.getElementById('notaTareas');
   const pesoTareas = document.getElementById('pesoTareas');
 
-  // UI
+  // Elementos de Interfaz
   const valPromedio = document.getElementById('valPromedio');
   const badgeEstado = document.getElementById('badgeEstado');
   const msgEstado = document.getElementById('msgEstado');
   const tablaResultados = document.getElementById('tablaResultados');
-  const sumaPesosVal = document.getElementById('sumaPesosVal');
-  const alertaPesos = document.getElementById('alertaPesos');
 
-  // Alternar vista Directa vs Desglose
+  /**
+   * Limita y autocorrige el valor de un input entre sus atributos min y max
+   */
+  function clampInput(input) {
+    if (!input || input.value === '') return NaN;
+    
+    const min = input.hasAttribute('min') ? parseFloat(input.getAttribute('min')) : 0;
+    const max = input.hasAttribute('max') ? parseFloat(input.getAttribute('max')) : 100;
+    
+    let val = parseFloat(input.value);
+    if (isNaN(val)) return NaN;
+
+    if (val > max) {
+      val = max;
+      input.value = max;
+    } else if (val < min) {
+      val = min;
+      input.value = min;
+    }
+    return val;
+  }
+
+  // Modo Directo vs Desglose
   toggleDirecto.addEventListener('change', () => {
     if (toggleDirecto.checked) {
       panelDirecto.classList.remove('hidden');
@@ -44,65 +63,102 @@ document.addEventListener('DOMContentLoaded', () => {
     calcular();
   });
 
-  // Toggle Laboratorio
+  // Listener para Laboratorios
   checkAplicaLab.addEventListener('change', () => {
     if (checkAplicaLab.checked) {
-      wrapperPesoLab.classList.remove('hidden');
       contentLab.classList.remove('hidden');
     } else {
-      wrapperPesoLab.classList.add('hidden');
       contentLab.classList.add('hidden');
       notaLab.value = '';
     }
+    ajustarPesosProceso();
     calcular();
   });
 
-  // Toggle Tareas
+  // Listener para Tareas
   checkAplicaTareas.addEventListener('change', () => {
     if (checkAplicaTareas.checked) {
-      wrapperPesoTareas.classList.remove('hidden');
       contentTareas.classList.remove('hidden');
     } else {
-      wrapperPesoTareas.classList.add('hidden');
       contentTareas.classList.add('hidden');
       notaTareas.value = '';
     }
+    ajustarPesosProceso();
     calcular();
   });
 
-  // Escuchar eventos en todos los inputs
-  document.querySelectorAll('input').forEach(input => {
-    input.addEventListener('input', calcular);
+  // Sincronización de pesos (entre 0% y 50%)
+  pesoLab.addEventListener('input', () => {
+    let val = clampInput(pesoLab);
+    if (isNaN(val)) val = 0;
+    pesoTareas.value = 50 - val;
+    calcular();
+  });
+
+  pesoTareas.addEventListener('input', () => {
+    let val = clampInput(pesoTareas);
+    if (isNaN(val)) val = 0;
+    pesoLab.value = 50 - val;
+    calcular();
+  });
+
+  // Gestión de visibilidad y reajuste de pesos
+  function ajustarPesosProceso() {
+    const labActivo = checkAplicaLab.checked;
+    const tareasActivas = checkAplicaTareas.checked;
+
+    if (labActivo && tareasActivas) {
+      wrapperPesoLab.classList.remove('hidden');
+      wrapperPesoTareas.classList.remove('hidden');
+      
+      const valLab = clampInput(pesoLab) || 0;
+      const valTareas = clampInput(pesoTareas) || 0;
+
+      if (valLab + valTareas !== 50) {
+        pesoLab.value = 25;
+        pesoTareas.value = 25;
+      }
+    } else if (labActivo) {
+      wrapperPesoLab.classList.add('hidden');
+      wrapperPesoTareas.classList.add('hidden');
+      pesoLab.value = 50;
+      pesoTareas.value = 0;
+    } else if (tareasActivas) {
+      wrapperPesoLab.classList.add('hidden');
+      wrapperPesoTareas.classList.add('hidden');
+      pesoLab.value = 0;
+      pesoTareas.value = 50;
+    } else {
+      wrapperPesoLab.classList.add('hidden');
+      wrapperPesoTareas.classList.add('hidden');
+      pesoLab.value = 0;
+      pesoTareas.value = 0;
+    }
+  }
+
+  // Event listener general para todos los inputs numéricos (valida límites y recalcula)
+  document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener('input', () => {
+      clampInput(input);
+      calcular();
+    });
   });
 
   function calcular() {
     let promedio = 0;
 
     if (toggleDirecto.checked) {
-      promedio = parseFloat(inputDirecto.value) || 0;
+      promedio = clampInput(inputDirecto) || 0;
     } else {
-      const pParciales = parseFloat(pesoParciales.value) || 0;
-      
-      const aplicaLab = checkAplicaLab.checked;
-      const pLab = aplicaLab ? (parseFloat(pesoLab.value) || 0) : 0;
-      const nLab = aplicaLab ? (parseFloat(notaLab.value) || 0) : 0;
+      const pLab = checkAplicaLab.checked ? (clampInput(pesoLab) || 0) : 0;
+      const nLab = checkAplicaLab.checked ? (clampInput(notaLab) || 0) : 0;
 
-      const aplicaTareas = checkAplicaTareas.checked;
-      const pTareas = aplicaTareas ? (parseFloat(pesoTareas.value) || 0) : 0;
-      const nTareas = aplicaTareas ? (parseFloat(notaTareas.value) || 0) : 0;
+      const pTareas = checkAplicaTareas.checked ? (clampInput(pesoTareas) || 0) : 0;
+      const nTareas = checkAplicaTareas.checked ? (clampInput(notaTareas) || 0) : 0;
 
-      const sumaPesos = pParciales + pLab + pTareas;
-      sumaPesosVal.textContent = sumaPesos;
-
-      if (sumaPesos !== 100) {
-        alertaPesos.className = "text-xs text-center py-1.5 px-3 rounded-sm bg-red-100 text-red-700 font-medium";
-      } else {
-        alertaPesos.className = "text-xs text-center py-1.5 px-3 rounded-sm bg-gray-100 text-gray-600 font-medium";
-      }
-
-      // Promedio de Parciales
-      const np1 = parseFloat(notaP1.value);
-      const np2 = parseFloat(notaP2.value);
+      // Parciales (50% fijo)
+      const np1 = clampInput(notaP1);
+      const np2 = clampInput(notaP2);
       let promParciales = 0;
 
       if (!isNaN(np1) && !isNaN(np2)) {
@@ -113,7 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
         promParciales = np2;
       }
 
-      promedio = (promParciales * (pParciales / 100)) + 
+      // PP = (PromParciales * 0.5) + (nLab * pLab/100) + (nTareas * pTareas/100)
+      promedio = (promParciales * 0.50) + 
                  (nLab * (pLab / 100)) + 
                  (nTareas * (pTareas / 100));
     }
@@ -126,50 +183,47 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function actualizarFirmas(promedio) {
-    if (promedio < 50) {
-      badgeEstado.className = "inline-block px-3 py-1 rounded-sm text-xs font-bold bg-red-100 text-red-700 mb-4";
-      badgeEstado.textContent = "Sin Firma (Reprobado)";
-      msgEstado.textContent = "No alcanzas el mínimo (50%) para habilitar el examen final.";
-    } else if (promedio < 60) {
-      badgeEstado.className = "inline-block px-3 py-1 rounded-sm text-xs font-bold bg-yellow-100 text-yellow-800 mb-4";
-      badgeEstado.textContent = "Media Firma (2do final)";
-      msgEstado.textContent = "Habilitado únicamente para rendir el 2do examen final.";
+    if (promedio < 60) {
+      badgeEstado.className = "inline-block px-3 py-1 rounded-sm text-xs font-bold bg-red-50 text-red-900 mb-3";
+      badgeEstado.textContent = "Sin Firma (PP < 60%)";
+      msgEstado.textContent = "No alcanzás el 60% requerido. Aun podes rendir el 3er Parcial Recuperatorio.";
     } else {
-      badgeEstado.className = "inline-block px-3 py-1 rounded-sm text-xs font-bold bg-green-100 text-green-700 mb-4";
-      badgeEstado.textContent = "Dos Firmas (Ambos Llamados)";
-      msgEstado.textContent = "Habilitado para rendir el 1er y 2do examen final.";
+      badgeEstado.className = "inline-block px-3 py-1 rounded-sm text-xs font-bold bg-green-100 text-green-700 mb-3";
+      badgeEstado.textContent = "Habilitado (Firma Aprobada)";
+      msgEstado.textContent = "";
     }
   }
 
   function actualizarTablaExamen(promedio) {
-    if (promedio < 50) {
+    if (promedio < 60) {
       tablaResultados.innerHTML = `
         <tr>
-          <td colspan="2" class="px-3 py-4 text-center text-xs text-red-500 font-medium">
-            Se requiere al menos 50% de promedio ponderado para rendir el examen final.
+          <td colspan="2" class="px-3 py-4 text-center text-xs text-red-900 font-medium">
+            No habilitado.
           </td>
         </tr>`;
       return;
     }
 
+    // Escala oficial de notas según Puntuación Final (PF = 0.6*EF + 0.4*PP)
     const limitesNotas = [
-      { nota: 2, minFinal: 60 },
-      { nota: 3, minFinal: 71 },
-      { nota: 4, minFinal: 81 },
-      { nota: 5, minFinal: 91 }
+      { nota: 2, minPF: 60 },
+      { nota: 3, minPF: 71 },
+      { nota: 4, minPF: 81 },
+      { nota: 5, minPF: 91 }
     ];
 
     let html = '';
 
     limitesNotas.forEach(item => {
-      let reqExamen = (item.minFinal - (promedio * 0.4)) / 0.6;
+      let reqExamen = (item.minPF - (promedio * 0.4)) / 0.6;
       let examenFinalRequerido = Math.max(50, Math.ceil(reqExamen));
 
       if (examenFinalRequerido > 100) {
         html += `
           <tr>
             <td class="px-3 py-2 text-center font-bold text-gray-400">Nota ${item.nota}</td>
-            <td class="px-3 py-2 text-right text-xs text-gray-400">Inalcanzable</td>
+            <td class="px-3 py-2 text-right text-xs text-gray-400 italic">Inalcanzable</td>
           </tr>`;
       } else {
         html += `
@@ -183,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tablaResultados.innerHTML = html;
   }
 
-  // Ejecutar primera evaluación
+  // Inicializar cálculo al cargar
+  ajustarPesosProceso();
   calcular();
 });

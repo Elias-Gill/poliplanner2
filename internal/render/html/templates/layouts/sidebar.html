@@ -7,6 +7,7 @@
     style="display: none;"></div>
 
   <aside
+    id="main-sidebar"
     x-data="{ touchStartX: 0 }"
     @touchstart="touchStartX = $event.touches[0].clientX"
     @touchend="if ($event.changedTouches[0].clientX - touchStartX < -50) sidebarOpen = false"
