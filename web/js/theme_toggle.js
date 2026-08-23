@@ -1,20 +1,18 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const root = document.documentElement;
+document.addEventListener('DOMContentLoaded', () => {
+	const root = document.documentElement;
 
-    const storedMode = localStorage.getItem("mode");
+	const isDark =
+		localStorage.getItem('mode') === 'dark' ||
+		(!localStorage.getItem('mode') && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-    if (storedMode === "dark") {
-        root.classList.add("dark-mode");
-    } else {
-        root.classList.remove("dark-mode");
-    }
+	root.classList.toggle('dark', isDark);
 
-    const toggleTheme = () => {
-        const isDark = root.classList.toggle("dark-mode");
-        localStorage.setItem("mode", isDark ? "dark" : "light");
-    };
+	const toggleTheme = () => {
+		const isDarkNow = root.classList.toggle('dark');
+		localStorage.setItem('mode', isDarkNow ? 'dark' : 'light');
+	};
 
-    document.querySelectorAll(".theme-toggle").forEach(btn => {
-        btn.addEventListener("click", toggleTheme);
-    });
+	document.querySelectorAll('.theme-toggle').forEach((btn) => {
+		btn.addEventListener('click', toggleTheme);
+	});
 });

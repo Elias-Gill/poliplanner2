@@ -835,147 +835,147 @@ main:has(#graph-wrapper) {
 #graph-wrapper {
   background: #f4f7fb;
 }
-.dark-mode #graph-wrapper,
-.dark-mode #graph-container {
+.dark #graph-wrapper,
+.dark #graph-container {
   background: var(--slate-900);
 }
-.dark-mode #app-header {
+.dark #app-header {
   background: var(--slate-800);
   border-color: var(--slate-700);
 }
-.dark-mode #career-name, .dark-mode #legend-title {
+.dark #career-name, .dark #legend-title {
   color: var(--slate-50);
 }
-.dark-mode #selector-label, .dark-mode #stat-semesters, .dark-mode .stat-pill, .dark-mode .legend-item {
+.dark #selector-label, .dark #stat-semesters, .dark .stat-pill, .dark .legend-item {
   color: var(--slate-400);
 }
-.dark-mode #custom-select-btn {
+.dark #custom-select-btn {
   background: var(--slate-900);
   border-color: var(--slate-700);
   color: var(--slate-50);
 }
-.dark-mode #custom-select-list {
+.dark #custom-select-list {
   background: var(--slate-800);
   border-color: var(--slate-700);
 }
-.dark-mode #custom-select-list li {
+.dark #custom-select-list li {
   color: var(--slate-50);
 }
-.dark-mode #custom-select-list li:hover {
+.dark #custom-select-list li:hover {
   background: var(--slate-700);
 }
-.dark-mode #custom-select-list li.selected {
+.dark #custom-select-list li.selected {
   background: var(--navy-900);
   color: var(--navy-300);
 }
-.dark-mode #graph-legend {
+.dark #graph-legend {
   background: var(--slate-800);
   border-color: var(--slate-700);
   box-shadow: 0 4px 16px rgba(0,0,0,0.5);
 }
-.dark-mode #loading-overlay {
+.dark #loading-overlay {
   background: rgba(15, 23, 42, 0.88);
 }
-.dark-mode #loading-text {
+.dark #loading-text {
   color: var(--slate-50);
 }
-.dark-mode #node-tooltip {
+.dark #node-tooltip {
   background: var(--slate-800);
   border-color: var(--slate-700);
 }
-.dark-mode #tooltip-name {
+.dark #tooltip-name {
   color: var(--slate-50);
 }
-.dark-mode .tooltip-chip {
+.dark .tooltip-chip {
   background: var(--slate-900);
   color: var(--slate-400);
 }
-.dark-mode .modal-content {
+.dark .modal-content {
   background: var(--slate-800);
   border-color: var(--slate-700);
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6);
 }
-.dark-mode .modal-header {
+.dark .modal-header {
   background: linear-gradient(135deg, #1f3550 0%, #142536 100%);
 }
-.dark-mode .modal-desc {
+.dark .modal-desc {
   background: var(--slate-900);
   border-color: var(--slate-700);
   color: var(--slate-50);
 }
-.dark-mode .modal-stat-card {
+.dark .modal-stat-card {
   background: var(--slate-900);
   border-color: var(--slate-700);
   box-shadow: none;
 }
-.dark-mode .modal-stat-value {
+.dark .modal-stat-value {
   color: var(--navy-300);
 }
-.dark-mode .modal-title {
+.dark .modal-title {
   color: var(--slate-50);
 }
-.dark-mode .prereq-chip {
+.dark .prereq-chip {
   background: linear-gradient(180deg, #1f3550 0%, #142536 100%);
   border-color: #2f4c6d;
   color: #93c5fd;
 }
 
-.dark-mode .prereq-chip:hover {
+.dark .prereq-chip:hover {
   background: linear-gradient(180deg, #2f4c6d 0%, #1f3550 100%);
   box-shadow: 0 6px 16px rgba(147, 197, 253, 0.12);
 }
 
-.dark-mode .modal-prereqs {
+.dark .modal-prereqs {
   border-top-color: var(--slate-700);
 }
 
 /* ===== DARK MODE - VISTA SEMESTRES (MOBILE) ===== */
-.dark-mode .semester-tabbar {
+.dark .semester-tabbar {
   background: var(--slate-800);
   border-bottom-color: var(--slate-700);
 }
 
-.dark-mode .semester-tab {
+.dark .semester-tab {
   background: var(--slate-900);
   border-color: var(--slate-700);
   color: var(--slate-400);
 }
 
-.dark-mode .semester-tab.active {
+.dark .semester-tab.active {
   background: #2f4c6d;
   border-color: #2f4c6d;
   color: #ffffff;
 }
 
-.dark-mode .semester-card {
+.dark .semester-card {
   background: var(--slate-800);
   border-color: var(--slate-700);
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-.dark-mode .semester-card-name {
+.dark .semester-card-name {
   color: var(--slate-50);
 }
 
-.dark-mode .semester-card-meta {
+.dark .semester-card-meta {
   color: var(--slate-400);
 }
 
-.dark-mode .semester-card-meta .meta-sep {
+.dark .semester-card-meta .meta-sep {
   color: var(--slate-600);
 }
 
-.dark-mode .semester-prereq-chip {
+.dark .semester-prereq-chip {
   background: var(--slate-900);
   border-color: var(--slate-700);
   color: var(--navy-300);
 }
 
-.dark-mode .semester-prereq-chip:active {
+.dark .semester-prereq-chip:active {
   background: var(--slate-700);
 }
 
-.dark-mode .toggle-graph {
+.dark .toggle-graph {
   background: #1f3550;
   color: #93c5fd;
   border-color: #2f4c6d;

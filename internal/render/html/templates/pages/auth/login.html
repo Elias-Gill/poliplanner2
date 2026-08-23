@@ -19,19 +19,19 @@
 {{ define "content" }}
   <div class="md:h-full md:justify-center md:items-center flex">
     <div
-      class="w-full max-w-md bg-white rounded-sm border border-gray-300 shadow-lg p-6 md:p-10">
+      class="w-full max-w-md bg-white dark:bg-gray-800 rounded-sm border border-gray-300 dark:border-gray-700 shadow-lg p-6 md:p-10">
       <div class="text-center mb-5 md:mb-6">
         <img
           src="/static/logo.svg"
           alt="Logo PoliPlanner"
           class="mx-auto h-16 w-auto md:h-20" />
-        <h2 class="mt-4 text-2xl font-bold text-gray-900">Iniciar Sesión</h2>
+        <h2 class="mt-4 text-2xl font-bold text-gray-900 dark:text-gray-100">Iniciar Sesión</h2>
       </div>
 
       <!-- Mensaje de error (se muestra si viene en los datos) -->
       {{ if .Error }}
         <div
-          class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-sm text-sm">
+          class="mb-6 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 px-4 py-3 rounded-sm text-sm">
           {{ .Error }}
         </div>
       {{ end }}
@@ -44,14 +44,14 @@
         <div>
           <label
             for="username"
-            class="block text-sm font-medium text-gray-700 mb-1">
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Usuario o correo
           </label>
           <div class="relative">
             <div
               class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg
-                class="text-gray-500"
+                class="text-gray-500 dark:text-gray-400"
                 width="1em"
                 height="1em"
                 fill="currentColor"
@@ -65,7 +65,7 @@
               id="username"
               name="username"
               value="{{ .Username }}"
-              class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 placeholder-gray-400 transition-colors"
+              class="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-colors"
               style="text-transform: lowercase"
               required
               placeholder="usuario123" />
@@ -75,14 +75,14 @@
         <div>
           <label
             for="password"
-            class="block text-sm font-medium text-gray-700 mb-1">
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Contraseña
           </label>
           <div class="relative">
             <div
               class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg
-                class="text-gray-500"
+                class="text-gray-500 dark:text-gray-400"
                 width="1em"
                 height="1em"
                 fill="currentColor"
@@ -96,7 +96,7 @@
               type="password"
               id="password"
               name="password"
-              class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 placeholder-gray-400 transition-colors"
+              class="block w-full pl-10 pr-3 py-2.5 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-colors"
               required
               placeholder="Contraseña" />
           </div>
@@ -105,28 +105,28 @@
         <div class="flex justify-between text-sm pt-1">
           <a
             href="/password-recovery"
-            class="font-medium text-primary-600 hover:text-primary-700 transition-colors">
+            class="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
             ¿Olvidaste la contraseña?
           </a>
         </div>
 
         <button
           type="submit"
-          class="w-full bg-primary-600 text-white py-3 rounded-sm font-semibold hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors mt-1">
+          class="w-full bg-primary-600 text-white py-3 rounded-sm font-semibold hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors mt-1">
           Iniciar sesión
         </button>
       </form>
 
-      <div class="mt-6 text-center text-sm text-gray-600">
+      <div class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
         ¿No tenés cuenta?
         <a
           href="/signup"
-          class="font-medium text-primary-600 hover:text-primary-700 transition-colors">
+          class="font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
           Registrate acá
         </a>
       </div>
 
-      <div class="mt-4 text-center text-xs text-gray-500">
+      <div class="mt-4 text-center text-xs text-gray-500 dark:text-gray-400">
         <a href="/tools/" class="hover:underline transition-colors"
           >Herramientas</a
         >

@@ -22,12 +22,12 @@
 {{ define "content" }}
   <div
     x-data="scheduleBuilder()"
-    class="min-h-[calc(100vh-4rem)] p-4 md:p-6 bg-gray-50 flex flex-col gap-6 pb-24 lg:pb-6">
+    class="min-h-[calc(100vh-4rem)] p-4 md:p-6 bg-gray-50 dark:bg-gray-900 flex flex-col gap-6 pb-24 lg:pb-6 transition-colors">
     
     <!-- Header de la página -->
-    <div class="bg-white p-4 rounded-sm shadow-xs border border-gray-200">
-      <h1 class="text-xl font-bold text-gray-900">Arma tu Horario</h1>
-      <p class="text-xs text-gray-500 mt-0.5">
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-sm shadow-xs border border-gray-200 dark:border-gray-700">
+      <h1 class="text-xl font-bold text-gray-900 dark:text-white">Arma tu Horario</h1>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
         Agregá materias de distintas carreras a tu borrador
       </p>
     </div>
@@ -37,10 +37,10 @@
       <!-- COLUMNA IZQUIERDA: Catálogo y Filtro de Carreras -->
       <div class="lg:col-span-7 xl:col-span-8 space-y-4">
         <!-- Seleccionador Principal de Carrera -->
-        <div class="bg-white p-4 rounded-sm shadow-xs border border-gray-200">
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-sm shadow-xs border border-gray-200 dark:border-gray-700">
           <label
             for="career-select"
-            class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+            class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">
             Carrera
           </label>
           <select
@@ -48,7 +48,7 @@
             name="career_id"
             hx-get="/schedule/subjects"
             hx-target="#subjects-container"
-            class="w-full px-3 py-2 text-sm border border-gray-300 rounded-sm bg-white focus:ring-2 focus:ring-primary-500">
+            class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 cursor-pointer">
             <option value="" disabled selected>
               Seleccioná una carrera...
             </option>
@@ -71,9 +71,9 @@
           class="space-y-3">
           <!-- Estado inicial cuando no se seleccionó carrera aún -->
           <div
-            class="bg-white p-8 rounded-sm border border-dashed border-gray-300 text-center">
+            class="bg-white dark:bg-gray-800 p-8 rounded-sm border border-dashed border-gray-300 dark:border-gray-700 text-center">
             <svg
-              class="mx-auto h-10 w-10 text-gray-400 mb-2"
+              class="mx-auto h-10 w-10 text-gray-400 dark:text-gray-500 mb-2"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24">
@@ -83,12 +83,12 @@
                 stroke-width="1.5"
                 d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
-            <p class="text-sm text-gray-600 font-medium">
+            <p class="text-sm text-gray-600 dark:text-gray-300 font-medium">
               Seleccioná una carrera arriba para ver las materias disponibles.
             </p>
-            <p class="text-xs text-gray-500 mt-1">
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
               ¡Podés agregar
-              <span class="font-black text-gray-900"
+              <span class="font-black text-gray-900 dark:text-white"
                 >materias de varias carreras</span
               >
               a tu horario!
@@ -146,14 +146,14 @@
         class="fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:col-span-5 xl:col-span-4 lg:sticky lg:top-6">
         
         <div
-          class="bg-white rounded-t-2xl lg:rounded-sm shadow-2xl lg:shadow-xs border border-gray-200 overflow-hidden flex flex-col max-h-[85vh] lg:max-h-[calc(100vh-8rem)]">
+          class="bg-white dark:bg-gray-800 rounded-t-2xl lg:rounded-sm shadow-2xl lg:shadow-xs border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col max-h-[85vh] lg:max-h-[calc(100vh-8rem)]">
           
           <!-- Handle para arrastrar visualmente en Mobile -->
-          <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto my-2 lg:hidden"></div>
+          <div class="w-12 h-1 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto my-2 lg:hidden"></div>
 
           <!-- Header del Carrito -->
           <div
-            class="p-4 bg-gray-800 text-white flex items-center justify-between">
+            class="p-4 bg-gray-900 dark:bg-gray-950 text-white flex items-center justify-between">
             <div class="flex items-center gap-2">
               <h2 class="font-semibold text-sm">Materias Seleccionadas</h2>
               <span
@@ -182,12 +182,12 @@
 
           <!-- Lista de Materias Seleccionadas -->
           <div
-            class="p-4 overflow-y-auto flex-1 space-y-3 divide-y divide-gray-100">
+            class="p-4 overflow-y-auto flex-1 space-y-3 divide-y divide-gray-100 dark:divide-gray-700/60">
             <!-- Estado vacío -->
             <template x-if="selectedSubjects.length === 0">
               <div class="text-center py-8">
                 <svg
-                  class="mx-auto h-8 w-8 text-gray-300 mb-2"
+                  class="mx-auto h-8 w-8 text-gray-300 dark:text-gray-600 mb-2"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24">
@@ -197,7 +197,7 @@
                     stroke-width="1.5"
                     d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <p class="text-xs text-gray-500">
+                <p class="text-xs text-gray-500 dark:text-gray-400">
                   Todavía no agregaste materias a este borrador.
                 </p>
               </div>
@@ -210,14 +210,14 @@
                 <div class="space-y-0.5 min-w-0">
                   <div class="flex items-center gap-1.5 flex-wrap">
                     <span
-                      class="text-xs font-medium text-gray-900 leading-tight"
+                      class="text-xs font-medium text-gray-900 dark:text-gray-100 leading-tight"
                       x-text="item.name"></span>
                   </div>
                   <p
-                    class="text-[11px] text-gray-500"
+                    class="text-[11px] text-gray-500 dark:text-gray-400"
                     x-text="'Sección: ' + item.section"></p>
                   <p
-                    class="text-[11px] text-gray-400 font-mono"
+                    class="text-[11px] text-gray-400 dark:text-gray-500 font-mono"
                     x-text="item.schedule"></p>
                 </div>
 
@@ -225,7 +225,7 @@
                 <button
                   type="button"
                   @click="removeSubject(item.id)"
-                  class="text-gray-400 hover:text-red-600 transition p-1 shrink-0 cursor-pointer"
+                  class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition p-1 shrink-0 cursor-pointer"
                   title="Quitar materia">
                   <svg
                     class="w-4 h-4"
@@ -244,17 +244,17 @@
           </div>
 
           <!-- Footer / Formulario final -->
-          <div class="p-4 bg-gray-50 border-t border-gray-200">
+          <div class="p-4 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-200 dark:border-gray-700">
             <form hx-post="/schedule/" hx-swap="outerHTML" class="space-y-3">
               <div>
                 <div class="flex items-center justify-between mb-1">
                   <label
                     for="schedule-title"
-                    class="block text-xs font-bold text-gray-700 tracking-wider">
+                    class="block text-xs font-bold text-gray-700 dark:text-gray-300 tracking-wider">
                     Nombre del horario
                   </label>
                   <span
-                    class="text-[10px] font-semibold bg-primary-100 text-primary-800 px-1.5 py-0.5 rounded-xs">
+                    class="text-[10px] font-semibold bg-primary-100 dark:bg-primary-950/80 text-primary-800 dark:text-primary-300 px-1.5 py-0.5 rounded-xs border border-primary-200 dark:border-primary-800/50">
                     Obligatorio
                     <span class="text-red-500">*</span>
                   </span>
@@ -269,10 +269,10 @@
                     x-model="scheduleTitle"
                     @focus="$event.target.select()"
                     placeholder="Ej: Horario 1er Semestre 2026"
-                    class="w-full pl-8 pr-3 py-2 text-sm bg-white border border-gray-300 rounded-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 shadow-2xs transition" />
+                    class="w-full pl-8 pr-3 py-2 text-sm bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-sm text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 shadow-2xs transition" />
 
                   <svg
-                    class="w-4 h-4 text-gray-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                    class="w-4 h-4 text-gray-400 dark:text-gray-500 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24">
@@ -295,7 +295,7 @@
               <button
                 type="submit"
                 :disabled="selectedSubjects.length === 0 || !scheduleTitle.trim()"
-                class="w-full bg-primary-600 text-white py-2.5 px-4 rounded-sm font-semibold text-sm hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center justify-center gap-2 cursor-pointer">
+                class="w-full bg-primary-600 text-white py-2.5 px-4 rounded-sm font-semibold text-sm hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center justify-center gap-2 cursor-pointer shadow-sm">
                 <span>Guardar Horario</span>
               </button>
             </form>
