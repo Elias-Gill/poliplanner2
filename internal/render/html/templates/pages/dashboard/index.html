@@ -1,26 +1,32 @@
 {{ define "custom_tags" }}
   <title>Dashboard — PoliPlanner</title>
-  <meta name="description" content="Gestiona tus materias, consulta tus exámenes y organiza tu calendario académico en PoliPlanner." />
+  <meta
+    name="description"
+    content="Gestiona tus materias, consulta tus exámenes y organiza tu calendario académico en PoliPlanner." />
   <meta name="robots" content="index, follow" />
 
   <link rel="canonical" href="https://poliplanner.fly.dev/dashboard" />
 
   <meta property="og:title" content="Dashboard — PoliPlanner" />
-  <meta property="og:description" content="Panel principal de PoliPlanner para organizar tu vida académica." />
+  <meta
+    property="og:description"
+    content="Panel principal de PoliPlanner para organizar tu vida académica." />
   <meta property="og:url" content="https://poliplanner.fly.dev/dashboard" />
   <meta property="og:type" content="website" />
 {{ end }}
 
 {{ define "custom_head" }}
   <script src="/static/vendor/fullcalendar/index.global.min.js"></script>
-  <script src="/static/js/calendar.js"></script>
+  <script src="/static/js/calendar.js?2"></script>
   <script src="/static/vendor/htmx/htmx.min.js" defer></script>
 {{ end }}
 
 {{ define "content" }}
-  <div class="max-w-7xl mx-auto py-2 min-h-[calc(100vh-4rem)] flex flex-col gap-4">
+  <div
+    class="max-w-7xl mx-auto py-2 min-h-[calc(100vh-4rem)] flex flex-col gap-4">
     <!-- Header y Selector de Horarios -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-gray-800 p-4 rounded-sm shadow-sm border border-gray-200 dark:border-gray-700">
+    <div
+      class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-gray-800 p-4 rounded-sm shadow-sm border border-gray-200 dark:border-gray-700">
       <div>
         <h1 class="text-xl font-bold text-gray-900 dark:text-white">
           Dashboard
@@ -102,7 +108,8 @@
 
     <!-- Barra de Exportación de PDF (Debajo del Header) -->
     {{ if .Schedules }}
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white/80 dark:bg-gray-800/60 px-4 py-2.5 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm">
+      <div
+        class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white/80 dark:bg-gray-800/60 px-4 py-2.5 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm">
         <span class="text-xs text-gray-600 dark:text-gray-300 font-medium">
           ¿Necesitas llevar tu horario impreso o guardarlo en tu dispositivo?
         </span>
@@ -126,6 +133,7 @@
         </a>
       </div>
     {{ end }}
+
 
     <!-- Contenido dinámico del Dashboard (intercambiado vía HTMX) -->
     <div id="dashboard-content">

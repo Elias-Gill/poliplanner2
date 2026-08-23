@@ -1,13 +1,19 @@
 {{ define "custom_tags" }}
   <title>Página No Encontrada (404) — PoliPlanner</title>
-  <meta name="description" content="La página que estás buscando no existe o ha sido movida en PoliPlanner." />
-  
+  <meta
+    name="description"
+    content="La página que estás buscando no existe o ha sido movida en PoliPlanner." />
+
   <!-- Bloqueo estricto para no indexar páginas de error -->
   <meta name="robots" content="noindex, nofollow" />
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Página No Encontrada (404) — PoliPlanner" />
-  <meta property="og:description" content="La página solicitada no está disponible." />
+  <meta
+    property="og:title"
+    content="Página No Encontrada (404) — PoliPlanner" />
+  <meta
+    property="og:description"
+    content="La página solicitada no está disponible." />
   <meta property="og:type" content="website" />
 {{ end }}
 
@@ -15,16 +21,24 @@
   <div
     class="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] px-4 text-center bg-gray-50 dark:bg-gray-900 transition-colors">
     <!-- Código de Error en Highlight -->
-    <span class="inline-block px-3 py-1 mb-4 text-xs font-bold uppercase tracking-widest text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/80 rounded-sm border border-primary-100 dark:border-primary-800/50">
+    <span
+      class="inline-block px-3 py-1 mb-4 text-xs font-bold uppercase tracking-widest text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/80 rounded-sm border border-primary-100 dark:border-primary-800/50">
       Error 404
     </span>
 
-    <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-3">
+    <h1
+      class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-3">
       Página no encontrada
     </h1>
 
-    <p class="text-base text-gray-600 dark:text-gray-300 mb-2 max-w-md leading-relaxed">
-      La página que estás buscando <code class="px-1.5 py-0.5 text-sm font-mono bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-sm">{{ . }}</code> no existe o ha sido movida.
+    <p
+      class="text-base text-gray-600 dark:text-gray-300 mb-2 max-w-md leading-relaxed">
+      La página que estás buscando
+      <code
+        class="px-1.5 py-0.5 text-sm font-mono bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-sm"
+        >{{ . }}</code
+      >
+      no existe o ha sido movida.
     </p>
 
     <p class="text-sm text-gray-500 dark:text-gray-400 mb-8">

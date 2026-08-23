@@ -1,48 +1,57 @@
 {{ define "custom_tags" }}
-<title>Acceso Denegado — PoliPlanner</title>
-<meta name="description" content="No tenés los permisos necesarios para acceder a este recurso en PoliPlanner." />
+  <title>Acceso Denegado — PoliPlanner</title>
+  <meta
+    name="description"
+    content="No tenés los permisos necesarios para acceder a este recurso en PoliPlanner." />
 
-<!-- Bloqueo estricto para no indexar páginas de error de permisos -->
-<meta name="robots" content="noindex, nofollow" />
+  <!-- Bloqueo estricto para no indexar páginas de error de permisos -->
+  <meta name="robots" content="noindex, nofollow" />
 
-<!-- Open Graph -->
-<meta property="og:title" content="Acceso Denegado — PoliPlanner" />
-<meta property="og:description" content="No tenés los permisos necesarios para realizar esta acción o visualizar este contenido." />
-<meta property="og:type" content="website" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="Acceso Denegado — PoliPlanner" />
+  <meta
+    property="og:description"
+    content="No tenés los permisos necesarios para realizar esta acción o visualizar este contenido." />
+  <meta property="og:type" content="website" />
 {{ end }}
 
 {{ define "content" }}
-<div
-  class="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] px-4 text-center bg-gray-50 dark:bg-gray-900 transition-colors">
-  <!-- Badge de alerta para permisos / restricción -->
-  <span class="inline-block px-3 py-1 mb-4 text-xs font-bold uppercase tracking-widest text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/80 rounded-sm border border-orange-200 dark:border-orange-900/50">
-    Error 403
-  </span>
+  <div
+    class="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] px-4 text-center bg-gray-50 dark:bg-gray-900 transition-colors">
+    <!-- Badge de alerta para permisos / restricción -->
+    <span
+      class="inline-block px-3 py-1 mb-4 text-xs font-bold uppercase tracking-widest text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/80 rounded-sm border border-orange-200 dark:border-orange-900/50">
+      Error 403
+    </span>
 
-  <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-3">
-    Acceso denegado
-  </h1>
+    <h1
+      class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-3">
+      Acceso denegado
+    </h1>
 
-  <p class="text-base text-gray-600 dark:text-gray-300 mb-2 max-w-md leading-relaxed">
-    No tenés los permisos necesarios para acceder a este recurso o realizar esta acción.
-  </p>
+    <p
+      class="text-base text-gray-600 dark:text-gray-300 mb-2 max-w-md leading-relaxed">
+      No tenés los permisos necesarios para acceder a este recurso o realizar
+      esta acción.
+    </p>
 
-  <p class="text-sm text-gray-500 dark:text-gray-400 mb-8 max-w-sm">
-    Si creés que esto es un error, verificá la cuenta con la que iniciaste sesión.
-  </p>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-8 max-w-sm">
+      Si creés que esto es un error, verificá la cuenta con la que iniciaste
+      sesión.
+    </p>
 
-  <div class="flex items-center gap-3">
-    <button
-      onclick="window.history.back()"
-      class="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-sm shadow-sm transition-all duration-200 focus:outline-none">
-      Regresar
-    </button>
+    <div class="flex items-center gap-3">
+      <button
+        onclick="window.history.back()"
+        class="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-sm shadow-sm transition-all duration-200 focus:outline-none">
+        Regresar
+      </button>
 
-    <a
-      href="/dashboard"
-      class="inline-flex items-center justify-center px-5 py-2 text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-600 dark:hover:bg-primary-500 rounded-sm shadow-sm transition-all duration-200 focus:ring-2 focus:ring-primary-500 focus:outline-none">
-      Ir al Inicio
-    </a>
+      <a
+        href="/dashboard"
+        class="inline-flex items-center justify-center px-5 py-2 text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-600 dark:hover:bg-primary-500 rounded-sm shadow-sm transition-all duration-200 focus:ring-2 focus:ring-primary-500 focus:outline-none">
+        Ir al Inicio
+      </a>
+    </div>
   </div>
-</div>
 {{ end }}

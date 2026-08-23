@@ -1,68 +1,102 @@
 {{ define "custom_tags" }}
   <!-- Título y Descripción centrados en la intención de búsqueda del estudiante -->
   <title>Cómo Calcular tus Notas y Promedio Universitario — PoliPlanner</title>
-  <meta name="description" content="Aprende a calcular tu promedio de parciales, nota final, ponderaciones y requisitos de asistencia para el examen final en la FP-UNA." />
+  <meta
+    name="description"
+    content="Aprende a calcular tu promedio de parciales, nota final, ponderaciones y requisitos de asistencia para el examen final en la FP-UNA." />
 
   <!-- Canonical para evitar contenido duplicado -->
-  <link rel="canonical" href="https://poliplanner.fly.dev/guides/calculo_notas" />
+  <link
+    rel="canonical"
+    href="https://poliplanner.fly.dev/guides/calculo_notas" />
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Cómo Calcular tus Notas y Promedio Universitario — PoliPlanner" />
-  <meta property="og:description" content="Guía sobre cálculo de promedio ponderado, notas finales, requisitos de asistencia y parciales." />
-  <meta property="og:url" content="https://poliplanner.fly.dev/guides/calculo_notas" />
+  <meta
+    property="og:title"
+    content="Cómo Calcular tus Notas y Promedio Universitario — PoliPlanner" />
+  <meta
+    property="og:description"
+    content="Guía sobre cálculo de promedio ponderado, notas finales, requisitos de asistencia y parciales." />
+  <meta
+    property="og:url"
+    content="https://poliplanner.fly.dev/guides/calculo_notas" />
   <meta property="og:type" content="article" />
 
   <!-- Schema -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "TechArticle",
-    "headline": "Cómo Calcular tus Notas y Promedio Universitario",
-    "description": "Guía práctica sobre cómo calcular promedios ponderados, requisitos de asistencia y notas necesarias para aprobar materias en la FP-UNA.",
-    "publisher": {
-      "@type": "Organization",
-      "name": "PoliPlanner"
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Cómo Calcular tus Notas y Promedio Universitario",
+      "description": "Guía práctica sobre cómo calcular promedios ponderados, requisitos de asistencia y notas necesarias para aprobar materias en la FP-UNA.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "PoliPlanner"
+      }
     }
-  }
   </script>
 {{ end }}
 
 {{ define "custom_head" }}
-<link rel="stylesheet" href="/static/css/guides_styles.css" />
+  <link rel="stylesheet" href="/static/css/guides_styles.css?2" />
 {{ end }}
 
 {{ define "content" }}
   <div class="guide_article">
     <h1>Cálculo de Notas y Requisitos de Aprobación</h1>
     <p>
-      En esta guía se explica cómo se calcula el promedio de proceso, la puntuación final y las condiciones de asistencia necesarias para rendir exámenes finales.
+      En esta guía se explica cómo se calcula el promedio de proceso, la
+      puntuación final y las condiciones de asistencia necesarias para rendir
+      exámenes finales.
     </p>
-    <div class="my-4 p-3 bg-gray-50 border border-gray-200 rounded-sm text-sm text-gray-600 flex items-center gap-2.5">
-        <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        <span>
-            Si quieres calcular tu Promedio Ponderado y conocer tu escala de notas, podes usar
-            nuestra
-            <a href="/guides/news" class="font-medium text-gray-900
-                hover:underline">Calculadora</a>.
-        </span>
+    <div
+      class="my-4 p-3 bg-gray-50 border border-gray-200 rounded-sm text-sm text-gray-600 flex items-center gap-2.5">
+      <svg
+        class="w-4 h-4 text-gray-400 shrink-0"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>
+        Si quieres calcular tu Promedio Ponderado y conocer tu escala de notas,
+        podes usar nuestra
+        <a
+          href="/guides/news"
+          class="font-medium text-gray-900
+                hover:underline"
+          >Calculadora</a
+        >.
+      </span>
     </div>
 
     <section>
       <h2>Evaluación del Proceso y Promedio Ponderado (PP)</h2>
       <p>
-        El semestre se divide en dos etapas de evaluación continua. En cada etapa se acumula un puntaje compuesto por:
+        El semestre se divide en dos etapas de evaluación continua. En cada
+        etapa se acumula un puntaje compuesto por:
       </p>
       <ul>
-        <li><strong>50% Evaluación Parcial:</strong> Nota obtenida en el examen parcial de esa etapa.</li>
-        <li><strong>50% Trabajos y Prácticas:</strong> Promedio acumulado de trabajos
-                prácticos, laboratorios, talleres y tareas. Se estipula que deben haber al
-                menos 2 actividades de este tipo por etapa. Los porcentajes asignados a cada
-                actividad dependen de cada docente.</li>
+        <li>
+          <strong>50% Evaluación Parcial:</strong> Nota obtenida en el examen
+          parcial de esa etapa.
+        </li>
+        <li>
+          <strong>50% Trabajos y Prácticas:</strong> Promedio acumulado de
+          trabajos prácticos, laboratorios, talleres y tareas. Se estipula que
+          deben haber al menos 2 actividades de este tipo por etapa. Los
+          porcentajes asignados a cada actividad dependen de cada docente.
+        </li>
       </ul>
       <p>
-        El <strong>Promedio Ponderado (PP)</strong> del semestre surge del promedio de los puntajes acumulados en ambas etapas. Para tener derecho a rendir el Examen Final, este promedio debe ser de al menos <strong>60%</strong>.
+        El <strong>Promedio Ponderado (PP)</strong> del semestre surge del
+        promedio de los puntajes acumulados en ambas etapas. Para tener derecho
+        a rendir el Examen Final, este promedio debe ser de al menos
+        <strong>60%</strong>.
       </p>
 
       <h3>Ejemplo práctico del cálculo del Promedio Ponderado</h3>
@@ -89,26 +123,36 @@
       </ul>
 
       <div class="pre-container">
-        <pre>(80 × 20) + (70 × 30) + (75 × 50) = 1600 + 2100 + 3750 = 7450
-7450 ÷ 100 = 74.5%</pre>
+        <pre>
+(80 × 20) + (70 × 30) + (75 × 50) = 1600 + 2100 + 3750 = 7450
+7450 ÷ 100 = 74.5%</pre
+        >
       </div>
-      <p>El Promedio Ponderado (PP) del semestre en este caso es <strong>74.5%</strong>.</p>
+      <p>
+        El Promedio Ponderado (PP) del semestre en este caso es
+        <strong>74.5%</strong>.
+      </p>
     </section>
 
     <section>
       <h2>Puntuación Final (PF)</h2>
       <p>
-        Una vez habilitado a rendir, la Puntuación Final (PF) que determina la nota final se calcula combinando el Examen Final con el Promedio Ponderado del proceso:
+        Una vez habilitado a rendir, la Puntuación Final (PF) que determina la
+        nota final se calcula combinando el Examen Final con el Promedio
+        Ponderado del proceso:
       </p>
       <p>
         <strong>PF = 0.6 × EF + 0.4 × PP</strong>
       </p>
       <div>
         <p>
-          <strong>EF (Examen Final):</strong> Exige obtener como mínimo un <strong>50%</strong> para aprobar la materia, independientemente de la nota acumulada en el proceso.
+          <strong>EF (Examen Final):</strong> Exige obtener como mínimo un
+          <strong>50%</strong> para aprobar la materia, independientemente de la
+          nota acumulada en el proceso.
         </p>
         <p>
-          <strong>PP (Promedio Ponderado):</strong> Puntaje total obtenido durante la evaluación del semestre.
+          <strong>PP (Promedio Ponderado):</strong> Puntaje total obtenido
+          durante la evaluación del semestre.
         </p>
       </div>
     </section>
@@ -116,7 +160,8 @@
     <section>
       <h2>Escala de Calificaciones</h2>
       <p>
-        La Puntuación Final (PF) se redondea (los decimales a partir de 0.5 ascienden al entero superior) y se asigna la nota final correspondiente:
+        La Puntuación Final (PF) se redondea (los decimales a partir de 0.5
+        ascienden al entero superior) y se asigna la nota final correspondiente:
       </p>
       <div class="table-container">
         <table border="1">
@@ -167,40 +212,61 @@
     <section>
       <h2>Requisitos para Rendir el Examen Final</h2>
       <p>
-        Para rendir el Examen Final en cualquiera de sus dos oportunidades por periodo, se deben cumplir simultáneamente los siguientes puntos:
+        Para rendir el Examen Final en cualquiera de sus dos oportunidades por
+        periodo, se deben cumplir simultáneamente los siguientes puntos:
       </p>
       <ul>
-        <li><strong>Promedio Ponderado:</strong> Contar con un Promedio Ponderado (PP) mínimo del <strong>60%</strong>.</li>
-        <li><strong>Asistencia a Laboratorios:</strong> Cumplir con el 100% de las actividades
-                de laboratorio cuando corresponda.</li>
+        <li>
+          <strong>Promedio Ponderado:</strong> Contar con un Promedio Ponderado
+          (PP) mínimo del <strong>60%</strong>.
+        </li>
+        <li>
+          <strong>Asistencia a Laboratorios:</strong> Cumplir con el 100% de las
+          actividades de laboratorio cuando corresponda.
+        </li>
       </ul>
       <p>
-        <strong>Importante:</strong> En caso de no habilitar los examenes finales, el alumno
-            puede rendir un tercer parcial a modo de recuperatorio. Este se realiza en la misma
-            fecha que el primer examen final, utilizando el mismo examen de la prueba final.
+        <strong>Importante:</strong> En caso de no habilitar los examenes
+        finales, el alumno puede rendir un tercer parcial a modo de
+        recuperatorio. Este se realiza en la misma fecha que el primer examen
+        final, utilizando el mismo examen de la prueba final.
       </p>
     </section>
 
     <section>
       <h2>Régimen de Asistencia a Clases Teóricas</h2>
       <p>
-        El porcentaje de asistencia a clases teóricas determina las oportunidades disponibles para rendir el examen final:
+        El porcentaje de asistencia a clases teóricas determina las
+        oportunidades disponibles para rendir el examen final:
       </p>
       <ul>
-        <li><strong>70% o más de asistencia:</strong> Habilita a rendir tanto la primera como la segunda oportunidad de Examen Final.</li>
-        <li><strong>Entre 50% y 69% de asistencia:</strong> Habilita únicamente a rendir en la segunda oportunidad de Examen Final.</li>
-        <li><strong>Menos del 50% de asistencia:</strong> Implica la pérdida del derecho a rendir examen final en ese periodo.</li>
+        <li>
+          <strong>70% o más de asistencia:</strong> Habilita a rendir tanto la
+          primera como la segunda oportunidad de Examen Final.
+        </li>
+        <li>
+          <strong>Entre 50% y 69% de asistencia:</strong> Habilita únicamente a
+          rendir en la segunda oportunidad de Examen Final.
+        </li>
+        <li>
+          <strong>Menos del 50% de asistencia:</strong> Implica la pérdida del
+          derecho a rendir examen final en ese periodo.
+        </li>
       </ul>
     </section>
 
     <section>
       <h2>Fuentes Oficiales</h2>
-      <p>
-        Información extraída de la normativa académica de la institución:
-      </p>
+      <p>Información extraída de la normativa académica de la institución:</p>
       <ul>
         <li>
-          <a href="https://www.pol.una.py/wp-content/uploads/Resol.-25-15-68-00-Reglamento-Academico-de-la-FP-UNA.pdf" target="_blank" rel="noopener">Reglamento Académico de la FP-UNA (Resolución 25-15-68-00, Arts. 9, 11 y 13)</a>
+          <a
+            href="https://www.pol.una.py/wp-content/uploads/Resol.-25-15-68-00-Reglamento-Academico-de-la-FP-UNA.pdf"
+            target="_blank"
+            rel="noopener"
+            >Reglamento Académico de la FP-UNA (Resolución 25-15-68-00, Arts. 9,
+            11 y 13)</a
+          >
         </li>
       </ul>
     </section>

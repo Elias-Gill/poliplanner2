@@ -1,34 +1,40 @@
 {{ define "custom_tags" }}
   <!-- Título y Descripción centrados en las búsquedas de actualizaciones -->
   <title>Novedades y Actualizaciones del Sistema — PoliPlanner</title>
-  <meta name="description" content="Enterate de las últimas mejoras en PoliPlanner: exportación a PDF, guías universitarias actualizadas, modo offline y horarios multi-carrera." />
+  <meta
+    name="description"
+    content="Enterate de las últimas mejoras en PoliPlanner: exportación a PDF, guías universitarias actualizadas, modo offline y horarios multi-carrera." />
 
   <!-- Canonical para evitar contenido duplicado -->
   <link rel="canonical" href="https://poliplanner.fly.dev/guides/news" />
 
   <!-- Open Graph para cuando compartan las novedades en redes o grupos -->
-  <meta property="og:title" content="Novedades y Actualizaciones del Sistema — PoliPlanner" />
-  <meta property="og:description" content="Enterate de las últimas mejoras en PoliPlanner: exportación a PDF, soporte offline, horarios multi-carrera y guías actualizadas." />
+  <meta
+    property="og:title"
+    content="Novedades y Actualizaciones del Sistema — PoliPlanner" />
+  <meta
+    property="og:description"
+    content="Enterate de las últimas mejoras en PoliPlanner: exportación a PDF, soporte offline, horarios multi-carrera y guías actualizadas." />
   <meta property="og:url" content="https://poliplanner.fly.dev/guides/news" />
   <meta property="og:type" content="article" />
 
   <!-- Schema para que Google reconozca esta página como un registro de cambios/noticias -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "TechArticle",
-    "headline": "Novedades y Actualizaciones en PoliPlanner",
-    "description": "Historial de versiones y registro de cambios en PoliPlanner.",
-    "publisher": {
-      "@type": "Organization",
-      "name": "PoliPlanner"
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Novedades y Actualizaciones en PoliPlanner",
+      "description": "Historial de versiones y registro de cambios en PoliPlanner.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "PoliPlanner"
+      }
     }
-  }
   </script>
 {{ end }}
 
 {{ define "custom_head" }}
-<link rel="stylesheet" href="/static/css/guides_styles.css" />
+  <link rel="stylesheet" href="/static/css/guides_styles.css?2" />
 {{ end }}
 
 {{ define "content" }}
@@ -36,20 +42,28 @@
     <h1>Novedades recientes en PoliPlanner</h1>
 
     <p>
-      Seguimos mejorando la plataforma para acompañarte en cada semestre. Mantenemos las grandes funcionalidades añadidas recientemente junto con las últimas correcciones del sistema.
+      Seguimos mejorando la plataforma para acompañarte en cada semestre.
+      Mantenemos las grandes funcionalidades añadidas recientemente junto con
+      las últimas correcciones del sistema.
     </p>
 
     <!-- ANUNCIO DESTACADO (SUPER EN GRANDE) -->
-    <div class="my-6 p-6 bg-primary-50 border-2 border-primary-500 rounded-sm shadow-md">
+    <div
+      class="my-6 p-6 bg-primary-50 border-2 border-primary-500 rounded-sm shadow-md">
       <div class="flex items-center gap-2 mb-2">
-        <span class="px-2 py-0.5 bg-primary-600 text-white text-xs font-bold uppercase tracking-wider rounded-sm">Última Versión</span>
-        <span class="text-xs font-mono text-primary-700 font-semibold">v2.0.6</span>
+        <span
+          class="px-2 py-0.5 bg-primary-600 text-white text-xs font-bold uppercase tracking-wider rounded-sm"
+          >Última Versión</span
+        >
+        <span class="text-xs font-mono text-primary-700 font-semibold"
+          >v2.0.6</span
+        >
       </div>
-      <h3>
-        Exportación a PDF y Guías Universitarias Actualizadas
-      </h3>
+      <h3>Exportación a PDF y Guías Universitarias Actualizadas</h3>
       <p>
-        Ahora podés descargar tus horarios armados directamente en PDF para tenerlos siempre a mano o compartirlos. Además, ajustamos todas las guías del sitio al nuevo reglamento académico de la facultad.
+        Ahora podés descargar tus horarios armados directamente en PDF para
+        tenerlos siempre a mano o compartirlos. Además, ajustamos todas las
+        guías del sitio al nuevo reglamento académico de la facultad.
       </p>
     </div>
 
@@ -60,68 +74,79 @@
       <h3>Versión 2.0.6 (Actual)</h3>
       <ul>
         <li>
-          <strong>Actualización de Guías Universitarias:</strong> Corrección y ajuste de los contenidos del "Manual del Bicho" y guías de ayuda para alinearlos al nuevo reglamento.
+          <strong>Actualización de Guías Universitarias:</strong> Corrección y
+          ajuste de los contenidos del "Manual del Bicho" y guías de ayuda para
+          alinearlos al nuevo reglamento.
         </li>
         <li>
-          <strong>Monitoreo de Horarios (Scraper):</strong> Aumento en la frecuencia de revisión automática para detectar nuevas versiones de planillas Excel de horarios publicadas por la facultad.
+          <strong>Monitoreo de Horarios (Scraper):</strong> Aumento en la
+          frecuencia de revisión automática para detectar nuevas versiones de
+          planillas Excel de horarios publicadas por la facultad.
         </li>
       </ul>
 
       <h3>Versión 2.0.5</h3>
       <ul>
         <li>
-          <strong>Exportación a PDF:</strong> Nueva función que te permite descargar e imprimir directamente tus horarios creados en formato PDF.
+          <strong>Exportación a PDF:</strong> Nueva función que te permite
+          descargar e imprimir directamente tus horarios creados en formato PDF.
         </li>
       </ul>
 
       <h3>Novedades Destacadas (v2.0.2)</h3>
       <ul>
         <li>
-          <strong>Soporte de Horarios Multi-Carrera:</strong> Posibilidad de combinar materias de distintas carreras dentro de un mismo plan de horarios.
+          <strong>Soporte de Horarios Multi-Carrera:</strong> Posibilidad de
+          combinar materias de distintas carreras dentro de un mismo plan de
+          horarios.
         </li>
         <li>
-          <strong>Soporte de Modo Offline:</strong> Acceso a guías, herramientas y al último horario visualizado sin necesidad de conexión a internet (siempre que los hayas visitado previamente).
+          <strong>Soporte de Modo Offline:</strong> Acceso a guías, herramientas
+          y al último horario visualizado sin necesidad de conexión a internet
+          (siempre que los hayas visitado previamente).
         </li>
         <li>
-          <strong>Mejora en Herramientas:</strong> Optimización en la navegación de mallas interactivas y en la calculadora de notas.
+          <strong>Mejora en Herramientas:</strong> Optimización en la navegación
+          de mallas interactivas y en la calculadora de notas.
         </li>
       </ul>
 
       <p style="margin-top: 2rem;">
         <a href="/guides/">← Volver a Guías y Ayuda</a>
       </p>
-
     </section>
 
     <hr style="margin-top: 12vh;" />
 
     <!-- HISTORIAL DE VERSIONES -->
     <section>
-        <h1>Historial de versiones</h1>
-        <div id="news-history"></div>
+      <h1>Historial de versiones</h1>
+      <div id="news-history"></div>
     </section>
 
     <script>
-    // automaticamente cargado desde "versions.json" (?v= para evitar cache del navegador)
-    fetch('/static/versions.json?v=')
-        .then(res => res.json())
-        .then(data => {
-            const historyContainer = document.getElementById('news-history');
-            if (!historyContainer || !data.entries) return;
+      // automaticamente cargado desde "versions.json" (?v= para evitar cache del navegador)
+      fetch("/static/versions.json?v=")
+        .then((res) => res.json())
+        .then((data) => {
+          const historyContainer = document.getElementById("news-history");
+          if (!historyContainer || !data.entries) return;
 
-            let html = '';
-            data.entries.forEach(entry => {
-                html += `<h3>Versión ${entry.version} (${entry.date}) — ${entry.title}</h3>`;
-                html += '<ul>';
-                entry.changes.forEach(change => {
-                    html += `<li>${change}</li>`;
-                });
-                html += '</ul>';
+          let html = "";
+          data.entries.forEach((entry) => {
+            html += `<h3>Versión ${entry.version} (${entry.date}) — ${entry.title}</h3>`;
+            html += "<ul>";
+            entry.changes.forEach((change) => {
+              html += `<li>${change}</li>`;
             });
+            html += "</ul>";
+          });
 
-            historyContainer.innerHTML = html;
+          historyContainer.innerHTML = html;
         })
-        .catch(err => console.error('Error al cargar historial de noticias:', err));
+        .catch((err) =>
+          console.error("Error al cargar historial de noticias:", err),
+        );
     </script>
   </div>
 {{ end }}

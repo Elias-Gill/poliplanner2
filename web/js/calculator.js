@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Event listener general para todos los inputs numéricos (valida límites y recalcula)
+  // Event listener general para todos los inputs numéricos
   document.querySelectorAll('input[type="number"]').forEach(input => {
     input.addEventListener('input', () => {
       clampInput(input);
@@ -184,11 +184,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function actualizarFirmas(promedio) {
     if (promedio < 60) {
-      badgeEstado.className = "inline-block px-3 py-1 rounded-sm text-xs font-bold bg-red-50 text-red-900 mb-3";
+      badgeEstado.className = "inline-block px-3 py-1 rounded-sm text-xs font-bold bg-red-100 dark:bg-red-900/80 text-red-800 dark:text-red-200 border border-red-200 dark:border-red-700 mb-3";
       badgeEstado.textContent = "Sin Firma (PP < 60%)";
-      msgEstado.textContent = "No alcanzás el 60% requerido. Aun podes rendir el 3er Parcial Recuperatorio.";
+      msgEstado.textContent = "No alcanzás el 60% requerido. Aún podés rendir el 3er Parcial Recuperatorio.";
     } else {
-      badgeEstado.className = "inline-block px-3 py-1 rounded-sm text-xs font-bold bg-green-100 text-green-700 mb-3";
+      badgeEstado.className = "inline-block px-3 py-1 rounded-sm text-xs font-bold bg-green-100 dark:bg-green-900/80 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-700 mb-3";
       badgeEstado.textContent = "Habilitado (Firma Aprobada)";
       msgEstado.textContent = "";
     }
@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (promedio < 60) {
       tablaResultados.innerHTML = `
         <tr>
-          <td colspan="2" class="px-3 py-4 text-center text-xs text-red-900 font-medium">
+          <td colspan="2" class="px-3 py-4 text-center text-xs text-red-800 dark:text-red-300 font-medium">
             No habilitado.
           </td>
         </tr>`;
@@ -221,15 +221,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (examenFinalRequerido > 100) {
         html += `
-          <tr>
-            <td class="px-3 py-2 text-center font-bold text-gray-400">Nota ${item.nota}</td>
-            <td class="px-3 py-2 text-right text-xs text-gray-400 italic">Inalcanzable</td>
+          <tr class="border-b border-gray-100 dark:border-gray-700/50">
+            <td class="px-3 py-2 text-center font-bold text-gray-400 dark:text-gray-500">Nota ${item.nota}</td>
+            <td class="px-3 py-2 text-right text-xs text-gray-400 dark:text-gray-500 italic">Inalcanzable</td>
           </tr>`;
       } else {
         html += `
-          <tr>
-            <td class="px-3 py-2 text-center font-bold text-gray-800">Nota ${item.nota}</td>
-            <td class="px-3 py-2 text-right font-bold text-primary-600">${examenFinalRequerido}%</td>
+          <tr class="border-b border-gray-100 dark:border-gray-700/50">
+            <td class="px-3 py-2 text-center font-bold text-gray-800 dark:text-gray-200">Nota ${item.nota}</td>
+            <td class="px-3 py-2 text-right font-bold text-primary-600 dark:text-primary-400">${examenFinalRequerido}%</td>
           </tr>`;
       }
     });

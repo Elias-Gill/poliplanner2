@@ -1,97 +1,135 @@
 {{ define "custom_tags" }}
-<title>Versiones de Excel — PoliPlanner</title>
-<meta name="description" content="Historial y estado de parseo de archivos Excel sincronizados en PoliPlanner." />
-<meta name="robots" content="noindex, nofollow" />
+  <title>Versiones de Excel — PoliPlanner</title>
+  <meta
+    name="description"
+    content="Historial y estado de parseo de archivos Excel sincronizados en PoliPlanner." />
+  <meta name="robots" content="noindex, nofollow" />
 {{ end }}
 
 {{ define "content" }}
-<div class="max-w-5xl mx-auto py-4 min-h-[calc(100vh-4rem)] flex flex-col gap-4">
+  <div
+    class="max-w-5xl mx-auto py-4 min-h-[calc(100vh-4rem)] flex flex-col gap-4">
     <!-- Header -->
-    <div class="flex items-center justify-between bg-white px-4 py-3 rounded-sm border border-gray-200 shadow-sm">
-        <div class="flex flex-col gap-0.5 min-w-0">
-            <h1 class="text-sm font-bold text-gray-900">
-                Versiones de Excel <span class="text-xs font-normal text-gray-500">({{ len .Versions }})</span>
-            </h1>
-            <p class="text-xs text-gray-500">
-                Último check: 
-                <span class="font-mono font-semibold text-gray-700">
-                    {{ .LastSync.Format "02/01/2006 - 15:04" }}
-                </span>
-            </p>
-        </div>
-        <a href="/excel/" class="text-xs text-primary-600 font-semibold shrink-0">
-            &larr; Sincronización
-        </a>
+    <div
+      class="flex items-center justify-between bg-white px-4 py-3 rounded-sm border border-gray-200 shadow-sm">
+      <div class="flex flex-col gap-0.5 min-w-0">
+        <h1 class="text-sm font-bold text-gray-900">
+          Versiones de Excel
+          <span class="text-xs font-normal text-gray-500"
+            >({{ len .Versions }})</span
+          >
+        </h1>
+        <p class="text-xs text-gray-500">
+          Último check:
+          <span class="font-mono font-semibold text-gray-700">
+            {{ .LastSync.Format "02/01/2006 - 15:04" }}
+          </span>
+        </p>
+      </div>
+      <a href="/excel/" class="text-xs text-primary-600 font-semibold shrink-0">
+        &larr; Sincronización
+      </a>
     </div>
 
     {{ if .Versions }}
-    <!-- Tarjetas independientes limpias con borde izquierdo gris de grosor 2 -->
-    <div class="space-y-3">
+      <!-- Tarjetas independientes limpias con borde izquierdo gris de grosor 2 -->
+      <div class="space-y-3">
         {{ range .Versions }}
-        <div class="bg-white hover:bg-gray-50 rounded-sm border border-gray-200 border-l-2 border-l-gray-400 p-3.5 text-xs shadow-sm flex flex-col gap-2.5">
-            
+          <div
+            class="bg-white hover:bg-gray-50 rounded-sm border border-gray-200 border-l-2 border-l-gray-400 p-3.5 text-xs shadow-sm flex flex-col gap-2.5">
             <!-- Fila superior: ID, Status, Fecha y Metadata -->
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 pb-2">
-                <!-- Izquierda: Estado + ID + Fecha -->
-                <div class="flex items-center gap-2">
-                    {{ if .Succeeded }}
-                        <span class="px-2 py-0.5 rounded-sm text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                            OK
-                        </span>
-                    {{ else }}
-                        <span class="px-2 py-0.5 rounded-sm text-[10px] font-bold bg-red-100 text-red-800 border border-red-300">
-                            ERROR
-                        </span>
-                    {{ end }}
+            <div
+              class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 pb-2">
+              <!-- Izquierda: Estado + ID + Fecha -->
+              <div class="flex items-center gap-2">
+                {{ if .Succeeded }}
+                  <span
+                    class="px-2 py-0.5 rounded-sm text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                    OK
+                  </span>
+                {{ else }}
+                  <span
+                    class="px-2 py-0.5 rounded-sm text-[10px] font-bold bg-red-100 text-red-800 border border-red-300">
+                    ERROR
+                  </span>
+                {{ end }}
 
-                    <span class="font-mono font-bold text-xs text-gray-900">
-                        #{{ .ID }}
-                    </span>
 
-                    <span class="text-gray-300">|</span>
+                <span class="font-mono font-bold text-xs text-gray-900">
+                  #{{ .ID }}
+                </span>
 
-                    <span class="font-mono text-gray-600 text-[11px]">
-                        {{ .ParsedAt.Format "02/01/2006 - 15:04" }}
-                    </span>
-                </div>
+                <span class="text-gray-300">|</span>
 
-                <!-- Derecha: Periodo, Hojas y Enlace -->
-                <div class="flex items-center gap-3 text-[11px] font-mono text-gray-600">
-                    <span>periodID: <strong class="text-gray-900">{{ .PeriodID }}</strong></span>
-                    <span>Hojas: <strong class="text-gray-900">{{ .ParsedSheets }}</strong></span>
-                    
-                    {{ if and .URL (ne .URL "manual-upload") }}
-                        <a href="{{ .URL }}" target="_blank" rel="noopener noreferrer" class="text-primary-600 inline-flex items-center gap-1 font-sans font-medium">
-                            <span>Ver archivo</span>
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                        </a>
-                    {{ else }}
-                        <span class="text-gray-400 font-sans italic">Manual</span>
-                    {{ end }}
-                </div>
+                <span class="font-mono text-gray-600 text-[11px]">
+                  {{ .ParsedAt.Format "02/01/2006 - 15:04" }}
+                </span>
+              </div>
+
+              <!-- Derecha: Periodo, Hojas y Enlace -->
+              <div
+                class="flex items-center gap-3 text-[11px] font-mono text-gray-600">
+                <span
+                  >periodID:
+                  <strong class="text-gray-900">{{ .PeriodID }}</strong></span
+                >
+                <span
+                  >Hojas:
+                  <strong class="text-gray-900"
+                    >{{ .ParsedSheets }}</strong
+                  ></span
+                >
+
+                {{ if and .URL (ne .URL "manual-upload") }}
+                  <a
+                    href="{{ .URL }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-primary-600 inline-flex items-center gap-1 font-sans font-medium">
+                    <span>Ver archivo</span>
+                    <svg
+                      class="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                {{ else }}
+                  <span class="text-gray-400 font-sans italic">Manual</span>
+                {{ end }}
+              </div>
             </div>
 
             <!-- Nombre del archivo -->
             <div class="font-medium text-gray-900 text-sm break-all">
-                {{ .Name }}
+              {{ .Name }}
             </div>
 
             <!-- Error (si existe) -->
             {{ if .Error }}
-            <div class="mt-1 p-2.5 bg-red-50 border border-red-200 rounded-sm text-red-800 font-mono text-[11px] leading-relaxed break-all">
-                <strong class="font-bold uppercase tracking-wide">Error:</strong> {{ .Error }}
-            </div>
+              <div
+                class="mt-1 p-2.5 bg-red-50 border border-red-200 rounded-sm text-red-800 font-mono text-[11px] leading-relaxed break-all">
+                <strong class="font-bold uppercase tracking-wide"
+                  >Error:</strong
+                >
+                {{ .Error }}
+              </div>
             {{ end }}
 
-        </div>
+          </div>
         {{ end }}
-    </div>
-
+      </div>
     {{ else }}
-    <!-- Estado Vacío -->
-    <div class="bg-white p-8 rounded-sm border border-gray-200 text-center text-xs text-gray-500">
+      <!-- Estado Vacío -->
+      <div
+        class="bg-white p-8 rounded-sm border border-gray-200 text-center text-xs text-gray-500">
         No hay ninguna versión de Excel registrada aún.
-    </div>
+      </div>
     {{ end }}
-</div>
+  </div>
 {{ end }}

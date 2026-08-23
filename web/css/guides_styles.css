@@ -36,6 +36,7 @@ GUIDE ARTICLE SCOPE
     padding-bottom: 0.4rem;
     padding-left: 0.75rem;
     border-left: 3px solid var(--color-primary-500);
+    border-radius: 2px;
 }
 
 .guide_article h3 {
@@ -191,4 +192,68 @@ GUIDE ARTICLE SCOPE
     border: none;
     border-top: 1px solid var(--color-gray-200);
     margin: 2rem 0;
-css style}
+}
+
+/* ==============================
+DARK MODE VARIATION
+============================== */
+
+/* Soporte por si usas la clase .dark en el HTML/body para alternar manualmente */
+.dark .guide_article {
+    color: var(--color-gray-300, #d1d5db);
+}
+
+.dark .guide_article h1,
+.dark .guide_article h2,
+.dark .guide_article h3,
+.dark .guide_article h4,
+.dark .guide_article h5,
+.dark .guide_article h6 {
+    color: var(--color-gray-100, #f3f4f6);
+}
+
+.dark .guide_article h2 {
+    border-bottom-color: var(--color-gray-800, #1f2937);
+}
+
+.dark .guide_article h4 {
+    color: #94a3b8;
+    border-left-color: #475569;
+}
+
+.dark .guide_article a {
+    color: var(--color-primary-400, #22d3ee);
+}
+
+.dark .guide_article a:hover {
+    color: var(--color-primary-300, #67e8f9);
+}
+
+.dark .guide_article thead {
+    background-color: var(--color-gray-800, #1f2937);
+}
+
+.dark .guide_article th,
+.dark .guide_article td {
+    border-color: var(--color-gray-800, #1f2937);
+}
+
+.dark .guide_article blockquote {
+    color: var(--color-gray-400, #9ca3af);
+    background: var(--color-gray-900, #111827);
+}
+
+.dark .guide_article code {
+    background: var(--color-gray-800, #1f2937);
+    color: var(--color-gray-200, #e5e7eb);
+}
+
+.dark .guide_article pre {
+    background: var(--color-gray-900, #111827);
+    color: var(--color-gray-200, #e5e7eb);
+    border-color: var(--color-gray-800, #1f2937);
+}
+
+.dark .guide_article hr {
+    border-top-color: var(--color-gray-800, #1f2937);
+}

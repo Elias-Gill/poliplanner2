@@ -5,52 +5,57 @@
  * inside the header element (#header-page-title) for intuitive parent navigation.
  */
 document.addEventListener('DOMContentLoaded', () => {
-	const titleContainer = document.getElementById('header-page-title');
-	if (!titleContainer) return;
+    const titleContainer = document.getElementById('header-page-title');
+    if (!titleContainer) return;
 
-	const currentPath = window.location.pathname;
+    const currentPath = window.location.pathname;
 
-	// Direct route for homepage
-	if (currentPath === '/' || currentPath === '') {
-		titleContainer.textContent = 'Inicio';
-		return;
-	}
+    // Direct route for homepage
+    if (currentPath === '/' || currentPath === '') {
+        titleContainer.textContent = 'Inicio';
+        return;
+    }
 
-	// Friendly display names for path segments
-	const routeLabels = {
-		guides: 'Guías',
-		manual_bicho: 'Manual del Bicho',
-		news: 'Novedades',
-		calculo_notas: 'Guía de Notas',
-		tools: 'Herramientas',
-		interactive_graph: 'Mallas Interactivas',
-		calculator: 'Calculadora',
-	};
+    // Friendly display names for path segments
+    const routeLabels = {
+        guides: 'Guías',
+        manual_bicho: 'Manual del Bicho',
+        news: 'Novedades',
+        calculo_notas: 'Guía de Notas',
+        tools: 'Herramientas',
+        interactive_graph: 'Mallas Interactivas',
+        calculator: 'Calculadora',
+    };
 
-	const segments = currentPath.split('/').filter(Boolean);
-	let accumulatedPath = '';
-	const breadcrumbLinks = [];
+    const segments = currentPath.split('/').filter(Boolean);
+    let accumulatedPath = '';
+    const breadcrumbLinks = [];
 
-	segments.forEach((segment, index) => {
-		accumulatedPath += `/${segment}`;
-		const isLast = index === segments.length - 1;
+    segments.forEach((segment, index) => {
+        accumulatedPath += `/${segment}`;
+        const isLast = index === segments.length - 1;
 
-		// Label lookup or fallback formatting (replaces underscores/hyphens with spaces)
-		const label = routeLabels[segment] || segment.replace(/[-_]/g, ' ');
-		const formattedLabel = label.charAt(0).toUpperCase() + label.slice(1);
+        // Label lookup or fallback formatting (replaces underscores/hyphens with spaces)
+        const label = routeLabels[segment] || segment.replace(/[-_]/g, ' ');
+        const formattedLabel = label.charAt(0).toUpperCase() + label.slice(1);
 
-		if (isLast) {
-			// Current active page (Non-clickable text)
-			breadcrumbLinks.push(`
-<span class="font-semibold text-gray-800">${formattedLabel}</span>
-`);
-		} else {
-			// Parent level (Clickable link for back navigation)
-			breadcrumbLinks.push(` <a href="${accumulatedPath}" class="text-gray-500 hover:text-primary-600 transition-colors">
-                                    ${formattedLabel} </a>`);
-		}
-	});
+        if (isLast) {
+            // Current active page (Non-clickable text, adaptado a dark mode)
+            breadcrumbLinks.push(`
+                <span class="font-semibold text-gray-800 dark:text-gray-100">${formattedLabel}</span>
+            `);
+        } else {
+            // Parent level (Clickable link with dark mode support)
+            breadcrumbLinks.push(`
+                <a href="${accumulatedPath}" class="text-gray-500 dark:text-gray-400 hover:text-sky-600 dark:hover:text-sky-400 transition-colors">
+                    ${formattedLabel}
+                </a>
+            `);
+        }
+    });
 
-	// Render breadcrumbs separated by a '/'
-	titleContainer.innerHTML = breadcrumbLinks.join('<span class="mx-2 text-gray-400 font-normal">/</span>');
+    // Render breadcrumbs separated by a '/' with dark mode colors
+    titleContainer.innerHTML = breadcrumbLinks.join(
+        '<span class="mx-2 text-gray-400 dark:text-gray-600 font-normal" aria-hidden="true">/</span>'
+    );
 });

@@ -1,19 +1,25 @@
 {{ define "custom_tags" }}
   <title>Calculadora de Notas — PoliPlanner</title>
-  <meta name="description" content="Calcula tu promedio ponderado, verifica tus firmas y proyecciones de examen final según el reglamento de la FP-UNA." />
-  
+  <meta
+    name="description"
+    content="Calcula tu promedio ponderado, verifica tus firmas y proyecciones de examen final según el reglamento de la FP-UNA." />
+
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://poliplanner.fly.dev/tools/calculator" />
 
   <!-- Open Graph -->
   <meta property="og:title" content="Calculadora de Notas — PoliPlanner" />
-  <meta property="og:description" content="Herramienta para calcular tu promedio académico, firmas y proyectar tus notas de examen final." />
-  <meta property="og:url" content="https://poliplanner.fly.dev/tools/calculator" />
+  <meta
+    property="og:description"
+    content="Herramienta para calcular tu promedio académico, firmas y proyectar tus notas de examen final." />
+  <meta
+    property="og:url"
+    content="https://poliplanner.fly.dev/tools/calculator" />
   <meta property="og:type" content="website" />
 {{ end }}
 
 {{ define "custom_head" }}
-  <script src="/static/js/calculator.js" defer></script>
+  <script src="/static/js/calculator.js?2" defer></script>
   <style>
     /* Desactivar las flechas/spinners en inputs de tipo number */
     input[type="number"]::-webkit-outer-spin-button,
@@ -31,28 +37,34 @@
   <div class="max-w-4xl mx-auto px-4 py-8">
     <!-- Header de sección -->
     <div class="mb-10">
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
+      <h1
+        class="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
         Calculadora de notas
       </h1>
-      <p class="mt-3 text-base text-gray-500 dark:text-gray-400 leading-relaxed max-w-2xl">
-        Calculá tu promedio ponderado (PP), verificá tu estado de firma y descubrí qué nota necesitás en el examen final. 
+      <p
+        class="mt-3 text-base text-gray-500 dark:text-gray-400 leading-relaxed max-w-2xl">
+        Calculá tu promedio ponderado (PP), verificá tu estado de firma y
+        descubrí qué nota necesitás en el examen final.
 
-            <br>
-            Podés consultar nuestra
+        <br />
+        Podés consultar nuestra
         <a
           href="/guides/calculo_notas"
           class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">
           Guía de cálculo de notas
-        </a> para mas informacion.
+        </a>
+        para mas informacion.
       </p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       <!-- COLUMNA IZQUIERDA: ENTRADA DE DATOS -->
       <div class="lg:col-span-7 space-y-6">
-        <section class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-sm p-6">
+        <section
+          class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-sm p-6">
           <!-- Toggle MODO DIRECTO / DESGLOSE -->
-          <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4 mb-6">
+          <div
+            class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4 mb-6">
             <h2 class="text-base font-bold text-gray-900 dark:text-white">
               Ingreso de Calificaciones
             </h2>
@@ -60,7 +72,8 @@
               <input type="checkbox" id="toggleDirecto" class="sr-only peer" />
               <div
                 class="relative w-9 h-5 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 dark:after:border-gray-600 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-600"></div>
-              <span class="ms-2 text-xs font-medium text-gray-600 dark:text-gray-300">
+              <span
+                class="ms-2 text-xs font-medium text-gray-600 dark:text-gray-300">
                 Ya tengo mi PP acumulado
               </span>
             </label>
@@ -86,20 +99,23 @@
 
           <!-- MODO B: DESGLOSE COMPLETO -->
           <div id="panelDesglose" class="space-y-5">
-            
             <!-- BLOQUE 1: EXÁMENES PARCIALES (FIJO 50%) -->
-            <div class="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-sm p-4 space-y-3">
+            <div
+              class="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-sm p-4 space-y-3">
               <div class="flex justify-between items-center">
-                <span class="font-bold text-sm text-gray-800 dark:text-gray-200">
+                <span
+                  class="font-bold text-sm text-gray-800 dark:text-gray-200">
                   1. Exámenes Parciales
                 </span>
-                <span class="text-xs font-semibold px-2 py-0.5 rounded-sm bg-primary-50 dark:bg-primary-950/80 text-primary-600 dark:text-primary-300 border border-primary-100 dark:border-primary-800/50">
+                <span
+                  class="text-xs font-semibold px-2 py-0.5 rounded-sm bg-primary-100 dark:bg-primary-900/80 text-primary-800 dark:text-primary-200 border border-primary-200 dark:border-primary-700">
                   50%
                 </span>
               </div>
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                  <label
+                    class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
                     Parcial 1
                   </label>
                   <input
@@ -111,7 +127,8 @@
                     class="w-full border border-gray-200 dark:border-gray-700 rounded-sm px-3 py-1.5 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                  <label
+                    class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
                     Parcial 2
                   </label>
                   <input
@@ -126,12 +143,16 @@
             </div>
 
             <!-- BLOQUE 2: ACTIVIDADES DE PROCESO (50% RESTANTE) -->
-            <div class="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-sm p-4 space-y-4">
-              <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-2">
-                <span class="font-bold text-sm text-gray-800 dark:text-gray-200">
+            <div
+              class="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-sm p-4 space-y-4">
+              <div
+                class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-2">
+                <span
+                  class="font-bold text-sm text-gray-800 dark:text-gray-200">
                   2. Actividades de Proceso
                 </span>
-                <span class="text-xs font-semibold px-2 py-0.5 rounded-sm bg-primary-50 dark:bg-primary-950/80 text-primary-600 dark:text-primary-300 border border-primary-100 dark:border-primary-800/50">
+                <span
+                  class="text-xs font-semibold px-2 py-0.5 rounded-sm bg-primary-100 dark:bg-primary-900/80 text-primary-800 dark:text-primary-200 border border-primary-200 dark:border-primary-700">
                   50%
                 </span>
               </div>
@@ -140,14 +161,24 @@
               <div class="space-y-2">
                 <div class="flex items-center justify-between">
                   <label class="inline-flex items-center cursor-pointer gap-2">
-                    <input type="checkbox" id="checkAplicaLab" class="sr-only peer" />
+                    <input
+                      type="checkbox"
+                      id="checkAplicaLab"
+                      class="sr-only peer" />
                     <div
                       class="relative w-7 h-4 bg-gray-300 dark:bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 dark:after:border-gray-600 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-primary-600"></div>
-                    <span class="text-xs font-bold text-gray-700 dark:text-gray-300">Laboratorios</span>
+                    <span
+                      class="text-xs font-bold text-gray-700 dark:text-gray-300"
+                      >Laboratorios</span
+                    >
                   </label>
-                  
-                  <div id="wrapperPesoLab" class="hidden flex items-center gap-1">
-                    <label class="text-[11px] text-gray-500 dark:text-gray-400">Peso:</label>
+
+                  <div
+                    id="wrapperPesoLab"
+                    class="hidden flex items-center gap-1">
+                    <label class="text-[11px] text-gray-500 dark:text-gray-400"
+                      >Peso:</label
+                    >
                     <input
                       type="number"
                       id="pesoLab"
@@ -155,7 +186,9 @@
                       min="0"
                       max="50"
                       class="w-12 border border-gray-300 dark:border-gray-700 rounded-sm px-1.5 py-0.5 text-xs text-center font-bold bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-primary-500 outline-none" />
-                    <span class="text-[11px] text-gray-500 dark:text-gray-400">%</span>
+                    <span class="text-[11px] text-gray-500 dark:text-gray-400"
+                      >%</span
+                    >
                   </div>
                 </div>
 
@@ -174,14 +207,25 @@
               <div class="space-y-2">
                 <div class="flex items-center justify-between">
                   <label class="inline-flex items-center cursor-pointer gap-2">
-                    <input type="checkbox" id="checkAplicaTareas" class="sr-only peer" checked />
+                    <input
+                      type="checkbox"
+                      id="checkAplicaTareas"
+                      class="sr-only peer"
+                      checked />
                     <div
                       class="relative w-7 h-4 bg-gray-300 dark:bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 dark:after:border-gray-600 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-primary-600"></div>
-                    <span class="text-xs font-bold text-gray-700 dark:text-gray-300">Tareas y Trabajos Prácticos</span>
+                    <span
+                      class="text-xs font-bold text-gray-700 dark:text-gray-300"
+                      >Tareas y Trabajos Prácticos</span
+                    >
                   </label>
-                  
-                  <div id="wrapperPesoTareas" class="hidden flex items-center gap-1">
-                    <label class="text-[11px] text-gray-500 dark:text-gray-400">Peso:</label>
+
+                  <div
+                    id="wrapperPesoTareas"
+                    class="hidden flex items-center gap-1">
+                    <label class="text-[11px] text-gray-500 dark:text-gray-400"
+                      >Peso:</label
+                    >
                     <input
                       type="number"
                       id="pesoTareas"
@@ -189,7 +233,9 @@
                       min="0"
                       max="50"
                       class="w-12 border border-gray-300 dark:border-gray-700 rounded-sm px-1.5 py-0.5 text-xs text-center font-bold bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-primary-500 outline-none" />
-                    <span class="text-[11px] text-gray-500 dark:text-gray-400">%</span>
+                    <span class="text-[11px] text-gray-500 dark:text-gray-400"
+                      >%</span
+                    >
                   </div>
                 </div>
 
@@ -205,19 +251,36 @@
               </div>
             </div>
 
-            <!-- RECORDATORIO SOBRE ASISTENCIA -->
-            <div class="bg-primary-50 dark:bg-primary-950/40 border border-primary-100 dark:border-primary-900/50 rounded-sm p-3.5 flex items-start gap-2.5 text-xs text-gray-700 dark:text-gray-300">
-              <svg class="w-4 h-4 text-primary-600 dark:text-primary-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <!-- RECORDATORIO SOBRE ASISTENCIA (CORREGIDO) -->
+            <div
+              class="bg-primary-50 dark:bg-primary-900/60 border border-primary-200 dark:border-primary-700 rounded-sm p-3.5 flex items-start gap-2.5 text-xs text-primary-950 dark:text-primary-100">
+              <svg
+                class="w-4 h-4 text-primary-600 dark:text-primary-300 shrink-0 mt-0.5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <div class="leading-relaxed">
-                <span class="font-bold block mb-0.5 text-gray-800 dark:text-gray-200">Recordatorio de Asistencia:</span>
-                Requerís un mínimo de <strong>70% de asistencia</strong> para habilitar ambos
-                      Examenes Finales, o entre <strong>50% y 69%</strong> para habilitar
-                      únicamente en el 2do Examen final.
+                <span
+                  class="font-bold block mb-0.5 text-primary-900 dark:text-white"
+                  >Recordatorio de Asistencia:</span
+                >
+                Requerís un mínimo de
+                <strong class="font-semibold text-primary-950 dark:text-white"
+                  >70% de asistencia</strong
+                >
+                para habilitar ambos Exámenes Finales, o entre
+                <strong class="font-semibold text-primary-950 dark:text-white"
+                  >50% y 69%</strong
+                >
+                para habilitar únicamente en el 2do Examen final.
               </div>
             </div>
-
           </div>
         </section>
       </div>
@@ -228,10 +291,13 @@
         <section
           id="cardEstado"
           class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-sm p-6 text-center transition-all">
-          <span class="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 block mb-1">
+          <span
+            class="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 block mb-1">
             Promedio Ponderado (PP)
           </span>
-          <div id="valPromedio" class="text-4xl font-extrabold text-gray-900 dark:text-white mb-3">
+          <div
+            id="valPromedio"
+            class="text-4xl font-extrabold text-gray-900 dark:text-white mb-3">
             -- %
           </div>
 
@@ -242,14 +308,19 @@
             Ingresá tus datos
           </div>
 
-          <p id="msgEstado" class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
-            Completá tus notas para verificar si alcanzás el 60% requerido para firmar y habilitar el Examen Final.
+          <p
+            id="msgEstado"
+            class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+            Completá tus notas para verificar si alcanzás el 60% requerido para
+            firmar y habilitar el Examen Final.
           </p>
         </section>
 
         <!-- Card: Escala para Examen Final -->
-        <section class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-sm p-6">
-          <h3 class="font-bold text-gray-900 dark:text-white text-sm mb-4 flex items-center gap-2">
+        <section
+          class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-sm p-6">
+          <h3
+            class="font-bold text-gray-900 dark:text-white text-sm mb-4 flex items-center gap-2">
             <svg
               class="w-4 h-4 text-primary-500"
               fill="none"
@@ -264,26 +335,33 @@
             Requisito en Examen Final
           </h3>
 
-          <div class="overflow-hidden border border-gray-200 dark:border-gray-700 rounded-sm">
+          <div
+            class="overflow-hidden border border-gray-200 dark:border-gray-700 rounded-sm">
             <table class="w-full text-sm text-left">
-              <thead class="bg-gray-50 dark:bg-gray-900/60 text-gray-600 dark:text-gray-400 font-semibold border-b border-gray-200 dark:border-gray-700 text-xs">
+              <thead
+                class="bg-gray-50 dark:bg-gray-900/60 text-gray-600 dark:text-gray-400 font-semibold border-b border-gray-200 dark:border-gray-700 text-xs">
                 <tr>
                   <th class="px-3 py-2 text-center">Nota Final</th>
                   <th class="px-3 py-2 text-right">EF Requerido</th>
                 </tr>
               </thead>
-              <tbody id="tablaResultados" class="divide-y divide-gray-100 dark:divide-gray-700/50 text-gray-800 dark:text-gray-200">
+              <tbody
+                id="tablaResultados"
+                class="divide-y divide-gray-100 dark:divide-gray-700/50 text-gray-800 dark:text-gray-200">
                 <tr>
-                  <td colspan="2" class="px-3 py-4 text-center text-xs text-gray-400 dark:text-gray-500 italic">
+                  <td
+                    colspan="2"
+                    class="px-3 py-4 text-center text-xs text-gray-400 dark:text-gray-500 italic">
                     Ingresá un promedio válido
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-2 leading-tight">
-            * Se exige un mínimo de <strong>50%</strong> en el Examen Final para aprobar la
-                materia (independientemente del PP).
+          <p
+            class="text-[11px] text-gray-500 dark:text-gray-400 mt-2 leading-tight">
+            * Se exige un mínimo de <strong>50%</strong> en el Examen Final para
+            aprobar la materia (independientemente del PP).
           </p>
         </section>
       </div>

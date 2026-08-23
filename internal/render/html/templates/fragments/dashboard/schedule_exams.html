@@ -1,5 +1,5 @@
 {{ define "dashboard/schedule_exams" }}
-  <link rel="stylesheet" href="/static/css/calendar.css">
+  <link rel="stylesheet" href="/static/css/calendar.css?2" />
 
   <div
     x-data="examScheduleApp()"
@@ -85,13 +85,14 @@
       <div
         :class="activeTab === 'list' ? 'block' : 'hidden lg:block'"
         class="lg:col-span-5 xl:col-span-4 space-y-4 max-h-[600px] overflow-y-auto pr-1">
-        
         <!-- 1° PARCIAL -->
         <div
           class="border border-blue-100 dark:border-blue-900/40 rounded bg-white dark:bg-gray-800 overflow-hidden shadow-2xs">
           <div
             class="p-2.5 bg-blue-50/80 dark:bg-blue-950/40 border-b border-blue-100 dark:border-blue-900/40 flex justify-between items-center">
-            <span class="text-xs font-bold text-blue-700 dark:text-blue-300">1° Parcial</span>
+            <span class="text-xs font-bold text-blue-700 dark:text-blue-300"
+              >1° Parcial</span
+            >
           </div>
           <div class="divide-y divide-gray-100 dark:divide-gray-700/60">
             {{ range $i, $e := .Exams.Partial1 }}
@@ -100,22 +101,43 @@
                 @click="selectExamFromList('p1-{{ $i }}')"
                 :class="selectedExamId === 'p1-{{ $i }}' ? 'bg-blue-100/80 dark:bg-blue-900/50 ring-2 ring-blue-500' : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'"
                 class="p-3 block transition rounded-xs cursor-pointer">
-                <span class="text-xs font-bold text-gray-900 dark:text-gray-100 block">
+                <span
+                  class="text-xs font-bold text-gray-900 dark:text-gray-100 block">
                   {{ $e.CourseName }}
                 </span>
                 <div
                   class="mt-1 flex flex-wrap gap-x-3 text-[11px] text-gray-600 dark:text-gray-300">
-                  <span><strong class="text-gray-700 dark:text-gray-200">Aula:</strong> {{ if $e.Room }}{{ $e.Room }}{{ else }}A definir{{ end }}</span>
-                  <span><strong class="text-gray-700 dark:text-gray-200">Fecha:</strong> {{ if $e.Date }}{{ $e.Date }}{{ else }}A definir{{ end }}</span>
+                  <span
+                    ><strong class="text-gray-700 dark:text-gray-200"
+                      >Aula:</strong
+                    >
+                    {{ if $e.Room }}
+                      {{ $e.Room }}
+                    {{ else }}
+                      A definir
+                    {{ end }}</span
+                  >
+                  <span
+                    ><strong class="text-gray-700 dark:text-gray-200"
+                      >Fecha:</strong
+                    >
+                    {{ if $e.Date }}
+                      {{ $e.Date }}
+                    {{ else }}
+                      A definir
+                    {{ end }}</span
+                  >
                 </div>
                 {{ if $e.Revision }}
-                  <div class="mt-1 text-[10px] text-gray-500 dark:text-gray-400 italic">
+                  <div
+                    class="mt-1 text-[10px] text-gray-500 dark:text-gray-400 italic">
                     <strong>Revisión:</strong> {{ $e.Revision }}
                   </div>
                 {{ end }}
               </div>
             {{ else }}
-              <div class="p-3 text-center text-xs text-gray-400 dark:text-gray-500 italic">
+              <div
+                class="p-3 text-center text-xs text-gray-400 dark:text-gray-500 italic">
                 No hay fechas registradas
               </div>
             {{ end }}
@@ -127,7 +149,9 @@
           class="border border-indigo-100 dark:border-indigo-900/40 rounded bg-white dark:bg-gray-800 overflow-hidden shadow-2xs">
           <div
             class="p-2.5 bg-indigo-50/80 dark:bg-indigo-950/40 border-b border-indigo-100 dark:border-indigo-900/40 flex justify-between items-center">
-            <span class="text-xs font-bold text-indigo-700 dark:text-indigo-300">2° Parcial</span>
+            <span class="text-xs font-bold text-indigo-700 dark:text-indigo-300"
+              >2° Parcial</span
+            >
           </div>
           <div class="divide-y divide-gray-100 dark:divide-gray-700/60">
             {{ range $i, $e := .Exams.Partial2 }}
@@ -136,22 +160,43 @@
                 @click="selectExamFromList('p2-{{ $i }}')"
                 :class="selectedExamId === 'p2-{{ $i }}' ? 'bg-indigo-100/80 dark:bg-indigo-900/50 ring-2 ring-indigo-500' : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'"
                 class="p-3 block transition rounded-xs cursor-pointer">
-                <span class="text-xs font-bold text-gray-900 dark:text-gray-100 block">
+                <span
+                  class="text-xs font-bold text-gray-900 dark:text-gray-100 block">
                   {{ $e.CourseName }}
                 </span>
                 <div
                   class="mt-1 flex flex-wrap gap-x-3 text-[11px] text-gray-600 dark:text-gray-300">
-                  <span><strong class="text-gray-700 dark:text-gray-200">Aula:</strong> {{ if $e.Room }}{{ $e.Room }}{{ else }}A definir{{ end }}</span>
-                  <span><strong class="text-gray-700 dark:text-gray-200">Fecha:</strong> {{ if $e.Date }}{{ $e.Date }}{{ else }}A definir{{ end }}</span>
+                  <span
+                    ><strong class="text-gray-700 dark:text-gray-200"
+                      >Aula:</strong
+                    >
+                    {{ if $e.Room }}
+                      {{ $e.Room }}
+                    {{ else }}
+                      A definir
+                    {{ end }}</span
+                  >
+                  <span
+                    ><strong class="text-gray-700 dark:text-gray-200"
+                      >Fecha:</strong
+                    >
+                    {{ if $e.Date }}
+                      {{ $e.Date }}
+                    {{ else }}
+                      A definir
+                    {{ end }}</span
+                  >
                 </div>
                 {{ if $e.Revision }}
-                  <div class="mt-1 text-[10px] text-gray-500 dark:text-gray-400 italic">
+                  <div
+                    class="mt-1 text-[10px] text-gray-500 dark:text-gray-400 italic">
                     <strong>Revisión:</strong> {{ $e.Revision }}
                   </div>
                 {{ end }}
               </div>
             {{ else }}
-              <div class="p-3 text-center text-xs text-gray-400 dark:text-gray-500 italic">
+              <div
+                class="p-3 text-center text-xs text-gray-400 dark:text-gray-500 italic">
                 No hay fechas registradas
               </div>
             {{ end }}
@@ -163,7 +208,9 @@
           class="border border-amber-100 dark:border-amber-900/40 rounded bg-white dark:bg-gray-800 overflow-hidden shadow-2xs">
           <div
             class="p-2.5 bg-amber-50/80 dark:bg-amber-950/40 border-b border-amber-100 dark:border-amber-900/40 flex justify-between items-center">
-            <span class="text-xs font-bold text-amber-800 dark:text-amber-300">1° Final</span>
+            <span class="text-xs font-bold text-amber-800 dark:text-amber-300"
+              >1° Final</span
+            >
           </div>
           <div class="divide-y divide-gray-100 dark:divide-gray-700/60">
             {{ range $i, $e := .Exams.Final1 }}
@@ -172,22 +219,43 @@
                 @click="selectExamFromList('f1-{{ $i }}')"
                 :class="selectedExamId === 'f1-{{ $i }}' ? 'bg-amber-100/80 dark:bg-amber-900/50 ring-2 ring-amber-500' : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'"
                 class="p-3 block transition rounded-xs cursor-pointer">
-                <span class="text-xs font-bold text-gray-900 dark:text-gray-100 block">
+                <span
+                  class="text-xs font-bold text-gray-900 dark:text-gray-100 block">
                   {{ $e.CourseName }}
                 </span>
                 <div
                   class="mt-1 flex flex-wrap gap-x-3 text-[11px] text-gray-600 dark:text-gray-300">
-                  <span><strong class="text-gray-700 dark:text-gray-200">Aula:</strong> {{ if $e.Room }}{{ $e.Room }}{{ else }}A definir{{ end }}</span>
-                  <span><strong class="text-gray-700 dark:text-gray-200">Fecha:</strong> {{ if $e.Date }}{{ $e.Date }}{{ else }}A definir{{ end }}</span>
+                  <span
+                    ><strong class="text-gray-700 dark:text-gray-200"
+                      >Aula:</strong
+                    >
+                    {{ if $e.Room }}
+                      {{ $e.Room }}
+                    {{ else }}
+                      A definir
+                    {{ end }}</span
+                  >
+                  <span
+                    ><strong class="text-gray-700 dark:text-gray-200"
+                      >Fecha:</strong
+                    >
+                    {{ if $e.Date }}
+                      {{ $e.Date }}
+                    {{ else }}
+                      A definir
+                    {{ end }}</span
+                  >
                 </div>
                 {{ if $e.Revision }}
-                  <div class="mt-1 text-[10px] text-gray-500 dark:text-gray-400 italic">
+                  <div
+                    class="mt-1 text-[10px] text-gray-500 dark:text-gray-400 italic">
                     <strong>Revisión:</strong> {{ $e.Revision }}
                   </div>
                 {{ end }}
               </div>
             {{ else }}
-              <div class="p-3 text-center text-xs text-gray-400 dark:text-gray-500 italic">
+              <div
+                class="p-3 text-center text-xs text-gray-400 dark:text-gray-500 italic">
                 No hay fechas registradas
               </div>
             {{ end }}
@@ -199,7 +267,9 @@
           class="border border-rose-100 dark:border-rose-900/40 rounded bg-white dark:bg-gray-800 overflow-hidden shadow-2xs">
           <div
             class="p-2.5 bg-rose-50/80 dark:bg-rose-950/40 border-b border-rose-100 dark:border-rose-900/40 flex justify-between items-center">
-            <span class="text-xs font-bold text-rose-800 dark:text-rose-300">2° Final</span>
+            <span class="text-xs font-bold text-rose-800 dark:text-rose-300"
+              >2° Final</span
+            >
           </div>
           <div class="divide-y divide-gray-100 dark:divide-gray-700/60">
             {{ range $i, $e := .Exams.Final2 }}
@@ -208,22 +278,43 @@
                 @click="selectExamFromList('f2-{{ $i }}')"
                 :class="selectedExamId === 'f2-{{ $i }}' ? 'bg-rose-100/80 dark:bg-rose-900/50 ring-2 ring-rose-500' : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'"
                 class="p-3 block transition rounded-xs cursor-pointer">
-                <span class="text-xs font-bold text-gray-900 dark:text-gray-100 block">
+                <span
+                  class="text-xs font-bold text-gray-900 dark:text-gray-100 block">
                   {{ $e.CourseName }}
                 </span>
                 <div
                   class="mt-1 flex flex-wrap gap-x-3 text-[11px] text-gray-600 dark:text-gray-300">
-                  <span><strong class="text-gray-700 dark:text-gray-200">Aula:</strong> {{ if $e.Room }}{{ $e.Room }}{{ else }}A definir{{ end }}</span>
-                  <span><strong class="text-gray-700 dark:text-gray-200">Fecha:</strong> {{ if $e.Date }}{{ $e.Date }}{{ else }}A definir{{ end }}</span>
+                  <span
+                    ><strong class="text-gray-700 dark:text-gray-200"
+                      >Aula:</strong
+                    >
+                    {{ if $e.Room }}
+                      {{ $e.Room }}
+                    {{ else }}
+                      A definir
+                    {{ end }}</span
+                  >
+                  <span
+                    ><strong class="text-gray-700 dark:text-gray-200"
+                      >Fecha:</strong
+                    >
+                    {{ if $e.Date }}
+                      {{ $e.Date }}
+                    {{ else }}
+                      A definir
+                    {{ end }}</span
+                  >
                 </div>
                 {{ if $e.Revision }}
-                  <div class="mt-1 text-[10px] text-gray-500 dark:text-gray-400 italic">
+                  <div
+                    class="mt-1 text-[10px] text-gray-500 dark:text-gray-400 italic">
                     <strong>Revisión:</strong> {{ $e.Revision }}
                   </div>
                 {{ end }}
               </div>
             {{ else }}
-              <div class="p-3 text-center text-xs text-gray-400 dark:text-gray-500 italic">
+              <div
+                class="p-3 text-center text-xs text-gray-400 dark:text-gray-500 italic">
                 No hay fechas registradas
               </div>
             {{ end }}

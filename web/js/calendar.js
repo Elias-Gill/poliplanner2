@@ -5,6 +5,7 @@ window.examScheduleApp = function () {
         calendarInstance: null,
         highlightTimer: null,
         events: [],
+        themeObserver: null,
 
         init() {
             try {
@@ -17,6 +18,9 @@ window.examScheduleApp = function () {
             }
 
             this.initCalendar();
+
+            // Escuchar cambios de tema (dark/light) en la etiqueta html/body
+            this.setupThemeObserver();
 
             this.$watch("activeTab", (value) => {
                 if (value === "calendar" && this.calendarInstance) {
@@ -54,7 +58,7 @@ window.examScheduleApp = function () {
                 initialView: "dayGridMonth",
                 initialDate: initialDate,
                 locale: "es",
-                eventDisplay: "list-item",
+                eventDisplay: "block",
                 displayEventTime: false,
                 headerToolbar: {
                     left: "prev,next",
@@ -95,6 +99,20 @@ window.examScheduleApp = function () {
             }, 100);
         },
 
+        setupThemeObserver() {
+            // Re-renderiza o actualiza el tamaño al alternar el modo oscuro
+            const observer = new MutationObserver(() => {
+                if (this.calendarInstance) {
+                    this.calendarInstance.updateSize();
+                }
+            });
+
+            observer.observe(document.documentElement, {
+                attributes: true,
+                attributeFilter: ["class"],
+            });
+        },
+
         highlightExam(id) {
             this.selectedExamId = id;
             this.applyCalendarEventHighlight(id);
@@ -106,6 +124,7 @@ window.examScheduleApp = function () {
         },
 
         applyCalendarEventHighlight(id) {
+            this.selectedExamId = id;
             this.$nextTick(() => {
                 document.querySelectorAll(".fc-highlighted-event").forEach((el) => {
                     el.classList.remove("fc-highlighted-event");
