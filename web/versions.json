@@ -1,6 +1,16 @@
 {
-    "latest": "2.0.6",
+    "latest": "2.0.7",
     "entries": [
+        {
+            "version": "2.0.7",
+            "date": "2026-08-23",
+            "important": false,
+            "title": "Correccion del modo oscuro",
+            "changes": [
+                "Se corrigio el funcionamiento y estilos del modo oscuro.",
+                "Se corrigieron algunos errores graficos."
+            ]
+        },
         {
             "version": "2.0.6",
             "date": "2026-08-04",
