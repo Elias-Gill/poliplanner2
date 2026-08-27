@@ -8,28 +8,27 @@
     selectedPlan: 'all',
     selectedEmphasis: 'all',
 
-    matchesSubject(subject) {
+    matchesSubject(name, semester, level, plan) {
         // 0. Filtro por Búsqueda de Nombre
         if (this.searchQuery.trim() !== '') {
             const query = this.searchQuery.toLowerCase().trim();
-            const name = (subject.name || '').toLowerCase();
-            if (!name.includes(query)) {
+            if (!name.toLowerCase().includes(query)) {
                 return false;
             }
         }
 
         // 1. Filtro por Plan
-        if (this.selectedPlan !== 'all' && subject.plan !== this.selectedPlan) {
+        if (this.selectedPlan !== 'all' && plan !== this.selectedPlan) {
             return false;
         }
 
         // 2. Filtro por Modo (Semestre vs Nivel)
         if (this.filterMode === 'semester') {
-            if (this.selectedSemester !== 'all' && Number(subject.semester) !== Number(this.selectedSemester)) {
+            if (this.selectedSemester !== 'all' && Number(semester) !== Number(this.selectedSemester)) {
                 return false;
             }
         } else if (this.filterMode === 'level') {
-            if (this.selectedLevel !== 'all' && Number(subject.level) !== Number(this.selectedLevel)) {
+            if (this.selectedLevel !== 'all' && Number(level) !== Number(this.selectedLevel)) {
                 return false;
             }
         }
@@ -163,12 +162,7 @@
       {{ range .Subjects }}
         <div
           x-data="{ open: false }"
-          x-show="matchesSubject({
-                name: '{{ .Name }}',
-                semester: {{ .Semester }},
-                level: {{ .Level }},
-                plan: '{{ .Plan }}'
-            })"
+          x-show="matchesSubject('{{ .Name | js }}', {{ .Semester }}, {{ .Level }}, '{{ .Plan | js }}')"
           class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-sm shadow-xs overflow-hidden transition-all">
           <!-- Encabezado de la Materia -->
           <button
@@ -188,8 +182,7 @@
                 {{ if .Plan }}
                   <span
                     class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-1.5 py-0.5 rounded-sm shrink-0">
-                    Plan:
-                    {{ .Plan }}
+                    Plan: {{ .Plan }}
                   </span>
                 {{ end }}
 
@@ -203,8 +196,7 @@
                 {{ if gt .Level 0 }}
                   <span
                     class="text-[11px] font-semibold text-gray-600 dark:text-gray-300 bg-gray-200/80 dark:bg-gray-700/60 px-1.5 py-0.5 rounded-sm shrink-0">
-                    Nivel
-                    {{ .Level }}
+                    Nivel {{ .Level }}
                   </span>
                 {{ end }}
               </div>
