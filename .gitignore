@@ -37,6 +37,9 @@ poliplanner.db
 poliplanner.db-shm
 poliplanner.db-wal
 
+./poliplanner
+./poliplanner2
+
 # Go specific
 /bin/
 /pkg/
