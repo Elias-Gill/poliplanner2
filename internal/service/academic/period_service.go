@@ -20,6 +20,10 @@ func NewPeriodService(periodRepo academicRepo.PeriodRepository) *PeriodService {
 	}
 }
 
+func (p *PeriodService) ListPeriods(ctx context.Context) ([]academic.PeriodID, error) {
+	return []academic.PeriodID{1, 2, 3,4,5,6}, nil
+}
+
 func (p *PeriodService) CalculateCurrentPeriod(ctx context.Context) (academic.PeriodID, error) {
 	period := p.NewPeriodFromTime(time.Now().In(timezone.ParaguayTZ))
 

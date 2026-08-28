@@ -1,12 +1,14 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 	"strings"
 
 	utils "github.com/elias-gill/poliplanner2/internal/http"
 	"github.com/elias-gill/poliplanner2/internal/http/cookie"
+	"github.com/elias-gill/poliplanner2/internal/model/auth"
 	authModel "github.com/elias-gill/poliplanner2/internal/model/auth"
 	authSrv "github.com/elias-gill/poliplanner2/internal/service/auth"
 	"github.com/elias-gill/poliplanner2/logger"
@@ -39,12 +41,9 @@ func NewSessionMiddleware(authManager *authSrv.SessionService) func(next http.Ha
 			}
 
 			// If present, then authenticate the session
-			session, err := authManager.ValidateSession(
-				r.Context(),
-				authModel.SessionID(cookie.Value),
-			)
+			session, err := authManager.ValidateSession(r.Context(), authModel.SessionID(cookie.Value))
 
-			// If session is not authenticated, then redirect to login page
+			// If session authentication fails, then redirect to login page
 			if err != nil {
 				logger.Debug(
 					"session middleware redirect",
@@ -55,7 +54,8 @@ func NewSessionMiddleware(authManager *authSrv.SessionService) func(next http.Ha
 				return
 			}
 
-			next.ServeHTTP(w, utils.InjectUserID(r, session.User))
+			// Inject user session into the request context
+			next.ServeHTTP(w, injectUserSession(r, *session))
 		})
 	}
 }
@@ -73,4 +73,10 @@ func isProtectedRoute(path string) bool {
 // buildLoginRedirect builds the login redirect URL preserving the requested path.
 func buildLoginRedirect(r *http.Request) string {
 	return "/login?redirect=" + url.QueryEscape(r.URL.RequestURI())
+}
+
+func injectUserSession(r *http.Request, session auth.Session) *http.Request {
+	// NOTE: store the session as a VALUE to avoid any null pointer errors
+	ctx := context.WithValue(r.Context(), utils.UserSessionKey, session)
+	return r.WithContext(ctx)
 }

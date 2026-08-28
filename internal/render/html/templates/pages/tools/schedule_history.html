@@ -1,0 +1,247 @@
+{{ define "custom_tags" }}
+  <title>Historial de Horarios — PoliPlanner</title>
+  <meta
+    name="description"
+    content="Visualiza cómo cambiaron los horarios de tus materias en los últimos periodos académicos." />
+  <link
+    rel="canonical"
+    href="https://poliplanner.fly.dev/tools/schedule-history" />
+  <script src="/static/vendor/htmx/htmx.min.js" defer></script>
+{{ end }}
+
+{{ define "content" }}
+  <div class="max-w-5xl mx-auto px-4 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
+        Historial de Horarios
+      </h1>
+      <p class="mt-2 text-base text-gray-600 dark:text-gray-400">
+        Selecciona una carrera y una materia para comparar las secciones, docentes, fechas de exámenes y horarios habilitados.
+      </p>
+    </div>
+
+    <!-- Filtros -->
+    <div
+      class="grid gap-6 md:grid-cols-2 mb-8 bg-white dark:bg-gray-800 p-6 rounded-md border border-gray-200 dark:border-gray-700 shadow-xs">
+      <!-- Selector de Carrera -->
+      <div>
+        <label
+          for="career-select"
+          class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          Carrera
+        </label>
+        <select
+          id="career-select"
+          hx-get="/tools/schedule-history/list-subjects"
+          hx-target="#subjects-container"
+          name="career_id"
+          class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:outline-none">
+          <option value="" disabled selected>Selecciona una carrera...</option>
+          {{ range .Careers }}
+            <option value="{{ .ID }}">{{ .Name }} ({{ .Code }})</option>
+          {{ end }}
+        </select>
+      </div>
+
+      <!-- Selector de Materia -->
+      <div id="subjects-container">
+        {{ template "subjects_select" . }}
+      </div>
+    </div>
+
+    <!-- Contenedor del Historial -->
+    <div id="timeline-container">
+      <!-- Se inyectará el template timeline aquí -->
+    </div>
+  </div>
+{{ end }}
+
+{{ define "subjects_select" }}
+  <label
+    for="subject-select"
+    class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+    Materia
+  </label>
+  <select
+    id="subject-select"
+    hx-get="/tools/schedule-history/timeline"
+    hx-target="#timeline-container"
+    name="curriculum_id"
+    class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:outline-none"
+    {{ if not .Subjects }}disabled{{ end }}>
+    <option value="" disabled selected>Selecciona una materia...</option>
+    {{ range .Subjects }}
+      <option value="{{ .ID }}">{{ .Name }}</option>
+    {{ end }}
+  </select>
+{{ end }}
+
+{{ define "timeline" }}
+  <div class="space-y-4">
+    <div class="flex items-center justify-between pb-2 border-b border-gray-200 dark:border-gray-700">
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white">
+        Historial por Periodo
+      </h2>
+      <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+        {{ len .History }} periodos registrados
+      </span>
+    </div>
+
+    {{ if .History }}
+      {{ range $index, $period := .History }}
+        <div
+          x-data="{ open: {{ if eq $index 0 }}true{{ else }}false{{ end }} }"
+          class="bg-white dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 shadow-xs overflow-hidden">
+          
+          <!-- Encabezado del Periodo -->
+          <button
+            type="button"
+            @click="open = !open"
+            class="w-full px-5 py-4 bg-gray-50 dark:bg-gray-800/80 hover:bg-gray-100 dark:hover:bg-gray-700/50 flex items-center justify-between text-left transition cursor-pointer select-none">
+            <div class="flex items-center gap-3">
+              <span class="font-bold text-base text-gray-900 dark:text-white">
+                Periodo {{ $period.Year }}-{{ $period.Semester }}
+              </span>
+              <span class="text-xs font-semibold text-gray-600 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 px-2.5 py-1 rounded-full">
+                {{ len $period.Courses }} {{ if eq (len $period.Courses) 1 }}sección{{ else }}secciones{{ end }}
+              </span>
+            </div>
+
+            <svg
+              class="w-5 h-5 text-gray-500 dark:text-gray-400 transition-transform duration-200"
+              :class="open ? 'rotate-180' : ''"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          <!-- Lista de Cursos/Secciones -->
+          <div
+            x-show="open"
+            x-collapse
+            class="divide-y divide-gray-200 dark:divide-gray-700 border-t border-gray-200 dark:border-gray-700">
+            {{ range $period.Courses }}
+              <div class="p-5 space-y-4">
+                
+                <!-- Nombre del curso y Badge de Sección/Tipo -->
+                <div class="flex items-start justify-between gap-4 flex-wrap">
+                  <div>
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white leading-snug">
+                      {{ .Name }}
+                    </h3>
+                    <div class="flex items-center gap-2 mt-1">
+                      <span class="font-bold text-sm text-primary-700 dark:text-primary-300">
+                        Sección {{ .Section }}
+                      </span>
+                      {{ if .Type }}
+                        <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                          • {{ .Type }}
+                        </span>
+                      {{ end }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Información Docente y Horarios de Clase -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 text-sm pt-1">
+                  
+                  <!-- Docentes -->
+                  <div class="md:col-span-5 space-y-1">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 block">
+                      Docentes
+                    </span>
+                    <p class="text-gray-800 dark:text-gray-200 font-medium leading-relaxed">
+                      {{ if .Teachers }}
+                        {{ range $i, $t := .Teachers -}}
+                          {{- if $i }}, {{ end -}}
+                          {{- $t.FirstName }} {{ $t.LastName -}}
+                        {{- end }}
+                      {{ else }}
+                        <span class="text-gray-400 dark:text-gray-500 italic">Sin docentes asignados</span>
+                      {{ end }}
+                    </p>
+                  </div>
+
+                  <!-- Horarios de Clases -->
+                  <div class="md:col-span-7 space-y-1">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 block">
+                      Horarios de Clase
+                    </span>
+                    {{ if .Schedules }}
+                      <div class="flex flex-wrap gap-2">
+                        {{ range .Schedules }}
+                          <div class="inline-flex items-center gap-1.5 bg-gray-100 dark:bg-gray-700/60 text-gray-900 dark:text-gray-100 px-3 py-1 rounded-md text-xs font-medium border border-gray-200 dark:border-gray-600">
+                            <span class="font-bold text-primary-600 dark:text-primary-400">{{ .Day }}</span>
+                            <span>{{ .Time.Start.Format "15:04" }} a {{ .Time.End.Format "15:04" }}</span>
+                            {{ if .Room }}
+                              <span class="text-gray-500 dark:text-gray-400 font-normal">({{ .Room }})</span>
+                            {{ end }}
+                          </div>
+                        {{ end }}
+                      </div>
+                    {{ else }}
+                      <p class="text-gray-400 dark:text-gray-500 italic">Sin horarios de clase registrados</p>
+                    {{ end }}
+
+                    {{ if .SaturdayDates }}
+                      <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        <strong class="font-semibold">Clases de Sábados:</strong> {{ .SaturdayDates }}
+                      </p>
+                    {{ end }}
+                  </div>
+
+                </div>
+
+                <!-- Bloque de Exámenes -->
+                {{ if .Exams }}
+                  <div class="pt-3 border-t border-gray-100 dark:border-gray-700/60">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 block mb-2">
+                      Calendario de Exámenes
+                    </span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                      {{ range .Exams }}
+                        <div class="bg-gray-50 dark:bg-gray-700/30 p-2.5 rounded-md border border-gray-200 dark:border-gray-700 flex flex-col justify-between space-y-1">
+                            <span class="font-bold text-gray-900 dark:text-white text-xs">
+                                {{ if and (eq .Type "partial") (eq .Instance 1) }}1° Parcial
+                                {{ else if and (eq .Type "partial") (eq .Instance 2) }}2° Parcial
+                                {{ else if and (eq .Type "final") (eq .Instance 1) }}1° Final
+                                {{ else if and (eq .Type "final") (eq .Instance 2) }}2° Final
+                                {{ end }}
+                            </span>
+                          
+                          <div class="text-gray-700 dark:text-gray-300">
+                            {{ if .HasDate }}
+                              <span class="font-mono font-medium block">{{ .Date.Format "02/01/2006" }}</span>
+                              <span class="text-gray-500 dark:text-gray-400 font-mono text-[11px] block">{{ .Date.Format "15:04" }} hs</span>
+                            {{ else }}
+                              <span class="text-gray-400 dark:text-gray-500 italic">Sin fecha confirmada</span>
+                            {{ end }}
+                          </div>
+
+                          {{ if .Room }}
+                            <div class="text-[11px] text-gray-500 dark:text-gray-400 pt-1 border-t border-gray-200/50 dark:border-gray-600/50">
+                              Aula: <span class="font-medium text-gray-700 dark:text-gray-300">{{ .Room }}</span>
+                            </div>
+                          {{ end }}
+                        </div>
+                      {{ end }}
+                    </div>
+                  </div>
+                {{ end }}
+
+              </div>
+            {{ end }}
+          </div>
+        </div>
+      {{ end }}
+    {{ else }}
+      <div class="p-8 text-center bg-white dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700">
+        <p class="text-sm text-gray-500 dark:text-gray-400 italic">
+          No hay datos históricos disponibles para esta materia.
+        </p>
+      </div>
+    {{ end }}
+  </div>
+{{ end }}

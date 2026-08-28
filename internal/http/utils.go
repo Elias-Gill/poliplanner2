@@ -1,32 +1,23 @@
 package http
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
 
 	"github.com/elias-gill/poliplanner2/internal/model/user"
+
+	"github.com/elias-gill/poliplanner2/internal/model/auth"
 )
 
 type contextKey string
 
-const userIDKey contextKey = "userID"
+const UserSessionKey contextKey = "userSession"
 
 // ==================================
 // = 		Middleware utils        =
 // ==================================
-
-func InjectUserID(r *http.Request, userID user.UserID) *http.Request {
-	ctx := context.WithValue(r.Context(), userIDKey, userID)
-	return r.WithContext(ctx)
-}
-
-func ExtractUserID(r *http.Request) (user.UserID, bool) {
-	id, ok := r.Context().Value(userIDKey).(user.UserID)
-	return id, ok
-}
 
 // This function should never fail or panic if the session middleware is functioning correctly.
 // If a protected endpoint is reached without a userID set in the request context,
@@ -35,11 +26,30 @@ func ExtractUserID(r *http.Request) (user.UserID, bool) {
 // If this is the case, then probably the endpoint has not been added to the "protected
 // endpoints" array list in the middleware configuration.
 func MustExtractUserID(r *http.Request) user.UserID {
-	id, ok := ExtractUserID(r)
+	id, ok := extractUserID(r)
 	if !ok {
 		panic("HTTP context error: userID no encontrado en una ruta protegida. Revisa el middleware de sesión.")
 	}
 	return id
+}
+
+// Similar to the MustExtractUserID, this should NEVER fail on protected endpoints.
+func MustExtractUserSession(r *http.Request) auth.Session {
+	session, ok := extractUserSession(r)
+	if !ok {
+		panic("HTTP context error: userID no encontrado en una ruta protegida. Revisa el middleware de sesión.")
+	}
+	return session
+}
+
+func extractUserID(r *http.Request) (user.UserID, bool) {
+	session, ok := r.Context().Value(UserSessionKey).(auth.Session)
+	return session.User, ok
+}
+
+func extractUserSession(r *http.Request) (auth.Session, bool) {
+	session, ok := r.Context().Value(UserSessionKey).(auth.Session)
+	return session, ok
 }
 
 // ========================================

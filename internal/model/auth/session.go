@@ -10,8 +10,10 @@ import (
 )
 
 const (
-	sessionExtension = 15 * 24 * time.Hour
-	refreshThreshold = 15 * 24 * time.Hour // si queda menos que esto, se extiende
+	refreshThreshold = 6 * time.Hour
+	sessionExtension = 30 * time.Hour
+
+	maxSessionDuration = 30 * 24 * time.Hour // 30 days max session duration
 )
 
 type SessionID string
@@ -43,7 +45,10 @@ func (s *Session) ExtendIfNeeded() {
 
 func (s *Session) HasExpired() bool {
 	now := time.Now().In(timezone.ParaguayTZ)
-	return s.Expiration.Before(now)
+
+	sessionLimitReached := now.Sub(s.CreatedAt) > maxSessionDuration
+
+	return s.Expiration.Before(now) || sessionLimitReached
 }
 
 func NewSession(userID user.UserID) *Session {
@@ -52,7 +57,7 @@ func NewSession(userID user.UserID) *Session {
 		ID:         generateSessionID(),
 		User:       userID,
 		CreatedAt:  now,
-		Expiration: now.Add(time.Minute * 30), // 30 minutes session duration
+		Expiration: now.Add(sessionExtension),
 		LastUse:    now,
 	}
 }

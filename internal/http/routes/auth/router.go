@@ -104,6 +104,10 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// FIX: En Login, asegúrate de que antes de crear una nueva sesión, se destruya cualquier sesión previa si el usuario ya tenía una cookie válida.
+	// * Riesgo: Si no destruyes la sesión anterior, podrías dejar sesiones "huérfanas" en la base de datos hasta que expiren por tiempo.
+	// * Recomendación: En el flujo de login, intenta leer la cookie session_id existente y llama a Logout (para borrarla del repo) antes de asignar la nueva.
+
 	username := strings.TrimSpace(r.FormValue("username"))
 	password := r.FormValue("password")
 
@@ -149,24 +153,30 @@ func (h *Handler) signup(w http.ResponseWriter, r *http.Request) {
 
 	username := strings.TrimSpace(r.FormValue("username"))
 	email := strings.TrimSpace(r.FormValue("email"))
-	password := r.FormValue("password")
-	confirm := r.FormValue("confirm_password")
 
-	err := h.userService.CreateUser(r.Context(), username, email, password, confirm)
+	// Validate that passwords are equal
+	password := strings.TrimSpace(r.Form.Get("password"))
+	confirm := strings.TrimSpace(r.Form.Get("confirm_password"))
+
+	if password != confirm {
+		data := map[string]any{
+			"Username": username,
+			"Email":    email,
+			"Error":    "Las contraseñas no coinciden",
+		}
+		h.tmpl.RenderPage(w, "auth/signup.html", data)
+		return
+	}
+
+	err := h.userService.CreateUser(r.Context(), username, email, password)
 	if err != nil {
 		var msg string
-		switch e := err.(type) {
-		case userModel.ValidationError:
-			msg = e.Message
-		case error:
-			switch {
-			case errors.Is(err, userModel.ErrUsernameTaken):
-				msg = "Este nombre de usuario ya está en uso"
-			case errors.Is(err, userModel.ErrEmailTaken):
-				msg = "Este correo electrónico ya está registrado"
-			default:
-				msg = "Ocurrió un error inesperado"
-			}
+		if errors.Is(err, userModel.ErrUsernameTaken) {
+			msg = "Este nombre de usuario ya está en uso"
+		} else if errors.Is(err, userModel.ErrEmailTaken) {
+			msg = "Este correo electrónico ya está registrado"
+		} else {
+			msg = "Ocurrió un error inesperado"
 		}
 
 		data := map[string]any{
@@ -286,10 +296,21 @@ func (h *Handler) passwordRecoveryCommit(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	password := r.Form.Get("password")
-	confirm := r.Form.Get("confirm_password")
+	// Validate that passwords are equal
+	password := strings.TrimSpace(r.Form.Get("password"))
+	confirm := strings.TrimSpace(r.Form.Get("confirm_password"))
 
-	err := h.userService.CommitPasswordRecovery(r.Context(), token, password, confirm)
+	if password != confirm {
+		data := map[string]any{
+			"Token": token,
+			"Error": "Las contraseñas no coinciden",
+		}
+		h.tmpl.RenderPage(w, "auth/password-recovery-commit.html", data)
+		return
+	}
+
+	// Commit password change
+	err := h.userService.CommitPasswordRecovery(r.Context(), token, password)
 	if err != nil {
 		var msg string
 		if ve, ok := err.(userModel.ValidationError); ok {

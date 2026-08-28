@@ -15,6 +15,6 @@ func NewCareerService(planStorer academicRepo.CareerRepository) *CareerService {
 	return &CareerService{careerRepository: planStorer}
 }
 
-func (a CareerService) ListCareers(ctx context.Context) ([]*academic.Career, error) {
+func (a *CareerService) ListCareers(ctx context.Context) ([]*academic.Career, error) {
 	return a.careerRepository.List(ctx)
 }

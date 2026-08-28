@@ -20,11 +20,10 @@ func (s *UserService) CreateUser(
 	ctx context.Context,
 	username,
 	email,
-	rawPassword,
-	confirmPassword string,
+	rawPassword string,
 ) error {
 	// Valid and create user fields
-	u, err := userModel.NewUser(username, email, rawPassword, confirmPassword)
+	u, err := userModel.NewUser(username, email, rawPassword)
 	if err != nil {
 		return err
 	}
@@ -66,9 +65,9 @@ func (s *UserService) StartPasswordRecovery(ctx context.Context, email string) (
 	return token, nil
 }
 
-func (s *UserService) CommitPasswordRecovery(ctx context.Context, token, newPassword, confirmPassword string) error {
+func (s *UserService) CommitPasswordRecovery(ctx context.Context, token string, newPassword string) error {
 	// Validate passwords
-	if err := userModel.ValidatePasswordInput(newPassword, confirmPassword); err != nil {
+	if err := userModel.ValidatePasswordInput(newPassword); err != nil {
 		return err
 	}
 

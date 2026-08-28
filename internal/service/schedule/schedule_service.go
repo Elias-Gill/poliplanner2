@@ -69,7 +69,7 @@ func (s ScheduleService) GetScheduleOverview(ctx context.Context, userID user.Us
 }
 
 // Save persists a schedule and returns its ID
-func (s ScheduleService) CreateSchedule(ctx context.Context, userID user.UserID, title string, courseIDs []academic.CourseID) (schedule.ScheduleID, error) {
+func (s *ScheduleService) CreateSchedule(ctx context.Context, userID user.UserID, title string, courseIDs []academic.CourseID) (schedule.ScheduleID, error) {
 	logger.Debug("CreateSchedule called", "title", title, "owner", userID)
 
 	uID := user.UserID(userID)

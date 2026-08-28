@@ -65,7 +65,7 @@ func NewExcelService(
 }
 
 // GetLatestValidVersion lists the latest SUCCESFULLY parsed excel file version.
-func (e ExcelService) GetLatestValidVersion(ctx context.Context) (*excel.SheetVersion, error) {
+func (e *ExcelService) GetLatestValidVersion(ctx context.Context) (*excel.SheetVersion, error) {
 	versions, err := e.excelRepository.ListAllVersions(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("cannot find excel versions: %w", err)

@@ -41,14 +41,6 @@ func SetSessionCookie(w http.ResponseWriter, token auth.SessionID) {
 	})
 }
 
-func GetSessionCookie(r *http.Request) (string, error) {
-	c, err := r.Cookie(SessionIDCookie)
-	if err != nil {
-		return "", err
-	}
-	return c.Value, nil
-}
-
 func GetLatestScheduleCookie(r *http.Request) (schedule.ScheduleID, bool) {
 	cookie, err := r.Cookie(LatestScheduleCookie)
 	if err != nil {

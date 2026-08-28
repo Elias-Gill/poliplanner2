@@ -20,6 +20,13 @@ type ScheduleSummaryView struct {
 	Title string
 }
 
+type SubjectHistoryItem struct {
+	PeriodID int
+	Year     int
+	Semester int
+	Courses  []academic.CourseSummaryView
+}
+
 type StudentScheduleView struct {
 	Weekly WeekScheduleView
 	Exams  ExamMapView

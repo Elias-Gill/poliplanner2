@@ -54,3 +54,40 @@ func (c *CourseService) GetOfferings(ctx context.Context, curriculum academicMod
 
 	return courses, nil
 }
+
+func (c *CourseService) GetHistoricOfferings(ctx context.Context, curriculum academicModel.CurriculumID) ([]academicModel.CourseSummaryView, error) {
+	periods, _ := c.periodService.ListPeriods(ctx)
+	// FIX: error handling
+	// Fix: HACER UN structu especial que contenga la informacion del periodo y los cursos.
+	// Hacer directamente dentro del servicio y punto. Demasiado te peleas con models y demas.
+
+	var result []academicModel.CourseSummaryView
+	for _, p := range periods {
+		courses, err := c.courseRepository.ListByCurriculumID(ctx, curriculum, academicModel.PeriodID(p))
+		if err != nil {
+			return nil, fmt.Errorf("get courses: %w", err)
+		}
+
+		for i := range courses {
+			// Obtener profesores del curso
+			teachers, err := c.courseRepository.GetCourseTeachers(ctx, courses[i].ID)
+			if err != nil {
+				return nil, fmt.Errorf("get teachers for course %v: %w", courses[i].ID, err)
+			}
+
+			// Obtener horarios del curso
+			schedules, err := c.courseRepository.GetCourseSchedules(ctx, courses[i].ID)
+			if err != nil {
+				return nil, fmt.Errorf("get schedules for course %v: %w", courses[i].ID, err)
+			}
+
+			// Asignar los datos recopilados
+			courses[i].Teachers = teachers
+			courses[i].Schedules = schedules
+		}
+
+		result = append(result, courses...)
+	}
+
+	return result, nil
+}

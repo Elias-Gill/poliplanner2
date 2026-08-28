@@ -57,9 +57,10 @@ type User struct {
 
 // NewUser creates a new User instance after validating the username, email, and password.
 // Returns a ValidationError if any field is invalid. Also hashes the password before returning the User.
-func NewUser(username, email, password, confirm string) (*User, error) {
+func NewUser(username string, email string, password string) (*User, error) {
 	username = strings.ToLower(strings.TrimSpace(username))
 	email = strings.ToLower(strings.TrimSpace(email))
+	password = strings.ToLower(strings.TrimSpace(password))
 
 	if len(username) < 3 {
 		return nil, ValidationError{"username", "must be at least 3 characters"}
@@ -73,7 +74,7 @@ func NewUser(username, email, password, confirm string) (*User, error) {
 		return nil, err
 	}
 
-	if err := ValidatePasswordInput(password, confirm); err != nil {
+	if err := ValidatePasswordInput(password); err != nil {
 		return nil, err
 	}
 
@@ -158,13 +159,9 @@ func (u *User) ConfirmRecovery(newPassword string) error {
 
 // ValidatePasswordInput checks that the password meets minimum length requirements
 // and matches the confirmation. Returns a ValidationError on failure.
-func ValidatePasswordInput(password string, confirm string) error {
+func ValidatePasswordInput(password string) error {
 	if len(password) < 6 {
 		return ValidationError{"password", "must be at least 6 characters"}
-	}
-
-	if password != confirm {
-		return ValidationError{"confirm_password", "passwords do not match"}
 	}
 
 	return nil

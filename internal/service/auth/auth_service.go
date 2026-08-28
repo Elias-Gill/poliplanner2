@@ -31,6 +31,7 @@ func NewSessionService(userStore userRepo.UserRepository, sessionStore authRepo.
 var (
 	ErrSessionExpired      = errors.New("session has expired")
 	ErrSessionNotFound     = errors.New("session not found")
+	ErrPermissionDenied    = errors.New("permission denied")
 	ErrSessionSaveFailed   = errors.New("failed to save session")
 	ErrSessionDeleteFailed = errors.New("failed to delete session")
 	ErrSessionStoreFailure = errors.New("session store failure")
@@ -89,17 +90,7 @@ func (a *SessionService) ValidateSession(ctx context.Context, token auth.Session
 }
 
 // Logout invalidates a session by removing it from the store.
-func (a *SessionService) Logout(ctx context.Context, userID user.UserID, token auth.SessionID) error {
-	// Compare token user with logged user
-	session, err := a.ValidateSession(ctx, token)
-	if err != nil {
-		return errors.Join(ErrSessionNotFound, err)
-	}
-
-	if session.User != userID {
-		return errors.Join(ErrSessionNotFound, err)
-	}
-
+func (a *SessionService) Logout(ctx context.Context, token auth.SessionID) error {
 	if err := a.sessionStorer.Delete(ctx, token); err != nil {
 		return errors.Join(ErrSessionDeleteFailed, err)
 	}
