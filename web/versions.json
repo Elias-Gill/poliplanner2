@@ -1,6 +1,18 @@
 {
-    "latest": "2.0.7",
+    "latest": "2.0.8",
     "entries": [
+        {
+            "version": "2.0.8",
+            "date": "2026-08-29",
+            "important": false,
+            "title": "Nueva herramienta y correccion de errores",
+            "changes": [
+                "Se agregó una nueva herramienta de consulta. Esta permite consultar las ofertas de secciones de una materia en semestres anteriores.",
+                "Se mejoro la informacion y los estilos contenidos en el sidebar.",
+                "Se mejoro la presentacion de la pantalla de creacion de horarios.",
+                "Se corrigieron algunos errores graficos."
+            ]
+        },
         {
             "version": "2.0.7",
             "date": "2026-08-23",

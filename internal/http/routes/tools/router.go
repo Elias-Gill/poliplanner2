@@ -37,9 +37,9 @@ func (h *Handler) Routes() chi.Router {
 	r.Get("/calculator", h.calculator)
 	r.Get("/interactive_graph", h.interactiveGraph)
 
-	r.Get("/schedule-history", h.scheduleHistory)
-	r.Get("/schedule-history/list-subjects", h.listSubjects)
-	r.Get("/schedule-history/timeline", h.getTimeline)
+	r.Get("/course-offering-history", h.courseOfferingHistory)
+	r.Get("/course-offering-history/list-subjects", h.listSubjects)
+	r.Get("/course-offering-history/timeline", h.getTimeline)
 
 	return r
 }
@@ -69,7 +69,7 @@ func (h *Handler) interactiveGraph(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) scheduleHistory(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) courseOfferingHistory(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), 1*time.Second)
 	defer cancel()
 
@@ -85,8 +85,8 @@ func (h *Handler) scheduleHistory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html")
-	if err := h.tmpl.RenderPage(w, "tools/schedule_history.html", data); err != nil {
-		logger.Error("Cannot render schedule_history template", "error", err)
+	if err := h.tmpl.RenderPage(w, "tools/course_offering_history.html", data); err != nil {
+		logger.Error("Cannot render course_offering_history template", "error", err)
 	}
 }
 
@@ -109,7 +109,7 @@ func (h *Handler) listSubjects(w http.ResponseWriter, r *http.Request) {
 		"Subjects": curriculum.Subjects,
 	}
 
-	if err := h.tmpl.RenderPartial(w, "tools/schedule_history.html", "subjects_select", data); err != nil {
+	if err := h.tmpl.RenderPartial(w, "tools/course_offering_history.html", "subjects_select", data); err != nil {
 		logger.Error("cannot render subjects select partial", "error", err)
 	}
 }
@@ -133,7 +133,7 @@ func (h *Handler) getTimeline(w http.ResponseWriter, r *http.Request) {
 		"History": history,
 	}
 
-	if err := h.tmpl.RenderPartial(w, "tools/schedule_history.html", "timeline", data); err != nil {
+	if err := h.tmpl.RenderPartial(w, "tools/course_offering_history.html", "timeline", data); err != nil {
 		logger.Error("cannot render timeline partial", "error", err)
 	}
 }

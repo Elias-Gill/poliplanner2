@@ -25,7 +25,7 @@
     class="min-h-[calc(100vh-4rem)] p-4 md:p-6 bg-gray-50 dark:bg-gray-900 flex flex-col gap-6 pb-24 lg:pb-6 transition-colors">
     <!-- Header de la página -->
     <div
-      class="bg-white dark:bg-gray-800 p-4 rounded-sm shadow-xs border border-gray-200 dark:border-gray-700">
+      class="bg-white dark:bg-gray-800 p-4 rounded-sm shadow-xs">
       <h1 class="text-xl font-bold text-gray-900 dark:text-white">
         Arma tu Horario
       </h1>
@@ -40,7 +40,7 @@
       <div class="lg:col-span-7 xl:col-span-8 space-y-4">
         <!-- Seleccionador Principal de Carrera -->
         <div
-          class="bg-white dark:bg-gray-800 p-4 rounded-sm shadow-xs border border-gray-200 dark:border-gray-700">
+          class="bg-white dark:bg-gray-800 p-4 rounded-sm shadow-xs mb-10">
           <label
             for="career-select"
             class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">
@@ -109,11 +109,11 @@
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 translate-y-4"
-        class="fixed bottom-4 left-4 right-4 z-40 lg:hidden bg-gray-900 text-white p-3 rounded-xl shadow-xl flex items-center justify-between border border-gray-700">
+        class="fixed bottom-4 left-4 right-4 z-40 lg:hidden bg-gray-900 text-white p-3 rounded-sm shadow-sm flex items-center justify-between border border-gray-700">
         <div class="flex items-center gap-3">
           <span
             x-text="selectedSubjects.length"
-            class="bg-primary-500 text-white text-xs font-black px-2.5 py-1 rounded-full"></span>
+            class="bg-primary-600 text-white text-xs font-bold px-2 py-1 rounded-sm"></span>
           <div>
             <p class="text-xs font-bold leading-none">Materias seleccionadas</p>
             <p
@@ -124,7 +124,7 @@
         <button
           type="button"
           @click="mobileOpen = true"
-          class="bg-primary-600 hover:bg-primary-500 text-white text-xs font-semibold px-3 py-2 rounded-lg transition flex items-center gap-1 cursor-pointer">
+          class="bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold px-3 py-2 rounded-sm transition flex items-center gap-1 cursor-pointer">
           <span>Ver / Guardar</span>
           <svg
             class="w-4 h-4"
@@ -158,19 +158,19 @@
         :class="mobileOpen ? 'translate-y-0' : 'translate-y-full lg:translate-y-0'"
         class="fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:col-span-5 xl:col-span-4 lg:sticky lg:top-6">
         <div
-          class="bg-white dark:bg-gray-800 rounded-t-2xl lg:rounded-sm shadow-2xl lg:shadow-xs border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col max-h-[85vh] lg:max-h-[calc(100vh-8rem)]">
+          class="bg-white dark:bg-gray-800 rounded-sm shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col max-h-[85vh] lg:max-h-[calc(100vh-8rem)]">
           <!-- Handle para arrastrar visualmente en Mobile -->
           <div
-            class="w-12 h-1 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto my-2 lg:hidden"></div>
+            class="w-12 h-1 bg-gray-300 dark:bg-gray-600 rounded-sm mx-auto my-2 lg:hidden"></div>
 
           <!-- Header del Carrito -->
           <div
-            class="p-4 bg-gray-900 dark:bg-gray-950 text-white flex items-center justify-between">
+            class="p-4 bg-gray-900 text-white flex items-center justify-between">
             <div class="flex items-center gap-2">
               <h2 class="font-semibold text-sm">Materias Seleccionadas</h2>
               <span
                 x-text="selectedSubjects.length"
-                class="bg-primary-500 text-white text-xs font-bold px-2 py-0.5 rounded-full"></span>
+                class="bg-primary-600 text-white text-xs font-bold px-2 py-0.5 rounded-sm"></span>
             </div>
             <div class="flex items-center gap-3">
               <button
@@ -202,7 +202,7 @@
 
           <!-- Lista de Materias Seleccionadas -->
           <div
-            class="p-4 overflow-y-auto flex-1 space-y-3 divide-y divide-gray-100 dark:divide-gray-700/60">
+            class="p-4 overflow-y-auto flex-1 space-y-3">
             <!-- Estado vacío -->
             <template x-if="selectedSubjects.length === 0">
               <div class="text-center py-8">
@@ -274,11 +274,10 @@
                     class="block text-xs font-bold text-gray-700 dark:text-gray-300 tracking-wider">
                     Nombre del horario
                   </label>
-                  <span
-                    class="text-[10px] font-semibold bg-primary-100 dark:bg-primary-950/80 text-primary-800 dark:text-primary-300 px-1.5 py-0.5 rounded-xs border border-primary-200 dark:border-primary-800/50">
-                    Obligatorio
-                    <span class="text-red-500">*</span>
-                  </span>
+<span
+  class="text-[10px] font-semibold bg-primary-100 dark:bg-primary-900/60 text-primary-800 dark:text-primary-300 px-1.5 py-0.5 rounded-sm border border-primary-200 dark:border-primary-700/70">
+  Obligatorio
+</span>
                 </div>
 
                 <div class="relative">
