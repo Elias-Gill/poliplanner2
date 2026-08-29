@@ -3,7 +3,7 @@
     x-show="sidebarOpen"
     @click="sidebarOpen = false"
     x-transition.opacity.duration.200
-    class="fixed inset-0 z-40 bg-black/60 md:hidden"
+    class="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs md:hidden"
     style="display: none;"></div>
 
   <aside
@@ -12,21 +12,22 @@
     @touchstart="touchStartX = $event.touches[0].clientX"
     @touchend="if ($event.changedTouches[0].clientX - touchStartX < -50) sidebarOpen = false"
     :class="{ 'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen }"
-    class="-translate-x-full md:translate-x-0 fixed md:static inset-y-0 left-0 z-50 flex flex-col w-72 max-w-[85vw] md:w-64 sidebar-bg bg-primary-800 dark:bg-gray-800 text-white dark:text-gray-200 border-r border-primary-800 dark:border-gray-800 transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none pb-[max(env(safe-area-inset-bottom),0.75rem)] md:pb-0">
+    class="-translate-x-full md:translate-x-0 fixed md:static inset-y-0 left-0 z-50 flex flex-col w-72 max-w-[85vw] md:w-64 sidebar-bg bg-primary-800 dark:bg-gray-900 text-white dark:text-gray-200 border-r border-primary-700/50 dark:border-gray-800 transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none pb-[max(env(safe-area-inset-bottom),0.75rem)] md:pb-0 select-none">
+    
     <!-- Encabezado / Logo -->
     <div
-      class="p-5 border-b border-primary-800 dark:border-gray-800 flex items-center justify-between">
+      class="p-4 border-b border-primary-700/50 dark:border-gray-800 flex items-center justify-between">
       <a href="/guides/about" class="flex items-center gap-3 group flex-1">
         <div
-          class="w-9 h-9 rounded-md bg-white flex items-center justify-center shrink-0">
-          <img src="/static/favicon.ico" class="w-7 h-7" alt="Logo" />
+          class="w-10 h-10 rounded-lg bg-white/95 shadow-md flex items-center justify-center shrink-0 border border-white/20 group-hover:scale-105 transition-transform">
+          <img src="/static/favicon.ico" class="w-6 h-6 object-contain" alt="Logo PoliPlanner" />
         </div>
-        <div>
+        <div class="flex flex-col">
           <span
-            class="text-lg font-medium tracking-tight text-white dark:text-gray-100 transition-colors group-hover:text-primary-200 dark:group-hover:text-blue-400">
+            class="text-base font-bold tracking-tight text-white dark:text-gray-100 group-hover:text-primary-200 dark:group-hover:text-primary-400 transition-colors">
             PoliPlanner
           </span>
-          <span class="block text-xs text-primary-300 dark:text-gray-400">
+          <span class="text-[11px] font-medium text-primary-200/80 dark:text-gray-400">
             Por y para estudiantes
           </span>
         </div>
@@ -34,12 +35,10 @@
 
       <button
         @click="sidebarOpen = false"
-        class="md:hidden p-2 rounded-md text-primary-300 hover:text-white dark:text-gray-400 hover:bg-primary-800 dark:hover:bg-gray-800 dark:hover:text-gray-100 focus:outline-none transition-colors"
+        class="md:hidden p-1.5 rounded-lg text-primary-200 hover:text-white dark:text-gray-400 hover:bg-primary-700/60 dark:hover:bg-gray-800 dark:hover:text-gray-100 focus:outline-none transition-colors"
         aria-label="Cerrar menú">
         <svg
-          class="text-lg"
-          width="1em"
-          height="1em"
+          class="w-5 h-5"
           fill="currentColor"
           viewBox="0 0 16 16">
           <path
@@ -49,83 +48,129 @@
     </div>
 
     <!-- Navegación -->
-    <nav class="flex-1 px-3 py-6 space-y-1.5 overflow-y-auto sidebar-scroll">
-      <a
-        href="/dashboard"
-        @click="sidebarOpen = false"
-        class="nav-link flex items-center gap-3.5 px-4 py-3 md:px-3.5 md:py-2.5 rounded-md transition-colors text-primary-100 hover:bg-primary-800/60 hover:text-white dark:text-gray-300 dark:hover:bg-primary-800 dark:hover:text-gray-100 group text-base md:text-sm">
-        <svg
-          class="text-lg text-primary-300 group-hover:text-white dark:text-gray-500 dark:group-hover:text-gray-100 transition-colors shrink-0"
-          width="1em"
-          height="1em"
-          fill="currentColor"
-          viewBox="0 0 16 16">
-          <path
-            d="M8 4a.5.5 0 0 1 .5.5V6a.5.5 0 0 1-1 0V4.5A.5.5 0 0 1 8 4M3.732 5.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707M2 10a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 10m9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5m.754-4.246a.39.39 0 0 0-.527-.02L7.547 9.31a.91.91 0 1 0 1.302 1.258l3.434-4.297a.39.39 0 0 0-.029-.518z" />
-          <path
-            fill-rule="evenodd"
-            d="M0 10a8 8 0 1 1 15.547 2.661c-.442 1.253-1.845 1.602-2.932 1.25C11.309 13.488 9.475 13 8 13c-1.474 0-3.31.488-4.615.911-1.087.352-2.49.003-2.932-1.25A8 8 0 0 1 0 10m8-7a7 7 0 0 0-6.603 9.329c.203.575.923.876 1.68.63C4.397 12.533 6.358 12 8 12s3.604.532 4.923.96c.757.245 1.477-.056 1.68-.631A7 7 0 0 0 8 3" />
-        </svg>
-        <span class="font-medium">Dashboard</span>
-      </a>
+    <nav class="flex-1 px-3 py-4 space-y-6 overflow-y-auto sidebar-scroll">
+      <!-- Sección General -->
+      <div class="space-y-1">
+        <span class="px-3 text-[10px] font-bold uppercase tracking-wider text-primary-300/70 dark:text-gray-500">
+          General
+        </span>
+        
+        <a
+          href="/dashboard"
+          @click="sidebarOpen = false"
+          class="nav-link relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 text-primary-100 hover:bg-primary-700/60 hover:text-white dark:text-gray-300 dark:hover:bg-gray-800/80 dark:hover:text-gray-100 group text-sm font-medium">
+          <svg
+            class="w-4 h-4 text-primary-300 group-hover:text-white dark:text-gray-400 dark:group-hover:text-primary-400 transition-colors shrink-0"
+            fill="currentColor"
+            viewBox="0 0 16 16">
+            <path d="M8 4a.5.5 0 0 1 .5.5V6a.5.5 0 0 1-1 0V4.5A.5.5 0 0 1 8 4M3.732 5.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707M2 10a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 10m9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5m.754-4.246a.39.39 0 0 0-.527-.02L7.547 9.31a.91.91 0 1 0 1.302 1.258l3.434-4.297a.39.39 0 0 0-.029-.518z"/>
+            <path fill-rule="evenodd" d="M0 10a8 8 0 1 1 15.547 2.661c-.442 1.253-1.845 1.602-2.932 1.25C11.309 13.488 9.475 13 8 13c-1.474 0-3.31.488-4.615.911-1.087.352-2.49.003-2.932-1.25A8 8 0 0 1 0 10m8-7a7 7 0 0 0-6.603 9.329c.203.575.923.876 1.68.63C4.397 12.533 6.358 12 8 12s3.604.532 4.923.96c.757.245 1.477-.056 1.68-.631A7 7 0 0 0 8 3"/>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+      </div>
 
-      <a
-        href="/guides"
-        @click="sidebarOpen = false"
-        class="nav-link flex items-center gap-3.5 px-4 py-3 md:px-3.5 md:py-2.5 rounded-md transition-colors text-primary-100 hover:bg-primary-800/60 hover:text-white dark:text-gray-300 dark:hover:bg-primary-800 dark:hover:text-gray-100 group text-base md:text-sm">
-        <svg
-          class="text-lg text-primary-300 group-hover:text-white dark:text-gray-500 dark:group-hover:text-gray-100 transition-colors shrink-0"
-          width="1em"
-          height="1em"
-          fill="currentColor"
-          viewBox="0 0 16 16">
-          <path
-            d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783" />
-        </svg>
-        <span class="font-medium">Guías universitarias</span>
-      </a>
+      <!-- Sección Guías (Con Énfasis Tipo Herramientas) -->
+      <div class="space-y-1">
+        <span class="px-3 text-[10px] font-bold uppercase tracking-wider text-primary-300/70 dark:text-gray-500">
+          Guías y Recursos
+        </span>
 
-      <a
-        href="/tools/interactive_graph"
-        @click="sidebarOpen = false"
-        class="nav-link flex items-center gap-3.5 px-4 py-3 md:px-3.5 md:py-2.5 rounded-md transition-colors text-primary-100 hover:bg-primary-800/60 hover:text-white dark:text-gray-300 dark:hover:bg-primary-800 dark:hover:text-gray-100 group text-base md:text-sm">
-        <svg
-          class="text-lg text-primary-300 group-hover:text-white dark:text-gray-500 dark:group-hover:text-gray-100 transition-colors shrink-0"
-          width="1em"
-          height="1em"
-          fill="currentColor"
-          viewBox="0 0 16 16">
-          <path
-            fill-rule="evenodd"
-            d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H14a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 2 7h5.5V6A1.5 1.5 0 0 1 6 4.5zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5zM0 11.5A1.5 1.5 0 0 1 1.5 10h1A1.5 1.5 0 0 1 4 11.5v1A1.5 1.5 0 0 1 2.5 14h-1A1.5 1.5 0 0 1 0 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5A1.5 1.5 0 0 1 7.5 10h1a1.5 1.5 0 0 1 1.5 1.5v1A1.5 1.5 0 0 1 8.5 14h-1A1.5 1.5 0 0 1 6 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z" />
-        </svg>
-        <span class="font-medium">Mallas curriculares</span>
-      </a>
+        <a
+          href="/guides/calculo_notas"
+          @click="sidebarOpen = false"
+          class="nav-link relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 text-primary-100 hover:bg-primary-700/60 hover:text-white dark:text-gray-300 dark:hover:bg-gray-800/80 dark:hover:text-gray-100 group text-sm font-medium">
+          <svg
+            class="w-4 h-4 text-primary-300 group-hover:text-white dark:text-gray-400 dark:group-hover:text-primary-400 transition-colors shrink-0"
+            fill="currentColor"
+            viewBox="0 0 16 16">
+            <path d="M4 1.5H3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-10a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-10a1 1 0 0 1 1-1h1z"/>
+            <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 3a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"/>
+          </svg>
+          <span>Cálculo de Notas</span>
+        </a>
 
-      <a
-        href="/tools/calculator"
-        @click="sidebarOpen = false"
-        class="nav-link flex items-center gap-3.5 px-4 py-3 md:px-3.5 md:py-2.5 rounded-md transition-colors text-primary-100 hover:bg-primary-800/60 hover:text-white dark:text-gray-300 dark:hover:bg-primary-800 dark:hover:text-gray-100 group text-base md:text-sm">
-        <svg
-          class="text-lg text-primary-300 group-hover:text-white dark:text-gray-500 dark:group-hover:text-gray-100 transition-colors shrink-0"
-          width="1em"
-          height="1em"
-          fill="currentColor"
-          viewBox="0 0 16 16">
-          <path
-            d="M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-          <path
-            d="M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z" />
-        </svg>
-        <span class="font-medium">Calculadora de notas</span>
-      </a>
+        <a
+          href="/guides/manual_del_bicho"
+          @click="sidebarOpen = false"
+          class="nav-link relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 text-primary-100 hover:bg-primary-700/60 hover:text-white dark:text-gray-300 dark:hover:bg-gray-800/80 dark:hover:text-gray-100 group text-sm font-medium">
+          <svg
+            class="w-4 h-4 text-primary-300 group-hover:text-white dark:text-gray-400 dark:group-hover:text-primary-400 transition-colors shrink-0"
+            fill="currentColor"
+            viewBox="0 0 16 16">
+            <path d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"/>
+            <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2m0 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+          </svg>
+          <span>Manual del Bicho</span>
+        </a>
+
+        <a
+          href="/guides"
+          @click="sidebarOpen = false"
+          class="nav-link relative flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 text-primary-200/80 hover:bg-primary-700/40 hover:text-white dark:text-gray-400 dark:hover:bg-gray-800/50 dark:hover:text-gray-200 group text-xs font-medium">
+          <svg
+            class="w-3.5 h-3.5 text-primary-300/70 group-hover:text-white dark:text-gray-500 dark:group-hover:text-gray-300 transition-colors shrink-0"
+            fill="currentColor"
+            viewBox="0 0 16 16">
+            <path d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
+          </svg>
+          <span>Todas las guías</span>
+        </a>
+      </div>
+
+      <!-- Sección Herramientas -->
+      <div class="space-y-1">
+        <span class="px-3 text-[10px] font-bold uppercase tracking-wider text-primary-300/70 dark:text-gray-500">
+          Herramientas
+        </span>
+
+        <a
+          href="/tools/interactive_graph"
+          @click="sidebarOpen = false"
+          class="nav-link relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 text-primary-100 hover:bg-primary-700/60 hover:text-white dark:text-gray-300 dark:hover:bg-gray-800/80 dark:hover:text-gray-100 group text-sm font-medium">
+          <svg
+            class="w-4 h-4 text-primary-300 group-hover:text-white dark:text-gray-400 dark:group-hover:text-primary-400 transition-colors shrink-0"
+            fill="currentColor"
+            viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H14a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 2 7h5.5V6A1.5 1.5 0 0 1 6 4.5zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5zM0 11.5A1.5 1.5 0 0 1 1.5 10h1A1.5 1.5 0 0 1 4 11.5v1A1.5 1.5 0 0 1 2.5 14h-1A1.5 1.5 0 0 1 0 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5A1.5 1.5 0 0 1 7.5 10h1a1.5 1.5 0 0 1 1.5 1.5v1A1.5 1.5 0 0 1 8.5 14h-1A1.5 1.5 0 0 1 6 12.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"/>
+          </svg>
+          <span>Mallas curriculares</span>
+        </a>
+
+        <a
+          href="/tools/calculator"
+          @click="sidebarOpen = false"
+          class="nav-link relative flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 text-primary-100 hover:bg-primary-700/60 hover:text-white dark:text-gray-300 dark:hover:bg-gray-800/80 dark:hover:text-gray-100 group text-sm font-medium">
+          <svg
+            class="w-4 h-4 text-primary-300 group-hover:text-white dark:text-gray-400 dark:group-hover:text-primary-400 transition-colors shrink-0"
+            fill="currentColor"
+            viewBox="0 0 16 16">
+            <path d="M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+            <path d="M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
+          </svg>
+          <span>Calculadora de notas</span>
+        </a>
+
+        <a
+            href="/tools"
+            @click="sidebarOpen = false"
+            class="nav-link relative flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150 text-primary-200/80 hover:bg-primary-700/40 hover:text-white dark:text-gray-400 dark:hover:bg-gray-800/50 dark:hover:text-gray-200 group text-xs font-medium">
+            <svg
+                class="w-4 h-4 text-primary-300 group-hover:text-white dark:text-gray-400 dark:group-hover:text-primary-400 transition-colors shrink-0"
+                fill="currentColor"
+                viewBox="0 0 16 16">
+                <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5zM10.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5zM2.5 10a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5zm8 0a.5.5 0 0 1 .5.5v1.5H12.5a.5.5 0 0 1 0 1H11v1.5a.5.5 0 0 1-1 0V13H8.5a.5.5 0 0 1 0-1H10v-1.5a.5.5 0 0 1 .5-.5"/>
+            </svg>
+            <span>Mas herramientas</span>
+        </a>
+      </div>
     </nav>
 
     <!-- Pie del Sidebar -->
     <div
-      class="px-4 py-3 border-t border-primary-800 dark:border-gray-800 sidebar-bg">
+      class="p-3 border-t border-primary-700/50 dark:border-gray-800 sidebar-bg">
       <div
-        class="flex items-center justify-center gap-1.5 text-xs text-primary-300 dark:text-gray-400">
+        class="flex items-center justify-center gap-2 py-1 px-3 rounded-md bg-primary-900/40 dark:bg-gray-800/50 border border-primary-700/30 dark:border-gray-700/40 text-xs font-medium text-primary-200 dark:text-gray-400">
         <span>Iniciativa PoliPlanner</span>
       </div>
     </div>

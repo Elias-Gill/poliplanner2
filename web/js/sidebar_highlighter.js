@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     sidebar.querySelectorAll('a.nav-link').forEach((link) => {
         const linkPath = new URL(link.href).pathname;
 
-        if (currentPath === linkPath || (linkPath !== '/' && currentPath.startsWith(linkPath))) {
+        if (currentPath === linkPath) {
             link.classList.add('bg-white/10', 'text-blue-400', 'font-semibold', 'shadow-sm');
             link.classList.remove('text-gray-700');
             
