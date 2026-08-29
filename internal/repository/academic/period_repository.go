@@ -8,4 +8,5 @@ import (
 
 type PeriodRepository interface {
 	Upsert(ctx context.Context, c academic.Period) (academic.PeriodID, error)
+	GetAll(ctx context.Context) ([]academic.Period, error)
 }

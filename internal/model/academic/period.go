@@ -10,6 +10,7 @@ const (
 type PeriodID int64
 
 type Period struct {
+	ID       PeriodID
 	Year     int
 	Semester YearSemester
 }

@@ -16,6 +16,27 @@ func NewPeriodRepository(db *sql.DB) *PeriodRepository {
 	return &PeriodRepository{db: db}
 }
 
+func (r *PeriodRepository) GetAll(ctx context.Context) ([]academic.Period, error) {
+	exec := txManager.GetExecutor(ctx, r.db)
+
+	rows, err := exec.QueryContext(ctx, `SELECT id, year, periodo FROM periodos ORDER BY year DESC, periodo DESC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var periods []academic.Period
+	for rows.Next() {
+		var p academic.Period
+		if err := rows.Scan(&p.ID, &p.Year, &p.Semester); err != nil {
+			return nil, err
+		}
+		periods = append(periods, p)
+	}
+
+	return periods, nil
+}
+
 func (r *PeriodRepository) Upsert(ctx context.Context, p academic.Period) (academic.PeriodID, error) {
 	exec := txManager.GetExecutor(ctx, r.db)
 
