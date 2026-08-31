@@ -1,16 +1,10 @@
 {{ define "custom_tags" }}
   <title>Dashboard — PoliPlanner</title>
-  <meta
-    name="description"
-    content="Gestiona tus materias, consulta tus exámenes y organiza tu calendario académico en PoliPlanner." />
+  <meta name="description" content="Gestiona tus materias, consulta tus exámenes y organiza tu calendario académico en PoliPlanner." />
   <meta name="robots" content="index, follow" />
-
   <link rel="canonical" href="https://poliplanner.fly.dev/dashboard" />
-
   <meta property="og:title" content="Dashboard — PoliPlanner" />
-  <meta
-    property="og:description"
-    content="Panel principal de PoliPlanner para organizar tu vida académica." />
+  <meta property="og:description" content="Panel principal de PoliPlanner para organizar tu vida académica." />
   <meta property="og:url" content="https://poliplanner.fly.dev/dashboard" />
   <meta property="og:type" content="website" />
 {{ end }}
@@ -22,172 +16,148 @@
 {{ end }}
 
 {{ define "content" }}
-  <div
-    class="max-w-7xl mx-auto py-2 min-h-[calc(100vh-4rem)] flex flex-col gap-4">
-    <!-- Header y Selector de Horarios -->
-    <div
-      class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-gray-800 p-4 rounded-sm shadow-sm border border-gray-200 dark:border-gray-700">
-      <div>
-        <h1 class="text-xl font-bold text-gray-900 dark:text-white">
-          Dashboard
-        </h1>
-        <p class="text-xs text-gray-500 dark:text-gray-400">
-          Revisa tu horario semanal, exámenes y secciones inscritas
-        </p>
-      </div>
-
-      {{ if .Schedules }}
-        <div class="flex items-center gap-2 w-full md:w-auto">
-          <div class="relative flex-1 md:w-64">
-            <select
-              id="schedule-select"
-              name="id"
-              hx-get="/dashboard/"
-              hx-target="#dashboard-content"
-              hx-trigger="change"
-              class="w-full px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 text-gray-800 dark:text-gray-100 font-medium cursor-pointer">
-              {{ range .Schedules }}
-                <option
-                  value="{{ .ID }}"
-                  {{ if eq $.SelectedID .ID }}selected{{ end }}>
-                  {{ .Title }}
-                </option>
-              {{ end }}
-            </select>
-          </div>
-
-          <!-- Crear Horario -->
-          <a
-            href="/schedule/"
-            class="inline-flex items-center justify-center bg-primary-600 hover:bg-primary-700 text-white p-2 rounded-sm transition-colors text-sm shadow-sm"
-            title="Crear nuevo horario">
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 4v16m8-8H4" />
-            </svg>
-          </a>
-
-          <!-- Eliminar Horario -->
-          <form
-            action="/schedule/delete"
-            method="POST"
-            class="inline-block"
-            onsubmit="return confirm('¿Estás seguro de eliminar este horario?');">
-            <input
-              type="hidden"
-              id="delete-schedule-id"
-              name="id"
-              value="{{ .SelectedID }}" />
-            <button
-              type="submit"
-              class="inline-flex items-center justify-center border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 p-2 rounded-sm transition-colors text-sm"
-              title="Eliminar horario">
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </button>
-          </form>
-        </div>
-      {{ end }}
+  <div x-data="{ sidebarOpen: false, selectedId: '{{ .SelectedID }}' }" class="max-w-7xl mx-auto py-2 min-h-[calc(100vh-4rem)] flex flex-col gap-4 relative">
+    
+<!-- Header -->
+<div class="bg-white dark:bg-gray-800 rounded-sm border border-gray-200 dark:border-gray-700 p-4 space-y-3">
+  
+  <!-- Fila principal: Título y descripción -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Revisa tu horario semanal, exámenes y secciones inscritas.</p>
     </div>
 
-    <!-- Barra de Exportación de PDF (Debajo del Header) -->
-    {{ if .Schedules }}
-      <div
-        class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white/80 dark:bg-gray-800/60 px-4 py-2.5 rounded-sm border border-gray-200 dark:border-gray-700/60 shadow-sm">
-        <span class="text-xs text-gray-600 dark:text-gray-300 font-medium">
-          ¿Necesitas llevar tu horario impreso o guardarlo en tu dispositivo?
-        </span>
-        <a
-          id="export-pdf-btn"
-          href="/schedule/export/pdf?id={{ .SelectedID }}"
-          target="_blank"
-          class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-3 py-1.5 rounded-sm transition-colors text-xs font-semibold shadow-sm self-end sm:self-auto">
-          <svg
-            class="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          Exportar a PDF
+    <!-- Botón en Desktop -->
+    <button @click="sidebarOpen = true" type="button" class="hidden sm:inline-flex shrink-0 items-center gap-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-sm text-xs font-medium cursor-pointer transition-colors shadow-2xs">
+      <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+      <span>Mis horarios</span>
+    </button>
+  </div>
+
+  <!-- Accesos rápidos: Lista vertical en Mobile, Fila horizontal en Desktop -->
+  <div class="pt-2 border-t border-gray-100 dark:border-gray-700/60 flex flex-col sm:flex-row sm:items-center gap-2 text-xs">
+    <span class="text-[11px] font-semibold tracking-wider text-gray-400 dark:text-gray-500 uppercase">Accesos rápidos:</span>
+    
+    <div class="flex flex-col sm:flex-row gap-2">
+      <a href="/guides" class="inline-flex items-center gap-1.5 bg-gray-50 dark:bg-gray-700/50 hover:bg-primary-50 dark:hover:bg-primary-950/40 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 border border-gray-200 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-800 px-2.5 py-1.5 sm:py-1 rounded-xs transition-all font-medium">
+        <svg class="w-3.5 h-3.5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        <span>Guías Universitarias</span>
+      </a>
+
+      <a href="/subjects" class="inline-flex items-center gap-1.5 bg-gray-50 dark:bg-gray-700/50 hover:bg-primary-50 dark:hover:bg-primary-950/40 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 border border-gray-200 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-800 px-2.5 py-1.5 sm:py-1 rounded-xs transition-all font-medium">
+        <svg class="w-3.5 h-3.5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <span>Buscador de Materias</span>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<!-- Flecha pequeña flotante arriba a la derecha (Mobile solo) -->
+<button 
+  @click="sidebarOpen = true" 
+  type="button" 
+  class="sm:hidden fixed right-0 top-20 z-40 flex items-center justify-center w-7 h-9 bg-primary-600 dark:bg-primary-500 text-white rounded-l-md shadow-md active:scale-90 transition-transform cursor-pointer"
+  aria-label="Abrir mis horarios">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16" />
+</svg>
+</button>
+
+    <!-- Overlay Sidebar -->
+    <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false" class="fixed inset-0 bg-gray-900/50 z-40"></div>
+
+    <!-- Sidebar Drawer -->
+    <aside x-show="sidebarOpen" x-cloak class="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 z-50 flex flex-col">
+      <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+        <h2 class="text-base font-bold text-gray-900 dark:text-white">Mis Horarios</h2>
+        <button @click="sidebarOpen = false" class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="p-4 border-b border-gray-100 dark:border-gray-700/50">
+        <a href="/schedule/" class="flex items-center justify-center gap-2 w-full bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-sm text-xs font-semibold">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Crear nuevo horario
         </a>
       </div>
-    {{ end }}
 
+      <!-- Lista de Horarios -->
+      <div class="flex-1 overflow-y-auto p-4 space-y-2">
+        {{ range .Schedules }}
+<div 
+  x-data="{ menuOpen: false }" 
+  :class="selectedId === '{{ .ID }}' ? 'bg-primary-500/10 border-primary-500/50' : 'bg-gray-50 dark:bg-gray-700/30 border-gray-200 dark:border-gray-700'" 
+  class="group relative flex items-center justify-between p-3.5 rounded-sm border hover:border-primary-500/40 transition-colors">
+  
+  <!-- Botón de selección extendido a toda la tarjeta -->
+  <button 
+    hx-get="/dashboard/?id={{ .ID }}" 
+    hx-target="#dashboard-content" 
+    @click="selectedId = '{{ .ID }}'; sidebarOpen = false" 
+    class="absolute inset-0 w-full h-full text-left cursor-pointer focus:outline-none z-0"
+    aria-label="Seleccionar {{ .Title }}">
+  </button>
 
-    <!-- Contenido dinámico del Dashboard (intercambiado vía HTMX) -->
-    <div id="dashboard-content">
-      {{ if .Schedules }}
-        {{ if .ActiveSchedule }}
-          {{ template "dashboard/schedule_content" .ActiveSchedule }}
+  <!-- Título del horario -->
+  <div class="flex-1 pr-2 pointer-events-none z-10">
+    <span 
+      :class="selectedId === '{{ .ID }}' ? 'text-primary-700 dark:text-primary-300 font-bold' : 'text-gray-800 dark:text-gray-200 font-semibold'" 
+      class="text-xs block truncate">
+      {{ .Title }}
+    </span>
+  </div>
+
+  <!-- Contenedor del menú: eleva el z-index a z-30 al abrir para solapar los items inferiores -->
+  <div class="relative" :class="menuOpen ? 'z-30' : 'z-10'">
+    <button 
+      @click="menuOpen = !menuOpen" 
+      @click.away="menuOpen = false" 
+      type="button" 
+      class="p-1.5 rounded-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-200/60 dark:hover:bg-gray-600/60 cursor-pointer">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
+    </button>
+
+    <!-- Menú Contextual Desplegable -->
+    <div 
+      x-show="menuOpen" 
+      x-cloak 
+      class="absolute right-0 mt-1 w-36 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-sm shadow-xl py-1 z-50">
+      
+      <a href="/schedule/export/pdf?id={{ .ID }}" target="_blank" class="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+        <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Exportar PDF
+      </a>
+      
+      <form action="/schedule/delete" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este horario?');">
+        <input type="hidden" name="id" value="{{ .ID }}" />
+        <button type="submit" class="w-full text-left flex items-center gap-2 px-3 py-1.5 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30">
+          <svg class="w-3.5 h-3.5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          Eliminar
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+        {{ else }}
+          <p class="text-xs text-center text-gray-400 py-4">No tienes horarios guardados</p>
         {{ end }}
+      </div>
+    </aside>
+
+    <!-- Contenido dinámico HTMX -->
+    <div id="dashboard-content">
+      {{ if and .Schedules .ActiveSchedule }}
+        {{ template "dashboard/schedule_content" .ActiveSchedule }}
       {{ else }}
-        <div
-          class="bg-white dark:bg-gray-800 p-12 rounded-sm border border-dashed border-gray-300 dark:border-gray-700 text-center max-w-md mx-auto my-8 shadow-sm">
-          <h3
-            class="text-base font-semibold text-gray-900 dark:text-white mb-1">
-            Sin horarios creados
-          </h3>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mb-6">
-            Aún no dispones de un horario guardado.
-          </p>
-          <a
-            href="/schedule/"
-            class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-sm text-xs font-semibold shadow-sm"
-            >Crear horario</a
-          >
+        <div class="bg-white dark:bg-gray-800 p-12 rounded-sm border border-dashed border-gray-300 dark:border-gray-700 text-center max-w-md mx-auto my-8">
+          <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-1">Sin horarios creados</h3>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mb-6">Aún no dispones de un horario guardado.</p>
+          <a href="/schedule/" class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-sm text-xs font-semibold">Crear horario</a>
         </div>
       {{ end }}
     </div>
   </div>
-
-  <script>
-    // Sincroniza el ID del horario seleccionado con el formulario de eliminación y el botón de exportación
-    document
-      .getElementById("schedule-select")
-      ?.addEventListener("change", function () {
-        const selectedId = this.value;
-
-        // Actualizar ID de borrado
-        const deleteInput = document.getElementById("delete-schedule-id");
-        if (deleteInput) deleteInput.value = selectedId;
-
-        // Actualizar URL de exportación PDF
-        const exportBtn = document.getElementById("export-pdf-btn");
-        if (exportBtn) {
-          exportBtn.href = `/schedule/export/pdf?id=${selectedId}`;
-        }
-      });
-
-    // Re-inicializa el árbol de Alpine cuando HTMX reemplace el contenido del dashboard
-    document.body.addEventListener("htmx:afterSettle", function (evt) {
-      if (
-        typeof Alpine !== "undefined" &&
-        evt.detail.target &&
-        evt.detail.target.id === "dashboard-content"
-      ) {
-        Alpine.initTree(evt.detail.target);
-      }
-    });
-  </script>
 {{ end }}
