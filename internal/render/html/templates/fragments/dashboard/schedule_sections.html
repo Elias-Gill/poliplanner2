@@ -1,18 +1,31 @@
 {{ define "dashboard/schedule_sections" }}
   <div class="bg-white dark:bg-zinc-900 rounded-sm shadow-2xs border border-gray-200 dark:border-zinc-800 overflow-hidden transition-colors">
     
-    <!-- Cabecera Principal Institucional -->
-    <div class="p-4 bg-primary-700 dark:bg-zinc-950 text-white flex items-center gap-2 border-b border-primary-800 dark:border-zinc-800">
-      <svg class="w-4 h-4 text-primary-300 dark:text-primary-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<div class="p-4 bg-primary-700 dark:bg-zinc-900 border-b border-primary-800 dark:border-zinc-800 flex items-center justify-between gap-4">
+  <div class="flex items-center gap-2.5 min-w-0">
+    <!-- Contenedor del Ícono -->
+    <div class="w-7 h-7 rounded-xs bg-primary-600 dark:bg-primary-950/60 border border-primary-500/50 dark:border-primary-800/50 flex items-center justify-center shrink-0">
+      <svg class="w-4 h-4 text-white dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
       </svg>
-      <h2 class="font-semibold text-sm tracking-wide">Información de Secciones</h2>
     </div>
+
+    <!-- Título y Subtítulo -->
+    <div class="min-w-0">
+      <h2 class="text-sm font-bold text-white dark:text-zinc-100 leading-tight">
+        Información de Secciones
+      </h2>
+      <p class="text-[11px] text-primary-200 dark:text-zinc-400 mt-0.5">
+        Detalle de tus secciones, docentes y comité evaluador
+      </p>
+    </div>
+  </div>
+</div>
 
     <!-- Grid de Secciones -->
     <div class="p-4 md:p-5 grid grid-cols-1 md:grid-cols-2 gap-4 bg-white dark:bg-zinc-900">
       {{ range .Info }}
-        <div class="bg-white dark:bg-zinc-950/70 border border-gray-200/80 dark:border-zinc-800 rounded-xs shadow-2xs overflow-hidden flex flex-col justify-between transition-all hover:border-gray-300 dark:hover:border-zinc-700">
+        <div class="bg-white dark:bg-zinc-950/70 border border-gray-200/80 dark:border-zinc-800 rounded-xs shadow-2xs overflow-hidden flex flex-col justify-between">
           
           <div class="p-3.5 space-y-3">
             <!-- Encabezado de la Tarjeta de Materia -->

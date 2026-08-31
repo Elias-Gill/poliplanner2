@@ -1,3 +1,68 @@
+document.addEventListener('alpine:init', () => {
+  Alpine.data('examScheduleApp', () => ({
+    showCalendarModal: false,
+    selectedExamId: null,
+    calendar: null,
+
+    openCalendarModal(examId = null) {
+      this.selectedExamId = examId;
+      this.showCalendarModal = true;
+
+      this.$nextTick(() => {
+        if (!this.calendar) {
+          this.initCalendar();
+        } else {
+          this.calendar.updateSize();
+        }
+
+        // Si se seleccionó un examen específico, posicionar el calendario en esa fecha
+        if (examId) {
+          const events = this.calendar.getEvents();
+          const target = events.find(e => e.id === examId);
+          if (target && target.start) {
+            this.calendar.gotoDate(target.start);
+          }
+        }
+      });
+    },
+
+    initCalendar() {
+      const container = this.$refs.calendarContainer;
+      let events = [];
+
+      try {
+        const rawData = this.$refs.eventsData.textContent;
+        events = JSON.parse(rawData);
+      } catch (e) {
+        console.error('Error parseando JSON de exámenes:', e);
+      }
+
+      this.calendar = new FullCalendar.Calendar(container, {
+        initialView: 'dayGridMonth',
+        locale: 'es',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: ''
+        },
+        height: 'auto',
+        events: events,
+        eventClick: (info) => {
+          this.selectedExamId = info.event.id;
+          this.showCalendarModal = false;
+
+          // Scroll suave en la lista hasta el elemento correspondiente
+          const targetEl = document.getElementById(`exam-card-${info.event.id}`);
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+      });
+
+      this.calendar.render();
+    }
+  }));
+});
 window.examScheduleApp = function () {
     return {
         activeTab: "list",

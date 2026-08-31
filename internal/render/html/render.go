@@ -14,6 +14,17 @@ import (
 var funcMap = template.FuncMap{
 	"TitleCase":    TitleCase,
 	"MarshallJson": MarshallJson,
+	"dict": func(values ...any) (map[string]any, error) {
+		// Crear un mapa vacío
+		dict := make(map[string]any)
+
+		// Llenar el mapa con pares clave-valor
+		for i := 0; i < len(values); i += 2 {
+			key := values[i].(string)
+			dict[key] = values[i+1]
+		}
+		return dict, nil
+	},
 }
 
 type TemplateManager struct {
