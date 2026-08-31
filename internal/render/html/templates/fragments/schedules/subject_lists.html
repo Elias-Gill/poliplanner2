@@ -57,7 +57,7 @@
         @click="selectedPlan = 'all'"
         :class="selectedPlan === 'all' 
           ? 'bg-primary-600 dark:bg-primary-600 text-white font-bold shadow-xs' 
-          : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-primary-100/60 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-700'"
+          : 'bg-white dark:bg-zinc-900 text-gray-700 dark:text-zinc-200 hover:bg-primary-100/60 dark:hover:bg-gray-700 border-gray-200 dark:border-zinc-800'"
         class="px-3 py-1 text-xs rounded-sm border transition cursor-pointer font-medium">
         Ver Todos
       </button>
@@ -67,7 +67,7 @@
           @click="selectedPlan = '{{ .Code }}'"
           :class="selectedPlan === '{{ .Code }}' 
             ? 'bg-primary-600 text-white font-bold shadow-xs' 
-            : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-primary-100/60 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-700'"
+            : 'bg-white dark:bg-zinc-900 text-gray-800 dark:text-zinc-200 hover:bg-primary-100/60 dark:hover:bg-gray-700 border-gray-200 dark:border-zinc-800'"
           class="px-3 py-1 text-xs rounded-sm border transition cursor-pointer font-semibold flex items-center gap-1">
           <span>Plan {{ .Code }}</span>
         </button>
@@ -77,10 +77,10 @@
 </div>
 
     <!-- PANEL DE FILTROS SECUNDARIOS -->
-    <div class="bg-white dark:bg-gray-800/80 p-3.5 rounded-sm border border-gray-200 dark:border-gray-700/80 shadow-2xs space-y-3">
+    <div class="bg-white dark:bg-zinc-900/80 p-3.5 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-2xs space-y-3">
       <!-- Buscador por Nombre -->
       <div>
-        <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">
+        <label class="block text-[11px] font-semibold text-gray-600 dark:text-zinc-400 uppercase tracking-wider mb-1">
           Buscar Materia por nombre
         </label>
         <div class="relative">
@@ -88,7 +88,7 @@
             type="text"
             x-model="searchQuery"
             placeholder="Ej: Cálculo, Física, Programación..."
-            class="w-full px-3 py-1.5 text-xs border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:outline-none pr-7 transition-colors" />
+            class="w-full px-3 py-1.5 text-xs border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-zinc-950 text-gray-900 dark:text-zinc-100 placeholder-gray-400 focus:ring-2 focus:ring-primary-500 focus:outline-none pr-7 transition-colors" />
           <button
             x-show="searchQuery.length > 0"
             @click="searchQuery = ''"
@@ -99,18 +99,18 @@
         </div>
       </div>
 
-      <hr class="border-gray-100 dark:border-gray-700/60" />
+      <hr class="border-gray-100 dark:border-zinc-800" />
 
       <!-- Tabs Semestre / Nivel / Todas -->
       <div class="space-y-2">
         <div class="flex items-center justify-between flex-wrap gap-2">
-          <div class="flex items-center bg-gray-100 dark:bg-gray-900 p-0.5 rounded-sm border border-gray-200/60 dark:border-gray-700/60">
+          <div class="flex items-center bg-gray-100 dark:bg-zinc-950 p-0.5 rounded-sm border border-gray-200/60 dark:border-zinc-800">
             <button
               type="button"
               @click="filterMode = 'semester'"
               :class="filterMode === 'semester' 
-                ? 'bg-white dark:bg-gray-800 font-bold text-gray-900 dark:text-gray-100 shadow-2xs' 
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'"
+                ? 'bg-white dark:bg-zinc-900 font-bold text-gray-900 dark:text-zinc-100 shadow-2xs' 
+                : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-gray-200'"
               class="px-2.5 py-1 text-xs rounded-xs transition cursor-pointer">
               Por Semestre
             </button>
@@ -118,8 +118,8 @@
               type="button"
               @click="filterMode = 'level'"
               :class="filterMode === 'level' 
-                ? 'bg-white dark:bg-gray-800 font-bold text-gray-900 dark:text-gray-100 shadow-2xs' 
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'"
+                ? 'bg-white dark:bg-zinc-900 font-bold text-gray-900 dark:text-zinc-100 shadow-2xs' 
+                : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-gray-200'"
               class="px-2.5 py-1 text-xs rounded-xs transition cursor-pointer">
               Por Nivel
             </button>
@@ -133,7 +133,7 @@
             @click="selectedSemester = 'all'"
             :class="selectedSemester === 'all' 
               ? 'bg-primary-600 text-white font-semibold shadow-2xs' 
-              : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700/60 font-medium'"
+              : 'bg-gray-100 dark:bg-zinc-900 text-gray-700 dark:text-zinc-300 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-zinc-800 font-medium'"
             class="px-2.5 py-1 text-xs rounded-sm transition cursor-pointer">
             Todos
           </button>
@@ -143,7 +143,7 @@
               @click="selectedSemester = {{ . }}"
               :class="Number(selectedSemester) === {{ . }} 
                 ? 'bg-primary-600 text-white font-semibold shadow-2xs' 
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700/60 font-medium'"
+                : 'bg-gray-100 dark:bg-zinc-900 text-gray-700 dark:text-zinc-300 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-zinc-800 font-medium'"
               class="px-2.5 py-1 text-xs rounded-sm transition cursor-pointer">
               {{ if eq . 0 }}Sin Semestre{{ else }}{{ . }}º Sem{{ end }}
             </button>
@@ -157,7 +157,7 @@
             @click="selectedLevel = 'all'"
             :class="selectedLevel === 'all' 
               ? 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 font-semibold shadow-2xs' 
-              : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700/60 font-medium'"
+              : 'bg-gray-100 dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-zinc-800 font-medium'"
             class="px-2.5 py-1 text-xs rounded-sm transition cursor-pointer">
             Todos
           </button>
@@ -167,7 +167,7 @@
               @click="selectedLevel = {{ . }}"
               :class="Number(selectedLevel) === {{ . }} 
                 ? 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 font-semibold shadow-2xs' 
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700/60 font-medium'"
+                : 'bg-gray-100 dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-zinc-800 font-medium'"
               class="px-2.5 py-1 text-xs rounded-sm transition cursor-pointer">
               {{ if eq . 0 }}Sin Nivel{{ else }}Nivel {{ . }}{{ end }}
             </button>
@@ -183,7 +183,7 @@
         <div
           x-data="{ open: false }"
           x-show="matchesSubject('{{ .Name | js }}', {{ .Semester }}, {{ .Level }}, '{{ .Plan | js }}')"
-          class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-sm shadow-2xs overflow-hidden transition-all hover:border-gray-300 dark:hover:border-gray-600">
+          class="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-sm shadow-2xs overflow-hidden transition-all hover:border-gray-300 dark:hover:border-gray-600">
           
           <!-- Encabezado de la Materia -->
           <button
@@ -193,7 +193,7 @@
             hx-target="#courses-{{ .ID }}"
             hx-trigger="click once"
             hx-indicator="#indicator-{{ .ID }}"
-            class="w-full px-4 py-3 bg-gray-50/50 dark:bg-gray-800/50 hover:bg-gray-100/60 dark:hover:bg-gray-700/50 flex items-center justify-between text-left transition cursor-pointer select-none">
+            class="w-full px-4 py-3 bg-gray-50/50 dark:bg-zinc-900/50 hover:bg-gray-100/60 dark:hover:bg-gray-700/50 flex items-center justify-between text-left transition cursor-pointer select-none">
             <div class="flex flex-col gap-1 min-w-0 pr-2">
               <div class="flex items-center gap-2 flex-wrap">
                 {{ if .Plan }}
@@ -203,7 +203,7 @@
 </span>
                 {{ end }}
 
-                <h3 class="font-bold text-gray-900 dark:text-gray-100 text-sm truncate">
+                <h3 class="font-bold text-gray-900 dark:text-zinc-100 text-sm truncate">
                   {{ .Name }}
                 </h3>
               </div>
@@ -211,14 +211,14 @@
               <div class="flex items-center gap-1.5 pt-0.5 flex-wrap">
                 {{ if gt .Semester 0 }}
                   <span
-                    class="text-[10px] font-semibold text-gray-600 dark:text-gray-300 bg-gray-200/70 dark:bg-gray-700/70 px-1.5 py-0.5 rounded-sm shrink-0">
+                    class="text-[10px] font-semibold text-gray-600 dark:text-zinc-300 bg-gray-200/70 dark:bg-gray-700/70 px-1.5 py-0.5 rounded-sm shrink-0">
                     {{ .Semester }}º Semestre
                   </span>
                 {{ end }}
 
                 {{ if gt .Level 0 }}
                   <span
-                    class="text-[10px] font-semibold text-gray-600 dark:text-gray-300 bg-gray-200/70 dark:bg-gray-700/70 px-1.5 py-0.5 rounded-sm shrink-0">
+                    class="text-[10px] font-semibold text-gray-600 dark:text-zinc-300 bg-gray-200/70 dark:bg-gray-700/70 px-1.5 py-0.5 rounded-sm shrink-0">
                     Nivel {{ .Level }}
                   </span>
                 {{ end }}
@@ -236,7 +236,7 @@
                 Ver secciones
               </span>
               <svg
-                class="w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform duration-200"
+                class="w-4 h-4 text-gray-500 dark:text-zinc-400 transition-transform duration-200"
                 :class="open ? 'rotate-180' : ''"
                 fill="none"
                 stroke="currentColor"
@@ -250,15 +250,15 @@
           <div
             x-show="open"
             x-collapse
-            class="border-t border-gray-100 dark:border-gray-700/80 bg-white dark:bg-gray-900">
+            class="border-t border-gray-100 dark:border-zinc-800 bg-white dark:bg-zinc-950">
             <div
               id="courses-{{ .ID }}"
               hx-on:htmx:after-settle="Alpine.initTree(this)"></div>
           </div>
         </div>
       {{ else }}
-        <div class="bg-white dark:bg-gray-800 p-8 rounded-sm border border-gray-200 dark:border-gray-700 text-center">
-          <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">
+        <div class="bg-white dark:bg-zinc-900 p-8 rounded-sm border border-gray-200 dark:border-zinc-800 text-center">
+          <p class="text-sm text-gray-600 dark:text-zinc-400 font-medium">
             No se encontraron materias para la carrera elegida.
           </p>
         </div>

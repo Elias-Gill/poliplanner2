@@ -13,23 +13,23 @@
 {{ define "content" }}
   <div class="max-w-7xl mx-auto py-2 min-h-[calc(100vh-4rem)] flex flex-col gap-4">
     <!-- Header -->
-    <div class="bg-white dark:bg-gray-800 p-4 rounded-sm shadow-sm border border-gray-200 dark:border-gray-700">
-      <h1 class="text-xl font-bold text-gray-900 dark:text-white">
+    <div class="bg-white dark:bg-zinc-900 p-4 rounded-sm shadow-sm border border-gray-200 dark:border-zinc-800">
+      <h1 class="text-xl font-bold text-gray-900 dark:text-zinc-100">
         Historial de Secciones
       </h1>
-      <p class="text-xs text-gray-500 dark:text-gray-400">
+      <p class="text-xs text-gray-500 dark:text-zinc-400">
         Analiza la evolución de las secciones, docentes y exámenes de tus materias en los últimos periodos académicos.
       </p>
     </div>
 
     <!-- Filtros -->
     <div
-      class="grid gap-6 md:grid-cols-2 bg-white dark:bg-gray-800 p-6 rounded-sm border border-gray-200 dark:border-gray-700 shadow-sm">
+      class="grid gap-6 md:grid-cols-2 bg-white dark:bg-zinc-900 p-6 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
       <!-- Selector de Carrera -->
       <div>
         <label
           for="career-select"
-          class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          class="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
           Carrera
         </label>
         <select
@@ -37,7 +37,7 @@
           hx-get="/tools/course-offering-history/list-subjects"
           hx-target="#subjects-container"
           name="career_id"
-          class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:outline-none">
+          class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-zinc-700 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500 focus:outline-none">
           <option value="" disabled selected>Selecciona una carrera...</option>
           {{ range .Careers }}
             <option value="{{ .ID }}">{{ .Name }} ({{ .Code }})</option>
@@ -61,7 +61,7 @@
 {{ define "subjects_select" }}
   <label
     for="subject-select"
-    class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+    class="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
     Materia
   </label>
   <select
@@ -69,7 +69,7 @@
     hx-get="/tools/course-offering-history/timeline"
     hx-target="#timeline-container"
     name="curriculum_id"
-    class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:outline-none"
+    class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-zinc-700 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500 focus:outline-none"
     {{ if not .Subjects }}disabled{{ end }}>
     <option value="" disabled selected>Selecciona una materia...</option>
     {{ range .Subjects }}
@@ -94,10 +94,10 @@
     }
   }">
     <!-- Filtros de Contenido -->
-    <div class="bg-white dark:bg-gray-800 p-4 rounded-sm border border-gray-200 dark:border-gray-700 shadow-sm flex flex-col sm:flex-row gap-4">
-        <input type="text" x-model="searchQuery" placeholder="Buscar por sección..." class="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:outline-none">
+    <div class="bg-white dark:bg-zinc-900 p-4 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm flex flex-col sm:flex-row gap-4">
+        <input type="text" x-model="searchQuery" placeholder="Buscar por sección..." class="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-zinc-700 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500 focus:outline-none">
         
-        <select x-model="filterShift" class="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:outline-none">
+        <select x-model="filterShift" class="px-3 py-2 text-sm border border-gray-300 dark:border-zinc-700 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500 focus:outline-none">
             <option value="all">Todos los turnos</option>
             <option value="Mañana">Mañana</option>
             <option value="Tarde">Tarde</option>
@@ -109,21 +109,21 @@
       {{ range $index, $entry := .History }}
         <div
           x-data="{ open: {{ if eq $index 0 }}true{{ else }}false{{ end }} }"
-          class="bg-white dark:bg-gray-800 rounded-sm border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+          class="bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm overflow-hidden">
           
           <!-- Encabezado del Periodo -->
           <button
             type="button"
             @click="open = !open"
-            class="w-full px-5 py-4 bg-gray-50 dark:bg-gray-800/80 hover:bg-gray-100 dark:hover:bg-gray-700/50 flex items-center justify-between text-left transition cursor-pointer select-none">
+            class="w-full px-5 py-4 bg-gray-50 dark:bg-zinc-900/80 hover:bg-gray-100 dark:hover:bg-zinc-700/50 flex items-center justify-between text-left transition cursor-pointer select-none">
             <div class="flex items-center gap-3">
-              <span class="font-bold text-base text-gray-900 dark:text-white">
+              <span class="font-bold text-base text-gray-900 dark:text-zinc-100">
                 Periodo {{ $entry.Period.Year }}-{{ $entry.Period.Semester }}
               </span>
             </div>
 
             <svg
-              class="w-5 h-5 text-gray-500 dark:text-gray-400 transition-transform duration-200"
+              class="w-5 h-5 text-gray-500 dark:text-zinc-400 transition-transform duration-200"
               :class="open ? 'rotate-180' : ''"
               fill="none"
               stroke="currentColor"
@@ -135,14 +135,14 @@
           <!-- Lista de Cursos/Secciones -->
           <div
             x-show="open"
-            class="divide-y divide-gray-200 dark:divide-gray-700 border-t border-gray-200 dark:border-gray-700">
+            class="divide-y divide-gray-200 dark:divide-gray-700 border-t border-gray-200 dark:border-zinc-800">
             {{ range $entry.Offering }}
               <div class="p-5 space-y-4" x-show="matches({Section: '{{ .Section }}', Shift: '{{ .Shift }}'})">
                 
                 <!-- Nombre del curso y Badge de Sección/Tipo -->
                 <div class="flex items-start justify-between gap-4 flex-wrap">
                   <div>
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white leading-snug">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-zinc-100 leading-snug">
                       {{ .Name }}
                     </h3>
                     <div class="flex items-center gap-2 mt-1">
@@ -150,12 +150,12 @@
                         Sección {{ .Section }}
                       </span>
                       {{ if .Type }}
-                        <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                        <span class="text-xs font-semibold text-gray-500 dark:text-zinc-400">
                           • {{ .Type }}
                         </span>
                       {{ end }}
                       {{ if .Shift }}
-                        <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                        <span class="text-xs font-semibold text-gray-500 dark:text-zinc-400">
                           • Turno {{ .Shift }}
                         </span>
                       {{ end }}
@@ -168,44 +168,44 @@
                   
                   <!-- Docentes -->
                   <div class="md:col-span-5 space-y-1">
-                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 block">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400 block">
                       Docentes
                     </span>
-                    <p class="text-gray-800 dark:text-gray-200 font-medium leading-relaxed">
+                    <p class="text-gray-800 dark:text-zinc-200 font-medium leading-relaxed">
                       {{ if .Teachers }}
                         {{ range $i, $t := .Teachers -}}
                           {{- if $i }}, {{ end -}}
                           {{- $t.FirstName }} {{ $t.LastName -}}
                         {{- end }}
                       {{ else }}
-                        <span class="text-gray-400 dark:text-gray-500 italic">Sin docentes asignados</span>
+                        <span class="text-gray-400 dark:text-zinc-500 italic">Sin docentes asignados</span>
                       {{ end }}
                     </p>
                   </div>
 
                   <!-- Horarios de Clases -->
                   <div class="md:col-span-7 space-y-1">
-                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 block">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400 block">
                       Horarios de Clase
                     </span>
                     {{ if .Schedules }}
                       <div class="flex flex-wrap gap-2">
                         {{ range .Schedules }}
-                          <div class="inline-flex items-center gap-1.5 bg-gray-100 dark:bg-gray-700/60 text-gray-900 dark:text-gray-100 px-3 py-1 rounded-sm text-xs font-medium border border-gray-200 dark:border-gray-600">
+                          <div class="inline-flex items-center gap-1.5 bg-gray-100 dark:bg-gray-700/60 text-gray-900 dark:text-zinc-100 px-3 py-1 rounded-sm text-xs font-medium border border-gray-200 dark:border-zinc-700">
                             <span class="font-bold text-primary-600 dark:text-primary-400">{{ .Day }}</span>
                             <span>{{ .Time.Start.Format "15:04" }} a {{ .Time.End.Format "15:04" }}</span>
                             {{ if .Room }}
-                              <span class="text-gray-500 dark:text-gray-400 font-normal">({{ .Room }})</span>
+                              <span class="text-gray-500 dark:text-zinc-400 font-normal">({{ .Room }})</span>
                             {{ end }}
                           </div>
                         {{ end }}
                       </div>
                     {{ else }}
-                      <p class="text-gray-400 dark:text-gray-500 italic">Sin horarios de clase registrados</p>
+                      <p class="text-gray-400 dark:text-zinc-500 italic">Sin horarios de clase registrados</p>
                     {{ end }}
 
                     {{ if .SaturdayDates }}
-                      <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      <p class="text-xs text-gray-500 dark:text-zinc-400 mt-1">
                         <strong class="font-semibold">Clases de Sábados:</strong> {{ .SaturdayDates }}
                       </p>
                     {{ end }}
@@ -215,14 +215,14 @@
 
                 <!-- Bloque de Exámenes -->
                 {{ if .Exams }}
-                  <div class="pt-3 border-t border-gray-100 dark:border-gray-700/60">
-                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 block mb-2">
+                  <div class="pt-3 border-t border-gray-100 dark:border-zinc-800/60">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400 block mb-2">
                       Calendario de Exámenes
                     </span>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                       {{ range .Exams }}
-                        <div class="bg-gray-50 dark:bg-gray-700/30 p-2.5 rounded-sm border border-gray-200 dark:border-gray-700 flex flex-col justify-between space-y-1">
-                            <span class="font-bold text-gray-900 dark:text-white text-xs">
+                        <div class="bg-gray-50 dark:bg-gray-700/30 p-2.5 rounded-sm border border-gray-200 dark:border-zinc-800 flex flex-col justify-between space-y-1">
+                            <span class="font-bold text-gray-900 dark:text-zinc-100 text-xs">
                                 {{ if and (eq .Type "partial") (eq .Instance 1) }}1° Parcial
                                 {{ else if and (eq .Type "partial") (eq .Instance 2) }}2° Parcial
                                 {{ else if and (eq .Type "final") (eq .Instance 1) }}1° Final
@@ -230,18 +230,18 @@
                                 {{ end }}
                             </span>
                           
-                          <div class="text-gray-700 dark:text-gray-300">
+                          <div class="text-gray-700 dark:text-zinc-300">
                             {{ if .HasDate }}
                               <span class="font-mono font-medium block">{{ .Date.Format "02/01/2006" }}</span>
-                              <span class="text-gray-500 dark:text-gray-400 font-mono text-[11px] block">{{ .Date.Format "15:04" }} hs</span>
+                              <span class="text-gray-500 dark:text-zinc-400 font-mono text-[11px] block">{{ .Date.Format "15:04" }} hs</span>
                             {{ else }}
-                              <span class="text-gray-400 dark:text-gray-500 italic">Sin fecha confirmada</span>
+                              <span class="text-gray-400 dark:text-zinc-500 italic">Sin fecha confirmada</span>
                             {{ end }}
                           </div>
 
                           {{ if .Room }}
-                            <div class="text-[11px] text-gray-500 dark:text-gray-400 pt-1 border-t border-gray-200/50 dark:border-gray-600/50">
-                              Aula: <span class="font-medium text-gray-700 dark:text-gray-300">{{ .Room }}</span>
+                            <div class="text-[11px] text-gray-500 dark:text-zinc-400 pt-1 border-t border-gray-200/50 dark:border-zinc-700/50">
+                              Aula: <span class="font-medium text-gray-700 dark:text-zinc-300">{{ .Room }}</span>
                             </div>
                           {{ end }}
                         </div>
@@ -256,8 +256,8 @@
         </div>
       {{ end }}
     {{ else }}
-      <div class="p-8 text-center bg-white dark:bg-gray-800 rounded-sm border border-gray-200 dark:border-gray-700">
-        <p class="text-sm text-gray-500 dark:text-gray-400 italic">
+      <div class="p-8 text-center bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800">
+        <p class="text-sm text-gray-500 dark:text-zinc-400 italic">
           No hay datos históricos disponibles para esta materia.
         </p>
       </div>
