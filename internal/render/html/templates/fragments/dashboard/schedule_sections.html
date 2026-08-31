@@ -1,152 +1,129 @@
 {{ define "dashboard/schedule_sections" }}
-  <div
-    class="bg-white dark:bg-gray-800 rounded-sm shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors">
-    <div
-      class="p-4 bg-gray-700 dark:bg-gray-900 text-white border-b border-gray-600 dark:border-gray-800">
-      <h2 class="font-semibold text-sm tracking-wide">
-        Información de Secciones
-      </h2>
+  <div class="bg-white dark:bg-zinc-900 rounded-sm shadow-2xs border border-gray-200 dark:border-zinc-800 overflow-hidden transition-colors">
+    
+    <!-- Cabecera Principal Institucional -->
+    <div class="p-4 bg-primary-700 dark:bg-zinc-950 text-white flex items-center gap-2 border-b border-primary-800 dark:border-zinc-800">
+      <svg class="w-4 h-4 text-primary-300 dark:text-primary-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+      </svg>
+      <h2 class="font-semibold text-sm tracking-wide">Información de Secciones</h2>
     </div>
 
-    <div class="p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Grid de Secciones -->
+    <div class="p-4 md:p-5 grid grid-cols-1 md:grid-cols-2 gap-4 bg-white dark:bg-zinc-900">
       {{ range .Info }}
-        <div
-          class="p-4 bg-white dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-sm shadow-2xs space-y-3">
-          <div
-            class="flex items-start justify-between gap-2 border-b border-gray-100 dark:border-gray-700/60 pb-2">
-            <div>
-              <h3 class="text-xs font-bold text-gray-900 dark:text-gray-100">
-                {{ .Name }}
-              </h3>
-              <!-- Sección con más peso y contraste -->
-              <span
-                class="text-[11px] font-semibold text-gray-700 dark:text-gray-300"
-                >Sección: {{ .Section }}</span
-              >
-            </div>
-            <!-- INICIO: Tipo de sección corregido con alto contraste -->
-            <span
-              class="text-[10px] font-bold px-2 py-0.5 rounded-xs shrink-0 border {{ if eq .Type 1 }}
-                bg-red-100 dark:bg-red-900/80 text-red-800 dark:text-red-200
-                border-red-200 dark:border-red-700
-              {{ else if eq .Type 3 }}
-                bg-amber-100 dark:bg-amber-900/80 text-amber-800
-                dark:text-amber-200 border-amber-200 dark:border-amber-700
-              {{ else }}
-                bg-primary-100 dark:bg-primary-900/80 text-primary-800
-                dark:text-primary-200 border-primary-200 dark:border-primary-700
-              {{ end }}">
-              {{ .Type.String }}
-            </span>
-            <!-- FIN: Tipo de sección corregido -->
-          </div>
+        <div class="bg-white dark:bg-zinc-950/70 border border-gray-200/80 dark:border-zinc-800 rounded-xs shadow-2xs overflow-hidden flex flex-col justify-between transition-all hover:border-gray-300 dark:hover:border-zinc-700">
+          
+          <div class="p-3.5 space-y-3">
+            <!-- Encabezado de la Tarjeta de Materia -->
+            <div class="flex items-start justify-between gap-2 pb-2.5 border-b border-gray-100 dark:border-zinc-800/80">
+              <div class="space-y-1">
+                <h3 class="text-xs font-bold text-gray-900 dark:text-zinc-100 leading-tight">
+                  {{ .Name }}
+                </h3>
+                <div class="flex items-center gap-1.5">
+                  <span class="inline-flex items-center px-1.5 py-0.5 rounded-xs text-[10px] font-semibold bg-primary-50 dark:bg-primary-900/60 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/50">
+                    Sección {{ .Section }}
+                  </span>
+                </div>
+              </div>
 
-          <div>
-            <!-- Título Docentes suavizado -->
-            <p
-              class="text-[10px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">
-              Docentes
-            </p>
-            {{ if .Teachers }}
-              <ul class="space-y-0.5">
-                {{ range .Teachers }}
-                  <li
-                    class="text-[11px] text-gray-600 dark:text-gray-300 flex items-center gap-1.5">
-                    <svg
-                      class="w-3 h-3 text-primary-500 dark:text-primary-400 shrink-0"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    <span class="font-medium text-gray-700 dark:text-gray-200"
-                      >{{ .Name }}</span
-                    >
-                    {{ if .Email }}
-                      <a
-                        href="mailto:{{ .Email }}"
-                        class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 text-[10px] hover:underline transition-colors">
-                        ({{ .Email }})
-                      </a>
-                    {{ end }}
-                  </li>
-                {{ end }}
-              </ul>
-            {{ else }}
-              <ul class="space-y-0.5">
-                <li class="text-[11px] text-gray-400 dark:text-gray-500 italic">
+              <!-- Tipo de sección -->
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-xs shrink-0 border shadow-2xs {{ if eq .Type 1 }}
+                bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-300 border-red-200/70 dark:border-red-900/60
+              {{ else if eq .Type 3 }}
+                bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200/70 dark:border-amber-900/60
+              {{ else }}
+                bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200/70 dark:border-emerald-900/60
+              {{ end }}">
+                {{ .Type.String }}
+              </span>
+            </div>
+
+            <!-- Listado de Docentes -->
+            <div>
+              <p class="text-[10px] font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                <svg class="w-3 h-3 text-gray-400 dark:text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
+                Docentes Asignados
+              </p>
+              
+              {{ if .Teachers }}
+                <ul class="space-y-1">
+                  {{ range .Teachers }}
+                    <li class="text-[11px] flex items-center justify-between gap-2 p-1.5">
+                      <div class="flex items-center gap-1.5 min-w-0">
+                        <svg class="w-3.5 h-3.5 text-primary-600 dark:text-primary-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span class="font-medium text-gray-800 dark:text-zinc-200 truncate">{{ .Name }}</span>
+                      </div>
+                      {{ if .Email }}
+                        <a href="mailto:{{ .Email }}" class="inline-flex items-center gap-1 text-[10px] text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-mono hover:underline shrink-0">
+                          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                          Email
+                        </a>
+                      {{ end }}
+                    </li>
+                  {{ end }}
+                </ul>
+              {{ else }}
+                <p class="text-[11px] text-gray-400 dark:text-zinc-600 italic px-1">
                   Sin profesores asignados
-                </li>
-              </ul>
+                </p>
+              {{ end }}
+            </div>
+
+            <!-- Sábados Especiales (Alerta destacada) -->
+            {{ if .SaturdayDates }}
+              <div class="text-[11px] bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 p-2 border border-amber-200/80 dark:border-amber-900/60 rounded-xs flex items-start gap-1.5">
+                <svg class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                <div>
+                  <strong class="font-semibold text-amber-950 dark:text-amber-100">Sábados especiales:</strong>
+                  <span class="ml-1 text-amber-800 dark:text-amber-300 font-mono">{{ .SaturdayDates }}</span>
+                </div>
+              </div>
             {{ end }}
           </div>
 
-          {{/* Solo aparece si existen fechas de sábados */}}
-          {{ if .SaturdayDates }}
-            <div
-              class="text-[11px] bg-amber-100/80 dark:bg-amber-900/70 text-amber-900 dark:text-amber-100 p-2 border border-amber-300 dark:border-amber-700 rounded-xs">
-              <strong class="font-semibold text-amber-950 dark:text-amber-50"
-                >Sábados especiales:</strong
-              >
-              {{ .SaturdayDates }}
-            </div>
-          {{ end }}
-
-          {{/* Sección de Comité Evaluador */}}
-          <div class="pt-2 border-t border-gray-100 dark:border-gray-700/60">
-            <!-- Título Comité Evaluador suavizado -->
-            <p
-              class="text-[10px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">
+          <!-- Comité Evaluador (Pie de tarjeta) -->
+          <div class="p-3 bg-gray-50/50 dark:bg-zinc-900/80 border-t border-gray-100 dark:border-zinc-800/80">
+            <p class="text-[10px] font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+              <svg class="w-3 h-3 text-gray-400 dark:text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
               Comité Evaluador
             </p>
             {{ if or .CommitteePresident .CommitteeMember1 .CommitteeMember2 }}
-              <div
-                class="text-[11px] text-gray-600 dark:text-gray-300 space-y-0.5">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 text-[11px]">
                 {{ if .CommitteePresident }}
-                  <p>
-                    <span class="text-gray-500 dark:text-gray-400 font-medium"
-                      >Presidente:</span
-                    >
-                    <span class="text-gray-700 dark:text-gray-200"
-                      >{{ .CommitteePresident }}</span
-                    >
-                  </p>
+                  <div class="p-1.5 rounded-xs bg-white dark:bg-zinc-950 border border-gray-200/60 dark:border-zinc-800">
+                    <span class="block text-[9px] font-semibold text-primary-600 dark:text-primary-400 uppercase tracking-tight">Presidente</span>
+                    <span class="font-medium text-gray-800 dark:text-zinc-200 truncate block">{{ .CommitteePresident }}</span>
+                  </div>
                 {{ end }}
                 {{ if .CommitteeMember1 }}
-                  <p>
-                    <span class="text-gray-500 dark:text-gray-400 font-medium"
-                      >Miembro 1:</span
-                    >
-                    <span class="text-gray-700 dark:text-gray-200"
-                      >{{ .CommitteeMember1 }}</span
-                    >
-                  </p>
+                  <div class="p-1.5 rounded-xs bg-white dark:bg-zinc-950 border border-gray-200/60 dark:border-zinc-800">
+                    <span class="block text-[9px] font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-tight">Vocal 1</span>
+                    <span class="font-medium text-gray-700 dark:text-zinc-300 truncate block">{{ .CommitteeMember1 }}</span>
+                  </div>
                 {{ end }}
                 {{ if .CommitteeMember2 }}
-                  <p>
-                    <span class="text-gray-500 dark:text-gray-400 font-medium"
-                      >Miembro 2:</span
-                    >
-                    <span class="text-gray-700 dark:text-gray-200"
-                      >{{ .CommitteeMember2 }}</span
-                    >
-                  </p>
+                  <div class="p-1.5 rounded-xs bg-white dark:bg-zinc-950 border border-gray-200/60 dark:border-zinc-800">
+                    <span class="block text-[9px] font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-tight">Vocal 2</span>
+                    <span class="font-medium text-gray-700 dark:text-zinc-300 truncate block">{{ .CommitteeMember2 }}</span>
+                  </div>
                 {{ end }}
               </div>
             {{ else }}
-              <p class="text-[11px] text-gray-400 dark:text-gray-500 italic">
+              <p class="text-[11px] text-gray-400 dark:text-zinc-600 italic">
                 Sin comité asignado
               </p>
             {{ end }}
           </div>
+
         </div>
       {{ else }}
-        <div
-          class="col-span-full text-center py-6 text-gray-400 dark:text-gray-500 text-xs italic">
+        <div class="col-span-full text-center py-8 text-gray-400 dark:text-zinc-500 text-xs italic bg-gray-50/50 dark:bg-zinc-950/40 rounded-xs border border-dashed border-gray-200 dark:border-zinc-800">
           No hay detalles de secciones disponibles.
         </div>
       {{ end }}
