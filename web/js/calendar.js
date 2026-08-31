@@ -1,195 +1,97 @@
 document.addEventListener('alpine:init', () => {
-  Alpine.data('examScheduleApp', () => ({
-    showCalendarModal: false,
-    selectedExamId: null,
-    calendar: null,
-
-    openCalendarModal(examId = null) {
-      this.selectedExamId = examId;
-      this.showCalendarModal = true;
-
-      this.$nextTick(() => {
-        if (!this.calendar) {
-          this.initCalendar();
-        } else {
-          this.calendar.updateSize();
-        }
-
-        // Si se seleccionó un examen específico, posicionar el calendario en esa fecha
-        if (examId) {
-          const events = this.calendar.getEvents();
-          const target = events.find(e => e.id === examId);
-          if (target && target.start) {
-            this.calendar.gotoDate(target.start);
-          }
-        }
-      });
-    },
-
-    initCalendar() {
-      const container = this.$refs.calendarContainer;
-      let events = [];
-
-      try {
-        const rawData = this.$refs.eventsData.textContent;
-        events = JSON.parse(rawData);
-      } catch (e) {
-        console.error('Error parseando JSON de exámenes:', e);
-      }
-
-      this.calendar = new FullCalendar.Calendar(container, {
-        initialView: 'dayGridMonth',
-        locale: 'es',
-        headerToolbar: {
-          left: 'prev,next today',
-          center: 'title',
-          right: ''
-        },
-        height: 'auto',
-        events: events,
-        eventClick: (info) => {
-          this.selectedExamId = info.event.id;
-          this.showCalendarModal = false;
-
-          // Scroll suave en la lista hasta el elemento correspondiente
-          const targetEl = document.getElementById(`exam-card-${info.event.id}`);
-          if (targetEl) {
-            targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
-        }
-      });
-
-      this.calendar.render();
-    }
-  }));
-});
-window.examScheduleApp = function () {
-    return {
-        activeTab: "list",
+    Alpine.data('examScheduleApp', () => ({
+        showCalendarModal: false,
         selectedExamId: null,
-        calendarInstance: null,
+        calendar: null,
         highlightTimer: null,
-        events: [],
-        themeObserver: null,
 
-        init() {
-            try {
-                if (this.$refs.eventsData) {
-                    this.events = JSON.parse(this.$refs.eventsData.textContent);
+        openCalendarModal(examId = null) {
+            this.selectedExamId = examId;
+            this.showCalendarModal = true;
+
+            this.$nextTick(() => {
+                if (!this.calendar) {
+                    this.initCalendar();
+                } else {
+                    this.calendar.updateSize();
                 }
-            } catch (e) {
-                console.error("Error al parsear eventos:", e);
-                this.events = [];
-            }
 
-            this.initCalendar();
-
-            // Escuchar cambios de tema (dark/light) en la etiqueta html/body
-            this.setupThemeObserver();
-
-            this.$watch("activeTab", (value) => {
-                if (value === "calendar" && this.calendarInstance) {
-                    this.$nextTick(() => {
-                        setTimeout(() => {
-                            this.calendarInstance.updateSize();
-                            // Resalta evento si venimos de clic en lista
-                            if (this.selectedExamId) {
-                                this.applyCalendarEventHighlight(this.selectedExamId);
-                            }
-                        }, 50);
-                    });
+                if (examId) {
+                    this.applyCalendarEventHighlight(examId);
+                    const events = this.calendar.getEvents();
+                    const target = events.find(e => e.id === String(examId));
+                    if (target && target.start) {
+                        this.calendar.gotoDate(target.start);
+                    }
                 }
             });
         },
 
         initCalendar() {
-            const calendarEl = this.$refs.calendarContainer;
-            if (!calendarEl || typeof FullCalendar === "undefined") return;
+            const container = this.$refs.calendarContainer;
+            if (!container || typeof FullCalendar === 'undefined') return;
 
-            if (this.calendarInstance) {
-                this.calendarInstance.destroy();
-                this.calendarInstance = null;
+            let events = [];
+            try {
+                const rawData = this.$refs.eventsData.textContent;
+                events = JSON.parse(rawData);
+            } catch (e) {
+                console.error('Error parseando JSON de exámenes:', e);
             }
 
             let initialDate = undefined;
-            if (this.events && this.events.length > 0) {
-                const sorted = [...this.events].sort(
-                    (a, b) => new Date(a.start) - new Date(b.start)
-                );
+            if (events && events.length > 0) {
+                const sorted = [...events].sort((a, b) => new Date(a.start) - new Date(b.start));
                 initialDate = sorted[0].start;
             }
 
-            this.calendarInstance = new FullCalendar.Calendar(calendarEl, {
-                initialView: "dayGridMonth",
+            this.calendar = new FullCalendar.Calendar(container, {
+                initialView: 'dayGridMonth',
                 initialDate: initialDate,
-                locale: "es",
-                eventDisplay: "block",
+                locale: 'es',
+                eventDisplay: 'block',
                 displayEventTime: false,
                 headerToolbar: {
-                    left: "prev,next",
-                    center: "title",
-                    right: "today",
+                    left: 'prev,next',
+                    center: 'title',
+                    right: 'today'
                 },
-                events: this.events,
-                height: "auto",
+                height: 'auto',
+                events: events,
 
                 eventClassNames: (arg) => {
                     return [`fc-exam-event-${arg.event.id}`];
                 },
 
                 eventClick: (info) => {
-                    this.highlightExam(info.event.id);
-                    this.activeTab = "list";
+                    this.selectedExamId = info.event.id;
+                    this.showCalendarModal = false;
 
-                    this.$nextTick(() => {
-                        const cardEl = document.getElementById(
-                            `exam-card-${info.event.id}`
-                        );
-                        if (cardEl) {
-                            cardEl.scrollIntoView({
-                                behavior: "smooth",
-                                block: "center",
-                            });
-                        }
-                    });
-                },
+                    this.applyListHighlight(info.event.id);
+                }
             });
 
-            this.calendarInstance.render();
+            this.calendar.render();
 
             setTimeout(() => {
-                if (this.calendarInstance) {
-                    this.calendarInstance.updateSize();
+                if (this.calendar) {
+                    this.calendar.updateSize();
                 }
             }, 100);
-        },
 
-        setupThemeObserver() {
-            // Re-renderiza o actualiza el tamaño al alternar el modo oscuro
+            // Observador para cambios de modo oscuro/claro
             const observer = new MutationObserver(() => {
-                if (this.calendarInstance) {
-                    this.calendarInstance.updateSize();
+                if (this.calendar) {
+                    this.calendar.updateSize();
                 }
             });
-
             observer.observe(document.documentElement, {
                 attributes: true,
-                attributeFilter: ["class"],
+                attributeFilter: ['class']
             });
-        },
-
-        highlightExam(id) {
-            this.selectedExamId = id;
-            this.applyCalendarEventHighlight(id);
-
-            if (this.highlightTimer) clearTimeout(this.highlightTimer);
-            this.highlightTimer = setTimeout(() => {
-                this.clearHighlights();
-            }, 1500);
         },
 
         applyCalendarEventHighlight(id) {
-            this.selectedExamId = id;
             this.$nextTick(() => {
                 document.querySelectorAll(".fc-highlighted-event").forEach((el) => {
                     el.classList.remove("fc-highlighted-event");
@@ -202,20 +104,18 @@ window.examScheduleApp = function () {
             });
         },
 
-        clearHighlights() {
-            this.selectedExamId = null;
-            document.querySelectorAll(".fc-highlighted-event").forEach((el) => {
-                el.classList.remove("fc-highlighted-event");
-            });
-        },
+        applyListHighlight(id) {
+            this.$nextTick(() => {
+                const cardEl = document.getElementById(`exam-card-${id}`);
+                if (cardEl) {
+                    cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
 
-        selectExamFromList(id) {
-            const ev = this.events.find((e) => e.id === id);
-            if (ev && this.calendarInstance) {
-                this.calendarInstance.gotoDate(ev.start);
-            }
-            this.activeTab = "calendar";
-            this.highlightExam(id);
-        },
-    };
-};
+                if (this.highlightTimer) clearTimeout(this.highlightTimer);
+                this.highlightTimer = setTimeout(() => {
+                    this.selectedExamId = null;
+                }, 2500);
+            });
+        }
+    }));
+});

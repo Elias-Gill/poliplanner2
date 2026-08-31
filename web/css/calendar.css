@@ -2,24 +2,25 @@
    FULLCALENDAR BASE & LIGHT MODE
    ========================================================================== */
 .fc-highlighted-event {
-    outline: 2px solid #2563eb !important;
+    outline: 2px solid var(--color-primary-600, #0284c7) !important;
     outline-offset: 2px;
     border-radius: 4px;
-    box-shadow: 0 0 12px rgba(37, 99, 235, 0.4);
+    box-shadow: 0 0 12px rgba(2, 132, 199, 0.4);
     transition: all 0.3s ease-in-out;
+    z-index: 5;
 }
 
 .fc {
-    --fc-border-color: #e5e7eb;
+    --fc-border-color: var(--color-zinc-200, #e4e4e7);
     --fc-button-bg-color: #ffffff;
-    --fc-button-border-color: #d1d5db;
-    --fc-button-text-color: #374151;
-    --fc-button-hover-bg-color: #f3f4f6;
-    --fc-button-hover-border-color: #9ca3af;
-    --fc-button-active-bg-color: #2563eb;
-    --fc-button-active-border-color: #1d4ed8;
+    --fc-button-border-color: var(--color-zinc-300, #d4d4d8);
+    --fc-button-text-color: var(--color-zinc-700, #3f3f46);
+    --fc-button-hover-bg-color: var(--color-zinc-100, #f4f4f5);
+    --fc-button-hover-border-color: var(--color-zinc-400, #a1a1aa);
+    --fc-button-active-bg-color: var(--color-primary-600, #0284c7);
+    --fc-button-active-border-color: var(--color-primary-700, #0369a1);
     --fc-button-active-text-color: #ffffff;
-    --fc-today-bg-color: rgba(37, 99, 235, 0.08);
+    --fc-today-bg-color: rgba(14, 165, 233, 0.08);
     --fc-event-border-radius: 4px;
     font-family: inherit;
 }
@@ -27,7 +28,7 @@
 .fc .fc-toolbar-title {
     font-size: 0.95rem !important;
     font-weight: 700;
-    color: #1f2937;
+    color: var(--color-zinc-900, #18181b);
 }
 
 .fc .fc-button {
@@ -42,7 +43,7 @@
 .fc .fc-col-header-cell-cushion {
     font-size: 0.75rem;
     font-weight: 600;
-    color: #4b5563;
+    color: var(--color-zinc-500, #71717a);
     text-transform: uppercase;
     padding: 6px 0;
 }
@@ -50,7 +51,7 @@
 .fc .fc-daygrid-day-number {
     font-size: 0.75rem;
     font-weight: 500;
-    color: #374151;
+    color: var(--color-zinc-700, #3f3f46);
     padding: 4px 6px;
 }
 
@@ -58,7 +59,7 @@
     cursor: pointer;
     padding: 2px 4px;
     font-size: 0.75rem;
-    transition: all 0.15s ease;
+    transition: filter 0.15s ease;
 }
 
 .fc .fc-event:hover {
@@ -69,39 +70,48 @@
    FULLCALENDAR DARK MODE OVERRIDES (.dark)
    ========================================================================== */
 .dark .fc {
-    --fc-border-color: #334155;             /* slate-700 */
-    --fc-page-bg-color: #0f172a;           /* slate-900 */
-    --fc-neutral-bg-color: #1e293b;        /* slate-800 */
-    --fc-button-bg-color: #1e293b;
-    --fc-button-border-color: #334155;
-    --fc-button-text-color: #f1f5f9;        /* slate-100 */
-    --fc-button-hover-bg-color: #334155;
-    --fc-button-hover-border-color: #475569;
-    --fc-button-active-bg-color: #2563eb;
-    --fc-button-active-border-color: #3b82f6;
+    --fc-border-color: var(--color-zinc-800, #27272a);
+    --fc-page-bg-color: var(--color-zinc-950, #09090b);
+    --fc-neutral-bg-color: var(--color-zinc-900, #18181b);
+    --fc-button-bg-color: var(--color-zinc-900, #18181b);
+    --fc-button-border-color: var(--color-zinc-800, #27272a);
+    --fc-button-text-color: var(--color-zinc-100, #f4f4f5);
+    --fc-button-hover-bg-color: var(--color-zinc-800, #27272a);
+    --fc-button-hover-border-color: var(--color-zinc-700, #3f3f46);
+    --fc-button-active-bg-color: var(--color-primary-600, #0284c7);
+    --fc-button-active-border-color: var(--color-primary-500, #0ea5e9);
     --fc-button-active-text-color: #ffffff;
-    --fc-today-bg-color: rgba(56, 189, 248, 0.12); /* sky highlight para el día de hoy */
+    --fc-today-bg-color: rgba(56, 189, 248, 0.12);
 }
 
 .dark .fc .fc-toolbar-title {
-    color: #f8fafc; /* slate-50 */
+    color: var(--color-zinc-50, #fafafa);
 }
 
 .dark .fc .fc-col-header-cell-cushion {
-    color: #94a3b8; /* slate-400 */
+    color: var(--color-zinc-400, #a1a1aa);
 }
 
 .dark .fc .fc-daygrid-day-number {
-    color: #cbd5e1; /* slate-300 */
+    color: var(--color-zinc-300, #d4d4d8);
 }
 
 .dark .fc-highlighted-event {
-    outline-color: #38bdf8 !important; /* sky-400 */
+    outline-color: var(--color-primary-400, #38bdf8) !important;
     box-shadow: 0 0 14px rgba(56, 189, 248, 0.5);
 }
 
 .dark .fc .fc-event:hover {
     filter: brightness(1.15);
+}
+
+/* ==========================================================================
+   Highlight para las tarjetas en la lista HTML
+   ========================================================================== */
+.list-highlighted-card {
+    border-color: var(--color-primary-500, #0ea5e9) !important;
+    box-shadow: 0 0 0 2px var(--color-primary-500, #0ea5e9), 0 4px 12px rgba(14, 165, 233, 0.25) !important;
+    transition: all 0.3s ease-in-out;
 }
 
 /* ==========================================================================
