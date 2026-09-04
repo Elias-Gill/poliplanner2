@@ -179,7 +179,7 @@ func (e ExcelService) PersistSource(ctx context.Context, source source.ScheduleS
 					Period:        periodID,
 					Curriculum:    curriculumID,
 					SaturdayDates: course.SaturdayDates,
-					Comitee:       course.Comitee,
+					Comitee:       course.Comittee,
 				})
 				if err != nil {
 					return fmt.Errorf("failed to upsert course '%s': %w", course.Name, err)

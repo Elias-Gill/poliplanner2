@@ -9,7 +9,9 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
 	"github.com/elias-gill/poliplanner2/internal/model/schedule"
 	"github.com/elias-gill/poliplanner2/internal/model/user"
+
 	schedRepository "github.com/elias-gill/poliplanner2/internal/repository/schedule"
+	academicSrv "github.com/elias-gill/poliplanner2/internal/service/academic"
 	"github.com/elias-gill/poliplanner2/logger"
 )
 
@@ -23,6 +25,7 @@ var (
 
 type ScheduleService struct {
 	scheduleRepository schedRepository.ScheduleRepository
+	courseService      academicSrv.CourseService
 }
 
 func New(scheduleRepo schedRepository.ScheduleRepository) *ScheduleService {
@@ -46,7 +49,7 @@ func (s ScheduleService) ListUserSchedules(ctx context.Context, userID user.User
 // ListUserSchedules returns the details for the dashboard view of a given schedule
 func (s ScheduleService) GetScheduleOverview(ctx context.Context, userID user.UserID, scheduleID schedule.ScheduleID) (*schedule.StudentScheduleView, error) {
 	logger.Debug("GetSchedule called", "userID", userID, "scheduleID", scheduleID)
-	sche, err := s.scheduleRepository.GetDetailsByID(ctx, scheduleID)
+	sche, err := s.scheduleRepository.GetByID(ctx, scheduleID)
 	if err != nil {
 		logger.Debug("cannot get schedule details", "scheduleID", scheduleID, "error", err)
 		return nil, ErrNotFound
@@ -57,11 +60,22 @@ func (s ScheduleService) GetScheduleOverview(ctx context.Context, userID user.Us
 		return nil, ErrPermissionDenied
 	}
 
+	var courses []academic.CourseSummaryView
+
+	for _, courseID := range sche.Courses {
+		course, err := s.courseService.GetCourseSummary(ctx, courseID)
+		if err != nil {
+			return nil, fmt.Errorf("get course summary for course %d: %w", courseID, err)
+		}
+
+		courses = append(courses, *course)
+	}
+
 	// Map info into our view models
 	view := &schedule.StudentScheduleView{
-		Weekly: s.buildWeeklySchedule(sche.Courses),
-		Exams:  s.extractExams(sche.Courses),
-		Info:   s.buildCoursesInfo(sche.Courses),
+		Weekly: s.buildWeeklySchedule(courses),
+		Exams:  s.extractExams(courses),
+		Info:   s.buildCoursesInfo(courses),
 	}
 
 	logger.Debug("GetSchedule successful", "scheduleID", scheduleID, "userID", userID)
@@ -100,7 +114,7 @@ func (s *ScheduleService) CreateSchedule(ctx context.Context, userID user.UserID
 
 func (s ScheduleService) Delete(ctx context.Context, userID user.UserID, scheduleID schedule.ScheduleID) error {
 	logger.Debug("Delete schedule called", "userID", userID, "scheduleID", scheduleID)
-	sche, err := s.scheduleRepository.GetDetailsByID(ctx, scheduleID)
+	sche, err := s.scheduleRepository.GetByID(ctx, scheduleID)
 	if err != nil {
 		logger.Debug("cannot get schedule details for deletion", "scheduleID", scheduleID, "error", err)
 		return err

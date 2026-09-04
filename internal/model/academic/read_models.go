@@ -24,6 +24,16 @@ type CurriculumSubjectItem struct {
 	Name     string
 }
 
+type CourseBasicData struct {
+	ID            CourseID
+	Section       string
+	Shift         string
+	Name          string
+	Type          CourseType
+	SaturdayDates string
+	Committee     Committee
+}
+
 type CourseSummaryView struct {
 	ID            CourseID
 	Section       string

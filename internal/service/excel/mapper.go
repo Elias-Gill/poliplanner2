@@ -61,7 +61,7 @@ func buildOfferingFromDTO(data parser.SubjectDTO) academic.Course {
 		Type:     data.CourseType,
 		Exams:    buildExams(data),
 		Schedule: generateSchedule(data.Schedule),
-		Comitee: academic.Committee{
+		Comittee: academic.Committee{
 			President: data.CommitteePresident,
 			Member1:   data.CommitteeMember1,
 			Member2:   data.CommitteeMember2,

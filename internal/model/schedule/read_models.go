@@ -12,7 +12,7 @@ type ScheduleDetails struct {
 	Owner     user.UserID
 	Title     string
 	CreatedAt time.Time
-	Courses   []academic.CourseSummaryView
+	Courses   []academic.CourseID
 }
 
 type ScheduleSummaryView struct {

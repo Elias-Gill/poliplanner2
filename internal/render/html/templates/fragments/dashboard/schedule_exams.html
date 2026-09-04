@@ -195,14 +195,6 @@
           </div>
 
         <div>
-          <div class="flex items-center gap-1.5 text-[11px] font-mono font-semibold">
-            <svg class="w-3.5 h-3.5 text-primary-600 dark:text-primary-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            <span class="px-1.5 py-0.5 rounded-xs bg-primary-50 dark:bg-primary-900/70 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/50 shadow-2xs">
-              {{ if $e.Date }}{{ $e.Date }}{{ else }}A definir{{ end }}
-            </span>
-          </div>
 
           <div class="inline-flex items-center gap-1 text-[11px] text-zinc-400 dark:text-zinc-500 font-normal">
             <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -210,6 +202,15 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
             <span>Aula: {{ if $e.Room }}{{ $e.Room }}{{ else }}—{{ end }}</span>
+          </div>
+
+          <div class="flex items-center gap-1.5 text-[11px] font-mono font-semibold">
+            <svg class="w-3.5 h-3.5 text-primary-600 dark:text-primary-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span class="px-1.5 py-0.5 rounded-xs bg-primary-50 dark:bg-primary-900/70 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/50 shadow-2xs">
+              {{ if $e.Date }}{{ $e.Date }}{{ else }}A definir{{ end }}
+            </span>
           </div>
         </div>
 
@@ -253,8 +254,8 @@
   {{ else }}
 
     <div class="px-4 py-3 text-center bg-gray-50/50 dark:bg-zinc-950/40">
-      <div class="text-[11px] text-gray-400 dark:text-zinc-500 italic">
-        Sin {{ $label }} programados
+      <div class="text-[11px] text-gray-400 dark:text-zinc-500">
+        Sin Examenes Programados
       </div>
     </div>
 

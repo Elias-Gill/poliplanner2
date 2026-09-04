@@ -41,9 +41,13 @@ type CourseRepository interface {
 	// -   READ OPERATIONS   -
 	// -----------------------
 
-	ListByCurriculumID(ctx context.Context, curriculum academic.CurriculumID, period academic.PeriodID) ([]academic.CourseSummaryView, error)
+	ListByCurriculumID(ctx context.Context, curriculum academic.CurriculumID, period academic.PeriodID) ([]academic.CourseID, error)
+
+	GetBasicData(ctx context.Context, courseID academic.CourseID) (*academic.CourseBasicData, error)
 
 	GetCourseTeachers(ctx context.Context, courseID academic.CourseID) ([]academic.Teacher, error)
 
 	GetCourseSchedules(ctx context.Context, courseID academic.CourseID) ([]academic.ClassSession, error)
+
+	GetCourseExams(ctx context.Context, courseID academic.CourseID) ([]academic.Exam, error)
 }

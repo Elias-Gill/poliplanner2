@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 	"time"
 
 	txManager "github.com/elias-gill/poliplanner2/internal/infrastructure/persistence/sqlite/tx_manager"
@@ -182,9 +183,9 @@ func (r *CourseRepository) AssignExams(ctx context.Context, courseID academic.Co
 	return nil
 }
 
-func (r *CourseRepository) ListByCurriculumID(ctx context.Context, curriculum academic.CurriculumID, period academic.PeriodID) ([]academic.CourseSummaryView, error) {
+func (r *CourseRepository) ListByCurriculumID(ctx context.Context, curriculum academic.CurriculumID, period academic.PeriodID) ([]academic.CourseID, error) {
 	query := `
-		SELECT id, seccion, turno, tipo, nombre
+		SELECT id
 		FROM cursos
 		WHERE malla = $1 AND periodo = $2
 	`
@@ -195,10 +196,10 @@ func (r *CourseRepository) ListByCurriculumID(ctx context.Context, curriculum ac
 	}
 	defer rows.Close()
 
-	var courses []academic.CourseSummaryView
+	var courses []academic.CourseID
 	for rows.Next() {
-		var c academic.CourseSummaryView
-		if err := rows.Scan(&c.ID, &c.Section, &c.Shift, &c.Type, &c.Name); err != nil {
+		var c academic.CourseID
+		if err := rows.Scan(&c); err != nil {
 			return nil, fmt.Errorf("scan course: %w", err)
 		}
 		courses = append(courses, c)
@@ -287,4 +288,156 @@ func (r *CourseRepository) GetCourseSchedules(ctx context.Context, courseID acad
 	}
 
 	return schedules, nil
+}
+
+func (r *CourseRepository) GetCourseExams(ctx context.Context, courseID academic.CourseID) ([]academic.Exam, error) {
+	exec := txManager.GetExecutor(ctx, r.db)
+
+	query := `
+		SELECT 
+			tipo,
+			instancia,
+			COALESCE(CAST(fecha AS TEXT), ''),
+			COALESCE(CAST(hora AS TEXT), ''),
+			COALESCE(aula, ''),
+			COALESCE(CAST(revision_fecha AS TEXT), ''),
+			COALESCE(CAST(revision_hora AS TEXT), '')
+		FROM examenes
+		WHERE curso_id = ?
+	`
+
+	rows, err := exec.QueryContext(ctx, query, courseID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query exams: %w", err)
+	}
+	defer rows.Close()
+
+	var exams []academic.Exam
+	for rows.Next() {
+		var examTypeStr string
+		var instance int
+		var examDateStr, examTimeStr, room string
+		var revDateStr, revTimeStr string
+
+		if err := rows.Scan(
+			&examTypeStr,
+			&instance,
+			&examDateStr,
+			&examTimeStr,
+			&room,
+			&revDateStr,
+			&revTimeStr,
+		); err != nil {
+			return nil, fmt.Errorf("failed to scan exam: %w", err)
+		}
+
+		var examType academic.ExamType
+		switch examTypeStr {
+		case "partial":
+			examType = academic.ExamPartial
+		case "final":
+			examType = academic.ExamFinal
+		default:
+			examType = academic.ExamType(examTypeStr)
+		}
+
+		exam := academic.Exam{
+			Room:     room,
+			Type:     examType,
+			Instance: academic.ExamInstance(instance),
+		}
+		exam.SetDate(parseExamDateTime(examDateStr, examTimeStr))
+		exam.SetRevision(parseExamDateTime(revDateStr, revTimeStr))
+
+		exams = append(exams, exam)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating exam rows: %w", err)
+	}
+
+	return exams, nil
+}
+
+func (r *CourseRepository) GetBasicData(ctx context.Context, courseID academic.CourseID) (*academic.CourseBasicData, error) {
+	exec := txManager.GetExecutor(ctx, r.db)
+
+	query := `
+	SELECT 
+	id,
+	nombre,
+	seccion,
+	turno,
+	tipo,
+	COALESCE(fechas_sabados, ''),
+	COALESCE(comite_presidente, ''),
+	COALESCE(comite_miembro1, ''),
+	COALESCE(comite_miembro2, '')
+	FROM cursos
+	WHERE id = ?
+	`
+
+	var (
+		data         academic.CourseBasicData
+		courseType   int
+		satDates     string
+		pres, m1, m2 string
+	)
+
+	err := exec.QueryRowContext(ctx, query, courseID).Scan(
+		&data.ID,
+		&data.Name,
+		&data.Section,
+		&data.Shift,
+		&courseType,
+		&satDates,
+		&pres,
+		&m1,
+		&m2,
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("get course basic data: %w", err)
+	}
+
+	data.Type = academic.CourseType(courseType)
+	data.SaturdayDates = satDates
+	data.Committee = academic.Committee{
+		President: pres,
+		Member1:   m1,
+		Member2:   m2,
+	}
+
+	return &data, nil
+}
+
+// ==================
+//  Helper functions
+// ==================
+
+func parseExamDateTime(dateStr, timeStr string) *time.Time {
+	dateStr = strings.TrimSpace(dateStr)
+	timeStr = strings.TrimSpace(timeStr)
+
+	// Requiere al menos los 10 caracteres de la fecha "YYYY-MM-DD"
+	if len(dateStr) < 10 {
+		return nil
+	}
+
+	// Extrae la parte YYYY-MM-DD ignorando la 'T' e ISO strings si existieran
+	cleanDate := dateStr[:10]
+	fullStr := cleanDate
+	layout := "2006-01-02"
+
+	// Si se cuenta con una hora válida (ej: "18:30" o "18:30:00")
+	if len(timeStr) >= 5 {
+		fullStr += " " + timeStr[:5]
+		layout += " 15:04"
+	}
+
+	t, err := time.Parse(layout, fullStr)
+	if err != nil {
+		return nil
+	}
+	return &t
 }
