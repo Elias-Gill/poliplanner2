@@ -34,7 +34,7 @@
 {{ end }}
 
 {{ define "custom_head" }}
-  <link rel="stylesheet" href="/static/css/guides_styles.css?2" />
+  <link rel="stylesheet" href="/static/css/guides_styles.css?3" />
 {{ end }}
 
 {{ define "content" }}
@@ -49,18 +49,18 @@
 
     <!-- ANUNCIO DESTACADO (SUPER EN GRANDE) -->
     <div
-      class="my-6 p-6 bg-primary-50 border-2 border-primary-500 rounded-sm shadow-md">
+      class="my-6 p-6 bg-primary-50 dark:bg-zinc-800 border-2 border-primary-500 dark:border-primary-800 rounded-sm shadow-md">
       <div class="flex items-center gap-2 mb-2">
         <span
-          class="px-2 py-0.5 bg-primary-600 text-white text-xs font-bold uppercase tracking-wider rounded-sm"
+          class="px-2 py-0.5 bg-primary-600 dark:bg-primary-700 text-white text-xs font-bold uppercase tracking-wider rounded-sm"
           >Última Versión</span
         >
-        <span class="text-xs font-mono text-primary-700 font-semibold"
+        <span class="text-xs font-mono text-primary-700 dark:text-primary-300 font-semibold"
           >v2.0.6</span
         >
       </div>
-      <h3>Exportación a PDF y Guías Universitarias Actualizadas</h3>
-      <p>
+      <h3 class="dark:text-zinc-100">Exportación a PDF y Guías Universitarias Actualizadas</h3>
+      <p class="dark:text-zinc-300">
         Ahora podés descargar tus horarios armados directamente en PDF para
         tenerlos siempre a mano o compartirlos. Además, ajustamos todas las
         guías del sitio al nuevo reglamento académico de la facultad.

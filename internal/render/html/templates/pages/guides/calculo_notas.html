@@ -38,7 +38,7 @@
 {{ end }}
 
 {{ define "custom_head" }}
-  <link rel="stylesheet" href="/static/css/guides_styles.css?2" />
+  <link rel="stylesheet" href="/static/css/guides_styles.css?3" />
 {{ end }}
 
 {{ define "content" }}
@@ -50,7 +50,7 @@
       exámenes finales.
     </p>
     <div
-      class="my-4 p-3 bg-gray-50 border border-gray-200 rounded-sm text-sm text-gray-600 flex items-center gap-2.5">
+      class="my-4 p-3 bg-gray-50 dark:bg-black dark:border-zinc-700 dark:text-gray-400 border border-gray-200 rounded-sm text-sm text-gray-600 flex items-center gap-2.5">
       <svg
         class="w-4 h-4 text-gray-400 shrink-0"
         fill="none"
@@ -63,7 +63,7 @@
           d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
       <span>
-        Si quieres calcular tu Promedio Ponderado y conocer tu escala de notas,
+        Si quieres calcular tu Promedio de Evaluación del Proceso (PEP) y conocer tu escala de notas,
         podes usar nuestra
         <a
           href="/guides/news"
@@ -75,7 +75,7 @@
     </div>
 
     <section>
-      <h2>Evaluación del Proceso y Promedio Ponderado (PP)</h2>
+      <h2>Evaluación del Proceso y Promedio de Evaluación del Proceso (PEP)</h2>
       <p>
         El semestre se divide en dos etapas de evaluación continua. En cada
         etapa se acumula un puntaje compuesto por:
@@ -93,13 +93,13 @@
         </li>
       </ul>
       <p>
-        El <strong>Promedio Ponderado (PP)</strong> del semestre surge del
+        El <strong>Promedio de Evaluación del Proceso (PEP)</strong> del semestre surge del
         promedio de los puntajes acumulados en ambas etapas. Para tener derecho
         a rendir el Examen Final, este promedio debe ser de al menos
         <strong>60%</strong>.
       </p>
 
-      <h3>Ejemplo práctico del cálculo del Promedio Ponderado</h3>
+      <h3>Ejemplo práctico del cálculo del Promedio de Evaluación del Proceso (PEP)</h3>
       <p>
         Si una materia evalúa sus actividades con los siguientes pesos y notas:
       </p>
@@ -129,7 +129,7 @@
         >
       </div>
       <p>
-        El Promedio Ponderado (PP) del semestre en este caso es
+        El Promedio de Evaluación del Proceso (PEP) del semestre en este caso es
         <strong>74.5%</strong>.
       </p>
     </section>
@@ -139,20 +139,19 @@
       <p>
         Una vez habilitado a rendir, la Puntuación Final (PF) que determina la
         nota final se calcula combinando el Examen Final con el Promedio
-        Ponderado del proceso:
+        Ponderado del proceso (PEP):
       </p>
       <p>
-        <strong>PF = 0.6 × EF + 0.4 × PP</strong>
+        <strong>PF = 0.4 × EF + 0.6 × PEP</strong>
       </p>
       <div>
         <p>
           <strong>EF (Examen Final):</strong> Exige obtener como mínimo un
-          <strong>50%</strong> para aprobar la materia, independientemente de la
-          nota acumulada en el proceso.
+          <strong>50%</strong> para aprobar la materia. Si es menor al 50%, la nota final es automáticamente 1.
         </p>
         <p>
-          <strong>PP (Promedio Ponderado):</strong> Puntaje total obtenido
-          durante la evaluación del semestre.
+          <strong>PEP (Promedio de Evaluación del Proceso):</strong> Puntaje total obtenido
+          durante la evaluación continua del semestre.
         </p>
       </div>
     </section>
@@ -160,8 +159,7 @@
     <section>
       <h2>Escala de Calificaciones</h2>
       <p>
-        La Puntuación Final (PF) se redondea (los decimales a partir de 0.5
-        ascienden al entero superior) y se asigna la nota final correspondiente:
+        La Puntuación Final (PF) determina la nota final correspondiente:
       </p>
       <div class="table-container">
         <table border="1">
@@ -184,7 +182,7 @@
               <td>Aprobado</td>
               <td>60–70%</td>
               <td>2</td>
-              <td>Regular</td>
+              <td>Aceptable</td>
             </tr>
             <tr>
               <td>Aprobado</td>
@@ -210,26 +208,23 @@
     </section>
 
     <section>
-      <h2>Requisitos para Rendir el Examen Final</h2>
+      <h2>Requisitos para Rendir el Examen Final (Habilitación)</h2>
       <p>
-        Para rendir el Examen Final en cualquiera de sus dos oportunidades por
-        periodo, se deben cumplir simultáneamente los siguientes puntos:
+        Para rendir el Examen Final se deben cumplir simultáneamente los siguientes puntos:
       </p>
       <ul>
         <li>
-          <strong>Promedio Ponderado:</strong> Contar con un Promedio Ponderado
-          (PP) mínimo del <strong>60%</strong>.
+          <strong>Promedio de Proceso (PEP):</strong> Contar con un PEP mínimo del <strong>60%</strong>.
         </li>
         <li>
-          <strong>Asistencia a Laboratorios:</strong> Cumplir con el 100% de las
-          actividades de laboratorio cuando corresponda.
+          <strong>Asistencia:</strong> Cumplir con los requisitos de asistencia (50% de clases, 100% de laboratorios).
         </li>
       </ul>
       <p>
-        <strong>Importante:</strong> En caso de no habilitar los examenes
-        finales, el alumno puede rendir un tercer parcial a modo de
-        recuperatorio. Este se realiza en la misma fecha que el primer examen
-        final, utilizando el mismo examen de la prueba final.
+        <strong>Recuperación de Parciales:</strong> Si un alumno no alcanza el PEP necesario o
+            no fue capaz de tomar una de las pruebas parciales, puede rendir el primer examen
+            final como un tercer parcial (recuperatorio), siempre que el proceso en clase
+            llegue al 60%.
       </p>
     </section>
 

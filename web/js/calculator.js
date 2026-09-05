@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         promParciales = np2;
       }
 
-      // PP = (PromParciales * 0.5) + (nLab * pLab/100) + (nTareas * pTareas/100)
+      // PEP = (PromParciales * 0.5) + (nLab * pLab/100) + (nTareas * pTareas/100)
       promedio = (promParciales * 0.50) + 
                  (nLab * (pLab / 100)) + 
                  (nTareas * (pTareas / 100));
@@ -185,8 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function actualizarFirmas(promedio) {
     if (promedio < 60) {
       badgeEstado.className = "inline-block px-3 py-1 rounded-sm text-xs font-bold bg-red-100 dark:bg-red-900/80 text-red-800 dark:text-red-200 border border-red-200 dark:border-red-700 mb-3";
-      badgeEstado.textContent = "Sin Firma (PP < 60%)";
-      msgEstado.textContent = "No alcanzás el 60% requerido. Aún podés rendir el 3er Parcial Recuperatorio.";
+      badgeEstado.textContent = "No Habilitado (PEP < 60%)";
+      msgEstado.textContent = "No alcanzás el 60% de PEP requerido. No estás habilitado para el examen final. Podés recuperar un parcial según el nuevo reglamento.";
     } else {
       badgeEstado.className = "inline-block px-3 py-1 rounded-sm text-xs font-bold bg-green-100 dark:bg-green-900/80 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-700 mb-3";
       badgeEstado.textContent = "Habilitado (Firma Aprobada)";
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Escala oficial de notas según Puntuación Final (PF = 0.6*EF + 0.4*PP)
+    // Escala oficial de notas según Puntuación Final (PF = 0.4*EF + 0.6*PP)
     const limitesNotas = [
       { nota: 2, minPF: 60 },
       { nota: 3, minPF: 71 },
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let html = '';
 
     limitesNotas.forEach(item => {
-      let reqExamen = (item.minPF - (promedio * 0.4)) / 0.6;
+      let reqExamen = (item.minPF - (promedio * 0.6)) / 0.4;
       let examenFinalRequerido = Math.max(50, Math.ceil(reqExamen));
 
       if (examenFinalRequerido > 100) {
