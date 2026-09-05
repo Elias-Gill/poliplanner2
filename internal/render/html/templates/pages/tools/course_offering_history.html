@@ -59,45 +59,48 @@
 {{ end }}
 
 {{ define "subjects_select" }}
-  <label
-    for="subject-select"
-    class="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
-    Materia
-  </label>
-  <select
-    id="subject-select"
-    hx-get="/tools/course-offering-history/timeline"
-    hx-target="#timeline-container"
-    name="curriculum_id"
-    class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-zinc-700 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500 focus:outline-none cursor-pointer"
-    {{ if not .Subjects }}disabled{{ end }}>
-    <option value="" disabled selected>Selecciona una materia...</option>
-    {{ range .Subjects }}
-      <option value="{{ .ID }}">{{ .Name }}</option>
-    {{ end }}
-  </select>
+  <div x-data="{
+      searchQuery: '',
+      subjects: [
+        {{ range .Subjects }}
+          { id: '{{ .ID }}', name: '{{ .Name }}' },
+        {{ end }}
+      ],
+      get filteredSubjects() {
+        return this.subjects.filter(s => 
+          s.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+        )
+      }
+  }">
+    <label
+      for="subject-select"
+      class="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
+      Materia
+    </label>
+    
+    <input 
+      type="text" 
+      x-model="searchQuery" 
+      placeholder="Filtrar materias por nombre..." 
+      class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-zinc-700 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500 focus:outline-none mb-2">
+
+    <select
+      id="subject-select"
+      hx-get="/tools/course-offering-history/timeline"
+      hx-target="#timeline-container"
+      name="curriculum_id"
+      class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-zinc-700 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500 focus:outline-none cursor-pointer"
+      {{ if not .Subjects }}disabled{{ end }}>
+      <option value="" disabled selected>Selecciona una materia...</option>
+      <template x-for="subject in filteredSubjects" :key="subject.id">
+        <option :value="subject.id" x-text="subject.name"></option>
+      </template>
+    </select>
+  </div>
 {{ end }}
 
 {{ define "timeline" }}
-  <div class="space-y-4" x-data="{
-    searchQuery: '',
-    
-    matches(section) {
-        if (this.searchQuery.trim() !== '' && !section.toLowerCase().includes(this.searchQuery.toLowerCase().trim())) {
-            return false;
-        }
-        return true;
-    }
-  }">
-    <!-- Buscador rápido por sección -->
-    <div class="bg-white dark:bg-zinc-900 p-4 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
-      <input 
-        type="text" 
-        x-model="searchQuery" 
-        placeholder="Buscar sección en el historial (ej. A, B, 1)..." 
-        class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-zinc-700 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500 focus:outline-none">
-    </div>
-
+  <div class="space-y-4">
     {{ if .History }}
       {{ range $index, $entry := .History }}
         <div
@@ -110,14 +113,8 @@
             @click="open = !open"
             class="w-full px-5 py-3.5 bg-gray-50 dark:bg-zinc-900/80 hover:bg-gray-100 dark:hover:bg-zinc-700/50 flex items-center justify-between text-left transition cursor-pointer select-none">
             <div class="flex items-center gap-2.5">
-              <div class="w-6 h-6 rounded-xs bg-primary-100 dark:bg-primary-950 text-primary-700 dark:text-primary-400 font-bold text-xs flex items-center justify-center border border-primary-200 dark:border-primary-900">
-                {{ $entry.Period.Semester }}P
-              </div>
               <span class="font-bold text-sm text-gray-900 dark:text-zinc-100">
-                Periodo Lectivo {{ $entry.Period.Year }}-{{ $entry.Period.Semester }}
-              </span>
-              <span class="text-xs px-2 py-0.5 rounded-full bg-gray-200 dark:bg-zinc-800 text-gray-600 dark:text-zinc-400 font-medium">
-                {{ len $entry.Offering }} {{ if eq (len $entry.Offering) 1 }}sección habilitada{{ else }}secciones habilitadas{{ end }}
+                Periodo: {{ $entry.Period.Year }} - {{ if eq $entry.Period.Semester 1 }}1°{{ else }}2°{{ end }} Semestre
               </span>
             </div>
 
@@ -134,30 +131,24 @@
           <!-- Lista de Cursos/Secciones por Periodo -->
           <div
             x-show="open"
-            class="divide-y divide-gray-200 dark:divide-zinc-800 border-t border-gray-200 dark:border-zinc-800">
-            {{ range $entry.Offering }}
-              <div class="p-5 space-y-4" x-show="matches('{{ .Section }}')">
+            class="space-y-8 p-5 border-t border-gray-200 dark:border-zinc-800 bg-gray-50/40 dark:bg-zinc-950/20">
+            {{ range $secIndex, $section := .Offering }}
+              <div class="p-5 space-y-4 bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm{{ if gt $secIndex 0 }} mt-6{{ end }}">
                 
                 <!-- Encabezado de la Sección -->
                 <div class="flex items-start justify-between gap-4 flex-wrap">
                   <div>
                     <h3 class="text-base font-bold text-gray-900 dark:text-zinc-100 leading-snug">
-                      {{ .Name }}
+                      {{ $section.Name }}
                     </h3>
                     <div class="flex items-center gap-2 mt-1.5 flex-wrap">
                       <span class="inline-flex items-center px-2 py-0.5 rounded-xs text-xs font-bold bg-primary-50 dark:bg-primary-950/70 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800">
-                        Sección {{ .Section }}
+                        Sección {{ $section.Section }}
                       </span>
                       
                       <span class="inline-flex items-center px-2 py-0.5 rounded-xs text-xs font-medium bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 border border-gray-200 dark:border-zinc-700">
-                        Modalidad: {{ .Type.String }}
+                        {{ $section.Type.String }}
                       </span>
-
-                      {{ if .Shift }}
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-xs text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">
-                          Turno {{ .Shift }}
-                        </span>
-                      {{ end }}
                     </div>
                   </div>
                 </div>
@@ -171,8 +162,8 @@
                       Docentes Asignados
                     </span>
                     <p class="text-gray-800 dark:text-zinc-200 font-medium leading-relaxed text-xs">
-                      {{ if .Teachers }}
-                        {{ range $i, $t := .Teachers -}}
+                      {{ if $section.Teachers }}
+                        {{ range $i, $t := $section.Teachers -}}
                           {{- if $i }}, {{ end -}}
                           {{- $t.Title }} {{ $t.FirstName }} {{ $t.LastName -}}
                         {{- end }}
@@ -187,9 +178,9 @@
                     <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400 block">
                       Horarios de Clase
                     </span>
-                    {{ if .Schedules }}
+                    {{ if $section.Schedules }}
                       <div class="flex flex-wrap gap-2">
-                        {{ range .Schedules }}
+                        {{ range $section.Schedules }}
                           <div class="inline-flex items-center gap-1.5 bg-gray-50 dark:bg-zinc-800/60 text-gray-900 dark:text-zinc-100 px-2.5 py-1 rounded-sm text-xs font-medium border border-gray-200 dark:border-zinc-700">
                             <span class="font-bold text-primary-600 dark:text-primary-400">{{ .Day.String }}</span>
                             {{ if and .Time.Start .Time.End }}
@@ -205,9 +196,9 @@
                       <p class="text-xs text-gray-400 dark:text-zinc-500 italic">Sin horarios presenciales registrados</p>
                     {{ end }}
 
-                    {{ if .SaturdayDates }}
+                    {{ if $section.SaturdayDates }}
                       <p class="text-xs text-gray-500 dark:text-zinc-400 mt-1">
-                        <strong class="font-semibold">Clases de Sábados:</strong> {{ .SaturdayDates }}
+                        <strong class="font-semibold">Clases de Sábados:</strong> {{ $section.SaturdayDates }}
                       </p>
                     {{ end }}
                   </div>
@@ -215,14 +206,13 @@
                 </div>
 
                 <!-- Bloque de Exámenes Históricos -->
-                {{.Exams}}
-                {{ if .Exams }}
+                {{ if $section.Exams }}
                   <div class="pt-3 border-t border-gray-100 dark:border-zinc-800/60">
                     <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400 block mb-2">
                       Calendario de Exámenes
                     </span>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-                      {{ range .Exams }}
+                      {{ range $section.Exams }}
                         <div class="bg-gray-50/70 dark:bg-zinc-950/60 p-2.5 rounded-sm border border-gray-200 dark:border-zinc-800 flex flex-col justify-between space-y-1.5">
                             <div class="flex items-center justify-between">
                               <span class="font-bold text-gray-900 dark:text-zinc-100 text-xs">
@@ -233,11 +223,11 @@
                                   {{ else }}Examen{{ end }}
                               </span>
                             </div>
-                          
+                            
                             <div class="text-gray-700 dark:text-zinc-300 font-mono text-[11px]">
-                              {{ if .date }}
-                                <span class="font-medium block">{{ .date.Format "02/01/2006" }}</span>
-                                <span class="text-gray-500 dark:text-zinc-400 block">{{ .date.Format "15:04" }} hs</span>
+                              {{ if .HasDate }}
+                                <span class="font-medium block">{{ .Date.Format "02/01/2006" }}</span>
+                                <span class="text-gray-500 dark:text-zinc-400 block">{{ .Date.Format "15:04" }} hs</span>
                               {{ else }}
                                 <span class="text-gray-400 dark:text-zinc-500 italic font-sans">Sin fecha confirmada</span>
                               {{ end }}
@@ -255,13 +245,13 @@
                 {{ end }}
 
                 <!-- Tribunal / Comisión Examinadora si aplica -->
-                {{ if or .Committee.President .Committee.Member1 .Committee.Member2 }}
+                {{ if or $section.Committee.President $section.Committee.Member1 $section.Committee.Member2 }}
                   <div class="text-xs text-gray-500 dark:text-zinc-400 bg-gray-50 dark:bg-zinc-950/40 p-2.5 rounded-sm border border-gray-200/60 dark:border-zinc-800">
                     <span class="font-bold uppercase tracking-wider text-[10px] text-gray-500 dark:text-zinc-400 block mb-1">Comisión de Examen / Tribunal:</span>
                     <div class="flex flex-wrap gap-x-4 gap-y-1">
-                      {{ if .Committee.President }}<span><strong>Presidente:</strong> {{ .Committee.President }}</span>{{ end }}
-                      {{ if .Committee.Member1 }}<span><strong>Miembro 1:</strong> {{ .Committee.Member1 }}</span>{{ end }}
-                      {{ if .Committee.Member2 }}<span><strong>Miembro 2:</strong> {{ .Committee.Member2 }}</span>{{ end }}
+                      {{ if $section.Committee.President }}<span><strong>Presidente:</strong> {{ $section.Committee.President }}</span>{{ end }}
+                      {{ if $section.Committee.Member1 }}<span><strong>Miembro 1:</strong> {{ $section.Committee.Member1 }}</span>{{ end }}
+                      {{ if $section.Committee.Member2 }}<span><strong>Miembro 2:</strong> {{ $section.Committee.Member2 }}</span>{{ end }}
                     </div>
                   </div>
                 {{ end }}

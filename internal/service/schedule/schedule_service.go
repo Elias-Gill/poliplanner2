@@ -25,12 +25,13 @@ var (
 
 type ScheduleService struct {
 	scheduleRepository schedRepository.ScheduleRepository
-	courseService      academicSrv.CourseService
+	courseService      *academicSrv.CourseService
 }
 
-func New(scheduleRepo schedRepository.ScheduleRepository) *ScheduleService {
+func New(scheduleRepo schedRepository.ScheduleRepository, courseService *academicSrv.CourseService) *ScheduleService {
 	return &ScheduleService{
 		scheduleRepository: scheduleRepo,
+		courseService:      courseService,
 	}
 }
 

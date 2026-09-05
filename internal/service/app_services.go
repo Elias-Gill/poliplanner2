@@ -90,7 +90,7 @@ func NewAppServices(repos RepositoriesInput) *AppServices {
 
 	careerService := academicSrv.NewCareerService(repos.CareerRepo)
 
-	scheduleService := scheduleSrv.New(repos.ScheduleRepo)
+	scheduleService := scheduleSrv.New(repos.ScheduleRepo, courseService)
 
 	return &AppServices{
 		// Academic
