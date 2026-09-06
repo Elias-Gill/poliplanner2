@@ -121,6 +121,20 @@
                 <option value="2">Período 2</option>
               </select>
             </div>
+            <!-- Fecha -->
+            <div>
+              <label
+                for="dateInput"
+                class="block mb-1.5 text-sm font-medium text-gray-700">
+                Fecha de subida
+              </label>
+              <input
+                type="date"
+                id="dateInput"
+                name="date"
+                required
+                class="block w-full px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-sm shadow-sm transition focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+            </div>
             <!-- URL -->
             <div>
               <label
@@ -224,6 +238,7 @@
 
         const key = document.getElementById("uploadKey").value;
         const period = document.getElementById("periodSelect").value;
+        const date = document.getElementById("dateInput").value;
         const fileInput = document.getElementById("fileInput");
         const urlInput = document.getElementById("downloadUrl");
         const resultEl = document.getElementById("uploadResult");
@@ -231,6 +246,11 @@
         if (!period) {
           resultEl.className = "text-red-700 text-sm font-medium";
           resultEl.textContent = "Selecciona un período válido.";
+          return;
+        }
+        if (!date) {
+          resultEl.className = "text-red-700 text-sm font-medium";
+          resultEl.textContent = "Selecciona una fecha válida.";
           return;
         }
         if (fileInput.files.length === 0) {
@@ -246,6 +266,7 @@
         formData.append("file", fileInput.files[0]);
         formData.append("downloadUrl", urlInput.value);
         formData.append("period", period);
+        formData.append("date", date);
 
         try {
           const res = await fetch("/excel/sync", {
@@ -273,6 +294,11 @@
     // Mostrar nombre del archivo seleccionado
     const fileInput = document.getElementById("fileInput");
     const fileNameDisplay = document.getElementById("fileNameDisplay");
+    const dateInput = document.getElementById("dateInput");
+
+    if (dateInput) {
+      dateInput.valueAsDate = new Date();
+    }
 
     if (fileInput && fileNameDisplay) {
       fileInput.addEventListener("change", function (e) {

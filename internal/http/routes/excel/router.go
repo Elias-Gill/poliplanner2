@@ -141,6 +141,13 @@ func (h *Handler) handleUpload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	dateStr := r.FormValue("date")
+	uploadDate, err := time.Parse("2006-01-02", dateStr)
+	if err != nil {
+		http.Error(w, "Invalid date format, expected YYYY-MM-DD", http.StatusBadRequest)
+		return
+	}
+
 	downloadURL := strings.TrimSpace(r.FormValue("downloadUrl"))
 	if downloadURL == "" {
 		downloadURL = "manual-upload"
@@ -150,7 +157,7 @@ func (h *Handler) handleUpload(w http.ResponseWriter, r *http.Request) {
 		Name:     header.Filename,
 		URI:      downloadURL,
 		Semester: academic.YearSemester(semester),
-		Date:     time.Now().In(timezone.ParaguayTZ),
+		Date:     uploadDate.In(timezone.ParaguayTZ),
 	})
 
 	if err := h.excelService.PersistSource(r.Context(), src); err != nil {
