@@ -11,25 +11,25 @@
 {{ end }}
 
 {{ define "content" }}
-  <div class="max-w-7xl mx-auto py-2 min-h-[calc(100vh-4rem)] flex flex-col gap-4">
+  <div class="max-w-7xl mx-auto py-2 min-h-[calc(100vh-4rem)] flex flex-col gap-4 px-2 sm:px-4">
     <!-- Header -->
     <div class="bg-white dark:bg-zinc-900 p-4 rounded-sm shadow-sm border border-gray-200 dark:border-zinc-800">
-      <h1 class="text-xl font-bold text-gray-900 dark:text-zinc-100">
+      <h1 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-zinc-100">
         Historial de Secciones
       </h1>
       <p class="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
-        Consulta el registro histórico completo de las secciones habilitadas, turnos, docentes, horarios, tipos de curso y fechas de exámenes por periodo académico.
+        Consulta el registro histórico completo de las secciones habilitadas, turnos, docentes, horarios y exámenes por periodo académico.
       </p>
     </div>
 
     <!-- Filtros de Carrera y Materia -->
-    <div
-      class="grid gap-6 md:grid-cols-2 bg-white dark:bg-zinc-900 p-6 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 bg-white dark:bg-zinc-900 p-4 sm:p-5 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
+      
       <!-- Selector de Carrera -->
-      <div>
+      <div class="md:col-span-5">
         <label
           for="career-select"
-          class="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
+          class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-300 mb-1.5">
           Carrera
         </label>
         <select
@@ -37,7 +37,7 @@
           hx-get="/tools/course-offering-history/list-subjects"
           hx-target="#subjects-container"
           name="career_id"
-          class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-zinc-700 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500 focus:outline-none cursor-pointer">
+          class="w-full px-3 py-2 text-xs sm:text-sm border border-gray-300 dark:border-zinc-700 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500 focus:outline-none cursor-pointer">
           <option value="" disabled selected>Selecciona una carrera...</option>
           {{ range .Careers }}
             <option value="{{ .ID }}">{{ .Name }} ({{ .Code }})</option>
@@ -45,58 +45,122 @@
         </select>
       </div>
 
-      <!-- Selector de Materia -->
-      <div id="subjects-container">
+      <!-- Contenedor Dinámico de Materias -->
+      <div id="subjects-container" class="md:col-span-7">
         {{ template "subjects_select" . }}
       </div>
+
     </div>
 
     <!-- Contenedor del Historial -->
     <div id="timeline-container">
-      <!-- Se inyectará el template timeline aquí -->
+      <div class="p-8 text-center bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
+        <p class="text-xs sm:text-sm text-gray-500 dark:text-zinc-400">
+          Selecciona una carrera y luego una materia para ver su historial.
+        </p>
+      </div>
     </div>
   </div>
 {{ end }}
 
 {{ define "subjects_select" }}
-  <div x-data="{
-      searchQuery: '',
-      subjects: [
-        {{ range .Subjects }}
-          { id: '{{ .ID }}', name: '{{ .Name }}' },
-        {{ end }}
-      ],
-      get filteredSubjects() {
-        return this.subjects.filter(s => 
-          s.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-        )
-      }
-  }">
-    <label
-      for="subject-select"
-      class="block text-sm font-semibold text-gray-700 dark:text-zinc-300 mb-2">
-      Materia
-    </label>
-    
-    <input 
-      type="text" 
-      x-model="searchQuery" 
-      placeholder="Filtrar materias por nombre..." 
-      class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-zinc-700 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500 focus:outline-none mb-2">
+  {{ if .Subjects }}
+    <div 
+      x-data="{
+        open: false,
+        searchQuery: '',
+        selectedName: '',
+        selectedId: '',
+        subjects: [
+          {{ range .Subjects }}
+            { id: '{{ .ID }}', name: '{{ .Name }}' },
+          {{ end }}
+        ],
+        get filteredSubjects() {
+          if (!this.searchQuery.trim()) return this.subjects;
+          return this.subjects.filter(s => 
+            s.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+          );
+        },
+        selectSubject(subject) {
+          this.selectedId = subject.id;
+          this.selectedName = subject.name;
+          this.searchQuery = subject.name;
+          this.open = false;
+        }
+      }"
+      @click.outside="open = false"
+      class="relative w-full">
+      
+      <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-300 mb-1.5">
+        Materia
+      </label>
 
-    <select
-      id="subject-select"
-      hx-get="/tools/course-offering-history/timeline"
-      hx-target="#timeline-container"
-      name="curriculum_id"
-      class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-zinc-700 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500 focus:outline-none cursor-pointer"
-      {{ if not .Subjects }}disabled{{ end }}>
-      <option value="" disabled selected>Selecciona una materia...</option>
-      <template x-for="subject in filteredSubjects" :key="subject.id">
-        <option :value="subject.id" x-text="subject.name"></option>
-      </template>
-    </select>
-  </div>
+      <!-- Input de búsqueda y selección -->
+      <div class="relative">
+        <input 
+          type="text" 
+          x-model="searchQuery"
+          @focus="open = true"
+          @input="open = true; selectedId = ''"
+          placeholder="Buscar materia..." 
+          class="w-full px-3 py-2 text-xs sm:text-sm border border-gray-300 dark:border-zinc-700 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500 focus:outline-none pr-8">
+        
+        <button 
+          type="button" 
+          x-show="searchQuery.length > 0" 
+          @click="searchQuery = ''; selectedId = ''; selectedName = ''; open = true;"
+          class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 p-1">
+          ✕
+        </button>
+      </div>
+
+      <!-- Dropdown Flotante Absolute -->
+      <div 
+        x-show="open" 
+        x-cloak
+        class="absolute z-50 left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-sm shadow-xl divide-y divide-gray-100 dark:divide-zinc-800/60">
+        
+        <template x-for="subject in filteredSubjects" :key="subject.id">
+          <button
+            type="button"
+            @click="selectSubject(subject)"
+            :hx-get="'/tools/course-offering-history/timeline?curriculum_id=' + subject.id"
+            hx-target="#timeline-container"
+            hx-swap="innerHTML"
+            hx-trigger="click"
+            :class="selectedId === subject.id ? 'bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 font-bold' : 'text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800/60'"
+            class="w-full text-left px-3.5 py-2.5 text-xs sm:text-sm transition flex items-center justify-between cursor-pointer">
+            <span x-text="subject.name"></span>
+            
+            <svg 
+              x-show="selectedId === subject.id" 
+              class="w-4 h-4 text-primary-600 dark:text-primary-400 shrink-0 ml-2" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+            </svg>
+          </button>
+        </template>
+
+        <div 
+          x-show="filteredSubjects.length === 0" 
+          class="p-3 text-center text-xs text-gray-400 dark:text-zinc-500">
+          No hay materias que coincidan.
+        </div>
+      </div>
+    </div>
+  {{ else }}
+    <div>
+      <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-300 mb-1.5">
+        Materia
+      </label>
+      <div class="p-2.5 border border-gray-300 dark:border-zinc-700 rounded-sm bg-gray-50 dark:bg-zinc-950 text-xs text-gray-400 dark:text-zinc-500">
+        Selecciona primero una carrera...
+      </div>
+    </div>
+  {{ end }}
 {{ end }}
 
 {{ define "timeline" }}
@@ -111,9 +175,9 @@
           <button
             type="button"
             @click="open = !open"
-            class="w-full px-5 py-3.5 bg-gray-50 dark:bg-zinc-900/80 hover:bg-gray-100 dark:hover:bg-zinc-700/50 flex items-center justify-between text-left transition cursor-pointer select-none">
+            class="w-full px-4 sm:px-5 py-3 bg-gray-50 dark:bg-zinc-900/80 hover:bg-gray-100 dark:hover:bg-zinc-700/50 flex items-center justify-between text-left transition cursor-pointer select-none">
             <div class="flex items-center gap-2.5">
-              <span class="font-bold text-sm text-gray-900 dark:text-zinc-100">
+              <span class="font-bold text-xs sm:text-sm text-gray-900 dark:text-zinc-100">
                 Periodo: {{ $entry.Period.Year }} - {{ if eq $entry.Period.Semester 1 }}1°{{ else }}2°{{ end }} Semestre
               </span>
             </div>
@@ -131,22 +195,22 @@
           <!-- Lista de Cursos/Secciones por Periodo -->
           <div
             x-show="open"
-            class="space-y-8 p-5 border-t border-gray-200 dark:border-zinc-800 bg-gray-50/40 dark:bg-zinc-950/20">
+            class="space-y-4 sm:space-y-6 p-3 sm:p-5 border-t border-gray-200 dark:border-zinc-800 bg-gray-50/40 dark:bg-zinc-950/20">
             {{ range $secIndex, $section := .Offering }}
-              <div class="p-5 space-y-4 bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm{{ if gt $secIndex 0 }} mt-6{{ end }}">
+              <div class="p-4 sm:p-5 space-y-4 bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
                 
                 <!-- Encabezado de la Sección -->
-                <div class="flex items-start justify-between gap-4 flex-wrap">
+                <div class="flex items-start justify-between gap-2 flex-wrap">
                   <div>
-                    <h3 class="text-base font-bold text-gray-900 dark:text-zinc-100 leading-snug">
+                    <h3 class="text-sm sm:text-base font-bold text-gray-900 dark:text-zinc-100 leading-snug">
                       {{ $section.Name }}
                     </h3>
                     <div class="flex items-center gap-2 mt-1.5 flex-wrap">
-                      <span class="inline-flex items-center px-2 py-0.5 rounded-xs text-xs font-bold bg-primary-50 dark:bg-primary-950/70 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800">
+                      <span class="inline-flex items-center px-2 py-0.5 rounded-xs text-[11px] font-bold bg-primary-50 dark:bg-primary-950/70 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800">
                         Sección {{ $section.Section }}
                       </span>
                       
-                      <span class="inline-flex items-center px-2 py-0.5 rounded-xs text-xs font-medium bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 border border-gray-200 dark:border-zinc-700">
+                      <span class="inline-flex items-center px-2 py-0.5 rounded-xs text-[11px] font-medium bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 border border-gray-200 dark:border-zinc-700">
                         {{ $section.Type.String }}
                       </span>
                     </div>
@@ -154,11 +218,11 @@
                 </div>
 
                 <!-- Docentes y Horarios de Clase -->
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 text-sm pt-1">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 text-xs sm:text-sm pt-1">
                   
                   <!-- Docentes -->
                   <div class="md:col-span-5 space-y-1">
-                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400 block">
+                    <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400 block">
                       Docentes Asignados
                     </span>
                     <p class="text-gray-800 dark:text-zinc-200 font-medium leading-relaxed text-xs">
@@ -168,20 +232,20 @@
                           {{- $t.Title }} {{ $t.FirstName }} {{ $t.LastName -}}
                         {{- end }}
                       {{ else }}
-                        <span class="text-gray-400 dark:text-zinc-500 italic">Sin docentes registrados</span>
+                        <span class="text-gray-400 dark:text-zinc-500">Sin docentes registrados</span>
                       {{ end }}
                     </p>
                   </div>
 
                   <!-- Horarios de Clases -->
                   <div class="md:col-span-7 space-y-1">
-                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400 block">
+                    <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400 block">
                       Horarios de Clase
                     </span>
                     {{ if $section.Schedules }}
-                      <div class="flex flex-wrap gap-2">
+                      <div class="flex flex-wrap gap-1.5">
                         {{ range $section.Schedules }}
-                          <div class="inline-flex items-center gap-1.5 bg-gray-50 dark:bg-zinc-800/60 text-gray-900 dark:text-zinc-100 px-2.5 py-1 rounded-sm text-xs font-medium border border-gray-200 dark:border-zinc-700">
+                          <div class="inline-flex items-center gap-1.5 bg-gray-50 dark:bg-zinc-800/60 text-gray-900 dark:text-zinc-100 px-2 py-1 rounded-sm text-xs font-medium border border-gray-200 dark:border-zinc-700">
                             <span class="font-bold text-primary-600 dark:text-primary-400">{{ .Day.String }}</span>
                             {{ if and .Time.Start .Time.End }}
                               <span>{{ .Time.Start.Format "15:04" }} - {{ .Time.End.Format "15:04" }} hs</span>
@@ -193,7 +257,7 @@
                         {{ end }}
                       </div>
                     {{ else }}
-                      <p class="text-xs text-gray-400 dark:text-zinc-500 italic">Sin horarios presenciales registrados</p>
+                      <p class="text-xs text-gray-400 dark:text-zinc-500">Sin horarios presenciales registrados</p>
                     {{ end }}
 
                     {{ if $section.SaturdayDates }}
@@ -208,12 +272,12 @@
                 <!-- Bloque de Exámenes Históricos -->
                 {{ if $section.Exams }}
                   <div class="pt-3 border-t border-gray-100 dark:border-zinc-800/60">
-                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400 block mb-2">
+                    <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400 block mb-2">
                       Calendario de Exámenes
                     </span>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 text-xs">
                       {{ range $section.Exams }}
-                        <div class="bg-gray-50/70 dark:bg-zinc-950/60 p-2.5 rounded-sm border border-gray-200 dark:border-zinc-800 flex flex-col justify-between space-y-1.5">
+                        <div class="bg-gray-50/70 dark:bg-zinc-950/60 p-2 rounded-sm border border-gray-200 dark:border-zinc-800 flex flex-col justify-between space-y-1">
                             <div class="flex items-center justify-between">
                               <span class="font-bold text-gray-900 dark:text-zinc-100 text-xs">
                                   {{ if and (eq .Type "partial") (eq .Instance 1) }}1° Parcial
@@ -229,12 +293,12 @@
                                 <span class="font-medium block">{{ .Date.Format "02/01/2006" }}</span>
                                 <span class="text-gray-500 dark:text-zinc-400 block">{{ .Date.Format "15:04" }} hs</span>
                               {{ else }}
-                                <span class="text-gray-400 dark:text-zinc-500 italic font-sans">Sin fecha confirmada</span>
+                                <span class="text-gray-400 dark:text-zinc-500 font-sans">Sin fecha</span>
                               {{ end }}
                             </div>
 
                             {{ if .Room }}
-                              <div class="text-[11px] text-gray-500 dark:text-zinc-400 pt-1 border-t border-gray-200/50 dark:border-zinc-800">
+                              <div class="text-[10px] text-gray-500 dark:text-zinc-400 pt-1 border-t border-gray-200/50 dark:border-zinc-800">
                                 Aula: <span class="font-medium text-gray-700 dark:text-zinc-300">{{ .Room }}</span>
                               </div>
                             {{ end }}
@@ -244,11 +308,11 @@
                   </div>
                 {{ end }}
 
-                <!-- Tribunal / Comisión Examinadora si aplica -->
+                <!-- Tribunal / Comisión Examinadora -->
                 {{ if or $section.Committee.President $section.Committee.Member1 $section.Committee.Member2 }}
                   <div class="text-xs text-gray-500 dark:text-zinc-400 bg-gray-50 dark:bg-zinc-950/40 p-2.5 rounded-sm border border-gray-200/60 dark:border-zinc-800">
-                    <span class="font-bold uppercase tracking-wider text-[10px] text-gray-500 dark:text-zinc-400 block mb-1">Comisión de Examen / Tribunal:</span>
-                    <div class="flex flex-wrap gap-x-4 gap-y-1">
+                    <span class="font-bold uppercase tracking-wider text-[10px] text-gray-500 dark:text-zinc-400 block mb-1">Comisión / Tribunal:</span>
+                    <div class="flex flex-col sm:flex-row sm:flex-wrap gap-x-4 gap-y-0.5">
                       {{ if $section.Committee.President }}<span><strong>Presidente:</strong> {{ $section.Committee.President }}</span>{{ end }}
                       {{ if $section.Committee.Member1 }}<span><strong>Miembro 1:</strong> {{ $section.Committee.Member1 }}</span>{{ end }}
                       {{ if $section.Committee.Member2 }}<span><strong>Miembro 2:</strong> {{ $section.Committee.Member2 }}</span>{{ end }}
@@ -262,8 +326,8 @@
         </div>
       {{ end }}
     {{ else }}
-      <div class="p-8 text-center bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800">
-        <p class="text-sm text-gray-500 dark:text-zinc-400 italic">
+      <div class="p-8 text-center bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
+        <p class="text-xs sm:text-sm text-gray-500 dark:text-zinc-400">
           No hay registros históricos de secciones disponibles para la materia seleccionada.
         </p>
       </div>
