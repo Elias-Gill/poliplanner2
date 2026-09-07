@@ -123,7 +123,7 @@ func (h *Handler) isAuthorized(authHeader string) bool {
 func (h *Handler) handleUpload(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 	if err := r.ParseMultipartForm(maxUploadSize); err != nil {
-		http.Error(w, "Invalid form data", http.StatusBadRequest)
+		http.Error(w, "Invalid form data: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 

@@ -129,6 +129,7 @@ func initRouter(srvs *services.AppServices) chi.Router {
 	r.Handle("/robots.txt", http.FileServer(staticDir))
 	r.Handle("/service_worker.js", http.FileServer(staticDir))
 	r.Handle("/favicon.ico", http.FileServer(staticDir))
+	r.Handle("/googleb33441bbb10c2850.html", http.FileServer(staticDir))
 
 	// Fallback 404 handler
 	r.NotFound(routes.NotFound(tmplManager))
