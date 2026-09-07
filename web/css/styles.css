@@ -18,3 +18,11 @@
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+.medium-zoom-overlay {
+    z-index: 99999 !important;
+}
+
+.medium-zoom-image {
+    z-index: 100000 !important;
+}

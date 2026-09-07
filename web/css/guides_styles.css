@@ -9,6 +9,8 @@ GUIDE ARTICLE SCOPE
     color: var(--color-gray-800);
     background: none;
     border: none;
+    margin-left: 1rem;
+    margin-right: 1rem;
 }
 
 /* Headings */
@@ -132,6 +134,8 @@ GUIDE ARTICLE SCOPE
 .guide_article img {
     width: 80%;
     max-width: 80%;
+    max-height: 450px;
+    object-fit: contain;
     height: auto;
     margin: 1.5rem auto;
     display: block;
@@ -143,6 +147,7 @@ GUIDE ARTICLE SCOPE
     .guide_article img {
         width: 65%;
         max-width: 65%;
+        max-height: 500px;
     }
 }
 

@@ -1,0 +1,100 @@
+{{ define "custom_head" }}
+<link rel="stylesheet" href="/static/css/guides_styles.css?4" />
+{{ end }}
+
+{{ define "custom_tags" }}
+<title>
+    Aviso Importante: Limpieza de Secciones Fantasma y Horarios — PoliPlanner
+</title>
+<meta
+    name="description"
+    content="Información oficial sobre la eliminación de secciones fantasma (X, Y) y qué hacer para actualizar tus horarios correctamente en PoliPlanner." />
+
+<link
+    rel="canonical"
+    href="https://poliplanner.fly.dev/news/limpieza_secciones_fantasma" />
+
+<meta
+    property="og:title"
+    content="Aviso Importante: Limpieza de Secciones Fantasma y Horarios — PoliPlanner" />
+<meta
+    property="og:description"
+    content="Enterate por qué eliminamos las secciones fantasma de los excels provisorios y cómo actualizar tus horarios." />
+<meta
+    property="og:url"
+    content="https://poliplanner.fly.dev/news/limpieza_secciones_fantasma" />
+<meta property="og:type" content="article" />
+
+<script type="application/ld+json">
+{
+"@context": "https://schema.org",
+"@type": "NewsArticle",
+"headline": "Aviso Importante: Limpieza de Secciones Fantasma y Horarios",
+"description": "Información oficial sobre la eliminación de secciones fantasma y la actualización de horarios.",
+"publisher": {
+"@type": "Organization",
+"name": "PoliPlanner"
+}
+}
+</script>
+{{ end }}
+
+{{ define "content" }}
+<div class="guide_article">
+    <h1>🚨 Limpieza de secciones fantasma</h1>
+
+    <section id="aviso">
+        <p>
+            Como ya les habíamos comentado meses atrás sobre la recomendación de crear horarios
+            nuevos luego de las inscripciones, tenemos que dar un paso más con este tema.
+        </p>
+
+        <div class="my-4 p-3 bg-gray-50 dark:bg-zinc-800 border-l-4 border-amber-500 rounded-r text-sm text-gray-600 dark:text-zinc-300">
+            <strong>Contexto:</strong> La universidad había publicado originalmente un excel
+            provisorio con secciones "fantasma" (como "Sección X" o "Sección Y") antes de las
+            inscripciones, y posteriormente subieron otro nuevo formato con los datos
+            definitivos.
+        </div>
+
+        <p>
+            La web funciona haciendo un sondeo periódico de los excels oficiales. El problema
+            es que, como esas secciones fantasma ya no existen en los archivos nuevos, esas
+            materias y secciones quedan "huérfanas" en el sistema, quedando sin actualización,
+            pero tampoco se borran solas.
+        </p>
+
+        <p>
+            Como tampoco podemos saber a qué sección real te asignó la universidad después de
+            las inscripciones (eso lo maneja exclusivamente la institución, nosotros somos una
+            web externa), tus horarios quedan con secciones fantasma que no se pueden
+            actualizar por nuestra cuenta, por lo que cada usuario deberá verificar y corregir
+            su horario.
+        </p>
+
+        <img src="/static/images/aviso_limpieza_secciones.png" alt="Imagen del aviso circular" />
+
+        <p>
+            Para evitar que confíen en información rota y terminen perdiendo un examen, vamos a
+            eliminar todas esas secciones fantasma del sistema, por lo que van a notar que sus
+            horarios se ven afectados.
+        </p>
+
+        <p>
+            Preferimos hacerles pasar este mal rato antes que afectarlos académicamente.
+        </p>
+
+        <!-- BUBBLE: IMPORTANTE -->
+        <div
+            class="my-4 p-3 bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-sm text-sm text-gray-600 dark:text-zinc-300 flex items-center gap-2.5">
+            <span>
+                <strong class="font-medium text-gray-900 dark:text-zinc-100">👉 ¿Qué tenés que
+                    hacer?</strong> Entrá a la web y revisá tu horario. Los horarios sin secciones fantasma no se verán afectados en lo absoluto; en aquellos que sí las tenían, vas a notar que esas secciones simplemente desaparecieron. No te preocupes, simplemente armá uno nuevo.
+            </span>
+        </div>
+
+        <p style="margin-top: 2rem;">
+            <a href="/">← Volver a la web</a>
+        </p>
+    </section>
+</div>
+{{ end }}

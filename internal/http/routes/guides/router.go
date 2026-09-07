@@ -65,7 +65,7 @@ func (h *Handler) manualDelBicho(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) news(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if err := h.tmpl.RenderPage(w, "guides/news.html", nil); err != nil {
+	if err := h.tmpl.RenderPage(w, "guides/actualizaciones.html", nil); err != nil {
 		logger.Error("Cannot render news template", "error", err)
 	}
 }

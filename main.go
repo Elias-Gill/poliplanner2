@@ -11,6 +11,7 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/http/routes/dashboard"
 	"github.com/elias-gill/poliplanner2/internal/http/routes/excel"
 	"github.com/elias-gill/poliplanner2/internal/http/routes/guides"
+	"github.com/elias-gill/poliplanner2/internal/http/routes/news"
 	"github.com/elias-gill/poliplanner2/internal/http/routes/schedules"
 	"github.com/elias-gill/poliplanner2/internal/http/routes/tools"
 	"github.com/elias-gill/poliplanner2/internal/http/routes/user"
@@ -118,6 +119,8 @@ func initRouter(srvs *services.AppServices) chi.Router {
 	// Misc routers
 	r.Mount("/tools", tools.NewHandler(tmplManager, srvs.CareerService, srvs.CurriculumService, srvs.CourseService).Routes())
 	r.Mount("/guides", guides.NewHandler(tmplManager).Routes())
+
+	r.Mount("/news", news.NewHandler(tmplManager).Routes())
 
 	// Admin routers
 	r.Mount("/excel", excel.NewHandler(tmplManager, srvs.ExcelService, srvs.SyncService).Routes())
