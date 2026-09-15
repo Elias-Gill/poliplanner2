@@ -93,7 +93,7 @@ func (e ExcelService) PersistSource(ctx context.Context, source source.ScheduleS
 	}
 	defer content.Close()
 
-	p, err := parser.NewParser(content)
+	p, err := parser.NewScheduleParser(content)
 	if err != nil {
 		return fmt.Errorf("cannot initialize excel parser: %w", err)
 	}
@@ -110,13 +110,13 @@ func (e ExcelService) PersistSource(ctx context.Context, source source.ScheduleS
 	sheetCount := 0
 
 	txErr := e.txManager.WithTransaction(ctx, func(ctx context.Context) error {
-		for p.NextSheet() {
-			sheet, err := p.ParseCurrentSheet()
+		for {
+			sheet, err := p.ParseNextSheet()
 			if err != nil {
-				if sheet != nil {
-					return fmt.Errorf("error parsing sheet '%s': %w", sheet.Name, err)
-				}
-				return fmt.Errorf("error while parsing: %w", err)
+				return fmt.Errorf("error parsing sheet: %w", err)
+			}
+			if sheet == nil {
+				break
 			}
 
 			career := buildCareerFromDTO(sheet.Name)

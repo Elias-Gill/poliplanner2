@@ -2,18 +2,13 @@ package parser
 
 import (
 	"io"
-	"os"
 	"path/filepath"
 	"strings"
 	"sync"
-	"unicode"
 
 	"github.com/elias-gill/poliplanner2/internal/config"
-	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/exceptions"
-	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/layout"
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/engine"
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
-	"github.com/elias-gill/poliplanner2/logger"
-	"github.com/xuri/excelize/v2"
 )
 
 var dtoPool = sync.Pool{
@@ -22,13 +17,9 @@ var dtoPool = sync.Pool{
 	},
 }
 
-type ExcelParser struct {
-	layouts        []layout.Layout
-	file           *excelize.File
-	sheetNames     []string
-	currentSheet   int
-	headerKeywords []string
-	fieldSetters   map[string]func(*SubjectDTO, string)
+type SchedulesParser struct {
+	engine       *engine.ParserEngine
+	fieldSetters map[string]func(*SubjectDTO, string)
 }
 
 type ParsedSheet struct {
@@ -36,129 +27,34 @@ type ParsedSheet struct {
 	Subjects []SubjectDTO
 }
 
-func NewParser(file io.ReadCloser) (*ExcelParser, error) {
-	// Initialize layout loader
-	layoutsDir := filepath.Join(config.Get().Paths.BaseDir, "internal", "infrastructure", "parser", "layout", "schedules")
-	loader := layout.NewJsonLayoutLoader(layoutsDir)
-	layouts, err := loader.LoadJsonLayouts()
-	if err != nil {
-		return nil, exceptions.NewExcelParserConfigurationException("Failed to load layouts", err)
-	}
+func NewScheduleParser(file io.ReadCloser) (*SchedulesParser, error) {
+	layoutsDir := filepath.Join(config.Get().Paths.BaseDir, "internal", "infrastructure", "parser", "layouts", "schedules")
 
-	p := &ExcelParser{
-		layouts:        layouts,
-		headerKeywords: []string{"item", "ítem", "DPTO.", "dpto"},
-		currentSheet:   -1,
-		fieldSetters:   buildFieldSetters(),
-	}
-
-	memUsageStatus("Excel parser loading", func() {
-		err = p.prepareParser(file)
-	})
-
+	en, err := engine.NewParser(file, layoutsDir)
 	if err != nil {
 		return nil, err
 	}
-	return p, nil
+	en.SheetFilter = shouldParseSheet
+
+	return &SchedulesParser{
+		engine:       en,
+		fieldSetters: buildFieldSetters(),
+	}, nil
 }
 
-func (ep *ExcelParser) Close() {
-	if ep.file != nil {
-		ep.file.Close()
-		ep.file = nil
-	}
+func (ep *SchedulesParser) Close() {
+	ep.engine.Close()
 }
 
-func (ep *ExcelParser) NextSheet() bool {
-	ep.currentSheet++
-	for ep.currentSheet < len(ep.sheetNames) {
-		name := ep.sheetNames[ep.currentSheet]
-		if !ep.shouldParseSheet(name) {
-			ep.currentSheet++
-			continue
-		}
-		return true
-	}
-	return false
-}
-
-func (ep *ExcelParser) ParseCurrentSheet() (*ParsedSheet, error) {
-	if ep.currentSheet < 0 || ep.currentSheet >= len(ep.sheetNames) {
-		return nil, exceptions.NewExcelParserException("No current sheet selected", nil)
+func (ep *SchedulesParser) ParseNextSheet() (*ParsedSheet, error) {
+	name, ok := ep.engine.NextSheet()
+	if !ok {
+		return nil, nil
 	}
 
-	sheetName := ep.sheetNames[ep.currentSheet]
-	logger.Info("Parsing", "sheet_name", sheetName)
-
-	subjects, err := ep.parseSheet(sheetName)
-	return &ParsedSheet{
-		Name:     strings.ToUpper(strings.ReplaceAll(sheetName, " ", "")),
-		Subjects: subjects,
-	}, err
-}
-
-func (ep *ExcelParser) prepareParser(file io.ReadCloser) error {
-	if ep.file != nil {
-		ep.Close()
-	}
-
-	f, err := excelize.OpenReader(file, excelize.Options{
-		UnzipSizeLimit:    25 << 20,
-		UnzipXMLSizeLimit: 8 << 20,
-	})
-	if err != nil {
-		if os.IsNotExist(err) {
-			return exceptions.NewExcelParserConfigurationException("Cannot read source", err)
-		}
-		return exceptions.NewExcelParserInputException("Error reading source: ", err)
-	}
-
-	ep.file = f
-	ep.sheetNames = f.GetSheetList()
-	ep.currentSheet = -1
-	return nil
-}
-
-func (ep *ExcelParser) parseSheet(sheetName string) ([]SubjectDTO, error) {
 	subjects := make([]SubjectDTO, 0, 250)
 
-	stream, err := ep.file.Rows(sheetName)
-	if err != nil {
-		return nil, exceptions.NewExcelParserInputException("Sheet not found: "+sheetName, err)
-	}
-	defer stream.Close()
-
-	var lowerHeader []string
-	var lay *layout.Layout
-	var startingCell int
-
-	for stream.Next() {
-		row, err := stream.Columns()
-		if err != nil {
-			return nil, exceptions.NewExcelParserInputException("Error reading row", err)
-		}
-
-		if len(row) == 0 || ep.isEmptyRow(row) {
-			continue
-		}
-
-		if lay == nil {
-			if ep.isHeaderRow(row) {
-				lowerHeader = ep.buildLowerHeader(row)
-				startingCell = ep.calculateStartingCell(row)
-				l, err := ep.findFittingLayout(lowerHeader)
-				if err != nil {
-					return nil, err
-				}
-				lay = l
-			}
-			continue
-		}
-
-		if ep.isEmptyRow(row) {
-			break
-		}
-
+	err := ep.engine.ParseCurrentSheet(name, func(row []string, lay *engine.Layout, startingCell int) error {
 		d := dtoPool.Get().(*SubjectDTO)
 		d.Reset()
 		current := startingCell - 1
@@ -176,100 +72,22 @@ func (ep *ExcelParser) parseSheet(sheetName string) ([]SubjectDTO, error) {
 				setter(d, val)
 			}
 		}
-		// Slices fijos + Structs planos = Copia segura y aislada por valor en memoria contigua
 		subjects = append(subjects, *d)
 		dtoPool.Put(d)
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
 	}
 
-	if lay == nil {
-		return nil, exceptions.NewLayoutMatchException("No header row found in sheet: " + sheetName)
-	}
-	return subjects, nil
+	return &ParsedSheet{
+		Name:     strings.ToUpper(strings.ReplaceAll(name, " ", "")),
+		Subjects: subjects,
+	}, nil
 }
 
-func (ep *ExcelParser) findFittingLayout(lowerHeader []string) (*layout.Layout, error) {
-	for i := range ep.layouts {
-		if ep.layoutMatches(&ep.layouts[i], lowerHeader) {
-			return &ep.layouts[i], nil
-		}
-	}
-	return nil, exceptions.NewLayoutMatchException("No matching layout found for sheet")
-}
-
-func (ep *ExcelParser) layoutMatches(l *layout.Layout, lower []string) bool {
-	cellIdx, hdrIdx := 0, 0
-	for hdrIdx < len(l.Headers) && cellIdx < len(lower) {
-		val := lower[cellIdx]
-		cellIdx++
-		if val == "" {
-			continue
-		}
-		patterns, ok := l.Patterns[l.Headers[hdrIdx]]
-		if !ok {
-			return false
-		}
-		match := false
-		for _, p := range patterns {
-			if strings.Contains(val, p) { // Eliminada la alocación oculta de strings.ToLower(p)
-				match = true
-				break
-			}
-		}
-		if !match {
-			return false
-		}
-		hdrIdx++
-	}
-	return hdrIdx == len(l.Headers)
-}
-
-func (ep *ExcelParser) buildLowerHeader(row []string) []string {
-	lower := make([]string, len(row))
-	for i, val := range row {
-		lower[i] = strings.ToLower(strings.TrimSpace(val))
-	}
-	return lower
-}
-
-func (ep *ExcelParser) isHeaderRow(row []string) bool {
-	for _, val := range row {
-		trimmed := strings.TrimSpace(val)
-		if len(trimmed) == 0 {
-			continue
-		}
-		lowerVal := strings.ToLower(trimmed)
-		for _, keyword := range ep.headerKeywords {
-			if strings.Contains(lowerVal, keyword) {
-				return true
-			}
-		}
-	}
-	return false
-}
-
-func (ep *ExcelParser) isEmptyRow(row []string) bool {
-	for _, val := range row {
-		if len(strings.TrimSpace(val)) != 0 {
-			return false
-		}
-	}
-	return true
-}
-
-func (ep *ExcelParser) calculateStartingCell(row []string) int {
-	for i, val := range row {
-		if len(val) > 0 {
-			for _, r := range val {
-				if !unicode.IsSpace(r) {
-					return i
-				}
-			}
-		}
-	}
-	return 0
-}
-
-func (ep *ExcelParser) shouldParseSheet(name string) bool {
+func shouldParseSheet(name string) bool {
 	if len(name) == 0 {
 		return false
 	}
