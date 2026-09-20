@@ -73,14 +73,13 @@
         selectedId: '',
         subjects: [
           {{ range .Subjects }}
-            { id: '{{ .ID }}', name: '{{ .Name }}' },
+            { id: '{{ .ID }}', name: '{{ .Name | js }}', plan: '{{ .Plan | js }}' },
           {{ end }}
         ],
         get filteredSubjects() {
           if (!this.searchQuery.trim()) return this.subjects;
-          return this.subjects.filter(s => 
-            s.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-          );
+          const query = this.searchQuery.toLowerCase().trim();
+          return this.subjects.filter(s => s.name.toLowerCase().includes(query));
         },
         selectSubject(subject) {
           this.selectedId = subject.id;
@@ -89,6 +88,7 @@
           this.open = false;
         }
       }"
+      x-init="$nextTick(() => { $refs.subjectSearch.focus(); $refs.subjectSearch.select() })"
       @click.outside="open = false"
       class="relative w-full">
       
@@ -100,6 +100,7 @@
       <div class="relative">
         <input 
           type="text" 
+          x-ref="subjectSearch"
           x-model="searchQuery"
           @focus="open = true"
           @input="open = true; selectedId = ''"
@@ -130,8 +131,14 @@
             hx-swap="innerHTML"
             hx-trigger="click"
             :class="selectedId === subject.id ? 'bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 font-bold' : 'text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800/60'"
-            class="w-full text-left px-3.5 py-2.5 text-xs sm:text-sm transition flex items-center justify-between cursor-pointer">
-            <span x-text="subject.name"></span>
+            class="w-full text-left px-3.5 py-2.5 text-xs sm:text-sm transition flex items-center justify-between cursor-pointer gap-2">
+            <span class="flex items-center gap-2 min-w-0">
+              <span
+                x-show="subject.plan"
+                class="text-[10px] font-bold text-primary-800 dark:text-primary-300 bg-primary-100 dark:bg-primary-900/60 border border-primary-300 dark:border-primary-700/70 px-1.5 py-0.5 rounded-sm shrink-0 tracking-wide uppercase"
+                x-text="'Plan ' + subject.plan"></span>
+              <span class="truncate" x-text="subject.name"></span>
+            </span>
             
             <svg 
               x-show="selectedId === subject.id" 
@@ -156,8 +163,11 @@
       <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-300 mb-1.5">
         Materia
       </label>
-      <div class="p-2.5 border border-gray-300 dark:border-zinc-700 rounded-sm bg-gray-50 dark:bg-zinc-950 text-xs text-gray-400 dark:text-zinc-500">
-        Selecciona primero una carrera...
+      <div class="flex items-center gap-2 p-2.5 border border-dashed border-gray-300 dark:border-zinc-700 rounded-sm bg-gray-50 dark:bg-zinc-950 text-xs text-gray-400 dark:text-zinc-500 cursor-not-allowed select-none">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+        </svg>
+        <span>Selecciona primero una carrera para buscar materias...</span>
       </div>
     </div>
   {{ end }}
