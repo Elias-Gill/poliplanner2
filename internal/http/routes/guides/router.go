@@ -25,7 +25,7 @@ func (h *Handler) Routes() chi.Router {
 	r.Get("/tramites_academicos", h.tramites)
 	r.Get("/about", h.about)
 	r.Get("/manual_del_bicho", h.manualDelBicho)
-	r.Get("/news", h.news)
+	r.Get("/actualizaciones", h.news)
 	r.Get("/", h.index)
 
 	return r
