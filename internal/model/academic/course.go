@@ -28,15 +28,15 @@ const (
 	// classes are taught; it is used strictly to manage and sit for final exams.
 	ExamOnly CourseType = 1
 
-	// A course that is imparted specifically on Laboratory rooms
-	Laboratory CourseType = 3
+	// A course that is imparted specifically on laboratory rooms
+	OnLaboratory CourseType = 3
 )
 
 func (d CourseType) String() string {
 	switch d {
 	case ExamOnly:
 		return "Solo Examen Final"
-	case Laboratory:
+	case OnLaboratory:
 		return "En laboratorio"
 	default:
 		return "Normal"
