@@ -5,6 +5,24 @@ import (
 	"strings"
 )
 
+type Hour struct {
+	Hour   int
+	Minute int
+	Valid  bool
+}
+
+type Date struct {
+	Year  int
+	Month int
+	Day   int
+	Valid bool
+}
+
+type TimeSlot struct {
+	Start Hour
+	End   Hour
+}
+
 // ParseTime convierte texto a Hour sin alocaciones de Regex.
 func ParseTime(timeStr string) Hour {
 	timeStr = strings.TrimSpace(timeStr)

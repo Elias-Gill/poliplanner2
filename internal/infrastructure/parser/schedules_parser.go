@@ -49,6 +49,7 @@ func (ep *SchedulesParser) Close() {
 func (ep *SchedulesParser) ParseNextSheet() (*ParsedSheet, error) {
 	name, ok := ep.engine.NextSheet()
 	if !ok {
+		// There is no sheet to parse
 		return nil, nil
 	}
 

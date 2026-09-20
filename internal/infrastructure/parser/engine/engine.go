@@ -57,7 +57,8 @@ func (ep *ParserEngine) NextSheet() (string, bool) {
 
 	for ep.currentSheet < len(ep.sheetNames) {
 		name := ep.sheetNames[ep.currentSheet]
-		if ep.SheetFilter(name) {
+		shouldParse := ep.SheetFilter(name)
+		if shouldParse {
 			return name, true
 		}
 		ep.currentSheet++

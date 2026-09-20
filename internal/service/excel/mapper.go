@@ -69,7 +69,7 @@ func buildOfferingFromDTO(data parser.SubjectDTO) academic.Course {
 	}
 }
 
-func buildTeachers(src [4]parserCommons.TeacherDTO, count int) []academic.Teacher {
+func buildTeachers(src [4]parser.TeacherDTO, count int) []academic.Teacher {
 	var teachers []academic.Teacher
 
 	for i := range count {

@@ -18,6 +18,7 @@ import (
 	excelRepo "github.com/elias-gill/poliplanner2/internal/repository/excel"
 	academicService "github.com/elias-gill/poliplanner2/internal/service/academic"
 	metaServices "github.com/elias-gill/poliplanner2/internal/service/metadata"
+	"github.com/elias-gill/poliplanner2/logger"
 )
 
 var (
@@ -119,6 +120,8 @@ func (e ExcelService) PersistSource(ctx context.Context, source source.ScheduleS
 				break
 			}
 
+			logger.Info("Sheet parsing succesfull", "name", sheet)
+
 			career := buildCareerFromDTO(sheet.Name)
 
 			metadataService, err := metaServices.NewMetadataService(career.Code)
@@ -204,6 +207,8 @@ func (e ExcelService) PersistSource(ctx context.Context, source source.ScheduleS
 			// Force memmory cleaning
 			sheet.Subjects = nil
 			runtime.GC()
+
+			logger.Info("Persisted succesfully")
 		}
 
 		return nil

@@ -13,6 +13,13 @@ type WeekDayData struct {
 	Time commons.TimeSlot
 }
 
+type TeacherDTO struct {
+	Title     string
+	FirstName string
+	LastName  string
+	Email     string
+}
+
 type SubjectDTO struct {
 	Department     string
 	Plan           string
@@ -24,7 +31,7 @@ type SubjectDTO struct {
 	RawSubjectName string
 	CourseType     academic.CourseType
 
-	Teachers     [4]commons.TeacherDTO
+	Teachers     [4]TeacherDTO
 	TeacherCount int
 
 	Partial1Date commons.Date
