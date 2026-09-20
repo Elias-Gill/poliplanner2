@@ -47,6 +47,21 @@ type CourseSummaryView struct {
 	Committee     Committee
 }
 
+type CourseHistoryEntry struct {
+	Period   Period
+	Offering []CourseSummaryView
+}
+
+// ==========================
+// 	 Teacher history view
+// ==========================
+
+// TeacherHistoricEntry groups all the courses a teacher taught within a single period.
+type TeacherHistoricEntry struct {
+	Period   Period
+	Offering []CourseSummaryView
+}
+
 // FormattedSchedule directly used inside HTML templates with "{{ .FormattedSchedule }}"
 // WARNING: modify it's name carefully
 func (c CourseSummaryView) FormattedSchedule() string {

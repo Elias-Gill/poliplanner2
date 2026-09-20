@@ -1,0 +1,196 @@
+{{ define "custom_tags" }}
+  <title>Historial de Docentes — PoliPlanner</title>
+  <meta
+    name="description"
+    content="Buscá docentes de la universidad y consultá su historial completo de secciones, materias, horarios, exámenes y comisiones a lo largo de los últimos periodos académicos." />
+  <link
+    rel="canonical"
+    href="https://poliplanner.fly.dev/tools/teacher-history" />
+  <script src="/static/vendor/htmx/htmx.min.js" defer></script>
+  <script src="/static/vendor/alpinejs/alpine.min.js" defer></script>
+{{ end }}
+
+{{ define "content" }}
+  <div class="max-w-7xl mx-auto py-2 min-h-[calc(100vh-4rem)] flex flex-col gap-4 px-2 sm:px-4">
+    <!-- Header -->
+    <div class="bg-white dark:bg-zinc-900 p-4 rounded-sm shadow-sm border border-gray-200 dark:border-zinc-800">
+      <h1 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-zinc-100">
+        Historial de Docentes
+      </h1>
+      <p class="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
+        Buscá un docente y consultá su perfil completo junto con las secciones, horarios, exámenes y comisiones que tuvo a lo largo de los últimos periodos académicos.
+      </p>
+    </div>
+
+    <!-- Buscador de Docente -->
+    <div class="bg-white dark:bg-zinc-900 p-4 sm:p-5 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
+      {{ template "teachers_select" . }}
+    </div>
+
+    <!-- Contenedor del Historial -->
+    <div id="teacher-timeline-container">
+      <div class="p-8 text-center bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
+        <p class="text-xs sm:text-sm text-gray-500 dark:text-zinc-400">
+          Selecciona un docente para ver su historial completo.
+        </p>
+      </div>
+    </div>
+  </div>
+{{ end }}
+
+{{ define "teachers_select" }}
+  {{ if .Teachers }}
+    <div
+      x-data="{
+        open: false,
+        searchQuery: '',
+        selectedId: '',
+        selectedName: '',
+        teachers: [
+          {{ range .Teachers }}
+            { id: '{{ .ID }}', name: '{{ .FullName | js }}', email: '{{ .Email | js }}' },
+          {{ end }}
+        ],
+        get filteredTeachers() {
+          if (!this.searchQuery.trim()) return this.teachers;
+          const query = this.searchQuery.toLowerCase().trim();
+          return this.teachers.filter(t =>
+            t.name.toLowerCase().includes(query) || t.email.toLowerCase().includes(query)
+          );
+        },
+        selectTeacher(teacher) {
+          this.selectedId = teacher.id;
+          this.selectedName = teacher.name;
+          this.searchQuery = teacher.name;
+          this.open = false;
+        }
+      }"
+      x-init="$nextTick(() => { $refs.teacherSearch.focus(); $refs.teacherSearch.select() })"
+      @click.outside="open = false"
+      class="relative w-full">
+
+      <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-300 mb-1.5">
+        Docente
+      </label>
+
+      <!-- Input de búsqueda y selección -->
+      <div class="relative">
+        <input
+          type="text"
+          x-ref="teacherSearch"
+          x-model="searchQuery"
+          @focus="open = true"
+          @input="open = true; selectedId = ''"
+          placeholder="Buscar docente por nombre o correo..."
+          class="w-full px-3 py-2 text-xs sm:text-sm border border-gray-300 dark:border-zinc-700 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500 focus:outline-none pr-8" />
+
+        <button
+          type="button"
+          x-show="searchQuery.length > 0"
+          @click="searchQuery = ''; selectedId = ''; selectedName = ''; open = true;"
+          class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 p-1">
+          ✕
+        </button>
+      </div>
+
+      <!-- Dropdown Flotante -->
+      <div
+        x-show="open"
+        x-cloak
+        class="absolute z-50 left-0 right-0 mt-1 max-h-72 overflow-y-auto bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-sm shadow-xl divide-y divide-gray-100 dark:divide-zinc-800/60">
+
+        <template x-for="teacher in filteredTeachers" :key="teacher.id">
+          <button
+            type="button"
+            @click="selectTeacher(teacher); htmx.ajax('GET', '/tools/teacher-history/timeline?teacher_id=' + teacher.id, { target: '#teacher-timeline-container', swap: 'innerHTML' })"
+            :class="selectedId === teacher.id ? 'bg-primary-50 dark:bg-primary-950/40 text-primary-700 dark:text-primary-300 font-bold' : 'text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800/60'"
+            class="w-full text-left px-3.5 py-2.5 text-xs sm:text-sm transition flex items-center justify-between cursor-pointer gap-2">
+            <span class="flex flex-col min-w-0">
+              <span class="truncate" x-text="teacher.name"></span>
+              <span
+                x-show="teacher.email"
+                class="truncate text-[11px] font-normal text-gray-400 dark:text-zinc-500"
+                x-text="teacher.email"></span>
+            </span>
+
+            <svg
+              x-show="selectedId === teacher.id"
+              class="w-4 h-4 text-primary-600 dark:text-primary-400 shrink-0 ml-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+            </svg>
+          </button>
+        </template>
+
+        <div
+          x-show="filteredTeachers.length === 0"
+          class="p-3 text-center text-xs text-gray-400 dark:text-zinc-500">
+          No hay docentes que coincidan.
+        </div>
+      </div>
+    </div>
+  {{ else }}
+    <div>
+      <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-300 mb-1.5">
+        Docente
+      </label>
+      <div class="flex items-center gap-2 p-2.5 border border-dashed border-gray-300 dark:border-zinc-700 rounded-sm bg-gray-50 dark:bg-zinc-950 text-xs text-gray-400 dark:text-zinc-500 select-none">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+        </svg>
+        <span>No hay docentes registrados todavía...</span>
+      </div>
+    </div>
+  {{ end }}
+{{ end }}
+
+{{ define "teacher_timeline" }}
+  <div class="space-y-4">
+    {{ if .History }}
+      {{ range $index, $entry := .History }}
+        <div
+          x-data="{ open: {{ if eq $index 0 }}true{{ else }}false{{ end }} }"
+          class="bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+
+          <!-- Encabezado del Periodo -->
+          <button
+            type="button"
+            @click="open = !open"
+            class="w-full px-4 sm:px-5 py-3 bg-gray-50 dark:bg-zinc-900/80 hover:bg-gray-100 dark:hover:bg-zinc-700/50 flex items-center justify-between text-left transition cursor-pointer select-none">
+            <div class="flex items-center gap-2.5">
+              <span class="font-bold text-xs sm:text-sm text-gray-900 dark:text-zinc-100">
+                Periodo: {{ $entry.Period.Year }} - {{ if eq $entry.Period.Semester 1 }}1°{{ else }}2°{{ end }} Semestre
+              </span>
+            </div>
+
+            <svg
+              class="w-4 h-4 text-gray-500 dark:text-zinc-400 transition-transform duration-200"
+              :class="open ? 'rotate-180' : ''"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          <!-- Secciones del Periodo -->
+          <div
+            x-show="open"
+            class="space-y-4 sm:space-y-6 p-3 sm:p-5 border-t border-gray-200 dark:border-zinc-800 bg-gray-50/40 dark:bg-zinc-950/20">
+            {{ range $entry.Offering }}
+              {{ template "course_offering_card" . }}
+            {{ end }}
+          </div>
+        </div>
+      {{ end }}
+    {{ else }}
+      <div class="p-8 text-center bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
+        <p class="text-xs sm:text-sm text-gray-500 dark:text-zinc-400">
+          No hay registros históricos de secciones disponibles para el docente seleccionado.
+        </p>
+      </div>
+    {{ end }}
+  </div>
+{{ end }}

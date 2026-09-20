@@ -43,6 +43,10 @@ type CourseRepository interface {
 
 	ListByCurriculumID(ctx context.Context, curriculum academic.CurriculumID, period academic.PeriodID) ([]academic.CourseID, error)
 
+	// ListByTeacherAndPeriod returns all course IDs taught by the given teacher during
+	// the specified academic period, ordered by course name and section.
+	ListByTeacherAndPeriod(ctx context.Context, teacher academic.TeacherID, period academic.PeriodID) ([]academic.CourseID, error)
+
 	GetBasicData(ctx context.Context, courseID academic.CourseID) (*academic.CourseBasicData, error)
 
 	GetCourseTeachers(ctx context.Context, courseID academic.CourseID) ([]academic.Teacher, error)

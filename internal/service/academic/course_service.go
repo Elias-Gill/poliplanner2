@@ -85,12 +85,7 @@ func (c *CourseService) GetCourseSummary(ctx context.Context, courseID academicM
 	return &course, nil
 }
 
-type historicResult struct {
-	Period   academicModel.Period
-	Offering []academicModel.CourseSummaryView
-}
-
-func (c *CourseService) GetHistoricOfferings(ctx context.Context, curriculum academicModel.CurriculumID) ([]historicResult, error) {
+func (c *CourseService) GetHistoricOfferings(ctx context.Context, curriculum academicModel.CurriculumID) ([]academicModel.CourseHistoryEntry, error) {
 	periods, err := c.periodService.ListPeriods(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("list periods: %w", err)
@@ -101,7 +96,7 @@ func (c *CourseService) GetHistoricOfferings(ctx context.Context, curriculum aca
 		periods = periods[:5]
 	}
 
-	var result []historicResult
+	var result []academicModel.CourseHistoryEntry
 	for _, p := range periods {
 		courses, err := c.courseRepository.ListByCurriculumID(ctx, curriculum, p.ID)
 		if err != nil {
@@ -117,7 +112,7 @@ func (c *CourseService) GetHistoricOfferings(ctx context.Context, curriculum aca
 			offer = append(offer, *summary)
 		}
 
-		result = append(result, historicResult{Period: p, Offering: offer})
+		result = append(result, academicModel.CourseHistoryEntry{Period: p, Offering: offer})
 	}
 
 	return result, nil

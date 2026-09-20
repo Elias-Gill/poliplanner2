@@ -117,7 +117,7 @@ func initRouter(srvs *services.AppServices) chi.Router {
 	r.Mount("/user", user.NewHandler(tmplManager, srvs.SessionService).Routes())
 
 	// Misc routers
-	r.Mount("/tools", tools.NewHandler(tmplManager, srvs.CareerService, srvs.CurriculumService, srvs.CourseService).Routes())
+	r.Mount("/tools", tools.NewHandler(tmplManager, srvs.CareerService, srvs.CurriculumService, srvs.CourseService, srvs.TeacherService).Routes())
 	r.Mount("/guides", guides.NewHandler(tmplManager).Routes())
 
 	r.Mount("/news", news.NewHandler(tmplManager).Routes())

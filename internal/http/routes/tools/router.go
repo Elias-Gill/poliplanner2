@@ -19,14 +19,22 @@ type Handler struct {
 	careerService     *academicSrv.CareerService
 	curriculumService *academicSrv.CurriculumService
 	courseService     *academicSrv.CourseService
+	teacherService    *academicSrv.TeacherService
 }
 
-func NewHandler(tmpl *render.TemplateManager, careerSrv *academicSrv.CareerService, currSrv *academicSrv.CurriculumService, courseSrv *academicSrv.CourseService) *Handler {
+func NewHandler(
+	tmpl *render.TemplateManager,
+	careerSrv *academicSrv.CareerService,
+	currSrv *academicSrv.CurriculumService,
+	courseSrv *academicSrv.CourseService,
+	teacherSrv *academicSrv.TeacherService,
+) *Handler {
 	return &Handler{
 		tmpl:              tmpl,
 		careerService:     careerSrv,
 		curriculumService: currSrv,
 		courseService:     courseSrv,
+		teacherService:    teacherSrv,
 	}
 }
 
@@ -40,6 +48,9 @@ func (h *Handler) Routes() chi.Router {
 	r.Get("/course-offering-history", h.courseOfferingHistory)
 	r.Get("/course-offering-history/list-subjects", h.listSubjects)
 	r.Get("/course-offering-history/timeline", h.getTimeline)
+
+	r.Get("/teacher-history", h.teacherHistory)
+	r.Get("/teacher-history/timeline", h.getTeacherTimeline)
 
 	return r
 }
@@ -135,5 +146,54 @@ func (h *Handler) getTimeline(w http.ResponseWriter, r *http.Request) {
 
 	if err := h.tmpl.RenderPartial(w, "tools/course_offering_history.html", "timeline", data); err != nil {
 		logger.Error("cannot render timeline partial", "error", err)
+	}
+}
+
+func (h *Handler) teacherHistory(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
+	defer cancel()
+
+	teachers, err := h.teacherService.ListTeachers(ctx)
+	if err != nil {
+		logger.Error("cannot list teachers for history page", "error", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	data := map[string]any{
+		"Teachers": teachers,
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+	if err := h.tmpl.RenderPage(w, "tools/teacher_history.html", data); err != nil {
+		logger.Error("Cannot render teacher_history template", "error", err)
+	}
+}
+
+func (h *Handler) getTeacherTimeline(w http.ResponseWriter, r *http.Request) {
+	teacherIDStr := r.URL.Query().Get("teacher_id")
+	teacherID, err := strconv.Atoi(teacherIDStr)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	view, err := h.teacherService.GetTeacherHistory(r.Context(), academicModel.TeacherID(teacherID))
+	if err != nil {
+		logger.Error("cannot retrieve teacher history", "error", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if view == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	data := map[string]any{
+		"History": view,
+	}
+
+	if err := h.tmpl.RenderPartial(w, "tools/teacher_history.html", "teacher_timeline", data); err != nil {
+		logger.Error("cannot render teacher timeline partial", "error", err)
 	}
 }

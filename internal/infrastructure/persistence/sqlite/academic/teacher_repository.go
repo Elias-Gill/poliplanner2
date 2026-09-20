@@ -111,10 +111,10 @@ func (r *TeacherRepository) GetByID(ctx context.Context, id academic.TeacherID) 
 
 	var t academic.Teacher
 	err := exec.QueryRowContext(ctx, `
-		SELECT titulo, nombre, apellido, correo
+		SELECT id, COALESCE(titulo, ''), nombre, apellido, COALESCE(correo, '')
 		FROM docentes
 		WHERE id = ?
-	`, id).Scan(&t.Title, &t.FirstName, &t.LastName, &t.Email)
+	`, id).Scan(&t.ID, &t.Title, &t.FirstName, &t.LastName, &t.Email)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -124,4 +124,36 @@ func (r *TeacherRepository) GetByID(ctx context.Context, id academic.TeacherID) 
 	}
 
 	return &t, nil
+}
+
+// List returns every registered teacher ordered by last name and first name.
+func (r *TeacherRepository) List(ctx context.Context) ([]academic.Teacher, error) {
+	exec := txManager.GetExecutor(ctx, r.db)
+
+	rows, err := exec.QueryContext(ctx, `
+		SELECT id, COALESCE(titulo, ''), nombre, apellido, COALESCE(correo, '')
+		FROM docentes
+		ORDER BY apellido COLLATE NOCASE ASC, nombre COLLATE NOCASE ASC
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Initialize with 0 to prevent nil values when there are no teachers.
+	teachers := make([]academic.Teacher, 0)
+
+	for rows.Next() {
+		var t academic.Teacher
+		if err := rows.Scan(&t.ID, &t.Title, &t.FirstName, &t.LastName, &t.Email); err != nil {
+			return nil, err
+		}
+		teachers = append(teachers, t)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return teachers, nil
 }

@@ -212,6 +212,41 @@ func (r *CourseRepository) ListByCurriculumID(ctx context.Context, curriculum ac
 	return courses, nil
 }
 
+// ListByTeacherAndPeriod returns all course IDs taught by the given teacher during
+// the specified academic period.
+func (r *CourseRepository) ListByTeacherAndPeriod(ctx context.Context, teacher academic.TeacherID, period academic.PeriodID) ([]academic.CourseID, error) {
+	exec := txManager.GetExecutor(ctx, r.db)
+
+	query := `
+		SELECT c.id
+		FROM cursos c
+		JOIN docentes_curso dc ON dc.id_curso = c.id
+		WHERE dc.id_docente = ? AND c.periodo = ?
+		ORDER BY c.nombre ASC, c.seccion ASC
+	`
+
+	rows, err := exec.QueryContext(ctx, query, teacher, period)
+	if err != nil {
+		return nil, fmt.Errorf("list courses by teacher and period: %w", err)
+	}
+	defer rows.Close()
+
+	courses := make([]academic.CourseID, 0)
+	for rows.Next() {
+		var c academic.CourseID
+		if err := rows.Scan(&c); err != nil {
+			return nil, fmt.Errorf("scan course: %w", err)
+		}
+		courses = append(courses, c)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return courses, nil
+}
+
 func (r *CourseRepository) GetCourseTeachers(ctx context.Context, courseID academic.CourseID) ([]academic.Teacher, error) {
 	query := `
 		SELECT d.titulo, d.nombre, d.apellido
@@ -232,6 +267,10 @@ func (r *CourseRepository) GetCourseTeachers(ctx context.Context, courseID acade
 			return nil, fmt.Errorf("scan teacher: %w", err)
 		}
 		teachers = append(teachers, t)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate teacher rows: %w", err)
 	}
 
 	return teachers, nil
