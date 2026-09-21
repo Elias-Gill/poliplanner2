@@ -1,4 +1,4 @@
-package scraper
+package engine
 
 import (
 	"context"
@@ -23,6 +23,14 @@ const (
 	driveDownloadURL     = "https://drive.google.com/uc?export=download&id=%s"
 )
 
+// DriveHelper is the subset of the Google Drive integration the scrape engine
+// needs. Keeping it as an interface lets the engine be tested with a fake and
+// makes the Drive dependency easy to replace or extract.
+type DriveHelper interface {
+	ListSourcesInURL(ctx context.Context, url string) ([]*WebSource, error)
+	GetSourceFromSpreadsheetLink(ctx context.Context, link string) (*WebSource, error)
+}
+
 type GoogleDriveHelper struct {
 	apiKey               string
 	folderIDPattern      *regexp.Regexp
@@ -40,7 +48,10 @@ type GoogleFilesResponse struct {
 	Files []GoogleFile `json:"files"`
 }
 
-func NewGoogleDriveHelper(apiKey string) *GoogleDriveHelper {
+// NewGoogleDriveHelper builds the Google Drive integration. When no API key is
+// provided the integration is disabled and a literal nil interface is returned,
+// so callers can keep checking `helper == nil` and skip Drive handling.
+func NewGoogleDriveHelper(apiKey string) DriveHelper {
 	if apiKey == "" {
 		log.Warn("Google Drive integration disabled: missing API key")
 		return nil
@@ -68,7 +79,7 @@ func NewGoogleDriveHelper(apiKey string) *GoogleDriveHelper {
 	}
 }
 
-func (g *GoogleDriveHelper) ListSourcesInURL(ctx context.Context, url string) ([]*webSource, error) {
+func (g *GoogleDriveHelper) ListSourcesInURL(ctx context.Context, url string) ([]*WebSource, error) {
 	folderID := g.extractFolderID(url)
 
 	if folderID == "" {
@@ -82,7 +93,7 @@ func (g *GoogleDriveHelper) ListSourcesInURL(ctx context.Context, url string) ([
 		return nil, err
 	}
 
-	sources := make([]*webSource, 0, len(files))
+	sources := make([]*WebSource, 0, len(files))
 
 	for _, file := range files {
 		if err := ctx.Err(); err != nil {
@@ -93,14 +104,12 @@ func (g *GoogleDriveHelper) ListSourcesInURL(ctx context.Context, url string) ([
 			continue
 		}
 
-		source := &webSource{
+		sources = append(sources, &WebSource{
 			URL:        fmt.Sprintf(driveDownloadURL, file.ID),
 			Name:       file.Name,
 			UploadDate: file.ModifiedDate,
 			Semester:   extractPeriodFromFilename(file.Name),
-		}
-
-		sources = append(sources, source)
+		})
 	}
 
 	log.Info(
@@ -111,7 +120,7 @@ func (g *GoogleDriveHelper) ListSourcesInURL(ctx context.Context, url string) ([
 	return sources, nil
 }
 
-func (g *GoogleDriveHelper) GetSourceFromSpreadsheetLink(ctx context.Context, link string) (*webSource, error) {
+func (g *GoogleDriveHelper) GetSourceFromSpreadsheetLink(ctx context.Context, link string) (*WebSource, error) {
 	spreadsheetID := g.extractSpreadsheetID(link)
 
 	if spreadsheetID == "" {
@@ -128,7 +137,7 @@ func (g *GoogleDriveHelper) GetSourceFromSpreadsheetLink(ctx context.Context, li
 		return nil, err
 	}
 
-	return &webSource{
+	return &WebSource{
 		URL:        fmt.Sprintf(spreadsheetExportURL, spreadsheetID),
 		Name:       metadata.Name,
 		UploadDate: metadata.ModifiedDate,

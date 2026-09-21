@@ -1,4 +1,4 @@
-package scraper
+package engine
 
 import (
 	"context"
@@ -12,18 +12,20 @@ import (
 	"github.com/elias-gill/poliplanner2/logger"
 )
 
-type webSource struct {
+// WebSource is a Source backed by a remote Excel file. It knows how to download
+// its own content and exposes the metadata gathered during discovery.
+//
+// A single WebSource satisfies both source.ScheduleSource and source.LabSource,
+// which is why there is no need for per-domain wrappers: the fetching is
+// domain-agnostic and only the parser differs.
+type WebSource struct {
 	URL        string
 	Name       string
 	UploadDate time.Time
 	Semester   academic.YearSemester
 }
 
-type WebScheduleSource webSource
-
-type WebLaboratorySource webSource
-
-func (s *webSource) Content(ctx context.Context) (io.ReadCloser, error) {
+func (s *WebSource) Content(ctx context.Context) (io.ReadCloser, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, s.URL, nil)
 	if err != nil {
 		return nil, err
@@ -44,27 +46,11 @@ func (s *webSource) Content(ctx context.Context) (io.ReadCloser, error) {
 	return resp.Body, nil
 }
 
-func (s *webSource) Metadata() source.SourceMetadata {
+func (s *WebSource) Metadata() source.SourceMetadata {
 	return source.SourceMetadata{
 		Name:     s.Name,
 		URI:      s.URL,
 		Semester: s.Semester,
 		Date:     s.UploadDate,
 	}
-}
-
-func (s *WebScheduleSource) Content(ctx context.Context) (io.ReadCloser, error) {
-	return ((*webSource)(s)).Content(ctx)
-}
-
-func (s *WebScheduleSource) Metadata() source.SourceMetadata {
-	return ((*webSource)(s)).Metadata()
-}
-
-func (s *WebLaboratorySource) Content(ctx context.Context) (io.ReadCloser, error) {
-	return ((*webSource)(s)).Content(ctx)
-}
-
-func (s *WebLaboratorySource) Metadata() source.SourceMetadata {
-	return ((*webSource)(s)).Metadata()
 }
