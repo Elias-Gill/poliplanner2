@@ -29,6 +29,7 @@ type Handler struct {
 	careerService     *academicSrvs.CareerService
 	courseService     *academicSrvs.CourseService
 	curriculumService *academicSrvs.CurriculumService
+	secureHTTP        bool
 }
 
 func NewHandler(
@@ -37,6 +38,7 @@ func NewHandler(
 	careerService *academicSrvs.CareerService,
 	courseService *academicSrvs.CourseService,
 	curriculumService *academicSrvs.CurriculumService,
+	secureHTTP bool,
 ) *Handler {
 	return &Handler{
 		tmpl:              tmpl,
@@ -44,6 +46,7 @@ func NewHandler(
 		careerService:     careerService,
 		courseService:     courseService,
 		curriculumService: curriculumService,
+		secureHTTP:        secureHTTP,
 	}
 }
 
@@ -234,7 +237,7 @@ func (h *Handler) saveSchedule(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 5. Set latest schedule session cookie
-	cookie.SetLatestScheduleCookie(w, scheduleID)
+	cookie.SetLatestScheduleCookie(w, scheduleID, h.secureHTTP)
 
 	// 6. Redirect to dashboard (supports HTMX and native HTTP)
 	if r.Header.Get("HX-Request") == "true" {

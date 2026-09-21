@@ -1,6 +1,8 @@
 package metadata
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -13,9 +15,31 @@ var (
 	expectedCredits   = 5
 )
 
+// testMetadataDir locates the repository metadata directory regardless of the
+// working directory used by the test binary.
+func testMetadataDir(t *testing.T) string {
+	t.Helper()
+
+	dir, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+
+	for {
+		if _, err := os.Stat(filepath.Join(dir, "go.mod")); err == nil {
+			return filepath.Join(dir, "internal", "service", "metadata", "data")
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			t.Fatal("could not locate repository root (go.mod not found)")
+		}
+		dir = parent
+	}
+}
+
 func TestMetadataLoader_FindSubjectByName(t *testing.T) {
 	// Adaptado al nuevo constructor público
-	service, err := NewMetadataService(testCareerCode)
+	service, err := NewMetadataService(testCareerCode, testMetadataDir(t))
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -38,7 +62,7 @@ func TestMetadataLoader_FindSubjectByName(t *testing.T) {
 }
 
 func TestMetadataLoader_NameNormalization(t *testing.T) {
-	service, err := NewMetadataService(testCareerCode)
+	service, err := NewMetadataService(testCareerCode, testMetadataDir(t))
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -54,7 +78,7 @@ func TestMetadataLoader_NameNormalization(t *testing.T) {
 }
 
 func TestMetadataLoader_DashedNames_FirstPart(t *testing.T) {
-	service, err := NewMetadataService(testCareerCode)
+	service, err := NewMetadataService(testCareerCode, testMetadataDir(t))
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -70,7 +94,7 @@ func TestMetadataLoader_DashedNames_FirstPart(t *testing.T) {
 }
 
 func TestMetadataLoader_DashedNames_SecondPart(t *testing.T) {
-	service, err := NewMetadataService(testCareerCode)
+	service, err := NewMetadataService(testCareerCode, testMetadataDir(t))
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -90,7 +114,7 @@ func TestMetadataLoader_DashedNames_SecondPart(t *testing.T) {
 }
 
 func TestMetadataLoader_CacheFunctionality(t *testing.T) {
-	service, err := NewMetadataService(testCareerCode)
+	service, err := NewMetadataService(testCareerCode, testMetadataDir(t))
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -124,7 +148,7 @@ func TestMetadataLoader_CacheFunctionality(t *testing.T) {
 }
 
 func TestMetadataLoader_NonExistentSubject(t *testing.T) {
-	service, err := NewMetadataService(testCareerCode)
+	service, err := NewMetadataService(testCareerCode, testMetadataDir(t))
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -136,7 +160,7 @@ func TestMetadataLoader_NonExistentSubject(t *testing.T) {
 }
 
 func TestMetadataLoader_CaseAndAccentNormalization(t *testing.T) {
-	service, err := NewMetadataService(testCareerCode)
+	service, err := NewMetadataService(testCareerCode, testMetadataDir(t))
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -152,7 +176,7 @@ func TestMetadataLoader_CaseAndAccentNormalization(t *testing.T) {
 }
 
 func TestMetadataLoader_EmptySubjectName(t *testing.T) {
-	service, err := NewMetadataService(testCareerCode)
+	service, err := NewMetadataService(testCareerCode, testMetadataDir(t))
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -164,7 +188,7 @@ func TestMetadataLoader_EmptySubjectName(t *testing.T) {
 }
 
 func TestMetadataLoader_GetAllSubjects(t *testing.T) {
-	service, err := NewMetadataService(testCareerCode)
+	service, err := NewMetadataService(testCareerCode, testMetadataDir(t))
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -185,7 +209,7 @@ func TestMetadataLoader_GetAllSubjects(t *testing.T) {
 }
 
 func TestNormalizeName(t *testing.T) {
-	service, err := NewMetadataService(testCareerCode)
+	service, err := NewMetadataService(testCareerCode, testMetadataDir(t))
 	if err != nil {
 		t.Fatalf("Failed to create loader: %v", err)
 	}
@@ -212,7 +236,7 @@ func TestNormalizeName(t *testing.T) {
 }
 
 func TestMetadataLoader_InvalidCareerCode(t *testing.T) {
-	service, _ := NewMetadataService("non_existent_career")
+	service, _ := NewMetadataService("non_existent_career", testMetadataDir(t))
 	if service.hasCareerInfo {
 		t.Error("Expected false career info for invalid career code")
 	}

@@ -6,7 +6,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/commons"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/engine"
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
@@ -40,10 +39,10 @@ type ParsedLaboratories struct {
 	Labs   []LaboratoryDTO
 }
 
-func NewLaboratoriesParser(file io.ReadCloser) (*LaboratoriesParser, error) {
-	layoutsDir := filepath.Join(config.Get().Paths.BaseDir, "internal", "infrastructure", "parser", "layouts", "laboratories")
+func NewLaboratoriesParser(file io.ReadCloser, layoutsDir string) (*LaboratoriesParser, error) {
+	laboratoriesDir := filepath.Join(layoutsDir, "laboratories")
 
-	en, err := engine.NewParser(file, layoutsDir)
+	en, err := engine.NewParser(file, laboratoriesDir)
 	if err != nil {
 		return nil, err
 	}

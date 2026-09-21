@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/elias-gill/poliplanner2/internal/config"
 	log "github.com/elias-gill/poliplanner2/logger"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -17,13 +16,11 @@ type DbConnection struct {
 	db *sql.DB
 }
 
-func ConnectDB() (*DbConnection, error) {
-	cfg := config.Get()
-
-	log.Info("Initializing database connection", "url", cfg.Database.URL)
+func ConnectDB(dbURL string) (*DbConnection, error) {
+	log.Info("Initializing database connection", "url", dbURL)
 
 	// Open database file connection
-	db, err := sql.Open("sqlite3", cfg.Database.URL)
+	db, err := sql.Open("sqlite3", dbURL)
 	if err != nil {
 		return nil, fmt.Errorf("error opening db: %w", err)
 	}
@@ -44,13 +41,9 @@ func ConnectDB() (*DbConnection, error) {
 	return &DbConnection{db: db}, err
 }
 
-func RunMigrations() error {
-	cfg := config.Get()
-
-	migrationsDir := cfg.Database.MigrationsDir
-
-	databaseURL := "sqlite3://file:" + cfg.Database.URL + "?cache=shared&mode=rwc"
-	log.Debug("Running database migrations", "migrations_dir", cfg.Database.MigrationsDir)
+func RunMigrations(dbURL, migrationsDir string) error {
+	databaseURL := "sqlite3://file:" + dbURL + "?cache=shared&mode=rwc"
+	log.Debug("Running database migrations", "migrations_dir", migrationsDir)
 
 	log.Debug("Creating migration instance", "source", "file://"+migrationsDir)
 

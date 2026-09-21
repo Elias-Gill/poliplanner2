@@ -20,6 +20,7 @@ type Handler struct {
 	tmpl            *render.TemplateManager
 	scheduleService *schedule.ScheduleService
 	planService     *academic.CourseService
+	secureHTTP      bool
 }
 
 // NewHandler constructs a new Handler instance.
@@ -27,11 +28,13 @@ func NewHandler(
 	tmpl *render.TemplateManager,
 	scheduleService *schedule.ScheduleService,
 	planService *academic.CourseService,
+	secureHTTP bool,
 ) *Handler {
 	return &Handler{
 		tmpl:            tmpl,
 		scheduleService: scheduleService,
 		planService:     planService,
+		secureHTTP:      secureHTTP,
 	}
 }
 
@@ -71,7 +74,7 @@ func (h *Handler) dashboard(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		cookie.SetLatestScheduleCookie(w, scheduleModel.ScheduleID(scheduleID))
+		cookie.SetLatestScheduleCookie(w, scheduleModel.ScheduleID(scheduleID), h.secureHTTP)
 
 		err = h.tmpl.RenderPartial(w, "dashboard/index.html", "dashboard/schedule_content", details)
 		if err != nil {
@@ -140,7 +143,7 @@ func (h *Handler) dashboardSchedule(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie.SetLatestScheduleCookie(w, scheduleModel.ScheduleID(scheduleID))
+	cookie.SetLatestScheduleCookie(w, scheduleModel.ScheduleID(scheduleID), h.secureHTTP)
 
 	err = h.tmpl.RenderPartial(w, "dashboard/index.html", "dashboard/schedule_content", details)
 	if err != nil {

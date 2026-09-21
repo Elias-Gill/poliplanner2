@@ -39,6 +39,11 @@ type ExcelService struct {
 	// --- External services ---
 
 	periodService *academicService.PeriodService
+
+	// --- Paths injected from the composition root ---
+
+	layoutsDir  string
+	metadataDir string
 }
 
 func NewExcelService(
@@ -51,6 +56,8 @@ func NewExcelService(
 	careerRepo academicRepo.CareerRepository,
 	txManager repository.TxManager,
 	periodService *academicService.PeriodService,
+	layoutsDir string,
+	metadataDir string,
 ) *ExcelService {
 	return &ExcelService{
 		excelRepository:      excelRepo,
@@ -62,6 +69,8 @@ func NewExcelService(
 		careerRepository:     careerRepo,
 		txManager:            txManager,
 		periodService:        periodService,
+		layoutsDir:           layoutsDir,
+		metadataDir:          metadataDir,
 	}
 }
 
@@ -94,7 +103,7 @@ func (e ExcelService) PersistSource(ctx context.Context, source source.ScheduleS
 	}
 	defer content.Close()
 
-	p, err := parser.NewScheduleParser(content)
+	p, err := parser.NewScheduleParser(content, e.layoutsDir)
 	if err != nil {
 		return fmt.Errorf("cannot initialize excel parser: %w", err)
 	}
@@ -124,7 +133,7 @@ func (e ExcelService) PersistSource(ctx context.Context, source source.ScheduleS
 
 			career := buildCareerFromDTO(sheet.Career)
 
-			metadataService, err := metaServices.NewMetadataService(career.Code)
+			metadataService, err := metaServices.NewMetadataService(career.Code, e.metadataDir)
 			if err != nil {
 				return fmt.Errorf("error while loading metadata: %w", err)
 			}

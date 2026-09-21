@@ -1,7 +1,6 @@
 package service
 
 import (
-	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/repository"
 	"github.com/elias-gill/poliplanner2/internal/repository/academic"
 	"github.com/elias-gill/poliplanner2/internal/repository/auth"
@@ -58,13 +57,22 @@ type RepositoriesInput struct {
 	TxManager repository.TxManager
 }
 
+// AppConfig carries the configuration values the services need. They are
+// provided by the composition root instead of being read from a global.
+type AppConfig struct {
+	GoogleAPIKey string
+	EmailAPIKey  string
+	LayoutsDir   string
+	MetadataDir  string
+}
+
 // NewAppServices builds and wires all services together, managing inter-service dependencies.
-func NewAppServices(repos RepositoriesInput) *AppServices {
+func NewAppServices(repos RepositoriesInput, cfg AppConfig) *AppServices {
 	// Services that don't depend on other services
 	periodService := academicSrv.NewPeriodService(repos.PeriodRepo)
 	userService := userSrv.NewUserService(repos.UserRepo)
 	authService := authSrv.NewSessionService(repos.UserRepo, repos.AuthRepo)
-	emailService := email.New(config.Get().Email.APIKey)
+	emailService := email.New(cfg.EmailAPIKey)
 
 	// Services that depend on previously created services
 	excelService := excelSrv.NewExcelService(
@@ -77,10 +85,12 @@ func NewAppServices(repos RepositoriesInput) *AppServices {
 		repos.CareerRepo,
 		repos.TxManager,
 		periodService,
+		cfg.LayoutsDir,
+		cfg.MetadataDir,
 	)
 
 	syncService := excelSrv.NewSyncService(
-		excelSrv.NewDiscoveryService(config.Get().Excel.GoogleAPIKey),
+		excelSrv.NewDiscoveryService(cfg.GoogleAPIKey),
 		excelService,
 		repos.SyncRepo,
 	)

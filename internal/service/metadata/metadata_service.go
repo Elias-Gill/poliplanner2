@@ -8,7 +8,6 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
 	"github.com/elias-gill/poliplanner2/logger"
 )
@@ -59,10 +58,10 @@ type MetadataService struct {
 // NewMetadataService creates a service instance preloaded with the dataset
 // corresponding to the requested career code. It propagates wrapped internal
 // errors if configuration or filesystem read operations fail.
-func NewMetadataService(careerCode string) (*MetadataService, error) {
+func NewMetadataService(careerCode, metadataDir string) (*MetadataService, error) {
 	s := &MetadataService{}
 
-	if err := s.loadData(careerCode); err != nil {
+	if err := s.loadData(careerCode, metadataDir); err != nil {
 		return nil, fmt.Errorf("metadata service initialization failed: %w", err)
 	}
 
@@ -245,9 +244,8 @@ func (s *MetadataService) swapCacheEntries() {
 	s.cachedMetadata1, s.cachedMetadata2 = s.cachedMetadata2, s.cachedMetadata1
 }
 
-func (m *MetadataService) loadData(career string) error {
+func (m *MetadataService) loadData(career, basePath string) error {
 	career = strings.ToLower(career)
-	basePath := config.Get().Paths.MetadataDir
 
 	// Conditional load for the career curriculum file
 	metaFile := path.Join(basePath, "curriculums", fmt.Sprintf("%s.json", career))

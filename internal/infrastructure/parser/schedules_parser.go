@@ -6,7 +6,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/engine"
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
 )
@@ -27,10 +26,10 @@ type ParsedSchedules struct {
 	Subjects []SubjectDTO
 }
 
-func NewScheduleParser(file io.ReadCloser) (*SchedulesParser, error) {
-	layoutsDir := filepath.Join(config.Get().Paths.BaseDir, "internal", "infrastructure", "parser", "layouts", "schedules")
+func NewScheduleParser(file io.ReadCloser, layoutsDir string) (*SchedulesParser, error) {
+	schedulesDir := filepath.Join(layoutsDir, "schedules")
 
-	en, err := engine.NewParser(file, layoutsDir)
+	en, err := engine.NewParser(file, schedulesDir)
 	if err != nil {
 		return nil, err
 	}

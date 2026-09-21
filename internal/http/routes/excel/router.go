@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/config/timezone"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/source"
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
@@ -22,20 +21,26 @@ import (
 const maxUploadSize = 8 << 20 // 8 MiB
 
 type Handler struct {
-	tmpl         *render.TemplateManager
-	excelService *excel.ExcelService
-	syncService  *excel.SyncService
+	tmpl           *render.TemplateManager
+	excelService   *excel.ExcelService
+	syncService    *excel.SyncService
+	updateKey      string
+	scraperTimeout time.Duration
 }
 
 func NewHandler(
 	tmpl *render.TemplateManager,
 	excelService *excel.ExcelService,
 	syncService *excel.SyncService,
+	updateKey string,
+	scraperTimeout time.Duration,
 ) *Handler {
 	return &Handler{
-		tmpl:         tmpl,
-		excelService: excelService,
-		syncService:  syncService,
+		tmpl:           tmpl,
+		excelService:   excelService,
+		syncService:    syncService,
+		updateKey:      updateKey,
+		scraperTimeout: scraperTimeout,
 	}
 }
 
@@ -47,20 +52,6 @@ func (h *Handler) Routes() chi.Router {
 	r.Get("/list", h.listVersions) // <-- Nuevo endpoint para listar las versiones
 
 	return r
-}
-
-type handlerConfig struct {
-	updateKey      string
-	scraperTimeout time.Duration
-}
-
-// Helper para obtener configuración localmente dentro del struct Handler ya definido
-func (h *Handler) getConfig() handlerConfig {
-	cfg := config.Get()
-	return handlerConfig{
-		updateKey:      cfg.Security.UpdateKey,
-		scraperTimeout: cfg.Excel.ScraperTimeout,
-	}
 }
 
 // ======================================
@@ -117,8 +108,7 @@ func (h *Handler) listVersions(w http.ResponseWriter, r *http.Request) {
 // ==================== Helper methods ====================
 
 func (h *Handler) isAuthorized(authHeader string) bool {
-	cfg := h.getConfig()
-	expected := "Bearer " + cfg.updateKey
+	expected := "Bearer " + h.updateKey
 	return subtle.ConstantTimeCompare([]byte(strings.TrimSpace(authHeader)), []byte(expected)) == 1
 }
 
@@ -171,8 +161,7 @@ func (h *Handler) handleUpload(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handleSync(w http.ResponseWriter, r *http.Request) {
-	cfg := h.getConfig()
-	ctx, cancel := context.WithTimeout(r.Context(), cfg.scraperTimeout)
+	ctx, cancel := context.WithTimeout(r.Context(), h.scraperTimeout)
 	defer cancel()
 
 	if err := h.syncService.Sync(ctx); err != nil {

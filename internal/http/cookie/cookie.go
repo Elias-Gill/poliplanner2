@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/elias-gill/poliplanner2/internal/config"
 	"github.com/elias-gill/poliplanner2/internal/config/timezone"
 	"github.com/elias-gill/poliplanner2/internal/model/auth"
 	"github.com/elias-gill/poliplanner2/internal/model/schedule"
@@ -29,13 +28,13 @@ func ClearSessionCookie(w http.ResponseWriter) {
 	})
 }
 
-func SetSessionCookie(w http.ResponseWriter, token auth.SessionID) {
+func SetSessionCookie(w http.ResponseWriter, token auth.SessionID, secure bool) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     SessionIDCookie,
 		Value:    string(token),
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   config.Get().Security.SecureHTTP,
+		Secure:   secure,
 		SameSite: http.SameSiteLaxMode,
 		Expires:  time.Now().In(timezone.ParaguayTZ).Add(15 * 24 * time.Hour),
 	})
@@ -55,14 +54,14 @@ func GetLatestScheduleCookie(r *http.Request) (schedule.ScheduleID, bool) {
 	return schedule.ScheduleID(id), true
 }
 
-func SetLatestScheduleCookie(w http.ResponseWriter, scheduleID schedule.ScheduleID) {
+func SetLatestScheduleCookie(w http.ResponseWriter, scheduleID schedule.ScheduleID, secure bool) {
 	// set this id into a cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:     LatestScheduleCookie,
 		Value:    strconv.FormatInt(int64(scheduleID), 10),
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   config.Get().Security.SecureHTTP,
+		Secure:   secure,
 		SameSite: http.SameSiteLaxMode,
 		MaxAge:   30 * 24 * 60 * 60,
 	})

@@ -48,14 +48,14 @@ func main() {
 	)
 
 	log.Info("Initializing db")
-	conn, err := persistence.ConnectDB()
+	conn, err := persistence.ConnectDB(cfg.Database.URL)
 	if err != nil {
 		panic(err)
 	}
 	defer conn.CloseDB()
 
 	log.Info("Running migrations")
-	err = persistence.RunMigrations()
+	err = persistence.RunMigrations(cfg.Database.URL, cfg.Database.MigrationsDir)
 	if err != nil {
 		panic(err)
 	}
@@ -77,15 +77,20 @@ func main() {
 		UserRepo:       sqliteStore.UserRepo,
 		TxManager:      sqliteStore.TxManager,
 		ScheduleRepo:   sqliteStore.ScheduleRepo,
+	}, services.AppConfig{
+		GoogleAPIKey: cfg.Excel.GoogleAPIKey,
+		EmailAPIKey:  cfg.Email.APIKey,
+		LayoutsDir:   cfg.Paths.ExcelParsingLayoutsDir,
+		MetadataDir:  cfg.Paths.MetadataDir,
 	})
 
 	// Setup http routers
-	r := initRouter(servs)
+	r := initRouter(servs, cfg)
 
 	// Auto import new excel versions on startup (concurrently)
 	go func() {
 		// 30 seconds has to be more than enough, even when google drive is slow
-		ctx, cancel := context.WithTimeout(context.Background(), config.Get().Excel.ScraperTimeout)
+		ctx, cancel := context.WithTimeout(context.Background(), cfg.Excel.ScraperTimeout)
 		defer cancel()
 		// The result of this operation is irrelevant
 		servs.SyncService.AutoSync(ctx)
@@ -100,9 +105,9 @@ func main() {
 }
 
 // initRouter builds, configs middlewares, and maps all the routes for the application.
-func initRouter(srvs *services.AppServices) chi.Router {
+func initRouter(srvs *services.AppServices, cfg *config.Config) chi.Router {
 	// Start template manager
-	tmplManager, err := render.NewTemplateManager(config.Get().Paths.TemplatesDir)
+	tmplManager, err := render.NewTemplateManager(cfg.Paths.TemplatesDir)
 	if err != nil {
 		log.Fatal("Error al cargar las plantillas", "error", err)
 	}
@@ -112,9 +117,9 @@ func initRouter(srvs *services.AppServices) chi.Router {
 	// Register middlewares
 	r.Use(middleware.NewSessionMiddleware(srvs.SessionService))
 
-	r.Mount("/", auth.NewHandler(tmplManager, srvs.UserService, srvs.SessionService, srvs.EmailService).Routes())
+	r.Mount("/", auth.NewHandler(tmplManager, srvs.UserService, srvs.SessionService, srvs.EmailService, cfg.Security.SecureHTTP).Routes())
 
-	r.Mount("/dashboard", dashboard.NewHandler(tmplManager, srvs.ScheduleService, srvs.CourseService).Routes())
+	r.Mount("/dashboard", dashboard.NewHandler(tmplManager, srvs.ScheduleService, srvs.CourseService, cfg.Security.SecureHTTP).Routes())
 
 	r.Mount("/schedule", schedules.NewHandler(
 		tmplManager,
@@ -122,6 +127,7 @@ func initRouter(srvs *services.AppServices) chi.Router {
 		srvs.CareerService,
 		srvs.CourseService,
 		srvs.CurriculumService,
+		cfg.Security.SecureHTTP,
 	).Routes())
 
 	r.Mount("/user", user.NewHandler(tmplManager, srvs.SessionService).Routes())
@@ -133,10 +139,10 @@ func initRouter(srvs *services.AppServices) chi.Router {
 	r.Mount("/news", news.NewHandler(tmplManager).Routes())
 
 	// Admin routers
-	r.Mount("/excel", excel.NewHandler(tmplManager, srvs.ExcelService, srvs.SyncService).Routes())
+	r.Mount("/excel", excel.NewHandler(tmplManager, srvs.ExcelService, srvs.SyncService, cfg.Security.UpdateKey, cfg.Excel.ScraperTimeout).Routes())
 
 	// Static files and assets mapping
-	staticDir := http.Dir(config.Get().Paths.AssetsDir)
+	staticDir := http.Dir(cfg.Paths.AssetsDir)
 	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(staticDir)))
 	r.Handle("/sitemap.xml", http.FileServer(staticDir))
 	r.Handle("/robots.txt", http.FileServer(staticDir))

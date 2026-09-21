@@ -21,6 +21,7 @@ type Handler struct {
 	userService  *userService.UserService
 	authService  *auth.SessionService
 	emailService *email.EmailSender
+	secureHTTP   bool
 }
 
 func NewHandler(
@@ -28,12 +29,14 @@ func NewHandler(
 	userService *userService.UserService,
 	authService *auth.SessionService,
 	emailService *email.EmailSender,
+	secureHTTP bool,
 ) *Handler {
 	return &Handler{
 		tmpl:         tmpl,
 		userService:  userService,
 		authService:  authService,
 		emailService: emailService,
+		secureHTTP:   secureHTTP,
 	}
 }
 
@@ -128,7 +131,7 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Successful login
-	cookie.SetSessionCookie(w, session.ID)
+	cookie.SetSessionCookie(w, session.ID, h.secureHTTP)
 	utils.Redirect(w, r, redirect)
 }
 
