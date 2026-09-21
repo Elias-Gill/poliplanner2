@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/config/timezone"
-	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/commons"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser"
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/commons"
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
 )
 
@@ -16,35 +16,35 @@ func TestNormalizeSubjectName(t *testing.T) {
 		input    string
 		expected string
 	}{
-		{"Fisica 2", "fisica II"},
-		{"calculo 7", "calculo VII"},
-		{"Algebra 10", "algebra X"},
-		{"programacion 1", "programacion I"},
-		{"estadistica 20", "estadistica XX"},
+		{"Fisica 2", "Fisica II"},
+		{"calculo 7", "Calculo VII"},
+		{"Algebra 10", "Algebra X"},
+		{"programacion 1", "Programacion I"},
+		{"estadistica 20", "Estadistica XX"},
 
 		// Spaces and capital letters
-		{"  Fisica   3  ", "fisica III"},
-		{"CALCULO 5", "calculo V"},
-		{"CáLCULO 5", "calculo V"},
+		{"  Fisica   3  ", "Fisica III"},
+		{"CALCULO 5", "Calculo V"},
+		{"CáLCULO 5", "Calculo V"},
 
 		// No modifications needed
-		{"fisica", "fisica"},
-		{"fisica II", "fisica II"},
-		{"fisica 0", "fisica 0"},
-		{"fisica 21", "fisica 21"},
+		{"fisica", "Fisica"},
+		{"fisica II", "Fisica II"},
+		{"fisica 0", "Fisica 0"},
+		{"fisica 21", "Fisica 21"},
 
 		// Dash delimiters truncation
-		{"Electiva 1 - Machine Learning", "electiva I"},
-		{"electIVa 2 - quien sabe", "electiva II"},
+		{"Electiva 1 - Machine Learning", "Electiva I"},
+		{"electIVa 2 - quien sabe", "Electiva II"},
 
 		// Parenthesis removal
-		{"calculo V (variable vectorial)", "calculo V"},
-		{"calculo V (*)", "calculo V"},
-		{"calculo V (**)", "calculo V"},
+		{"calculo V (variable vectorial)", "Calculo V"},
+		{"calculo V (*)", "Calculo V"},
+		{"calculo V (**)", "Calculo V"},
 
 		// Additional cases
-		{"Álgebra Línea 1", "algebra linea I"},
-		{"Óptica Élite 4", "optica elite IV"},
+		{"Álgebra Línea 1", "Algebra linea I"},
+		{"Óptica Élite 4", "Optica elite IV"},
 	}
 
 	for _, tc := range tests {
@@ -96,7 +96,7 @@ func TestBuildSubject(t *testing.T) {
 	}
 
 	expected := academic.Subject{
-		Name: "quimica organica II",
+		Name: "Quimica organica II",
 		Department: academic.Department{
 			Code: "DEPT-QMC",
 		},
