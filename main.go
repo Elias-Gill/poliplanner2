@@ -36,13 +36,13 @@ func main() {
 
 	log.InitLogger(log.Options{
 		Verbose:      cfg.Logging.Verbose,
-		FilePath:     cfg.Logging.File,
+		LogDir:       cfg.Logging.Dir,
 		MaxSizeBytes: cfg.Logging.MaxSizeBytes,
 		RotateAfter:  cfg.Logging.RotateAfter,
 	})
 	log.Info("Logger initialized",
 		"verbose", cfg.Logging.Verbose,
-		"file", cfg.Logging.File,
+		"log_dir", cfg.Logging.Dir,
 		"max_size_bytes", cfg.Logging.MaxSizeBytes,
 		"rotate_after", cfg.Logging.RotateAfter,
 	)

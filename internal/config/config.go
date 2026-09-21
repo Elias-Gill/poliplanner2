@@ -75,8 +75,9 @@ type ExcelConfig struct {
 
 type LoggingConfig struct {
 	Verbose bool
-	// File is the active log file. Its parent directory is created on demand.
-	File string
+	// Dir is the directory where the active log file and its backup are
+	// written. It is created on demand.
+	Dir string
 	// MaxSizeBytes rotates the log file once it would grow past this size.
 	MaxSizeBytes int64
 	// RotateAfter rotates the log file once it is older than this duration.
@@ -239,7 +240,7 @@ func load() (*Config, error) {
 
 		Logging: LoggingConfig{
 			Verbose:      l.bool("VERBOSE_LOGS", verboseLogsDefault),
-			File:         l.path(baseDir, "LOG_FILE", "logs/poliplanner.log"),
+			Dir:          l.path(baseDir, "LOG_DIR", "logs"),
 			MaxSizeBytes: int64(l.integer("LOG_MAX_SIZE_MB", 10)) * 1024 * 1024,
 			RotateAfter:  l.duration("LOG_ROTATE_INTERVAL", 15*24*time.Hour),
 		},

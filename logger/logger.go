@@ -4,10 +4,15 @@ import (
 	"io"
 	"log/slog"
 	"os"
+	"path/filepath"
 	"time"
 )
 
 var custom_logger *slog.Logger
+
+// LogFileName is the name of the active log file inside Options.LogDir. Its
+// rotated backup is stored next to it with a ".1" suffix.
+const LogFileName = "poliplanner.log"
 
 // Options configures the application logger. The zero value logs INFO to
 // stdout with no file output, which is the behavior used by tests and tooling
@@ -16,9 +21,9 @@ type Options struct {
 	// Verbose lowers the minimum level to DEBUG.
 	Verbose bool
 
-	// FilePath is the active log file. When empty, logs are written only to
-	// stdout. Its parent directory is created on demand.
-	FilePath string
+	// LogDir is the directory where LogFileName is written. When empty, logs
+	// are written only to stdout. The directory is created on demand.
+	LogDir string
 
 	// MaxSizeBytes rotates the file once it would grow past this size. Zero
 	// disables the size limit.
@@ -41,9 +46,9 @@ func InitLogger(opts Options) {
 	}
 
 	writers := []io.Writer{os.Stdout}
-	if opts.FilePath != "" {
+	if opts.LogDir != "" {
 		writers = append(writers, NewRotatingFileWriter(
-			opts.FilePath,
+			filepath.Join(opts.LogDir, LogFileName),
 			opts.MaxSizeBytes,
 			opts.RotateAfter,
 		))

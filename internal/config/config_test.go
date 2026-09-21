@@ -1,8 +1,10 @@
 package config
 
 import (
+	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
 
 // setBaseEnv prepares a minimal, valid development environment pointing at an
@@ -86,6 +88,39 @@ func TestSecretLogValuesHideSecrets(t *testing.T) {
 				t.Errorf("LogValue leaked a secret: %s", out)
 			}
 		})
+	}
+}
+
+func TestLoad_LoggingDefaults(t *testing.T) {
+	setBaseEnv(t)
+
+	cfg, err := Load()
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+
+	wantDir := filepath.Join(cfg.Paths.BaseDir, "logs")
+	if cfg.Logging.Dir != wantDir {
+		t.Errorf("Logging.Dir = %q, want %q", cfg.Logging.Dir, wantDir)
+	}
+	if cfg.Logging.MaxSizeBytes != 10*1024*1024 {
+		t.Errorf("Logging.MaxSizeBytes = %d, want %d", cfg.Logging.MaxSizeBytes, 10*1024*1024)
+	}
+	if cfg.Logging.RotateAfter != 15*24*time.Hour {
+		t.Errorf("Logging.RotateAfter = %s, want %s", cfg.Logging.RotateAfter, 15*24*time.Hour)
+	}
+}
+
+func TestLoad_LogDirOverride(t *testing.T) {
+	setBaseEnv(t)
+	t.Setenv("LOG_DIR", "/var/log/poliplanner")
+
+	cfg, err := Load()
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if cfg.Logging.Dir != "/var/log/poliplanner" {
+		t.Errorf("Logging.Dir = %q, want %q", cfg.Logging.Dir, "/var/log/poliplanner")
 	}
 }
 
