@@ -153,7 +153,7 @@ func (h *Handler) handleUpload(w http.ResponseWriter, r *http.Request) {
 		downloadURL = "manual-upload"
 	}
 
-	src := source.NewExcelSourceFromReader(file, source.SourceMetadata{
+	src := source.NewScheduleSourceFromReader(file, source.SourceMetadata{
 		Name:     header.Filename,
 		URI:      downloadURL,
 		Semester: academic.YearSemester(semester),
