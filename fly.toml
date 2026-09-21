@@ -18,6 +18,7 @@ primary_region = 'gru'
   APP_ENV = 'prod'
   DATABASE_URL = '/poliplanner/poliplanner.db'
   SERVER_ADDR = ':8080'
+  LOG_DIR = "/poliplanner/logs"
 
 [[mounts]]
   source = 'poliplanner'
