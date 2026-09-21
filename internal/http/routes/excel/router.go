@@ -2,6 +2,7 @@ package excel
 
 import (
 	"context"
+	"crypto/subtle"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -117,7 +118,8 @@ func (h *Handler) listVersions(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) isAuthorized(authHeader string) bool {
 	cfg := h.getConfig()
-	return strings.TrimSpace(authHeader) == "Bearer "+cfg.updateKey
+	expected := "Bearer " + cfg.updateKey
+	return subtle.ConstantTimeCompare([]byte(strings.TrimSpace(authHeader)), []byte(expected)) == 1
 }
 
 func (h *Handler) handleUpload(w http.ResponseWriter, r *http.Request) {

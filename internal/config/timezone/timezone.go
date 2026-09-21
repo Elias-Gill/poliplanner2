@@ -1,6 +1,11 @@
 package timezone
 
-import "time"
+import (
+	"time"
+	// Embed the IANA timezone database so ParaguayTZ never panics on minimal
+	// container images that lack system tzdata.
+	_ "time/tzdata"
+)
 
 var ParaguayTZ = func() *time.Location {
 	loc, err := time.LoadLocation("America/Asuncion")

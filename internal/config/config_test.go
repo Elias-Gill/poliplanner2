@@ -71,6 +71,24 @@ func TestLoad_RejectsMalformedDuration(t *testing.T) {
 	}
 }
 
+func TestSecretLogValuesHideSecrets(t *testing.T) {
+	cases := map[string]string{
+		"security": SecurityConfig{UpdateKey: "super-secret", SecureHTTP: true}.LogValue().String(),
+		"excel":    ExcelConfig{GoogleAPIKey: "google-secret"}.LogValue().String(),
+		"email":    EmailConfig{APIKey: "email-secret"}.LogValue().String(),
+	}
+
+	for name, out := range cases {
+		t.Run(name, func(t *testing.T) {
+			if strings.Contains(out, "super-secret") ||
+				strings.Contains(out, "google-secret") ||
+				strings.Contains(out, "email-secret") {
+				t.Errorf("LogValue leaked a secret: %s", out)
+			}
+		})
+	}
+}
+
 func TestLoad_ProdRequiresBaseDir(t *testing.T) {
 	t.Setenv("APP_ENV", "prod")
 	t.Setenv("APP_BASE_DIR", "")

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -83,6 +84,53 @@ type SecurityConfig struct {
 
 type EmailConfig struct {
 	APIKey string
+}
+
+// ================================
+//        Secret redaction        =
+// ================================
+
+// redact hides a secret while distinguishing it from an empty value.
+func redact(secret string) string {
+	if secret == "" {
+		return ""
+	}
+	return "***"
+}
+
+// LogValue implements slog.LogValuer so a Config can be logged without leaking
+// secrets in its nested groups.
+func (c Config) LogValue() slog.Value {
+	return slog.GroupValue(
+		slog.Any("app", c.App),
+		slog.Any("server", c.Server),
+		slog.Any("database", c.Database),
+		slog.Any("paths", c.Paths),
+		slog.Any("excel", c.Excel),
+		slog.Any("logging", c.Logging),
+		slog.Any("security", c.Security),
+		slog.Any("email", c.Email),
+	)
+}
+
+func (s SecurityConfig) LogValue() slog.Value {
+	return slog.GroupValue(
+		slog.String("update_key", redact(s.UpdateKey)),
+		slog.Bool("secure_http", s.SecureHTTP),
+	)
+}
+
+func (e ExcelConfig) LogValue() slog.Value {
+	return slog.GroupValue(
+		slog.String("google_api_key", redact(e.GoogleAPIKey)),
+		slog.Duration("scraper_timeout", e.ScraperTimeout),
+	)
+}
+
+func (e EmailConfig) LogValue() slog.Value {
+	return slog.GroupValue(
+		slog.String("api_key", redact(e.APIKey)),
+	)
 }
 
 var (
@@ -165,17 +213,17 @@ func load() (*Config, error) {
 		},
 
 		Database: DatabaseConfig{
-			URL:           resolveOrDefaultPath(baseDir, "DATABASE_URL", "poliplanner.db"),
-			MigrationsDir: filepath.Join(baseDir, "internal", "infrastructure", "persistence", "migrations"),
+			URL:           l.path(baseDir, "DATABASE_URL", "poliplanner.db"),
+			MigrationsDir: l.path(baseDir, "", "internal/infrastructure/persistence/migrations"),
 		},
 
 		Paths: PathsConfig{
 			BaseDir:                baseDir,
-			ExcelParsingLayoutsDir: filepath.Join(baseDir, "internal", "infrastructure", "parser", "layouts"),
-			MetadataDir:            filepath.Join(baseDir, "internal", "service", "metadata", "data"),
-			DownloadsDir:           resolveOrDefaultPath(baseDir, "DOWNLOADS_DIR", filepath.Join("tmp", "poliplanner")),
-			TemplatesDir:           filepath.Join(baseDir, "internal", "render", "html", "templates"),
-			AssetsDir:              filepath.Join(baseDir, "web"),
+			ExcelParsingLayoutsDir: l.path(baseDir, "", "internal/infrastructure/parser/layouts"),
+			MetadataDir:            l.path(baseDir, "", "internal/service/metadata/data"),
+			DownloadsDir:           l.path(baseDir, "DOWNLOADS_DIR", "tmp/poliplanner"),
+			TemplatesDir:           l.path(baseDir, "", "internal/render/html/templates"),
+			AssetsDir:              l.path(baseDir, "", "web"),
 		},
 
 		Excel: ExcelConfig{
@@ -314,12 +362,17 @@ func (l *loader) duration(key string, defaultValue time.Duration) time.Duration 
 	return value
 }
 
-func resolveOrDefaultPath(baseDir, envKey, defaultRel string) string {
-	if raw := os.Getenv(envKey); raw != "" {
-		if filepath.IsAbs(raw) {
-			return raw
+// path resolves a file or directory relative to baseDir. When envKey is not
+// empty and the variable is defined it takes precedence: absolute values are
+// used as is and relative ones are joined to baseDir.
+func (l *loader) path(baseDir, envKey, defaultRel string) string {
+	if envKey != "" {
+		if raw := os.Getenv(envKey); raw != "" {
+			if filepath.IsAbs(raw) {
+				return raw
+			}
+			return filepath.Join(baseDir, raw)
 		}
-		return filepath.Join(baseDir, raw)
 	}
 	return filepath.Join(baseDir, defaultRel)
 }
