@@ -96,7 +96,7 @@ func (e ExcelService) ListVersions(ctx context.Context) ([]*excel.SheetVersion, 
 	return e.excelRepository.ListAllVersions(ctx)
 }
 
-func (e ExcelService) PersistSource(ctx context.Context, source source.ScheduleSource) error {
+func (e ExcelService) PersistScheduleSource(ctx context.Context, source source.ScheduleSource) error {
 	content, err := source.Content(ctx)
 	if err != nil {
 		return fmt.Errorf("cannot open Excel source: %w", err)
@@ -257,5 +257,9 @@ func (e ExcelService) PersistSource(ctx context.Context, source source.ScheduleS
 	}
 
 	// Correctly parsed and persisted
+	return nil
+}
+
+func (e ExcelService) PersistLabSource(ctx context.Context, source source.LabSource) error {
 	return nil
 }

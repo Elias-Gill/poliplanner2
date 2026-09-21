@@ -152,7 +152,7 @@ func (h *Handler) handleUpload(w http.ResponseWriter, r *http.Request) {
 		Date:     uploadDate.In(timezone.ParaguayTZ),
 	})
 
-	if err := h.excelService.PersistSource(r.Context(), src); err != nil {
+	if err := h.excelService.PersistScheduleSource(r.Context(), src); err != nil {
 		http.Error(w, "Could not process the file: "+err.Error(), http.StatusBadRequest)
 		return
 	}

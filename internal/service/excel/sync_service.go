@@ -64,10 +64,40 @@ func (s *SyncService) AutoSync(ctx context.Context) error {
 	return nil
 }
 
+// Sync synchronizes every published Excel source type. Schedule and laboratory
+// sources share the same last sync attempt marker: there is no separate check
+// per type.
 func (s *SyncService) Sync(ctx context.Context) error {
+	logger.Info("Starting sources sync")
+
+	var errs []error
+
+	if err := s.syncSchedules(ctx); err != nil {
+		logger.Error("Schedule sources sync failed", "error", err)
+		errs = append(errs, err)
+	}
+
+	if err := s.syncLabs(ctx); err != nil {
+		logger.Error("Laboratory sources sync failed", "error", err)
+		errs = append(errs, err)
+	}
+
+	if err := s.syncRepository.SetLastSyncAttempt(ctx, time.Now().In(timezone.ParaguayTZ)); err != nil {
+		logger.Error("Failed to set sync date on database", "error", err)
+		errs = append(errs, fmt.Errorf("error setting sync date on database: %w", err))
+	}
+
+	if len(errs) > 0 {
+		return errors.Join(errs...)
+	}
+
+	return nil
+}
+
+func (s *SyncService) syncSchedules(ctx context.Context) error {
 	logger.Info("Starting schedule sources sync")
 
-	webSources, err := s.importService.FindLatestSources(ctx)
+	webSources, err := s.importService.FindLatestScheduleSources(ctx)
 	if err != nil {
 		logger.Error("Error retrieving latest sources from web", "error", err)
 		return fmt.Errorf("error retrieving latest sources from web: %w", err)
@@ -84,15 +114,9 @@ func (s *SyncService) Sync(ctx context.Context) error {
 		return fmt.Errorf("error retrieving latest version from db: %w", err)
 	}
 
-	err = s.syncRepository.SetLastSyncAttempt(ctx, time.Now().In(timezone.ParaguayTZ))
-	if err != nil {
-		logger.Error("Failed to set sync date on database", "error", err)
-		return fmt.Errorf("error setting sync date on database: %w", err)
-	}
-
 	if serverVersion == nil {
 		logger.Info("No previous version found in database, persisting all latest web sources", "count", len(webSources.Sources))
-		return s.persistAllSources(ctx, webSources.Sources)
+		return s.persistAllScheduleSources(ctx, webSources.Sources)
 	}
 
 	if !webSources.Date.After(serverVersion.ParsedAt) {
@@ -111,14 +135,31 @@ func (s *SyncService) Sync(ctx context.Context) error {
 		"count", len(webSources.Sources),
 	)
 
-	return s.persistAllSources(ctx, webSources.Sources)
+	return s.persistAllScheduleSources(ctx, webSources.Sources)
 }
 
-func (s *SyncService) persistAllSources(ctx context.Context, sources []source.ScheduleSource) error {
+func (s *SyncService) syncLabs(ctx context.Context) error {
+	logger.Info("Starting laboratory sources sync")
+
+	labSources, err := s.importService.FindLatestLabSources(ctx)
+	if err != nil {
+		logger.Error("Error retrieving latest laboratory sources from web", "error", err)
+		return fmt.Errorf("error retrieving latest laboratory sources from web: %w", err)
+	}
+
+	if labSources == nil || len(labSources.Sources) == 0 {
+		logger.Warn("No laboratory sources found on web")
+		return nil
+	}
+
+	return s.persistAllLabSources(ctx, labSources.Sources)
+}
+
+func (s *SyncService) persistAllScheduleSources(ctx context.Context, sources []source.ScheduleSource) error {
 	var errs []error
 	for i, src := range sources {
 		logger.Info("Persisting source", "index", i, "uri", src.Metadata().URI, "name", src.Metadata().Name)
-		if err := s.excelService.PersistSource(ctx, src); err != nil {
+		if err := s.excelService.PersistScheduleSource(ctx, src); err != nil {
 			logger.Error("Failed to persist source", "index", i, "uri", src.Metadata().URI, "error", err)
 			errs = append(errs, fmt.Errorf("source %d (%s): %w", i, src.Metadata().URI, err))
 		}
@@ -126,6 +167,23 @@ func (s *SyncService) persistAllSources(ctx context.Context, sources []source.Sc
 
 	if len(errs) > 0 {
 		return fmt.Errorf("errors persisting sources: %w", errors.Join(errs...))
+	}
+
+	return nil
+}
+
+func (s *SyncService) persistAllLabSources(ctx context.Context, sources []source.LabSource) error {
+	var errs []error
+	for i, src := range sources {
+		logger.Info("Persisting laboratory source", "index", i, "uri", src.Metadata().URI, "name", src.Metadata().Name)
+		if err := s.excelService.PersistLabSource(ctx, src); err != nil {
+			logger.Error("Failed to persist laboratory source", "index", i, "uri", src.Metadata().URI, "error", err)
+			errs = append(errs, fmt.Errorf("laboratory source %d (%s): %w", i, src.Metadata().URI, err))
+		}
+	}
+
+	if len(errs) > 0 {
+		return fmt.Errorf("errors persisting laboratory sources: %w", errors.Join(errs...))
 	}
 
 	return nil
