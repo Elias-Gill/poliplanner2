@@ -125,7 +125,7 @@ func load() (*Config, error) {
 		env = EnvDev
 	}
 
-	baseDir, err := resolveBaseDir()
+	baseDir, err := resolveBaseDir(env)
 	if err != nil {
 		return nil, fmt.Errorf("cannot resolve base dir: %w", err)
 	}
@@ -201,7 +201,7 @@ func load() (*Config, error) {
 // =         Helpers              =
 // ================================
 
-func resolveBaseDir() (string, error) {
+func resolveBaseDir(env Environment) (string, error) {
 	wd, err := os.Getwd()
 	if err != nil {
 		return "", err
@@ -214,7 +214,33 @@ func resolveBaseDir() (string, error) {
 		return filepath.Join(wd, raw), nil
 	}
 
+	// In development the process often runs from a package subdirectory (for
+	// example `go test ./...`), so we walk up to the module root to keep the
+	// relative Paths (layouts, metadata, templates, ...) pointing at the
+	// repository. In production only the working directory is meaningful.
+	if env == EnvDev {
+		if root, ok := findModuleRoot(wd); ok {
+			return root, nil
+		}
+	}
+
 	return wd, nil
+}
+
+// findModuleRoot walks up from dir and returns the first directory containing a
+// go.mod file.
+func findModuleRoot(dir string) (string, bool) {
+	for {
+		if _, err := os.Stat(filepath.Join(dir, "go.mod")); err == nil {
+			return dir, true
+		}
+
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			return "", false
+		}
+		dir = parent
+	}
 }
 
 // ================================
