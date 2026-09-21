@@ -2,6 +2,7 @@ package config
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -126,10 +127,12 @@ func Load() (*Config, error) {
 // ================================
 
 func load() (*Config, error) {
-	env := Environment(getEnv("APP_ENV", "dev"))
+	env := Environment(os.Getenv("APP_ENV"))
 	if env != EnvDev && env != EnvProd {
 		env = EnvDev
 	}
+
+	l := &loader{}
 
 	baseDir, err := resolveBaseDir(env)
 	if err != nil {
@@ -141,15 +144,9 @@ func load() (*Config, error) {
 		loadDotenv(filepath.Join(baseDir, ".env"))
 	}
 
-	// Fail fast on missing critical key
-	updateKey := getEnv("UPDATE_KEY", "")
-	if updateKey == "" {
-		return nil, fmt.Errorf("missing UPDATE_KEY")
-	}
-
-	googleAPIKey := getEnv("GOOGLE_API_KEY", "")
-
-	emailAPIKey := getEnv("EMAIL_API_KEY", "")
+	updateKey := l.required("UPDATE_KEY")
+	googleAPIKey := l.string("GOOGLE_API_KEY", "")
+	emailAPIKey := l.string("EMAIL_API_KEY", "")
 
 	// Secure http on production. Unsecure for dev to avoid local network problems
 	secureHTTPDefault := env == EnvProd
@@ -163,7 +160,7 @@ func load() (*Config, error) {
 		},
 
 		Server: ServerConfig{
-			Addr: getEnv("SERVER_ADDR", ":8080"),
+			Addr: l.string("SERVER_ADDR", ":8080"),
 			Env:  env,
 		},
 
@@ -183,21 +180,25 @@ func load() (*Config, error) {
 
 		Excel: ExcelConfig{
 			GoogleAPIKey:   googleAPIKey,
-			ScraperTimeout: getEnvAsDuration("SCRAPER_TIMEOUT", 30*time.Second),
+			ScraperTimeout: l.duration("SCRAPER_TIMEOUT", 30*time.Second),
 		},
 
 		Logging: LoggingConfig{
-			Verbose: getEnvAsBool("VERBOSE_LOGS", verboseLogsDefault),
+			Verbose: l.bool("VERBOSE_LOGS", verboseLogsDefault),
 		},
 
 		Security: SecurityConfig{
 			UpdateKey:  updateKey,
-			SecureHTTP: getEnvAsBool("SECURE_HTTP", secureHTTPDefault),
+			SecureHTTP: l.bool("SECURE_HTTP", secureHTTPDefault),
 		},
 
 		Email: EmailConfig{
 			APIKey: emailAPIKey,
 		},
+	}
+
+	if len(l.errs) > 0 {
+		return nil, errors.Join(l.errs...)
 	}
 
 	return cfg, nil
@@ -250,30 +251,62 @@ func findModuleRoot(dir string) (string, bool) {
 }
 
 // ================================
-// =         Env helpers          =
+//         Env helpers            =
 // ================================
 
-func getEnv(key, defaultValue string) string {
+// loader reads environment variables and accumulates validation errors so the
+// whole configuration can be reported at once instead of failing silently on
+// the first malformed value.
+type loader struct {
+	errs []error
+}
+
+// string returns the variable value or the provided default when unset.
+func (l *loader) string(key, defaultValue string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
 	}
 	return defaultValue
 }
 
-func getEnvAsBool(key string, defaultValue bool) bool {
-	valueStr := getEnv(key, "")
-	if value, err := strconv.ParseBool(valueStr); err == nil {
-		return value
+// required records an error when the variable is unset.
+func (l *loader) required(key string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		l.errs = append(l.errs, fmt.Errorf("missing required environment variable %s", key))
 	}
-	return defaultValue
+	return value
 }
 
-func getEnvAsDuration(key string, defaultValue time.Duration) time.Duration {
-	valueStr := getEnv(key, "")
-	if value, err := time.ParseDuration(valueStr); err == nil {
-		return value
+// bool parses a boolean variable, recording an error when it is malformed.
+func (l *loader) bool(key string, defaultValue bool) bool {
+	raw := os.Getenv(key)
+	if raw == "" {
+		return defaultValue
 	}
-	return defaultValue
+
+	value, err := strconv.ParseBool(raw)
+	if err != nil {
+		l.errs = append(l.errs, fmt.Errorf("invalid boolean value for %s: %q", key, raw))
+		return defaultValue
+	}
+	return value
+}
+
+// duration parses a duration variable, recording an error when it is
+// malformed.
+func (l *loader) duration(key string, defaultValue time.Duration) time.Duration {
+	raw := os.Getenv(key)
+	if raw == "" {
+		return defaultValue
+	}
+
+	value, err := time.ParseDuration(raw)
+	if err != nil {
+		l.errs = append(l.errs, fmt.Errorf("invalid duration value for %s: %q", key, raw))
+		return defaultValue
+	}
+	return value
 }
 
 func resolveOrDefaultPath(baseDir, envKey, defaultRel string) string {
