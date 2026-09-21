@@ -22,8 +22,8 @@ type SchedulesParser struct {
 	fieldSetters map[string]func(*SubjectDTO, string)
 }
 
-type ParsedSheet struct {
-	Name     string
+type ParsedSchedules struct {
+	Career   string
 	Subjects []SubjectDTO
 }
 
@@ -46,7 +46,7 @@ func (ep *SchedulesParser) Close() {
 	ep.engine.Close()
 }
 
-func (ep *SchedulesParser) ParseNextSheet() (*ParsedSheet, error) {
+func (ep *SchedulesParser) ParseNextSheet() (*ParsedSchedules, error) {
 	name, ok := ep.engine.NextSheet()
 	if !ok {
 		// There is no sheet to parse
@@ -55,7 +55,7 @@ func (ep *SchedulesParser) ParseNextSheet() (*ParsedSheet, error) {
 
 	subjects := make([]SubjectDTO, 0, 250)
 
-	err := ep.engine.ParseCurrentSheet(name, func(row []string, lay *engine.Layout, startingCell int) error {
+	err := ep.engine.ParseSheet(name, func(row []string, lay *engine.Layout, startingCell int) error {
 		d := dtoPool.Get().(*SubjectDTO)
 		d.Reset()
 		current := startingCell - 1
@@ -82,8 +82,8 @@ func (ep *SchedulesParser) ParseNextSheet() (*ParsedSheet, error) {
 		return nil, err
 	}
 
-	return &ParsedSheet{
-		Name:     strings.ToUpper(strings.ReplaceAll(name, " ", "")),
+	return &ParsedSchedules{
+		Career:   strings.ToUpper(strings.ReplaceAll(name, " ", "")),
 		Subjects: subjects,
 	}, nil
 }

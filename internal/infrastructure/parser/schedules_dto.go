@@ -102,7 +102,7 @@ func (s *SubjectDTO) SetSubjectName(val string) {
 	s.CourseType = academic.Normal
 
 	if strings.Contains(s.RawSubjectName, "(**)") {
-		s.CourseType = academic.Laboratory
+		s.CourseType = academic.OnLaboratory
 	} else if strings.Contains(s.RawSubjectName, "(*)") {
 		s.CourseType = academic.ExamOnly
 	}

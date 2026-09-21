@@ -52,6 +52,12 @@ type CourseHistoryEntry struct {
 	Offering []CourseSummaryView
 }
 
+type LaboratoryEntryView struct {
+	ID       LaboratoryID
+	section  string
+	schedule []ClassSession
+}
+
 // ==========================
 // 	 Teacher history view
 // ==========================

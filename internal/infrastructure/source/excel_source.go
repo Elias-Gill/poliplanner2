@@ -30,16 +30,11 @@ type SourceMetadata struct {
 	Date time.Time
 }
 
-type sourceInterface interface {
+type source interface {
 	Content(ctx context.Context) (io.ReadCloser, error)
 	Metadata() SourceMetadata
 }
 
-type ScheduleSource sourceInterface
+type ScheduleSource source
 
-type LabSource sourceInterface
-
-type SourceScraper interface {
-	DiscoverSchedules(ctx context.Context) ([]ScheduleSource, error)
-	DiscoverLabs(ctx context.Context) ([]LabSource, error)
-}
+type LabSource source

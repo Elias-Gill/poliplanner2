@@ -178,14 +178,38 @@ func IsValidDate(day, month, year int) bool {
 	return day <= daysInMonth
 }
 
-// ScanLines escanea texto multilínea sin alocar slices intermedios.
+// NormalizeKey recorta, colapsa espacios internos y pasa a mayúsculas. Se usa para
+// construir claves de agrupación (por ejemplo materia + plan + sección) de forma que
+// diferencias de espaciado o mayúsculas no impidan detectar entidades repetidas.
+//
+// NOTA: es una normalización exclusiva para comparar/agrupar, no un valor de negocio.
+func NormalizeKey(s string) string {
+	fields := strings.Fields(s)
+	if len(fields) == 0 {
+		return ""
+	}
+	return strings.ToUpper(strings.Join(fields, " "))
+}
+
+// ScanLines escanea texto multilínea sin alocar slices intermedios. Mantiene un tope de 4
+// líneas (pensado para los profesores de la planilla de horarios).
 func ScanLines(input string, assign func(idx int, line string)) int {
+	return ScanLinesN(input, 4, assign)
+}
+
+// ScanLinesN escanea hasta `max` líneas no vacías, asignando cada una mediante assign.
+// Conserva el mismo comportamiento que ScanLines (trim y salto de líneas vacías) pero
+// permite a otros parsers extender el límite.
+func ScanLinesN(input string, max int, assign func(idx int, line string)) int {
+	if max <= 0 {
+		return 0
+	}
 	input = strings.TrimSpace(input)
 	if input == "" {
 		return 0
 	}
 	idx := 0
-	for idx < 4 {
+	for idx < max {
 		next := strings.IndexByte(input, '\n')
 		var line string
 		if next == -1 {

@@ -122,7 +122,7 @@ func (e ExcelService) PersistSource(ctx context.Context, source source.ScheduleS
 
 			logger.Info("Sheet parsing succesfull", "name", sheet)
 
-			career := buildCareerFromDTO(sheet.Name)
+			career := buildCareerFromDTO(sheet.Career)
 
 			metadataService, err := metaServices.NewMetadataService(career.Code)
 			if err != nil {

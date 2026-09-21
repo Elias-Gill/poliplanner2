@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/config/timezone"
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/commons"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser"
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
 )
@@ -107,38 +108,19 @@ func TestBuildSubject(t *testing.T) {
 	}
 }
 
-// TODO: continuar de implementar
-// func TestBuildCurriculum(t *testing.T) {
-// 	input := parser.SubjectDTO{
-// 		Level:    4,
-// 		Semester: 5,
-// 	}
-//
-// 	expected := academic.Curriculum{
-// 		Level:    4,
-// 		Semester: 5,
-// 	}
-//
-// 	got := buildCurriculum(input)
-// 	// FIX: test case for emphasis
-// 	if got != expected {
-// 		t.Errorf("buildCurriculum() = %+v; want %+v", got, expected)
-// 	}
-// }
-
 func TestBuildOfferingFromDTO_ExamsMapping(t *testing.T) {
 	// Modificado: Ahora pasamos structs por valor asignando de forma explícita Valid: true
 	input := parser.SubjectDTO{
 		RawSubjectName: "Matematica I",
 		CourseType:     academic.ExamOnly,
 		Section:        "A",
-		Partial1Date:   parser.Date{Year: 2026, Month: 5, Day: 10, Valid: true},
-		Partial1Time:   parser.Hour{Hour: 14, Minute: 30, Valid: true},
+		Partial1Date:   commons.Date{Year: 2026, Month: 5, Day: 10, Valid: true},
+		Partial1Time:   commons.Hour{Hour: 14, Minute: 30, Valid: true},
 		Partial1Room:   "Aula 1",
-		Final1Date:     parser.Date{Year: 2026, Month: 7, Day: 15, Valid: true},
-		Final1Time:     parser.Hour{Hour: 8, Minute: 0, Valid: true},
-		Final1RevDate:  parser.Date{Year: 2026, Month: 7, Day: 18, Valid: true},
-		Final1RevTime:  parser.Hour{Hour: 10, Minute: 0, Valid: true},
+		Final1Date:     commons.Date{Year: 2026, Month: 7, Day: 15, Valid: true},
+		Final1Time:     commons.Hour{Hour: 8, Minute: 0, Valid: true},
+		Final1RevDate:  commons.Date{Year: 2026, Month: 7, Day: 18, Valid: true},
+		Final1RevTime:  commons.Hour{Hour: 10, Minute: 0, Valid: true},
 		Final1Room:     "Aula Magna",
 		// Los campos omitidos (Partial2, Final2) se inicializan en cero por defecto con Valid: false
 	}

@@ -69,7 +69,7 @@ func (ep *ParserEngine) NextSheet() (string, bool) {
 
 // ParseCurrentSheet iterates over rows and delegates processing to rowHandler.
 // It detects the header row and matching layout automatically.
-func (ep *ParserEngine) ParseCurrentSheet(sheetName string, rowHandler func(row []string, lay *Layout, startingCell int) error) error {
+func (ep *ParserEngine) ParseSheet(sheetName string, rowHandler func(row []string, lay *Layout, startingCell int) error) error {
 	stream, err := ep.file.Rows(sheetName)
 	if err != nil {
 		return exceptions.NewExcelParserInputException("Sheet not found: "+sheetName, err)
