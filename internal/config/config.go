@@ -221,14 +221,19 @@ func resolveBaseDir(env Environment) (string, error) {
 		return filepath.Join(wd, raw), nil
 	}
 
+	// Production must be explicit: the working directory is not a reliable
+	// source for the application layout, as it depends on how the process is
+	// launched.
+	if env == EnvProd {
+		return "", fmt.Errorf("APP_BASE_DIR must be set when APP_ENV=%s", EnvProd)
+	}
+
 	// In development the process often runs from a package subdirectory (for
 	// example `go test ./...`), so we walk up to the module root to keep the
 	// relative Paths (layouts, metadata, templates, ...) pointing at the
-	// repository. In production only the working directory is meaningful.
-	if env == EnvDev {
-		if root, ok := findModuleRoot(wd); ok {
-			return root, nil
-		}
+	// repository.
+	if root, ok := findModuleRoot(wd); ok {
+		return root, nil
 	}
 
 	return wd, nil

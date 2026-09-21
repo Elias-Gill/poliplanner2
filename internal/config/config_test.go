@@ -71,6 +71,34 @@ func TestLoad_RejectsMalformedDuration(t *testing.T) {
 	}
 }
 
+func TestLoad_ProdRequiresBaseDir(t *testing.T) {
+	t.Setenv("APP_ENV", "prod")
+	t.Setenv("APP_BASE_DIR", "")
+	t.Setenv("UPDATE_KEY", "test-key")
+
+	_, err := Load()
+	if err == nil {
+		t.Fatal("expected an error when APP_BASE_DIR is missing in production")
+	}
+	if !strings.Contains(err.Error(), "APP_BASE_DIR") {
+		t.Errorf("error should mention APP_BASE_DIR, got: %v", err)
+	}
+}
+
+func TestLoad_ProdWithBaseDir(t *testing.T) {
+	t.Setenv("APP_ENV", "prod")
+	t.Setenv("APP_BASE_DIR", t.TempDir())
+	t.Setenv("UPDATE_KEY", "test-key")
+
+	cfg, err := Load()
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if cfg.Server.Env != EnvProd {
+		t.Errorf("Env = %q, want %q", cfg.Server.Env, EnvProd)
+	}
+}
+
 func TestLoad_AggregatesErrors(t *testing.T) {
 	setBaseEnv(t)
 	t.Setenv("UPDATE_KEY", "")
