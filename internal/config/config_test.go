@@ -1,6 +1,7 @@
 package config
 
 import (
+	"log/slog"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -91,7 +92,7 @@ func TestSecretLogValuesHideSecrets(t *testing.T) {
 	}
 }
 
-func TestLoad_LoggingDefaults(t *testing.T) {
+func TestLoad_LoggingDefaultsInDev(t *testing.T) {
 	setBaseEnv(t)
 
 	cfg, err := Load()
@@ -99,9 +100,9 @@ func TestLoad_LoggingDefaults(t *testing.T) {
 		t.Fatalf("Load: %v", err)
 	}
 
-	wantDir := filepath.Join(cfg.Paths.BaseDir, "logs")
-	if cfg.Logging.Dir != wantDir {
-		t.Errorf("Logging.Dir = %q, want %q", cfg.Logging.Dir, wantDir)
+	// File logging is off by default in development.
+	if cfg.Logging.Dir != "" {
+		t.Errorf("Logging.Dir = %q, want empty in dev", cfg.Logging.Dir)
 	}
 	if cfg.Logging.MaxSizeBytes != 10*1024*1024 {
 		t.Errorf("Logging.MaxSizeBytes = %d, want %d", cfg.Logging.MaxSizeBytes, 10*1024*1024)
@@ -109,10 +110,38 @@ func TestLoad_LoggingDefaults(t *testing.T) {
 	if cfg.Logging.RotateAfter != 15*24*time.Hour {
 		t.Errorf("Logging.RotateAfter = %s, want %s", cfg.Logging.RotateAfter, 15*24*time.Hour)
 	}
+	if cfg.Logging.Format != "text" {
+		t.Errorf("Logging.Format = %q, want text", cfg.Logging.Format)
+	}
+	// Dev is verbose by default, so the level defaults to debug.
+	if cfg.Logging.Level != slog.LevelDebug {
+		t.Errorf("Logging.Level = %v, want debug", cfg.Logging.Level)
+	}
+}
+
+func TestLoad_LoggingDefaultsInProd(t *testing.T) {
+	t.Setenv("APP_ENV", "prod")
+	t.Setenv("APP_BASE_DIR", t.TempDir())
+	t.Setenv("UPDATE_KEY", "test-key")
+
+	cfg, err := Load()
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+
+	// File logging is on by default in production.
+	wantDir := filepath.Join(cfg.Paths.BaseDir, "logs")
+	if cfg.Logging.Dir != wantDir {
+		t.Errorf("Logging.Dir = %q, want %q", cfg.Logging.Dir, wantDir)
+	}
+	if cfg.Logging.Level != slog.LevelInfo {
+		t.Errorf("Logging.Level = %v, want info", cfg.Logging.Level)
+	}
 }
 
 func TestLoad_LogDirOverride(t *testing.T) {
 	setBaseEnv(t)
+	t.Setenv("LOG_TO_FILE", "true")
 	t.Setenv("LOG_DIR", "/var/log/poliplanner")
 
 	cfg, err := Load()
@@ -121,6 +150,39 @@ func TestLoad_LogDirOverride(t *testing.T) {
 	}
 	if cfg.Logging.Dir != "/var/log/poliplanner" {
 		t.Errorf("Logging.Dir = %q, want %q", cfg.Logging.Dir, "/var/log/poliplanner")
+	}
+}
+
+func TestLoad_LogLevelAndFormat(t *testing.T) {
+	setBaseEnv(t)
+	t.Setenv("LOG_LEVEL", "warn")
+	t.Setenv("LOG_FORMAT", "json")
+
+	cfg, err := Load()
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if cfg.Logging.Level != slog.LevelWarn {
+		t.Errorf("Logging.Level = %v, want warn", cfg.Logging.Level)
+	}
+	if cfg.Logging.Format != "json" {
+		t.Errorf("Logging.Format = %q, want json", cfg.Logging.Format)
+	}
+}
+
+func TestLoad_RejectsInvalidLogValues(t *testing.T) {
+	setBaseEnv(t)
+	t.Setenv("LOG_LEVEL", "loud")
+	t.Setenv("LOG_FORMAT", "xml")
+
+	_, err := Load()
+	if err == nil {
+		t.Fatal("expected an error for invalid log level and format")
+	}
+	for _, want := range []string{"LOG_LEVEL", "LOG_FORMAT"} {
+		if !strings.Contains(err.Error(), want) {
+			t.Errorf("error should mention %s, got: %v", want, err)
+		}
 	}
 }
 

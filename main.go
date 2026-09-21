@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/elias-gill/poliplanner2/internal/config"
+	"github.com/elias-gill/poliplanner2/internal/config/timezone"
 	"github.com/elias-gill/poliplanner2/internal/http/middleware"
 	"github.com/elias-gill/poliplanner2/internal/http/routes"
 	"github.com/elias-gill/poliplanner2/internal/http/routes/auth"
@@ -35,14 +36,17 @@ func main() {
 	}
 
 	log.InitLogger(log.Options{
-		Verbose:      cfg.Logging.Verbose,
+		Level:        cfg.Logging.Level,
 		LogDir:       cfg.Logging.Dir,
 		MaxSizeBytes: cfg.Logging.MaxSizeBytes,
 		RotateAfter:  cfg.Logging.RotateAfter,
+		Format:       cfg.Logging.Format,
+		Location:     timezone.ParaguayTZ,
 	})
 	log.Info("Logger initialized",
-		"verbose", cfg.Logging.Verbose,
+		"level", cfg.Logging.Level,
 		"log_dir", cfg.Logging.Dir,
+		"format", cfg.Logging.Format,
 		"max_size_bytes", cfg.Logging.MaxSizeBytes,
 		"rotate_after", cfg.Logging.RotateAfter,
 	)

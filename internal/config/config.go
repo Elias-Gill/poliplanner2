@@ -75,13 +75,18 @@ type ExcelConfig struct {
 
 type LoggingConfig struct {
 	Verbose bool
-	// Dir is the directory where the active log file and its backup are
-	// written. It is created on demand.
+	// Level is the minimum level to emit.
+	Level slog.Level
+	// Dir is the directory where the active log file and its rotated backups
+	// are written. Empty disables file output. It is created on demand.
 	Dir string
 	// MaxSizeBytes rotates the log file once it would grow past this size.
 	MaxSizeBytes int64
-	// RotateAfter rotates the log file once it is older than this duration.
+	// RotateAfter rotates the log file once it is older than this duration and
+	// bounds how long rotated files are kept.
 	RotateAfter time.Duration
+	// Format is the handler format, either "text" or "json".
+	Format string
 }
 
 type SecurityConfig struct {
@@ -208,6 +213,21 @@ func load() (*Config, error) {
 
 	// Verbose logs disabled on production
 	verboseLogsDefault := env == EnvDev
+	verbose := l.bool("VERBOSE_LOGS", verboseLogsDefault)
+
+	// File logging is meant for production deployments; it stays disabled in
+	// development unless LOG_TO_FILE is explicitly set.
+	logToFile := l.bool("LOG_TO_FILE", env == EnvProd)
+	logDir := ""
+	if logToFile {
+		logDir = l.path(baseDir, "LOG_DIR", "logs")
+	}
+
+	logFormat := strings.ToLower(strings.TrimSpace(l.string("LOG_FORMAT", "text")))
+	if logFormat != "text" && logFormat != "json" {
+		l.errs = append(l.errs, fmt.Errorf("invalid value for LOG_FORMAT: %q (want text or json)", logFormat))
+		logFormat = "text"
+	}
 
 	cfg := &Config{
 		App: AppData{
@@ -239,10 +259,12 @@ func load() (*Config, error) {
 		},
 
 		Logging: LoggingConfig{
-			Verbose:      l.bool("VERBOSE_LOGS", verboseLogsDefault),
-			Dir:          l.path(baseDir, "LOG_DIR", "logs"),
+			Verbose:      verbose,
+			Level:        l.logLevel("LOG_LEVEL", verbose),
+			Dir:          logDir,
 			MaxSizeBytes: int64(l.integer("LOG_MAX_SIZE_MB", 10)) * 1024 * 1024,
 			RotateAfter:  l.duration("LOG_ROTATE_INTERVAL", 15*24*time.Hour),
+			Format:       logFormat,
 		},
 
 		Security: SecurityConfig{
@@ -369,6 +391,32 @@ func (l *loader) integer(key string, defaultValue int) int {
 		return defaultValue
 	}
 	return value
+}
+
+// logLevel parses a textual log level. When unset it falls back to debug for a
+// verbose default and info otherwise.
+func (l *loader) logLevel(key string, verboseDefault bool) slog.Level {
+	raw := strings.ToLower(strings.TrimSpace(os.Getenv(key)))
+	if raw == "" {
+		if verboseDefault {
+			return slog.LevelDebug
+		}
+		return slog.LevelInfo
+	}
+
+	switch raw {
+	case "debug":
+		return slog.LevelDebug
+	case "info":
+		return slog.LevelInfo
+	case "warn", "warning":
+		return slog.LevelWarn
+	case "error":
+		return slog.LevelError
+	default:
+		l.errs = append(l.errs, fmt.Errorf("invalid log level for %s: %q", key, raw))
+		return slog.LevelInfo
+	}
 }
 
 // duration parses a duration variable, recording an error when it is
