@@ -28,7 +28,7 @@ import (
 
 func main() {
 	log.Info("Loading env configurations")
-	cfg, err := config.Load()
+	cfg, err := config.Init()
 	if err != nil {
 		log.Error("Config load has errors", "err", err.Error())
 		return

@@ -85,32 +85,38 @@ type EmailConfig struct {
 }
 
 var (
-	cfg  *Config
-	err  error
-	once sync.Once // To ensure thread safety
+	once    sync.Once // To ensure thread safety
+	cfg     *Config
+	loadErr error
 )
 
 // ================================
-// =         Public API           =
+//         Public API             =
 // ================================
 
-// Get returns loaded config or nil if failed.
+// Init loads the configuration exactly once and caches it. It is safe to call
+// multiple times; only the first call performs any work. It should run before
+// Get, typically from the application entry point.
+func Init() (*Config, error) {
+	once.Do(func() {
+		cfg, loadErr = load()
+	})
+	return cfg, loadErr
+}
+
+// Get returns the cached configuration. If the configuration failed to load,
+// Get panics with the underlying error, since the application cannot run
+// without a valid configuration.
 func Get() *Config {
-	once.Do(func() {
-		cfg, err = load()
-	})
-	return cfg
+	c, err := Init()
+	if err != nil {
+		panic(fmt.Sprintf("config: initialization failed: %v", err))
+	}
+	return c
 }
 
-// Err returns initialization error if any.
-func Err() error {
-	once.Do(func() {
-		cfg, err = load()
-	})
-	return err
-}
-
-// Load builds configuration from environment variables.
+// Load builds a fresh configuration without touching the cache. It is intended
+// for tests and tooling that need an isolated configuration.
 func Load() (*Config, error) {
 	return load()
 }
