@@ -116,7 +116,7 @@ type Course struct {
 	Schedule      []ClassSession
 	SaturdayDates string // Specific dates for Saturday classes, if applicable.
 
-	Exams   []Exam
+	Exams    []Exam
 	Comittee Committee
 }
 

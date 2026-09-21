@@ -11,20 +11,23 @@
 {{ end }}
 
 {{ define "content" }}
-  <div class="max-w-7xl mx-auto py-2 min-h-[calc(100vh-4rem)] flex flex-col gap-4 px-2 sm:px-4">
+  <div
+    class="max-w-7xl mx-auto py-2 min-h-[calc(100vh-4rem)] flex flex-col gap-4 px-2 sm:px-4">
     <!-- Header -->
-    <div class="bg-white dark:bg-zinc-900 p-4 rounded-sm shadow-sm border border-gray-200 dark:border-zinc-800">
+    <div
+      class="bg-white dark:bg-zinc-900 p-4 rounded-sm shadow-sm border border-gray-200 dark:border-zinc-800">
       <h1 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-zinc-100">
         Historial de Secciones
       </h1>
       <p class="text-xs text-gray-500 dark:text-zinc-400 mt-0.5">
-        Consulta el registro histórico completo de las secciones habilitadas, turnos, docentes, horarios y exámenes por periodo académico.
+        Consulta el registro histórico completo de las secciones habilitadas,
+        turnos, docentes, horarios y exámenes por periodo académico.
       </p>
     </div>
 
     <!-- Filtros de Carrera y Materia -->
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 bg-white dark:bg-zinc-900 p-4 sm:p-5 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
-      
+    <div
+      class="grid grid-cols-1 md:grid-cols-12 gap-4 bg-white dark:bg-zinc-900 p-4 sm:p-5 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
       <!-- Selector de Carrera -->
       <div class="md:col-span-5">
         <label
@@ -49,12 +52,12 @@
       <div id="subjects-container" class="md:col-span-7">
         {{ template "subjects_select" . }}
       </div>
-
     </div>
 
     <!-- Contenedor del Historial -->
     <div id="timeline-container">
-      <div class="p-8 text-center bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
+      <div
+        class="p-8 text-center bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
         <p class="text-xs sm:text-sm text-gray-500 dark:text-zinc-400">
           Selecciona una carrera y luego una materia para ver su historial.
         </p>
@@ -65,7 +68,7 @@
 
 {{ define "subjects_select" }}
   {{ if .Subjects }}
-    <div 
+    <div
       x-data="{
         open: false,
         searchQuery: '',
@@ -73,8 +76,8 @@
         selectedId: '',
         subjects: [
           {{ range .Subjects }}
-            { id: '{{ .ID }}', name: '{{ .Name | js }}', plan: '{{ .Plan | js }}' },
-          {{ end }}
+        { id: '{{ .ID }}', name: '{{ .Name | js }}', plan: '{{ .Plan | js }}' },
+      {{ end }}
         ],
         get filteredSubjects() {
           if (!this.searchQuery.trim()) return this.subjects;
@@ -91,25 +94,25 @@
       x-init="$nextTick(() => { $refs.subjectSearch.focus(); $refs.subjectSearch.select() })"
       @click.outside="open = false"
       class="relative w-full">
-      
-      <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-300 mb-1.5">
+      <label
+        class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-300 mb-1.5">
         Materia
       </label>
 
       <!-- Input de búsqueda y selección -->
       <div class="relative">
-        <input 
-          type="text" 
+        <input
+          type="text"
           x-ref="subjectSearch"
           x-model="searchQuery"
           @focus="open = true"
           @input="open = true; selectedId = ''"
-          placeholder="Buscar materia..." 
-          class="w-full px-3 py-2 text-xs sm:text-sm border border-gray-300 dark:border-zinc-700 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500 focus:outline-none pr-8">
-        
-        <button 
-          type="button" 
-          x-show="searchQuery.length > 0" 
+          placeholder="Buscar materia..."
+          class="w-full px-3 py-2 text-xs sm:text-sm border border-gray-300 dark:border-zinc-700 rounded-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-zinc-100 focus:ring-2 focus:ring-primary-500 focus:outline-none pr-8" />
+
+        <button
+          type="button"
+          x-show="searchQuery.length > 0"
           @click="searchQuery = ''; selectedId = ''; selectedName = ''; open = true;"
           class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 p-1">
           ✕
@@ -117,11 +120,10 @@
       </div>
 
       <!-- Dropdown Flotante Absolute -->
-      <div 
-        x-show="open" 
+      <div
+        x-show="open"
         x-cloak
         class="absolute z-50 left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-sm shadow-xl divide-y divide-gray-100 dark:divide-zinc-800/60">
-        
         <template x-for="subject in filteredSubjects" :key="subject.id">
           <button
             type="button"
@@ -135,20 +137,24 @@
                 x-text="'Plan ' + subject.plan"></span>
               <span class="truncate" x-text="subject.name"></span>
             </span>
-            
-            <svg 
-              x-show="selectedId === subject.id" 
-              class="w-4 h-4 text-primary-600 dark:text-primary-400 shrink-0 ml-2" 
-              fill="none" 
-              stroke="currentColor" 
+
+            <svg
+              x-show="selectedId === subject.id"
+              class="w-4 h-4 text-primary-600 dark:text-primary-400 shrink-0 ml-2"
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                d="M5 13l4 4L19 7" />
             </svg>
           </button>
         </template>
 
-        <div 
-          x-show="filteredSubjects.length === 0" 
+        <div
+          x-show="filteredSubjects.length === 0"
           class="p-3 text-center text-xs text-gray-400 dark:text-zinc-500">
           No hay materias que coincidan.
         </div>
@@ -156,12 +162,22 @@
     </div>
   {{ else }}
     <div>
-      <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-300 mb-1.5">
+      <label
+        class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-zinc-300 mb-1.5">
         Materia
       </label>
-      <div class="flex items-center gap-2 p-2.5 border border-dashed border-gray-300 dark:border-zinc-700 rounded-sm bg-gray-50 dark:bg-zinc-950 text-xs text-gray-400 dark:text-zinc-500 cursor-not-allowed select-none">
-        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+      <div
+        class="flex items-center gap-2 p-2.5 border border-dashed border-gray-300 dark:border-zinc-700 rounded-sm bg-gray-50 dark:bg-zinc-950 text-xs text-gray-400 dark:text-zinc-500 cursor-not-allowed select-none">
+        <svg
+          class="w-4 h-4 shrink-0"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
         </svg>
         <span>Selecciona primero una carrera para buscar materias...</span>
       </div>
@@ -174,17 +190,23 @@
     {{ if .History }}
       {{ range $index, $entry := .History }}
         <div
-          x-data="{ open: {{ if eq $index 0 }}true{{ else }}false{{ end }} }"
+          x-data="{ open: {{ if eq $index 0 }}
+            true
+          {{ else }}
+            false
+          {{ end }} }"
           class="bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm overflow-hidden">
-          
           <!-- Encabezado del Periodo -->
           <button
             type="button"
             @click="open = !open"
             class="w-full px-4 sm:px-5 py-3 bg-gray-50 dark:bg-zinc-900/80 hover:bg-gray-100 dark:hover:bg-zinc-700/50 flex items-center justify-between text-left transition cursor-pointer select-none">
             <div class="flex items-center gap-2.5">
-              <span class="font-bold text-xs sm:text-sm text-gray-900 dark:text-zinc-100">
-                Periodo: {{ $entry.Period.Year }} - {{ if eq $entry.Period.Semester 1 }}1°{{ else }}2°{{ end }} Semestre
+              <span
+                class="font-bold text-xs sm:text-sm text-gray-900 dark:text-zinc-100">
+                Periodo: {{ $entry.Period.Year }} -
+                {{ if eq $entry.Period.Semester 1 }}1°{{ else }}2°{{ end }}
+                Semestre
               </span>
             </div>
 
@@ -194,7 +216,11 @@
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7" />
             </svg>
           </button>
 
@@ -209,9 +235,11 @@
         </div>
       {{ end }}
     {{ else }}
-      <div class="p-8 text-center bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
+      <div
+        class="p-8 text-center bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
         <p class="text-xs sm:text-sm text-gray-500 dark:text-zinc-400">
-          No hay registros históricos de secciones disponibles para la materia seleccionada.
+          No hay registros históricos de secciones disponibles para la materia
+          seleccionada.
         </p>
       </div>
     {{ end }}

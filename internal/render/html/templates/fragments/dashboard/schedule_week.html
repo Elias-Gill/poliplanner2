@@ -1,202 +1,294 @@
 {{ define "dashboard/schedule_week" }}
-<div class="bg-white dark:bg-zinc-900 rounded-sm shadow-2xs border border-gray-200 dark:border-zinc-800 overflow-hidden">
-  
-<!-- Cabecera Unificada -->
-<div class="p-4 bg-primary-700 dark:bg-zinc-900 border-b border-primary-800 dark:border-zinc-800 flex items-center justify-between gap-4">
-  <div class="flex items-center gap-2.5 min-w-0">
-    <!-- Contenedor del Ícono -->
-    <div class="w-7 h-7 rounded-xs bg-primary-600 dark:bg-primary-950/60 border border-primary-500/50 dark:border-primary-800/50 flex items-center justify-center shrink-0">
-      <svg class="w-4 h-4 text-white dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 012-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-      </svg>
+  <div
+    class="bg-white dark:bg-zinc-900 rounded-sm shadow-2xs border border-gray-200 dark:border-zinc-800 overflow-hidden">
+    <!-- Cabecera Unificada -->
+    <div
+      class="p-4 bg-primary-700 dark:bg-zinc-900 border-b border-primary-800 dark:border-zinc-800 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <!-- Contenedor del Ícono -->
+        <div
+          class="w-7 h-7 rounded-xs bg-primary-600 dark:bg-primary-950/60 border border-primary-500/50 dark:border-primary-800/50 flex items-center justify-center shrink-0">
+          <svg
+            class="w-4 h-4 text-white dark:text-primary-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 012-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+
+        <!-- Título y Subtítulo -->
+        <div class="min-w-0">
+          <h2
+            class="text-sm font-bold text-white dark:text-zinc-100 leading-tight">
+            Horario de Clases
+          </h2>
+          <p class="text-[11px] text-primary-200 dark:text-zinc-400 mt-0.5">
+            Distribución semanal de asignaturas
+          </p>
+        </div>
+      </div>
     </div>
 
-    <!-- Título y Subtítulo -->
-    <div class="min-w-0">
-      <h2 class="text-sm font-bold text-white dark:text-zinc-100 leading-tight">
-        Horario de Clases
-      </h2>
-      <p class="text-[11px] text-primary-200 dark:text-zinc-400 mt-0.5">
-        Distribución semanal de asignaturas
-      </p>
+    <!-- Vista Única: Flex/Scroll en Móvil -> Grid 6 Cols en Desktop -->
+    <div class="p-4 md:p-6 bg-white dark:bg-zinc-900">
+      <div
+        class="flex md:grid md:grid-cols-6 gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 md:pb-0 no-scrollbar">
+        <!-- Lunes -->
+        <div
+          class="snap-center shrink-0 w-[85vw] sm:w-[300px] md:w-auto space-y-2">
+          <div
+            class="bg-gray-100 dark:bg-zinc-950 p-2 text-center border border-gray-200 dark:border-zinc-800 rounded-xs">
+            <span
+              class="text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider"
+              >Lunes</span
+            >
+          </div>
+          <div class="space-y-2.5">
+            {{ if .Weekly.Monday }}
+              {{ template "schedule/class_slots" .Weekly.Monday }}
+            {{ else }}
+              <div
+                class="p-4 text-center text-gray-400 dark:text-zinc-600 text-xs">
+                Libre
+              </div>
+            {{ end }}
+          </div>
+        </div>
+
+        <!-- Martes -->
+        <div
+          class="snap-center shrink-0 w-[85vw] sm:w-[300px] md:w-auto space-y-2">
+          <div
+            class="bg-gray-100 dark:bg-zinc-950 p-2 text-center border border-gray-200 dark:border-zinc-800 rounded-xs">
+            <span
+              class="text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider"
+              >Martes</span
+            >
+          </div>
+          <div class="space-y-2.5">
+            {{ if .Weekly.Tuesday }}
+              {{ template "schedule/class_slots" .Weekly.Tuesday }}
+            {{ else }}
+              <div
+                class="p-4 text-center text-gray-400 dark:text-zinc-600 text-xs">
+                Libre
+              </div>
+            {{ end }}
+          </div>
+        </div>
+
+        <!-- Miércoles -->
+        <div
+          class="snap-center shrink-0 w-[85vw] sm:w-[300px] md:w-auto space-y-2">
+          <div
+            class="bg-gray-100 dark:bg-zinc-950 p-2 text-center border border-gray-200 dark:border-zinc-800 rounded-xs">
+            <span
+              class="text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider"
+              >Miércoles</span
+            >
+          </div>
+          <div class="space-y-2.5">
+            {{ if .Weekly.Wednesday }}
+              {{ template "schedule/class_slots" .Weekly.Wednesday }}
+            {{ else }}
+              <div
+                class="p-4 text-center text-gray-400 dark:text-zinc-600 text-xs">
+                Libre
+              </div>
+            {{ end }}
+          </div>
+        </div>
+
+        <!-- Jueves -->
+        <div
+          class="snap-center shrink-0 w-[85vw] sm:w-[300px] md:w-auto space-y-2">
+          <div
+            class="bg-gray-100 dark:bg-zinc-950 p-2 text-center border border-gray-200 dark:border-zinc-800 rounded-xs">
+            <span
+              class="text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider"
+              >Jueves</span
+            >
+          </div>
+          <div class="space-y-2.5">
+            {{ if .Weekly.Thursday }}
+              {{ template "schedule/class_slots" .Weekly.Thursday }}
+            {{ else }}
+              <div
+                class="p-4 text-center text-gray-400 dark:text-zinc-600 text-xs">
+                Libre
+              </div>
+            {{ end }}
+          </div>
+        </div>
+
+        <!-- Viernes -->
+        <div
+          class="snap-center shrink-0 w-[85vw] sm:w-[300px] md:w-auto space-y-2">
+          <div
+            class="bg-gray-100 dark:bg-zinc-950 p-2 text-center border border-gray-200 dark:border-zinc-800 rounded-xs">
+            <span
+              class="text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider"
+              >Viernes</span
+            >
+          </div>
+          <div class="space-y-2.5">
+            {{ if .Weekly.Friday }}
+              {{ template "schedule/class_slots" .Weekly.Friday }}
+            {{ else }}
+              <div
+                class="p-4 text-center text-gray-400 dark:text-zinc-600 text-xs">
+                Libre
+              </div>
+            {{ end }}
+          </div>
+        </div>
+
+        <!-- Sábado -->
+        <div
+          class="snap-center shrink-0 w-[85vw] sm:w-[300px] md:w-auto space-y-2">
+          <div
+            class="bg-gray-100 dark:bg-zinc-950 p-2 text-center border border-gray-200 dark:border-zinc-800 rounded-xs">
+            <span
+              class="text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider"
+              >Sábado</span
+            >
+          </div>
+          <div class="space-y-2.5">
+            {{ if .Weekly.Saturday }}
+              {{ template "schedule/class_slots" .Weekly.Saturday }}
+            {{ else }}
+              <div
+                class="p-4 text-center text-gray-400 dark:text-zinc-600 text-xs">
+                Libre
+              </div>
+            {{ end }}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-  <!-- Vista Única: Flex/Scroll en Móvil -> Grid 6 Cols en Desktop -->
-  <div class="p-4 md:p-6 bg-white dark:bg-zinc-900">
-    <div class="flex md:grid md:grid-cols-6 gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 md:pb-0 no-scrollbar">
-      
-      <!-- Lunes -->
-      <div class="snap-center shrink-0 w-[85vw] sm:w-[300px] md:w-auto space-y-2">
-        <div class="bg-gray-100 dark:bg-zinc-950 p-2 text-center border border-gray-200 dark:border-zinc-800 rounded-xs">
-          <span class="text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Lunes</span>
-        </div>
-        <div class="space-y-2.5">
-          {{ if .Weekly.Monday }}
-            {{ template "schedule/class_slots" .Weekly.Monday }}
-          {{ else }}
-            <div class="p-4 text-center text-gray-400 dark:text-zinc-600 text-xs">Libre</div>
-          {{ end }}
-        </div>
-      </div>
+  <script>
+    (function () {
+      const colors = [
+        { headerBg: "#fee2e2", text: "#991b1b", border: "#fca5a5" },
+        { headerBg: "#ffedd5", text: "#9a3412", border: "#fdba74" },
+        { headerBg: "#fef9c3", text: "#854d0e", border: "#fde047" },
+        { headerBg: "#dcfce7", text: "#166534", border: "#86efac" },
+        { headerBg: "#cffafe", text: "#155e75", border: "#67e8f9" },
+        { headerBg: "#e0f2fe", text: "#075985", border: "#7dd3fc" },
+        { headerBg: "#dbeafe", text: "#1e40af", border: "#93c5fd" },
+        { headerBg: "#e0e7ff", text: "#3730a3", border: "#a5b4fc" },
+        { headerBg: "#ede9fe", text: "#5b21b6", border: "#c4b5fd" },
+        { headerBg: "#fae8ff", text: "#86198f", border: "#f0abfc" },
+        { headerBg: "#fce7f3", text: "#9d174d", border: "#f9a8d4" },
+        { headerBg: "#ffe4e6", text: "#9f1239", border: "#fda4af" },
+      ];
 
-      <!-- Martes -->
-      <div class="snap-center shrink-0 w-[85vw] sm:w-[300px] md:w-auto space-y-2">
-        <div class="bg-gray-100 dark:bg-zinc-950 p-2 text-center border border-gray-200 dark:border-zinc-800 rounded-xs">
-          <span class="text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Martes</span>
-        </div>
-        <div class="space-y-2.5">
-          {{ if .Weekly.Tuesday }}
-            {{ template "schedule/class_slots" .Weekly.Tuesday }}
-          {{ else }}
-            <div class="p-4 text-center text-gray-400 dark:text-zinc-600 text-xs">Libre</div>
-          {{ end }}
-        </div>
-      </div>
+      const colorsDark = [
+        { headerBg: "#2a1717", text: "#e2b0b0", border: "#442525" },
+        { headerBg: "#2a1c14", text: "#e2bdad", border: "#442d20" },
+        { headerBg: "#282313", text: "#ded3aa", border: "#3f381f" },
+        { headerBg: "#15241a", text: "#a9d4b8", border: "#213a2a" },
+        { headerBg: "#142327", text: "#a8d2dc", border: "#20373e" },
+        { headerBg: "#142128", text: "#a7cadb", border: "#1f3441" },
+        { headerBg: "#171d29", text: "#b0c0e0", border: "#242f43" },
+        { headerBg: "#1c1b29", text: "#b8b6e0", border: "#2c2a43" },
+        { headerBg: "#211929", text: "#c5b4e0", border: "#352742" },
+        { headerBg: "#271726", text: "#dcafd9", border: "#40243e" },
+        { headerBg: "#281720", text: "#ddafc6", border: "#412433" },
+        { headerBg: "#28171a", text: "#ddafb5", border: "#412429" },
+      ];
 
-      <!-- Miércoles -->
-      <div class="snap-center shrink-0 w-[85vw] sm:w-[300px] md:w-auto space-y-2">
-        <div class="bg-gray-100 dark:bg-zinc-950 p-2 text-center border border-gray-200 dark:border-zinc-800 rounded-xs">
-          <span class="text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Miércoles</span>
-        </div>
-        <div class="space-y-2.5">
-          {{ if .Weekly.Wednesday }}
-            {{ template "schedule/class_slots" .Weekly.Wednesday }}
-          {{ else }}
-            <div class="p-4 text-center text-gray-400 dark:text-zinc-600 text-xs">Libre</div>
-          {{ end }}
-        </div>
-      </div>
-
-      <!-- Jueves -->
-      <div class="snap-center shrink-0 w-[85vw] sm:w-[300px] md:w-auto space-y-2">
-        <div class="bg-gray-100 dark:bg-zinc-950 p-2 text-center border border-gray-200 dark:border-zinc-800 rounded-xs">
-          <span class="text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Jueves</span>
-        </div>
-        <div class="space-y-2.5">
-          {{ if .Weekly.Thursday }}
-            {{ template "schedule/class_slots" .Weekly.Thursday }}
-          {{ else }}
-            <div class="p-4 text-center text-gray-400 dark:text-zinc-600 text-xs">Libre</div>
-          {{ end }}
-        </div>
-      </div>
-
-      <!-- Viernes -->
-      <div class="snap-center shrink-0 w-[85vw] sm:w-[300px] md:w-auto space-y-2">
-        <div class="bg-gray-100 dark:bg-zinc-950 p-2 text-center border border-gray-200 dark:border-zinc-800 rounded-xs">
-          <span class="text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Viernes</span>
-        </div>
-        <div class="space-y-2.5">
-          {{ if .Weekly.Friday }}
-            {{ template "schedule/class_slots" .Weekly.Friday }}
-          {{ else }}
-            <div class="p-4 text-center text-gray-400 dark:text-zinc-600 text-xs">Libre</div>
-          {{ end }}
-        </div>
-      </div>
-
-      <!-- Sábado -->
-      <div class="snap-center shrink-0 w-[85vw] sm:w-[300px] md:w-auto space-y-2">
-        <div class="bg-gray-100 dark:bg-zinc-950 p-2 text-center border border-gray-200 dark:border-zinc-800 rounded-xs">
-          <span class="text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Sábado</span>
-        </div>
-        <div class="space-y-2.5">
-          {{ if .Weekly.Saturday }}
-            {{ template "schedule/class_slots" .Weekly.Saturday }}
-          {{ else }}
-            <div class="p-4 text-center text-gray-400 dark:text-zinc-600 text-xs">Libre</div>
-          {{ end }}
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<script>
-  (function () {
-    const colors = [
-      { headerBg: '#fee2e2', text: '#991b1b', border: '#fca5a5' },
-      { headerBg: '#ffedd5', text: '#9a3412', border: '#fdba74' },
-      { headerBg: '#fef9c3', text: '#854d0e', border: '#fde047' },
-      { headerBg: '#dcfce7', text: '#166534', border: '#86efac' },
-      { headerBg: '#cffafe', text: '#155e75', border: '#67e8f9' },
-      { headerBg: '#e0f2fe', text: '#075985', border: '#7dd3fc' },
-      { headerBg: '#dbeafe', text: '#1e40af', border: '#93c5fd' },
-      { headerBg: '#e0e7ff', text: '#3730a3', border: '#a5b4fc' },
-      { headerBg: '#ede9fe', text: '#5b21b6', border: '#c4b5fd' },
-      { headerBg: '#fae8ff', text: '#86198f', border: '#f0abfc' },
-      { headerBg: '#fce7f3', text: '#9d174d', border: '#f9a8d4' },
-      { headerBg: '#ffe4e6', text: '#9f1239', border: '#fda4af' },
-    ];
-
-    const colorsDark = [
-      { headerBg: '#2a1717', text: '#e2b0b0', border: '#442525' },
-      { headerBg: '#2a1c14', text: '#e2bdad', border: '#442d20' },
-      { headerBg: '#282313', text: '#ded3aa', border: '#3f381f' },
-      { headerBg: '#15241a', text: '#a9d4b8', border: '#213a2a' },
-      { headerBg: '#142327', text: '#a8d2dc', border: '#20373e' },
-      { headerBg: '#142128', text: '#a7cadb', border: '#1f3441' },
-      { headerBg: '#171d29', text: '#b0c0e0', border: '#242f43' },
-      { headerBg: '#1c1b29', text: '#b8b6e0', border: '#2c2a43' },
-      { headerBg: '#211929', text: '#c5b4e0', border: '#352742' },
-      { headerBg: '#271726', text: '#dcafd9', border: '#40243e' },
-      { headerBg: '#281720', text: '#ddafc6', border: '#412433' },
-      { headerBg: '#28171a', text: '#ddafb5', border: '#412429' },
-    ];
-
-    function pickColor(course, isDark) {
-      let hash = 0;
-      for (let i = 0; i < course.length; i++) {
-        hash = course.charCodeAt(i) + ((hash << 5) - hash);
-      }
-      const idx = Math.abs(hash) % colors.length;
-      return isDark ? colorsDark[idx] : colors[idx];
-    }
-
-    function applyColors() {
-      const isDark = document.documentElement.classList.contains('dark');
-      document.querySelectorAll('.class-entry').forEach(el => {
-        const course = el.dataset.course;
-        if (!course) return;
-
-        const c = pickColor(course, isDark);
-        const headerEl = el.querySelector('.class-header');
-
-        el.style.borderColor = c.border;
-        if (headerEl) {
-          headerEl.style.backgroundColor = c.headerBg;
-          headerEl.style.color = c.text;
+      function pickColor(course, isDark) {
+        let hash = 0;
+        for (let i = 0; i < course.length; i++) {
+          hash = course.charCodeAt(i) + ((hash << 5) - hash);
         }
-      });
-    }
+        const idx = Math.abs(hash) % colors.length;
+        return isDark ? colorsDark[idx] : colors[idx];
+      }
 
-    applyColors();
-    new MutationObserver(applyColors).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    document.addEventListener('htmx:afterSettle', applyColors);
-  })();
-</script>
+      function applyColors() {
+        const isDark = document.documentElement.classList.contains("dark");
+        document.querySelectorAll(".class-entry").forEach((el) => {
+          const course = el.dataset.course;
+          if (!course) return;
+
+          const c = pickColor(course, isDark);
+          const headerEl = el.querySelector(".class-header");
+
+          el.style.borderColor = c.border;
+          if (headerEl) {
+            headerEl.style.backgroundColor = c.headerBg;
+            headerEl.style.color = c.text;
+          }
+        });
+      }
+
+      applyColors();
+      new MutationObserver(applyColors).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
+      document.addEventListener("htmx:afterSettle", applyColors);
+    })();
+  </script>
 {{ end }}
 
 {{ define "schedule/class_slots" }}
   {{ range . }}
-    <div class="class-entry bg-white dark:bg-zinc-950 border rounded-xs overflow-hidden shadow-2xs transition-all hover:border-gray-400 dark:hover:border-zinc-700" data-course="{{ .Course }}">
-      <div class="class-header px-2.5 py-1.5 font-bold text-xs leading-tight border-b border-inherit truncate">
+    <div
+      class="class-entry bg-white dark:bg-zinc-950 border rounded-xs overflow-hidden shadow-2xs transition-all hover:border-gray-400 dark:hover:border-zinc-700"
+      data-course="{{ .Course }}">
+      <div
+        class="class-header px-2.5 py-1.5 font-bold text-xs leading-tight border-b border-inherit truncate">
         {{ .Course }}
       </div>
-      
+
       <div class="p-2 space-y-2 bg-white dark:bg-zinc-950">
-        <div class="flex items-center gap-1.5 text-[11px] font-mono font-semibold">
-          <svg class="w-3.5 h-3.5 text-primary-600 dark:text-primary-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          <span class="px-1.5 py-0.5 rounded-xs bg-primary-50 dark:bg-primary-900/70 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/50 shadow-2xs">
+        <div
+          class="flex items-center gap-1.5 text-[11px] font-mono font-semibold">
+          <svg
+            class="w-3.5 h-3.5 text-primary-600 dark:text-primary-400 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span
+            class="px-1.5 py-0.5 rounded-xs bg-primary-50 dark:bg-primary-900/70 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/50 shadow-2xs">
             {{ .Time }}
           </span>
         </div>
-        
-        <div class="flex items-center gap-1.5 text-[11px] text-gray-600 dark:text-zinc-400 pt-0.5 border-t border-gray-100 dark:border-zinc-900">
-          <svg class="w-3 h-3 text-gray-400 dark:text-zinc-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+
+        <div
+          class="flex items-center gap-1.5 text-[11px] text-gray-600 dark:text-zinc-400 pt-0.5 border-t border-gray-100 dark:border-zinc-900">
+          <svg
+            class="w-3 h-3 text-gray-400 dark:text-zinc-500 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
           <span class="truncate font-medium">Aula: {{ .Room }}</span>
         </div>
       </div>
