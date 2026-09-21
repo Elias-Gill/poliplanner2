@@ -30,6 +30,16 @@ func mustNotExist(t *testing.T, path string) {
 	}
 }
 
+// rotatedFiles lists the rotated backups of the active log file.
+func rotatedFiles(t *testing.T, activePath string) []string {
+	t.Helper()
+	matches, err := filepath.Glob(activePath + ".*")
+	if err != nil {
+		t.Fatalf("glob rotated files: %v", err)
+	}
+	return matches
+}
+
 func TestRotatingFileWriter_AppendsAndCreatesDir(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "nested", "poliplanner.log")
@@ -69,8 +79,13 @@ func TestRotatingFileWriter_RotatesBySize(t *testing.T) {
 	if got := readFile(t, path); got != "a" {
 		t.Errorf("active content = %q, want %q", got, "a")
 	}
-	if got := readFile(t, path+".1"); got != "0123456789" {
-		t.Errorf("backup content = %q, want %q", got, "0123456789")
+
+	rotated := rotatedFiles(t, path)
+	if len(rotated) != 1 {
+		t.Fatalf("expected 1 rotated file, got %v", rotated)
+	}
+	if got := readFile(t, rotated[0]); got != "0123456789" {
+		t.Errorf("rotated content = %q, want %q", got, "0123456789")
 	}
 }
 
@@ -97,36 +112,46 @@ func TestRotatingFileWriter_RotatesByAge(t *testing.T) {
 	if got := readFile(t, path); got != "day sixteen\n" {
 		t.Errorf("active content = %q, want %q", got, "day sixteen\n")
 	}
-	if got := readFile(t, path+".1"); got != "day one\n" {
-		t.Errorf("backup content = %q, want %q", got, "day one\n")
+
+	rotated := rotatedFiles(t, path)
+	if len(rotated) != 1 {
+		t.Fatalf("expected 1 rotated file, got %v", rotated)
+	}
+	if got := readFile(t, rotated[0]); got != "day one\n" {
+		t.Errorf("rotated content = %q, want %q", got, "day one\n")
 	}
 }
 
-func TestRotatingFileWriter_KeepsOnlyTwoFiles(t *testing.T) {
+func TestRotatingFileWriter_DeletesExpiredBackups(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "poliplanner.log")
 
-	// Each 10-byte block triggers a rotation, so after three writes there have
-	// been two rotations but only the last two files should remain.
-	w := NewRotatingFileWriter(path, 10, 0)
-	for _, chunk := range []string{"aaaaaaaaaa", "bbbbbbbbbb", "cccccccccc"} {
-		if _, err := w.Write([]byte(chunk)); err != nil {
-			t.Fatalf("write: %v", err)
-		}
+	// An old rotated file that is already past the retention window.
+	stale := path + ".20200101-000000"
+	if err := os.WriteFile(stale, []byte("ancient\n"), 0o644); err != nil {
+		t.Fatalf("seed stale backup: %v", err)
+	}
+
+	now := time.Date(2026, 1, 20, 0, 0, 0, 0, time.UTC)
+	w := NewRotatingFileWriter(path, 5, 15*24*time.Hour)
+	w.now = func() time.Time { return now }
+
+	// First write fills the file; the second triggers a rotation and cleanup.
+	if _, err := w.Write([]byte("12345")); err != nil {
+		t.Fatalf("write: %v", err)
+	}
+	if _, err := w.Write([]byte("x")); err != nil {
+		t.Fatalf("write: %v", err)
 	}
 	if err := w.Close(); err != nil {
 		t.Fatalf("close: %v", err)
 	}
 
-	mustExist(t, path)
-	mustExist(t, path+".1")
-	mustNotExist(t, path+".2")
+	mustNotExist(t, stale)
 
-	if got := readFile(t, path); got != "cccccccccc" {
-		t.Errorf("active content = %q, want %q", got, "cccccccccc")
-	}
-	if got := readFile(t, path+".1"); got != "bbbbbbbbbb" {
-		t.Errorf("backup content = %q, want %q", got, "bbbbbbbbbb")
+	rotated := rotatedFiles(t, path)
+	if len(rotated) != 1 {
+		t.Fatalf("expected only the fresh rotated file, got %v", rotated)
 	}
 }
 
@@ -153,7 +178,12 @@ func TestRotatingFileWriter_RotatesStaleFileOnOpen(t *testing.T) {
 	if got := readFile(t, path); got != "fresh\n" {
 		t.Errorf("active content = %q, want %q", got, "fresh\n")
 	}
-	if got := readFile(t, path+".1"); got != "stale\n" {
-		t.Errorf("backup content = %q, want %q", got, "stale\n")
+
+	rotated := rotatedFiles(t, path)
+	if len(rotated) != 1 {
+		t.Fatalf("expected 1 rotated file, got %v", rotated)
+	}
+	if got := readFile(t, rotated[0]); got != "stale\n" {
+		t.Errorf("rotated content = %q, want %q", got, "stale\n")
 	}
 }

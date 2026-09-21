@@ -3,26 +3,31 @@ package logger
 import (
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
 
+// backupTimeLayout is the timestamp format embedded in rotated file names. It
+// is also what deleteExpired parses back to decide whether a file is stale.
+const backupTimeLayout = "20060102-150405"
+
 // RotatingFileWriter is an io.Writer that writes to a single active log file and
-// keeps exactly one previous file as backup. It rotates when any of these
-// happens first:
+// rotates it into timestamped backups. It rotates when any of these happens
+// first:
 //
 //   - the active file would exceed maxSizeBytes (0 disables the size limit)
 //   - the active file is older than rotateAfter (0 disables the age limit)
 //
-// On rotation the previous backup is deleted and the active file is renamed to
-// the backup, so disk usage stays bounded to roughly twice the configured size.
-// This keeps the most recent logs without needing an unbounded number of files,
-// which matters for resource-constrained deployments.
+// rotateAfter is also the retention window: on every rotation, backups whose
+// rotation timestamp is older than now-rotateAfter are deleted. This keeps the
+// logs on disk bounded to the retention window instead of growing forever.
 //
 // The age of the active file is taken from its modification time when it is
-// first opened and then tracked in memory. This means a process restart resets
+// first opened and then tracked in memory. A process restart therefore resets
 // the age clock to the last write time of the file, while the size limit still
-// guarantees that logs never grow without bound.
+// bounds the active file.
 type RotatingFileWriter struct {
 	path         string
 	maxSizeBytes int64
@@ -125,15 +130,74 @@ func (w *RotatingFileWriter) rotate() error {
 		return err
 	}
 
-	backup := w.path + ".1"
-	if err := os.Remove(backup); err != nil && !os.IsNotExist(err) {
+	// Clean up expired backups before adding a new one, so the retention window
+	// is enforced even if the process runs for a long time.
+	if err := w.deleteExpired(); err != nil {
 		return err
 	}
+
+	backup := w.nextBackupPath()
 	if err := os.Rename(w.path, backup); err != nil && !os.IsNotExist(err) {
 		return err
 	}
 
 	return w.open()
+}
+
+// nextBackupPath returns a unique timestamped name for the rotated file.
+func (w *RotatingFileWriter) nextBackupPath() string {
+	base := w.path + "." + w.now().UTC().Format(backupTimeLayout)
+
+	candidate := base
+	for i := 1; ; i++ {
+		if _, err := os.Stat(candidate); os.IsNotExist(err) {
+			return candidate
+		}
+		candidate = base + "-" + strconv.Itoa(i)
+	}
+}
+
+// deleteExpired removes rotated files whose rotation timestamp is older than the
+// retention window.
+func (w *RotatingFileWriter) deleteExpired() error {
+	if w.rotateAfter <= 0 {
+		return nil
+	}
+
+	cutoff := w.now().Add(-w.rotateAfter)
+
+	matches, err := filepath.Glob(w.path + ".*")
+	if err != nil {
+		return err
+	}
+
+	for _, match := range matches {
+		ts, ok := backupTimestamp(match, w.path)
+		if !ok {
+			continue
+		}
+		if ts.Before(cutoff) {
+			if err := os.Remove(match); err != nil && !os.IsNotExist(err) {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// backupTimestamp extracts the rotation time encoded in a rotated file name.
+func backupTimestamp(path, activePath string) (time.Time, bool) {
+	name := strings.TrimPrefix(path, activePath+".")
+	if len(name) < len(backupTimeLayout) {
+		return time.Time{}, false
+	}
+
+	ts, err := time.ParseInLocation(backupTimeLayout, name[:len(backupTimeLayout)], time.UTC)
+	if err != nil {
+		return time.Time{}, false
+	}
+	return ts, true
 }
 
 func (w *RotatingFileWriter) close() error {
