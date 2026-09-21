@@ -1,24 +1,55 @@
 package logger
 
 import (
+	"io"
 	"log/slog"
 	"os"
+	"time"
 )
 
 var custom_logger *slog.Logger
 
+// Options configures the application logger. The zero value logs INFO to
+// stdout with no file output, which is the behavior used by tests and tooling
+// that never call InitLogger explicitly.
+type Options struct {
+	// Verbose lowers the minimum level to DEBUG.
+	Verbose bool
+
+	// FilePath is the active log file. When empty, logs are written only to
+	// stdout. Its parent directory is created on demand.
+	FilePath string
+
+	// MaxSizeBytes rotates the file once it would grow past this size. Zero
+	// disables the size limit.
+	MaxSizeBytes int64
+
+	// RotateAfter rotates the file once it is older than this duration. Zero
+	// disables the age limit.
+	RotateAfter time.Duration
+}
+
 // InitLogger updates the configuration of the default logger.
 // It should be called after loading the application configuration.
 //
-// Initially, the standard Go logger is used.
-// This function allows setting the log verbosity level and configuring output destinations.
-func InitLogger(verbose bool) {
+// Initially, the standard Go logger is used. This function allows setting the
+// log verbosity level and configuring output destinations.
+func InitLogger(opts Options) {
 	level := slog.LevelInfo
-	if verbose {
+	if opts.Verbose {
 		level = slog.LevelDebug
 	}
 
-	handler := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+	writers := []io.Writer{os.Stdout}
+	if opts.FilePath != "" {
+		writers = append(writers, NewRotatingFileWriter(
+			opts.FilePath,
+			opts.MaxSizeBytes,
+			opts.RotateAfter,
+		))
+	}
+
+	handler := slog.NewTextHandler(io.MultiWriter(writers...), &slog.HandlerOptions{
 		Level: level,
 	})
 
@@ -29,7 +60,7 @@ func getLogger() *slog.Logger {
 	if custom_logger == nil {
 		// If the logger is not initialized, then create a new one with INFO level (specially
 		// usable for testing)
-		InitLogger(false)
+		InitLogger(Options{})
 		return custom_logger
 	}
 	return custom_logger

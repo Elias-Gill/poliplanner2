@@ -58,6 +58,7 @@ poliplanner.db-wal
 
 # Logs
 *.log
+/logs/
 
 # Temporary files
 /tmp/

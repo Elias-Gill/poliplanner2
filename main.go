@@ -34,8 +34,18 @@ func main() {
 		return
 	}
 
-	log.InitLogger(cfg.Logging.Verbose)
-	log.Info("Logger initialized", "verbose", cfg.Logging.Verbose)
+	log.InitLogger(log.Options{
+		Verbose:      cfg.Logging.Verbose,
+		FilePath:     cfg.Logging.File,
+		MaxSizeBytes: cfg.Logging.MaxSizeBytes,
+		RotateAfter:  cfg.Logging.RotateAfter,
+	})
+	log.Info("Logger initialized",
+		"verbose", cfg.Logging.Verbose,
+		"file", cfg.Logging.File,
+		"max_size_bytes", cfg.Logging.MaxSizeBytes,
+		"rotate_after", cfg.Logging.RotateAfter,
+	)
 
 	log.Info("Initializing db")
 	conn, err := persistence.ConnectDB()

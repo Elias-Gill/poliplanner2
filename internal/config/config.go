@@ -75,6 +75,12 @@ type ExcelConfig struct {
 
 type LoggingConfig struct {
 	Verbose bool
+	// File is the active log file. Its parent directory is created on demand.
+	File string
+	// MaxSizeBytes rotates the log file once it would grow past this size.
+	MaxSizeBytes int64
+	// RotateAfter rotates the log file once it is older than this duration.
+	RotateAfter time.Duration
 }
 
 type SecurityConfig struct {
@@ -232,7 +238,10 @@ func load() (*Config, error) {
 		},
 
 		Logging: LoggingConfig{
-			Verbose: l.bool("VERBOSE_LOGS", verboseLogsDefault),
+			Verbose:      l.bool("VERBOSE_LOGS", verboseLogsDefault),
+			File:         l.path(baseDir, "LOG_FILE", "logs/poliplanner.log"),
+			MaxSizeBytes: int64(l.integer("LOG_MAX_SIZE_MB", 10)) * 1024 * 1024,
+			RotateAfter:  l.duration("LOG_ROTATE_INTERVAL", 15*24*time.Hour),
 		},
 
 		Security: SecurityConfig{
@@ -341,6 +350,21 @@ func (l *loader) bool(key string, defaultValue bool) bool {
 	value, err := strconv.ParseBool(raw)
 	if err != nil {
 		l.errs = append(l.errs, fmt.Errorf("invalid boolean value for %s: %q", key, raw))
+		return defaultValue
+	}
+	return value
+}
+
+// integer parses an integer variable, recording an error when it is malformed.
+func (l *loader) integer(key string, defaultValue int) int {
+	raw := os.Getenv(key)
+	if raw == "" {
+		return defaultValue
+	}
+
+	value, err := strconv.Atoi(raw)
+	if err != nil {
+		l.errs = append(l.errs, fmt.Errorf("invalid integer value for %s: %q", key, raw))
 		return defaultValue
 	}
 	return value
