@@ -3,7 +3,6 @@ package sqlite
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 
 	txManager "github.com/elias-gill/poliplanner2/internal/infrastructure/persistence/sqlite/tx_manager"
@@ -117,32 +116,3 @@ func (r *CurriculumRepository) GetByCareerID(ctx context.Context, career academi
 
 	return subjects, nil
 }
-
-func (r *CurriculumRepository) FindBySubjectAndPlan(
-	ctx context.Context,
-	careerCode, planCode, subjectName string,
-) (academic.CurriculumID, error) {
-	exec := txManager.GetExecutor(ctx, r.db)
-
-	var id int64
-	err := exec.QueryRowContext(ctx, `
-		SELECT m.id
-		FROM mallas m
-		JOIN carreras c ON c.id = m.carrera
-		JOIN planes p ON p.id = m.plan
-		JOIN asignaturas s ON s.id = m.asignatura
-		WHERE c.siglas = ? AND p.codigo = ? AND s.nombre = ?
-		LIMIT 1
-		`, careerCode, planCode, subjectName).Scan(&id)
-
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return 0, nil
-		}
-
-		return 0, fmt.Errorf("find malla for laboratory: %w", err)
-	}
-
-	return academic.CurriculumID(id), nil
-}
-

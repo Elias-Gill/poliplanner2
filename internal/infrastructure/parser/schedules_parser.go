@@ -1,11 +1,13 @@
 package parser
 
 import (
+	"fmt"
 	"io"
 	"path/filepath"
 	"strings"
 	"sync"
 
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/commons"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/engine"
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
 )
@@ -78,11 +80,11 @@ func (ep *SchedulesParser) ParseNextSheet() (*ParsedSchedules, error) {
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error parsing sheet %s: %w", name, err)
 	}
 
 	return &ParsedSchedules{
-		Career:   strings.ToUpper(strings.ReplaceAll(name, " ", "")),
+		Career:   commons.NormalizeCareer(name),
 		Subjects: subjects,
 	}, nil
 }

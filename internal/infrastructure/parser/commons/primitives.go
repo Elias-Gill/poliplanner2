@@ -191,6 +191,13 @@ func NormalizeKey(s string) string {
 	return strings.ToUpper(strings.Join(fields, " "))
 }
 
+// NormalizeCareer strips every whitespace character and uppercases the result. Career codes
+// may be written with different spacing or casing between the sheet name and the cells, so
+// both sides must be normalized the same way before comparing.
+func NormalizeCareer(s string) string {
+	return strings.ToUpper(strings.ReplaceAll(s, " ", ""))
+}
+
 // ScanLines escanea texto multilínea sin alocar slices intermedios. Mantiene un tope de 4
 // líneas (pensado para los profesores de la planilla de horarios).
 func ScanLines(input string, assign func(idx int, line string)) int {

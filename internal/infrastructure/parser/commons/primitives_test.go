@@ -22,6 +22,25 @@ func TestNormalizeKey(t *testing.T) {
 	}
 }
 
+func TestNormalizeCareer(t *testing.T) {
+	tests := []struct {
+		in   string
+		want string
+	}{
+		{"IIN", "IIN"},
+		{"  iin ", "IIN"},
+		{"Cnel. Oviedo", "CNEL.OVIEDO"},
+		{"", ""},
+		{"  \t\n ", ""},
+	}
+
+	for _, tt := range tests {
+		if got := NormalizeCareer(tt.in); got != tt.want {
+			t.Errorf("NormalizeCareer(%q) = %q, want %q", tt.in, got, tt.want)
+		}
+	}
+}
+
 func TestScanLinesNRespectsLimit(t *testing.T) {
 	var lines []string
 	count := ScanLinesN("a\nb\nc\nd\ne", 3, func(_ int, line string) {

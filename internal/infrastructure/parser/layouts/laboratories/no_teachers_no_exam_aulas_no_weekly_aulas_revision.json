@@ -6,7 +6,7 @@
         { "encabezado": "ignorar", "patron": [""] },
         { "encabezado": "ignorar", "patron": [""] },
         { "encabezado": "ignorar", "patron": [""] },
-        { "encabezado": "ignorar", "patron": [""] },
+        { "encabezado": "semestre", "patron": ["periodo", "period"] },
         { "encabezado": "ignorar", "patron": [""] },
         { "encabezado": "ignorar", "patron": [""] },
         { "encabezado": "ignorar", "patron": [""] },

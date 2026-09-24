@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/commons"
+	"github.com/elias-gill/poliplanner2/internal/infrastructure/parser/engine"
+	"github.com/elias-gill/poliplanner2/internal/model/academic"
 )
 
 func labHour(h, m int) commons.Hour {
@@ -101,5 +103,103 @@ func TestSplitSection(t *testing.T) {
 			t.Errorf("splitSection(%q) = (%q, %q), want (%q, %q)",
 				tt.line, gotSection, gotHour, tt.wantSection, tt.wantHour)
 		}
+	}
+}
+
+func TestAccumulatorDropsForeignCareers(t *testing.T) {
+	lay := &engine.Layout{Headers: []string{"asignatura", "plan", "carrera", "horaLunes", "horaMartes"}}
+	acc := newLabAccumulator(commons.NormalizeCareer("IIN"))
+
+	acc.parseRow([]string{"Algebra", "2010", "IIN", "18:00 - 20:00 (T1)", ""}, lay, 0)
+	acc.parseRow([]string{"Otra Materia", "2010", "LCI", "18:00 - 20:00 (T1)", ""}, lay, 0)
+	// Same subject/plan/section as the valid entry but from a foreign career: it must not
+	// contaminate the valid one.
+	acc.parseRow([]string{"Algebra", "2010", "LCI", "", "20:00 - 22:00 (T1)"}, lay, 0)
+
+	labs := acc.flatten()
+	if len(labs) != 1 {
+		t.Fatalf("got %d labs, want 1: %+v", len(labs), labs)
+	}
+	if labs[0].RawName != "Algebra" || labs[0].Section != "T1" {
+		t.Fatalf("unexpected lab: %+v", labs[0])
+	}
+	if labs[0].WeekSchedule[academic.Tuesday].Time.Start.Valid {
+		t.Fatalf("foreign career row contaminated the valid entry: %+v", labs[0].WeekSchedule)
+	}
+}
+
+func TestAccumulatorCarriesCareerForward(t *testing.T) {
+	lay := &engine.Layout{Headers: []string{"asignatura", "plan", "carrera", "horaLunes"}}
+	acc := newLabAccumulator(commons.NormalizeCareer("IIN"))
+
+	acc.parseRow([]string{"Algebra", "2010", "LCI", "18:00 - 20:00 (T1)"}, lay, 0)
+	// Empty career cell (merged) inherits the previous value, so it is discarded as foreign.
+	acc.parseRow([]string{"Algebra II", "2010", "", "18:00 - 20:00 (T1)"}, lay, 0)
+
+	if labs := acc.flatten(); len(labs) != 0 {
+		t.Fatalf("got %d labs, want 0: %+v", len(labs), labs)
+	}
+}
+
+func TestAccumulatorSplitsSectionsBySchedule(t *testing.T) {
+	lay := &engine.Layout{Headers: []string{"asignatura", "plan", "carrera", "horaLunes"}}
+	acc := newLabAccumulator(commons.NormalizeCareer("IIN"))
+
+	acc.parseRow([]string{"Fisica", "2010", "IIN", "18:00 - 20:00 (T1)"}, lay, 0)
+	acc.parseRow([]string{"Fisica", "2010", "IIN", "20:00 - 22:00 (T1)"}, lay, 0)
+
+	labs := acc.flatten()
+	if len(labs) != 2 {
+		t.Fatalf("got %d labs, want 2: %+v", len(labs), labs)
+	}
+	if labs[0].Section != "T1" || labs[1].Section != "T1_2" {
+		t.Fatalf("section names = %q, %q, want T1, T1_2", labs[0].Section, labs[1].Section)
+	}
+	if got := labs[0].WeekSchedule[academic.Monday].Time.Start.Hour; got != 18 {
+		t.Fatalf("first section start hour = %d, want 18", got)
+	}
+	if got := labs[1].WeekSchedule[academic.Monday].Time.Start.Hour; got != 20 {
+		t.Fatalf("second section start hour = %d, want 20", got)
+	}
+}
+
+func TestAccumulatorNamesUnnamedSections(t *testing.T) {
+	lay := &engine.Layout{Headers: []string{"asignatura", "plan", "carrera", "horaLunes"}}
+	acc := newLabAccumulator(commons.NormalizeCareer("IIN"))
+
+	acc.parseRow([]string{"Fisica", "2010", "IIN", "18:00 - 20:00"}, lay, 0)
+	acc.parseRow([]string{"Fisica", "2010", "IIN", "20:00 - 22:00"}, lay, 0)
+
+	labs := acc.flatten()
+	if len(labs) != 2 {
+		t.Fatalf("got %d labs, want 2: %+v", len(labs), labs)
+	}
+	if labs[0].Section != defaultSection || labs[1].Section != defaultSection+"_2" {
+		t.Fatalf("section names = %q, %q, want %s, %s_2",
+			labs[0].Section, labs[1].Section, defaultSection, defaultSection)
+	}
+}
+
+func TestAccumulatorMergesIdenticalSchedules(t *testing.T) {
+	lay := &engine.Layout{Headers: []string{"asignatura", "plan", "carrera", "horaLunes", "horaMartes"}}
+	acc := newLabAccumulator(commons.NormalizeCareer("IIN"))
+
+	acc.parseRow([]string{"Fisica", "2010", "IIN", "18:00 - 20:00 (T1)", "20:00 - 22:00 (T1)"}, lay, 0)
+	acc.parseRow([]string{"Fisica", "2010", "IIN", "18:00 - 20:00 (T1)", "20:00 - 22:00 (T1)"}, lay, 0)
+
+	if labs := acc.flatten(); len(labs) != 1 {
+		t.Fatalf("got %d labs, want 1: %+v", len(labs), labs)
+	}
+}
+
+func TestAccumulatorCapturesPeriodo(t *testing.T) {
+	lay := &engine.Layout{Headers: []string{"asignatura", "plan", "carrera", "periodo", "horaLunes"}}
+	acc := newLabAccumulator(commons.NormalizeCareer("IIN"))
+
+	acc.parseRow([]string{"Fisica", "2010", "IIN", "2", "18:00 - 20:00 (T1)"}, lay, 0)
+
+	labs := acc.flatten()
+	if len(labs) != 1 || labs[0].Semester != 1 {
+		t.Fatalf("periodo not captured: %+v", labs)
 	}
 }

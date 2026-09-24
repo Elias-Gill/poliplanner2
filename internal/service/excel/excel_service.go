@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"runtime"
-	"strings"
 
 	"time"
 
@@ -344,9 +343,11 @@ func (e ExcelService) parseLabSource(ctx context.Context, src source.LabSource) 
 	}
 	defer p.Close()
 
+	currentSemester := academicModel.YearSemester(src.Metadata().Semester)
+
 	periodID, err := e.periodRepository.Upsert(ctx, academicModel.Period{
 		Year:     src.Metadata().Date.Year(),
-		Semester: academicModel.YearSemester(src.Metadata().Semester),
+		Semester: currentSemester,
 	})
 	if err != nil {
 		return 0, 0, fmt.Errorf("failed to upsert period: %w", err)
@@ -366,20 +367,54 @@ func (e ExcelService) parseLabSource(ctx context.Context, src source.LabSource) 
 
 			logger.Info("Laboratory sheet parsed", "career", sheet.Career, "labs", len(sheet.Labs))
 
-			for _, lab := range sheet.Labs {
-				subjectName := normalizeSubjectName(lab.RawName)
+			career := buildCareerFromDTO(sheet.Career)
 
-				curriculumID, err := e.curriculumRepository.FindBySubjectAndPlan(
-					ctx,
-					strings.ToUpper(sheet.Career),
-					lab.Plan,
-					subjectName,
-				)
-				if err != nil {
-					return fmt.Errorf("failed to resolve curriculum for laboratory '%s': %w", lab.RawName, err)
+			metadataService, err := metaServices.NewMetadataService(career.Code, e.metadataDir)
+			if err != nil {
+				return fmt.Errorf("error while loading metadata: %w", err)
+			}
+			metadataService.EnrichCareer(&career)
+
+			careerID, err := e.careerRepository.Upsert(ctx, career)
+			if err != nil {
+				return fmt.Errorf("failed to upsert career '%s': %w", career.Code, err)
+			}
+
+			for _, lab := range sheet.Labs {
+				// IMPORTANT: check the period, cause this shitty excel has a lot of trash and junk
+				// inserted on it, so we have to filter the dtos by period. And fuck the entry
+				// if the period if not setted.
+				if lab.Semester == 0 {
+					logger.Warn("Skipping laboratory with empty semester", "career", career.Name, "laboratory", lab.RawName)
+					continue
 				}
-				if curriculumID == 0 {
-					return fmt.Errorf("curriculum not found for laboratory '%s' (career %s, plan %s)", lab.RawName, sheet.Career, lab.Plan)
+				if lab.Semester != int(currentSemester) {
+					continue
+				}
+
+				// Build and persist the subject, enriching it with known metadata.
+				subject := academicModel.Subject{Name: normalizeSubjectName(lab.RawName)}
+				metadataService.EnrichSubject(&subject)
+
+				subjectID, err := e.subjectRepository.Upsert(ctx, subject)
+				if err != nil {
+					return fmt.Errorf("failed to upsert subject '%s': %w", subject.Name, err)
+				}
+
+				// Build and persist the curriculum (malla), enriching it with the
+				// semester known from metadata when available.
+				curriculum := academicModel.Curriculum{
+					Plan: academicModel.Plan{Code: lab.Plan},
+				}
+				metadataService.EnrichCurriculum(subject, &curriculum)
+
+				curriculumID, err := e.curriculumRepository.Upsert(ctx, academicRepo.CurriculumSaveParams{
+					SubjectID:  subjectID,
+					CareerID:   careerID,
+					Curriculum: curriculum,
+				})
+				if err != nil {
+					return fmt.Errorf("failed to upsert curriculum for laboratory '%s': %w", lab.RawName, err)
 				}
 
 				if _, err := e.laboratoryRepository.Upsert(ctx, academicRepo.LaboratorySaveParams{
