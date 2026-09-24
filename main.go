@@ -77,6 +77,7 @@ func main() {
 		PeriodRepo:     sqliteStore.PeriodRepo,
 		SubjectRepo:    sqliteStore.SubjectRepo,
 		CareerRepo:     sqliteStore.CareerRepo,
+		LaboratoryRepo: sqliteStore.LaboratoryRepo,
 		AuthRepo:       sqliteStore.AuthRepo,
 		UserRepo:       sqliteStore.UserRepo,
 		TxManager:      sqliteStore.TxManager,

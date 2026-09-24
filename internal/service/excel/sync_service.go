@@ -20,9 +20,6 @@ const autoSyncInterval = 6 * time.Hour
 
 var ErrCheckLastSync = errors.New("failed to retrieve last sync date")
 
-// sourceTypes lists every kind of Excel source the sync pipeline handles.
-var sourceTypes = []excel.SourceType{excel.SourceTypeSchedule, excel.SourceTypeLab}
-
 type SyncService struct {
 	importService  *DiscoveryService
 	excelService   *ExcelService
@@ -45,66 +42,91 @@ func (s *SyncService) GetSyncState(ctx context.Context, kind excel.SourceType) (
 	return s.syncRepository.GetSyncState(ctx, kind)
 }
 
-// AutoSync searches and syncs every source type whose last search is older than
+// AutoSync searches and syncs each source type whose last search is older than
 // autoSyncInterval.
 func (s *SyncService) AutoSync(ctx context.Context) error {
 	logger.Info("Auto sync check started")
 
 	var errs []error
 
-	for _, kind := range sourceTypes {
-		if err := s.autoSyncType(ctx, kind); err != nil {
-			errs = append(errs, fmt.Errorf("%s: %w", kind, err))
+	// Schedules
+	searchSchedules, err := s.shouldSearch(ctx, excel.SourceTypeSchedule)
+	if err != nil {
+		logger.Warn("Failed to retrieve schedule sync state", "error", err)
+		errs = append(errs, ErrCheckLastSync)
+	} else if searchSchedules {
+		// Sync schedules if a new version is available
+		err := s.syncSchedules(ctx)
+		if err != nil {
+			logger.Error("Schedule sources sync failed", "error", err)
+			errs = append(errs, err)
 		}
 	}
 
-	return errors.Join(errs...)
+	// Laboratories
+	searchLabs, err := s.shouldSearch(ctx, excel.SourceTypeLab)
+	if err != nil {
+		logger.Warn("Failed to retrieve laboratory sync state", "error", err)
+		errs = append(errs, ErrCheckLastSync)
+	} else if searchLabs {
+		// Sync labs if a new version is available
+		err := s.syncLabs(ctx)
+		if err != nil {
+			logger.Error("Laboratory sources sync failed", "error", err)
+			errs = append(errs, err)
+		}
+	}
+
+	if len(errs) > 0 {
+		return errors.Join(errs...)
+	}
+
+	return nil
 }
 
-func (s *SyncService) autoSyncType(ctx context.Context, kind excel.SourceType) error {
+// shouldSearch reports whether enough time passed since the last search of a
+// source type to search the web again.
+func (s *SyncService) shouldSearch(ctx context.Context, kind excel.SourceType) (bool, error) {
 	state, err := s.syncRepository.GetSyncState(ctx, kind)
 	if err != nil {
-		logger.Warn("Failed to retrieve sync state", "source_type", kind, "error", err)
-		return ErrCheckLastSync
+		return false, err
 	}
 
-	if state.LastSearchAt != nil {
-		elapsed := time.Since(*state.LastSearchAt)
-		logger.Info("Time since last search", "source_type", kind, "elapsed_hours", math.Round(elapsed.Hours()))
-
-		if elapsed < autoSyncInterval {
-			logger.Info("Source search not required", "source_type", kind)
-			return nil
-		}
+	if state.LastSearchAt == nil {
+		return true, nil
 	}
 
-	return s.syncType(ctx, kind)
+	elapsed := time.Since(*state.LastSearchAt)
+	if elapsed >= autoSyncInterval {
+		return true, nil
+	}
+
+	logger.Info("Source search not required", "source_type", kind, "elapsed_hours", math.Round(elapsed.Hours()))
+
+	return false, nil
 }
 
-// Sync forces a search and sync of every source type, ignoring the interval.
+// Sync forces a search and sync of both source types, ignoring the interval.
 func (s *SyncService) Sync(ctx context.Context) error {
 	logger.Info("Starting sources sync")
 
 	var errs []error
 
-	for _, kind := range sourceTypes {
-		if err := s.syncType(ctx, kind); err != nil {
-			errs = append(errs, fmt.Errorf("%s: %w", kind, err))
-		}
+	if err := s.syncSchedules(ctx); err != nil {
+		logger.Error("Schedule sources sync failed", "error", err)
+		errs = append(errs, err)
 	}
 
-	return errors.Join(errs...)
-}
-
-func (s *SyncService) syncType(ctx context.Context, kind excel.SourceType) error {
-	switch kind {
-	case excel.SourceTypeSchedule:
-		return s.syncSchedules(ctx)
-	case excel.SourceTypeLab:
-		return s.syncLabs(ctx)
-	default:
-		return fmt.Errorf("unknown source type %q", kind)
+	if err := s.syncLabs(ctx); err != nil {
+		logger.Error("Laboratory sources sync failed", "error", err)
+		errs = append(errs, err)
 	}
+
+	if len(errs) > 0 {
+		return errors.Join(errs...)
+	}
+
+	return nil
 }
 
 func (s *SyncService) syncSchedules(ctx context.Context) error {
@@ -249,8 +271,6 @@ func (s *SyncService) persistAllLabSources(ctx context.Context, sources []source
 	return nil
 }
 
-// recordSearchAttempt stores the search timestamp per type. Failures are logged
-// but never abort the sync: the marker is an optimization, not critical state.
 func (s *SyncService) recordSearchAttempt(ctx context.Context, kind excel.SourceType) {
 	if err := s.syncRepository.SetLastSearchAttempt(ctx, kind, time.Now().In(timezone.ParaguayTZ)); err != nil {
 		logger.Error("Failed to set last search attempt", "source_type", kind, "error", err)

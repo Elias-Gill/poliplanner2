@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"github.com/elias-gill/poliplanner2/internal/model/auth"
+	txManager "github.com/elias-gill/poliplanner2/internal/infrastructure/persistence/sqlite/tx_manager"
 )
 
 type SqliteAuthRepository struct {
@@ -19,6 +20,8 @@ func NewAuthRepository(db *sql.DB) *SqliteAuthRepository {
 }
 
 func (s SqliteAuthRepository) Get(ctx context.Context, token auth.SessionID) (*auth.Session, error) {
+	exec := txManager.GetExecutor(ctx, s.db)
+
 	const query = `
 		SELECT 
 			session_token,
@@ -30,7 +33,7 @@ func (s SqliteAuthRepository) Get(ctx context.Context, token auth.SessionID) (*a
 		WHERE session_token = ?
 	`
 
-	row := s.db.QueryRowContext(ctx, query, token)
+	row := exec.QueryRowContext(ctx, query, token)
 
 	var ses auth.Session
 	var sessionToken string
@@ -57,6 +60,8 @@ func (s SqliteAuthRepository) Get(ctx context.Context, token auth.SessionID) (*a
 }
 
 func (s SqliteAuthRepository) Save(ctx context.Context, ses *auth.Session) error {
+	exec := txManager.GetExecutor(ctx, s.db)
+
 	const query = `
 		INSERT INTO user_sessions (
 			session_token,
@@ -72,7 +77,7 @@ func (s SqliteAuthRepository) Save(ctx context.Context, ses *auth.Session) error
 			last_used_at = excluded.last_used_at
 	`
 
-	_, err := s.db.ExecContext(
+	_, err := exec.ExecContext(
 		ctx,
 		query,
 		ses.ID,
@@ -86,11 +91,13 @@ func (s SqliteAuthRepository) Save(ctx context.Context, ses *auth.Session) error
 }
 
 func (s SqliteAuthRepository) Delete(ctx context.Context, token auth.SessionID) error {
+	exec := txManager.GetExecutor(ctx, s.db)
+
 	const query = `
 		DELETE FROM user_sessions
 		WHERE session_token = ?
 	`
 
-	_, err := s.db.ExecContext(ctx, query, token)
+	_, err := exec.ExecContext(ctx, query, token)
 	return err
 }

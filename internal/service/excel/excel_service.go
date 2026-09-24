@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"runtime"
+	"strings"
 
 	"time"
 
@@ -28,6 +29,7 @@ type ExcelService struct {
 	periodRepository     academicRepo.PeriodRepository
 	subjectRepository    academicRepo.SubjectRepository
 	careerRepository     academicRepo.CareerRepository
+	laboratoryRepository academicRepo.LaboratoryRepository
 
 	txManager repository.TxManager
 
@@ -49,6 +51,7 @@ func NewExcelService(
 	periodRepo academicRepo.PeriodRepository,
 	subjectRepo academicRepo.SubjectRepository,
 	careerRepo academicRepo.CareerRepository,
+	laboratoryRepo academicRepo.LaboratoryRepository,
 	txManager repository.TxManager,
 	periodService *academicService.PeriodService,
 	layoutsDir string,
@@ -62,6 +65,7 @@ func NewExcelService(
 		periodRepository:     periodRepo,
 		subjectRepository:    subjectRepo,
 		careerRepository:     careerRepo,
+		laboratoryRepository: laboratoryRepo,
 		txManager:            txManager,
 		periodService:        periodService,
 		layoutsDir:           layoutsDir,
@@ -175,7 +179,7 @@ func (e ExcelService) parseScheduleSource(ctx context.Context, source source.Sch
 				break
 			}
 
-			logger.Info("Sheet parsing succesfull", "name", sheet)
+			logger.Info("Sheet parsing succesfull", "career", sheet.Career)
 
 			career := buildCareerFromDTO(sheet.Career)
 
@@ -276,14 +280,130 @@ func (e ExcelService) parseScheduleSource(ctx context.Context, source source.Sch
 	return periodID, sheetCount, nil
 }
 
-func (e ExcelService) PersistLabSource(ctx context.Context, source source.LabSource) error {
-	logger.Debug("Persisting lab", "source", source.Metadata().Name)
+// PersistLabSource parses and persists a laboratory source, recording both the
+// parse audit and the resulting version.
+func (e ExcelService) PersistLabSource(ctx context.Context, src source.LabSource) error {
+	startedAt := time.Now().In(timezone.ParaguayTZ)
 
-	// TODO: Crear el repositorio para guardar y consultar los laboratorios
+	periodID, sheetCount, parseErr := e.parseLabSource(ctx, src)
 
-	// TODO: Implementar el servicio de laboratorios cuya API ya esta definida
+	finishedAt := time.Now().In(timezone.ParaguayTZ)
+	meta := src.Metadata()
 
-	// TODO: Implementar la visualizacion en el frontend del dashboard
+	audit := &excel.ParseAudit{
+		SourceType:   excel.SourceTypeLab,
+		Name:         meta.Name,
+		URL:          meta.URI,
+		SourceDate:   meta.Date,
+		StartedAt:    startedAt,
+		FinishedAt:   finishedAt,
+		Succeeded:    parseErr == nil,
+		ParsedSheets: sheetCount,
+	}
+
+	if parseErr == nil {
+		versionID, err := e.excelRepository.SaveVersion(ctx, &excel.SheetVersion{
+			PeriodID:     periodID,
+			SourceType:   excel.SourceTypeLab,
+			Name:         meta.Name,
+			URL:          meta.URI,
+			SourceDate:   meta.Date,
+			ParsedAt:     finishedAt,
+			ParsedSheets: sheetCount,
+		})
+		if err != nil {
+			return fmt.Errorf("failed to save laboratory version (parse error: %v): %w", parseErr, err)
+		}
+
+		audit.VersionID = &versionID
+	} else {
+		audit.Error = parseErr.Error()
+	}
+
+	if err := e.excelRepository.SaveAudit(ctx, audit); err != nil {
+		return fmt.Errorf("failed to save laboratory parse audit (parse error: %v): %w", parseErr, err)
+	}
+
+	if parseErr != nil {
+		return fmt.Errorf("laboratory persistence transaction failed: %w", parseErr)
+	}
 
 	return nil
+}
+
+func (e ExcelService) parseLabSource(ctx context.Context, src source.LabSource) (academicModel.PeriodID, int, error) {
+	content, err := src.Content(ctx)
+	if err != nil {
+		return 0, 0, fmt.Errorf("cannot open Excel source: %w", err)
+	}
+	defer content.Close()
+
+	p, err := parser.NewLaboratoriesParser(content, e.layoutsDir)
+	if err != nil {
+		return 0, 0, fmt.Errorf("cannot initialize laboratory parser: %w", err)
+	}
+	defer p.Close()
+
+	periodID, err := e.periodRepository.Upsert(ctx, academicModel.Period{
+		Year:     src.Metadata().Date.Year(),
+		Semester: academicModel.YearSemester(src.Metadata().Semester),
+	})
+	if err != nil {
+		return 0, 0, fmt.Errorf("failed to upsert period: %w", err)
+	}
+
+	sheetCount := 0
+
+	txErr := e.txManager.WithTransaction(ctx, func(ctx context.Context) error {
+		for {
+			sheet, err := p.ParseNextSheet()
+			if err != nil {
+				return fmt.Errorf("error parsing laboratory sheet: %w", err)
+			}
+			if sheet == nil {
+				break
+			}
+
+			logger.Info("Laboratory sheet parsed", "career", sheet.Career, "labs", len(sheet.Labs))
+
+			for _, lab := range sheet.Labs {
+				subjectName := normalizeSubjectName(lab.RawName)
+
+				curriculumID, err := e.curriculumRepository.FindBySubjectAndPlan(
+					ctx,
+					strings.ToUpper(sheet.Career),
+					lab.Plan,
+					subjectName,
+				)
+				if err != nil {
+					return fmt.Errorf("failed to resolve curriculum for laboratory '%s': %w", lab.RawName, err)
+				}
+				if curriculumID == 0 {
+					return fmt.Errorf("curriculum not found for laboratory '%s' (career %s, plan %s)", lab.RawName, sheet.Career, lab.Plan)
+				}
+
+				if _, err := e.laboratoryRepository.Upsert(ctx, academicRepo.LaboratorySaveParams{
+					Curriculum: curriculumID,
+					Period:     periodID,
+					Section:    lab.Section,
+					Schedule:   generateSchedule(lab.WeekSchedule),
+				}); err != nil {
+					return fmt.Errorf("failed to persist laboratory '%s': %w", lab.RawName, err)
+				}
+			}
+
+			sheetCount++
+
+			sheet.Labs = nil
+			runtime.GC()
+		}
+
+		return nil
+	})
+
+	if txErr != nil {
+		return periodID, sheetCount, txErr
+	}
+
+	return periodID, sheetCount, nil
 }

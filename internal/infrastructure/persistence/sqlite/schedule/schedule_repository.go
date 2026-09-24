@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/config/timezone"
+	txManager "github.com/elias-gill/poliplanner2/internal/infrastructure/persistence/sqlite/tx_manager"
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
 	"github.com/elias-gill/poliplanner2/internal/model/schedule"
 	"github.com/elias-gill/poliplanner2/internal/model/user"
@@ -28,13 +29,9 @@ func NewScheduleRepository(db *sql.DB) *SqliteScheduleStore {
 // ============================================================
 
 func (s *SqliteScheduleStore) Save(ctx context.Context, sche schedule.Schedule) (schedule.ScheduleID, error) {
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return 0, err
-	}
-	defer tx.Rollback()
+	exec := txManager.GetExecutor(ctx, s.db)
 
-	res, err := tx.ExecContext(ctx, `
+	res, err := exec.ExecContext(ctx, `
 		INSERT INTO horarios(usuario_id, titulo, creado_en)
 		VALUES (?, ?, ?)`,
 		sche.Owner, sche.Title, time.Now().In(timezone.ParaguayTZ),
@@ -49,7 +46,7 @@ func (s *SqliteScheduleStore) Save(ctx context.Context, sche schedule.Schedule) 
 	}
 
 	for _, c := range sche.Courses {
-		_, err := tx.ExecContext(ctx, `
+		_, err := exec.ExecContext(ctx, `
 			INSERT INTO horarios_detalle(horario_id, curso_id)
 			VALUES (?, ?)`,
 			id, c,
@@ -59,15 +56,13 @@ func (s *SqliteScheduleStore) Save(ctx context.Context, sche schedule.Schedule) 
 		}
 	}
 
-	if err := tx.Commit(); err != nil {
-		return 0, err
-	}
-
 	return schedule.ScheduleID(id), nil
 }
 
 func (s *SqliteScheduleStore) ListByUserID(ctx context.Context, ownerID user.UserID) ([]schedule.ScheduleSummaryView, error) {
-	rows, err := s.db.QueryContext(ctx, `
+	exec := txManager.GetExecutor(ctx, s.db)
+
+	rows, err := exec.QueryContext(ctx, `
 		SELECT id, titulo
 		FROM horarios
 		WHERE usuario_id = ?`, ownerID,
@@ -90,10 +85,12 @@ func (s *SqliteScheduleStore) ListByUserID(ctx context.Context, ownerID user.Use
 }
 
 func (s *SqliteScheduleStore) GetByID(ctx context.Context, ID schedule.ScheduleID) (*schedule.ScheduleDetails, error) {
+	exec := txManager.GetExecutor(ctx, s.db)
+
 	var sch schedule.ScheduleDetails
 	var created string
 
-	row := s.db.QueryRowContext(ctx, `
+	row := exec.QueryRowContext(ctx, `
         SELECT usuario_id, titulo, creado_en
         FROM horarios
         WHERE id = ?`, ID)
@@ -109,7 +106,7 @@ func (s *SqliteScheduleStore) GetByID(ctx context.Context, ID schedule.ScheduleI
 	t, _ := time.Parse("2006-01-02 15:04:05", created)
 	sch.CreatedAt = t
 
-	courseRows, err := s.db.QueryContext(ctx, `
+	courseRows, err := exec.QueryContext(ctx, `
         SELECT curso_id 
         FROM horarios_detalle 
         WHERE horario_id = ?`, ID)
@@ -137,7 +134,9 @@ func (s *SqliteScheduleStore) GetByID(ctx context.Context, ID schedule.ScheduleI
 }
 
 func (s *SqliteScheduleStore) Delete(ctx context.Context, scheduleID schedule.ScheduleID) error {
-	res, err := s.db.ExecContext(ctx, `
+	exec := txManager.GetExecutor(ctx, s.db)
+
+	res, err := exec.ExecContext(ctx, `
 		DELETE FROM horarios
 		WHERE id = ?`, scheduleID,
 	)

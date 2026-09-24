@@ -13,6 +13,8 @@ import (
 	schedRepository "github.com/elias-gill/poliplanner2/internal/repository/schedule"
 	academicSrv "github.com/elias-gill/poliplanner2/internal/service/academic"
 	"github.com/elias-gill/poliplanner2/logger"
+
+	"github.com/elias-gill/poliplanner2/internal/repository"
 )
 
 // FIX: RETORNAR ERRORES CORRECTOS DESDE EL SERVICE
@@ -26,12 +28,19 @@ var (
 type ScheduleService struct {
 	scheduleRepository schedRepository.ScheduleRepository
 	courseService      *academicSrv.CourseService
+
+	txManager repository.TxManager
 }
 
-func New(scheduleRepo schedRepository.ScheduleRepository, courseService *academicSrv.CourseService) *ScheduleService {
+func New(
+	scheduleRepo schedRepository.ScheduleRepository,
+	courseService *academicSrv.CourseService,
+	txManager repository.TxManager,
+) *ScheduleService {
 	return &ScheduleService{
 		scheduleRepository: scheduleRepo,
 		courseService:      courseService,
+		txManager:          txManager,
 	}
 }
 
@@ -104,10 +113,16 @@ func (s *ScheduleService) CreateSchedule(ctx context.Context, userID user.UserID
 		return -1, err
 	}
 
-	id, err := s.scheduleRepository.Save(ctx, *sche)
-	if err != nil {
-		logger.Error("cannot save schedule", "error", err)
-		return -1, err
+	var id schedule.ScheduleID
+
+	txErr := s.txManager.WithTransaction(ctx, func(ctx context.Context) error {
+		var err error
+		id, err = s.scheduleRepository.Save(ctx, *sche)
+		return err
+	})
+	if txErr != nil {
+		logger.Error("cannot save schedule", "error", txErr)
+		return -1, txErr
 	}
 
 	return id, nil

@@ -12,8 +12,6 @@ import (
 	academicRepo "github.com/elias-gill/poliplanner2/internal/repository/academic"
 )
 
-// FIX: IMPORTANTE, TODAS LAS OPERACIONES DE LOS REPOSITORIOS DEBERIA DE USAR GetExecutor
-
 type CourseRepository struct {
 	db *sql.DB
 }
@@ -184,13 +182,15 @@ func (r *CourseRepository) AssignExams(ctx context.Context, courseID academic.Co
 }
 
 func (r *CourseRepository) ListByCurriculumID(ctx context.Context, curriculum academic.CurriculumID, period academic.PeriodID) ([]academic.CourseID, error) {
+	exec := txManager.GetExecutor(ctx, r.db)
+
 	query := `
 		SELECT id
 		FROM cursos
 		WHERE malla = $1 AND periodo = $2
 	`
 
-	rows, err := r.db.QueryContext(ctx, query, curriculum, period)
+	rows, err := exec.QueryContext(ctx, query, curriculum, period)
 	if err != nil {
 		return nil, fmt.Errorf("list courses by curriculum: %w", err)
 	}
@@ -248,13 +248,15 @@ func (r *CourseRepository) ListByTeacherAndPeriod(ctx context.Context, teacher a
 }
 
 func (r *CourseRepository) GetCourseTeachers(ctx context.Context, courseID academic.CourseID) ([]academic.Teacher, error) {
+	exec := txManager.GetExecutor(ctx, r.db)
+
 	query := `
 		SELECT d.titulo, d.nombre, d.apellido
 		FROM docentes_curso dc join docentes d on d.id = dc.id_docente
 		WHERE dc.id_curso = $1
 	`
 
-	rows, err := r.db.QueryContext(ctx, query, courseID)
+	rows, err := exec.QueryContext(ctx, query, courseID)
 	if err != nil {
 		return nil, fmt.Errorf("get course teachers: %w", err)
 	}
@@ -277,13 +279,15 @@ func (r *CourseRepository) GetCourseTeachers(ctx context.Context, courseID acade
 }
 
 func (r *CourseRepository) GetCourseSchedules(ctx context.Context, courseID academic.CourseID) ([]academic.ClassSession, error) {
+	exec := txManager.GetExecutor(ctx, r.db)
+
 	query := `
 		SELECT dia, desde, hasta, aula
 		FROM curso_horarios
 		WHERE curso_id = $1
 	`
 
-	rows, err := r.db.QueryContext(ctx, query, courseID)
+	rows, err := exec.QueryContext(ctx, query, courseID)
 	if err != nil {
 		return nil, fmt.Errorf("get course schedules: %w", err)
 	}

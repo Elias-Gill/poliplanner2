@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/elias-gill/poliplanner2/internal/model/user"
+	txManager "github.com/elias-gill/poliplanner2/internal/infrastructure/persistence/sqlite/tx_manager"
 	"github.com/elias-gill/poliplanner2/logger"
 )
 
@@ -20,11 +21,13 @@ func NewUserRepository(db *sql.DB) *SqliteUserRepository {
 }
 
 func (s SqliteUserRepository) Insert(ctx context.Context, u *user.User) error {
+	exec := txManager.GetExecutor(ctx, s.db)
+
 	query := `
 		INSERT INTO users (username, password, email)
 		VALUES (?, ?, ?)
 	`
-	res, err := s.db.ExecContext(ctx, query, u.Username, u.Password, u.Email)
+	res, err := exec.ExecContext(ctx, query, u.Username, u.Password, u.Email)
 	if err != nil {
 		return err
 	}
@@ -37,6 +40,8 @@ func (s SqliteUserRepository) Insert(ctx context.Context, u *user.User) error {
 }
 
 func (s *SqliteUserRepository) Save(ctx context.Context, u *user.User) error {
+	exec := txManager.GetExecutor(ctx, s.db)
+
 	const query = `
 		INSERT INTO users (
 			user_id,
@@ -56,7 +61,7 @@ func (s *SqliteUserRepository) Save(ctx context.Context, u *user.User) error {
 			recovery_token_used = excluded.recovery_token_used
 	`
 
-	_, err := s.db.ExecContext(
+	_, err := exec.ExecContext(
 		ctx,
 		query,
 		u.ID,
@@ -76,7 +81,9 @@ func (s *SqliteUserRepository) Save(ctx context.Context, u *user.User) error {
 }
 
 func (s SqliteUserRepository) Delete(ctx context.Context, userID user.UserID) error {
-	_, err := s.db.ExecContext(ctx, `DELETE FROM users WHERE user_id = ?`, userID)
+	exec := txManager.GetExecutor(ctx, s.db)
+
+	_, err := exec.ExecContext(ctx, `DELETE FROM users WHERE user_id = ?`, userID)
 	if err != nil {
 		return fmt.Errorf("delete exec error: %w", err)
 	}
@@ -85,8 +92,10 @@ func (s SqliteUserRepository) Delete(ctx context.Context, userID user.UserID) er
 }
 
 func (s SqliteUserRepository) GetByID(ctx context.Context, userID user.UserID) (*user.User, error) {
+	exec := txManager.GetExecutor(ctx, s.db)
+
 	u := &user.User{}
-	err := s.db.QueryRowContext(ctx, `
+	err := exec.QueryRowContext(ctx, `
 		SELECT user_id, username, password, email,
 		       recovery_token_hash, recovery_token_expiration, recovery_token_used
 		FROM users WHERE user_id = ?`, userID).
@@ -104,8 +113,10 @@ func (s SqliteUserRepository) GetByID(ctx context.Context, userID user.UserID) (
 }
 
 func (s SqliteUserRepository) GetByUsername(ctx context.Context, username string) (*user.User, error) {
+	exec := txManager.GetExecutor(ctx, s.db)
+
 	u := &user.User{}
-	err := s.db.QueryRowContext(ctx, `
+	err := exec.QueryRowContext(ctx, `
 		SELECT u.user_id, u.username, u.password, u.email,
 		       u.recovery_token_hash, u.recovery_token_expiration, u.recovery_token_used
 		FROM users u WHERE u.username = ?`, username).
@@ -123,8 +134,10 @@ func (s SqliteUserRepository) GetByUsername(ctx context.Context, username string
 }
 
 func (s SqliteUserRepository) GetByEmail(ctx context.Context, email string) (*user.User, error) {
+	exec := txManager.GetExecutor(ctx, s.db)
+
 	u := &user.User{}
-	err := s.db.QueryRowContext(ctx, `
+	err := exec.QueryRowContext(ctx, `
 		SELECT user_id, username, password, email,
 		       recovery_token_hash, recovery_token_expiration, recovery_token_used
 		FROM users WHERE email = ?`, email).
@@ -142,8 +155,10 @@ func (s SqliteUserRepository) GetByEmail(ctx context.Context, email string) (*us
 }
 
 func (s SqliteUserRepository) GetByRecoveryToken(ctx context.Context, token string) (*user.User, error) {
+	exec := txManager.GetExecutor(ctx, s.db)
+
 	u := &user.User{}
-	err := s.db.QueryRowContext(ctx, `
+	err := exec.QueryRowContext(ctx, `
 		SELECT user_id, username, password, email,
 		recovery_token_hash, recovery_token_expiration, recovery_token_used
 		FROM users WHERE recovery_token_hash = ?`, token).

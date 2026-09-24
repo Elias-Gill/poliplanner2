@@ -42,6 +42,7 @@ type RepositoriesInput struct {
 	PeriodRepo     academic.PeriodRepository
 	SubjectRepo    academic.SubjectRepository
 	CareerRepo     academic.CareerRepository
+	LaboratoryRepo academic.LaboratoryRepository
 
 	// Parsing repos
 	ExcelRepo excel.ExcelRepository
@@ -83,6 +84,7 @@ func NewAppServices(repos RepositoriesInput, cfg AppConfig) *AppServices {
 		repos.PeriodRepo,
 		repos.SubjectRepo,
 		repos.CareerRepo,
+		repos.LaboratoryRepo,
 		repos.TxManager,
 		periodService,
 		cfg.LayoutsDir,
@@ -108,7 +110,7 @@ func NewAppServices(repos RepositoriesInput, cfg AppConfig) *AppServices {
 		courseService,
 	)
 
-	scheduleService := scheduleSrv.New(repos.ScheduleRepo, courseService)
+	scheduleService := scheduleSrv.New(repos.ScheduleRepo, courseService, repos.TxManager)
 
 	return &AppServices{
 		// Academic

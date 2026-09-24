@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/elias-gill/poliplanner2/internal/model/excel"
+	txManager "github.com/elias-gill/poliplanner2/internal/infrastructure/persistence/sqlite/tx_manager"
 )
 
 type SQLiteSyncRepository struct {
@@ -19,9 +20,11 @@ func NewSyncRepository(db *sql.DB) *SQLiteSyncRepository {
 }
 
 func (s *SQLiteSyncRepository) GetSyncState(ctx context.Context, kind excel.SourceType) (*excel.SyncState, error) {
+	exec := txManager.GetExecutor(ctx, s.db)
+
 	var lastSearch, lastSync sql.NullString
 
-	err := s.db.QueryRowContext(
+	err := exec.QueryRowContext(
 		ctx,
 		`SELECT last_search_at, last_sync_at FROM excel_sync_state WHERE source_type = ?`,
 		string(kind),
@@ -67,7 +70,9 @@ func (s *SQLiteSyncRepository) SetLastSyncAttempt(ctx context.Context, kind exce
 }
 
 func (s *SQLiteSyncRepository) setAttempt(ctx context.Context, kind excel.SourceType, column string, t time.Time) error {
-	_, err := s.db.ExecContext(
+	exec := txManager.GetExecutor(ctx, s.db)
+
+	_, err := exec.ExecContext(
 		ctx,
 		fmt.Sprintf(`
 		INSERT INTO excel_sync_state (source_type, %[1]s)

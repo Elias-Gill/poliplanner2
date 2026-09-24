@@ -2,7 +2,13 @@
 
 CREATE TABLE IF NOT EXISTS excel_sync_state (
     source_type    TEXT PRIMARY KEY,
+
+    -- Last web search (discovery) for this source type. Set even when nothing
+    -- new was found; gates the search interval.
     last_search_at DATETIME,
+
+    -- Last successful persistence of new sources for this source type. Only set
+    -- when there was something pending to sync.
     last_sync_at   DATETIME
 );
 

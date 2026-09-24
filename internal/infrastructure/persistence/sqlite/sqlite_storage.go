@@ -34,6 +34,7 @@ type SQLiteStorage struct {
 	SubjectRepo    academic.SubjectRepository
 	TeacherRepo    academic.TeacherRepository
 	CurriculumRepo academic.CurriculumRepository
+	LaboratoryRepo academic.LaboratoryRepository
 
 	ScheduleRepo schedule.ScheduleRepository
 
@@ -59,6 +60,7 @@ func NewSQLiteStorage(conn *sql.DB) *SQLiteStorage {
 		SubjectRepo:    academicImpl.NewSubjectRepository(conn),
 		TeacherRepo:    academicImpl.NewTeacherRepository(conn),
 		CurriculumRepo: academicImpl.NewCurriculumRepository(conn),
+		LaboratoryRepo: academicImpl.NewLaboratoryRepository(conn),
 
 		ScheduleRepo: scheduleImpl.NewScheduleRepository(conn),
 

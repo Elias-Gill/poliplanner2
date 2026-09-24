@@ -93,6 +93,8 @@ func (r *CareerRepository) List(ctx context.Context) ([]*academic.Career, error)
 
 // ListPlans retrieves all unique study plans associated with a given career ID.
 func (r *CareerRepository) ListPlans(ctx context.Context, id academic.CareerID) ([]academic.Plan, error) {
+	exec := txManager.GetExecutor(ctx, r.db)
+
 	const query = `
 		SELECT p.codigo
 		FROM planes p
@@ -100,7 +102,7 @@ func (r *CareerRepository) ListPlans(ctx context.Context, id academic.CareerID) 
 		ORDER BY p.codigo ASC;
 	`
 
-	rows, err := r.db.QueryContext(ctx, query, id)
+	rows, err := exec.QueryContext(ctx, query, id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query plans for career %d: %w", id, err)
 	}

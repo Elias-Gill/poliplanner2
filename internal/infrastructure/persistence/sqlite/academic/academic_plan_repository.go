@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
+	txManager "github.com/elias-gill/poliplanner2/internal/infrastructure/persistence/sqlite/tx_manager"
 )
 
 type SqliteAcademicPlanStore struct {
@@ -18,7 +19,9 @@ func NewSqliteAcademicPlanStore(connection *sql.DB) *SqliteAcademicPlanStore {
 }
 
 func (s SqliteAcademicPlanStore) ListCareers(ctx context.Context) ([]*academic.Career, error) {
-	rows, err := s.db.QueryContext(
+	exec := txManager.GetExecutor(ctx, s.db)
+
+	rows, err := exec.QueryContext(
 		ctx,
 		`
 		SELECT id, siglas
@@ -58,8 +61,9 @@ func (s SqliteAcademicPlanStore) GetSubject(
 	ctx context.Context,
 	id academic.SubjectID,
 ) (*academic.Subject, error) {
+	exec := txManager.GetExecutor(ctx, s.db)
 
-	row := s.db.QueryRowContext(
+	row := exec.QueryRowContext(
 		ctx,
 		`
 		SELECT 
