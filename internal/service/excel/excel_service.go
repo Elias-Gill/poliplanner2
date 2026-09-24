@@ -2,7 +2,6 @@ package excel
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"runtime"
 
@@ -19,10 +18,6 @@ import (
 	academicService "github.com/elias-gill/poliplanner2/internal/service/academic"
 	metaServices "github.com/elias-gill/poliplanner2/internal/service/metadata"
 	"github.com/elias-gill/poliplanner2/logger"
-)
-
-var (
-	ErrNoSheetVersion = errors.New("No sheet version found")
 )
 
 type ExcelService struct {
@@ -74,39 +69,90 @@ func NewExcelService(
 	}
 }
 
-// GetLatestValidVersion lists the latest SUCCESFULLY parsed excel file version.
-func (e *ExcelService) GetLatestValidVersion(ctx context.Context) (*excel.SheetVersion, error) {
-	versions, err := e.excelRepository.ListAllVersions(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("cannot find excel versions: %w", err)
+// ListVersions returns the successfully parsed versions of a source type.
+func (e ExcelService) ListVersions(ctx context.Context, kind excel.SourceType) ([]*excel.SheetVersion, error) {
+	return e.excelRepository.ListVersions(ctx, kind)
+}
+
+// ListAudit returns the parse attempts of a source type, latest first.
+func (e ExcelService) ListAudit(ctx context.Context, kind excel.SourceType, limit int) ([]*excel.ParseAudit, error) {
+	return e.excelRepository.ListAudit(ctx, kind, limit)
+}
+
+// IsSourceUpToDate reports whether a version of the same source (matched by name
+// or url) with an equal or newer source date was already parsed successfully.
+func (e ExcelService) IsSourceUpToDate(
+	ctx context.Context,
+	kind excel.SourceType,
+	name, url string,
+	sourceDate time.Time,
+) (bool, error) {
+	return e.excelRepository.IsSourceUpToDate(ctx, kind, name, url, sourceDate)
+}
+
+// PersistScheduleSource parses and persists a schedule source, recording both
+// the parse audit and the resulting version.
+func (e ExcelService) PersistScheduleSource(ctx context.Context, src source.ScheduleSource) error {
+	startedAt := time.Now().In(timezone.ParaguayTZ)
+
+	periodID, sheetCount, parseErr := e.parseScheduleSource(ctx, src)
+
+	finishedAt := time.Now().In(timezone.ParaguayTZ)
+	meta := src.Metadata()
+
+	audit := &excel.ParseAudit{
+		SourceType:   excel.SourceTypeSchedule,
+		Name:         meta.Name,
+		URL:          meta.URI,
+		SourceDate:   meta.Date,
+		StartedAt:    startedAt,
+		FinishedAt:   finishedAt,
+		Succeeded:    parseErr == nil,
+		ParsedSheets: sheetCount,
 	}
 
-	// The repository returns an ordered list from latest to oldest.
-	for _, v := range versions {
-		// Check for the first correctly parsed version
-		if v.Succeeded {
-			return v, nil
+	if parseErr == nil {
+		versionID, err := e.excelRepository.SaveVersion(ctx, &excel.SheetVersion{
+			PeriodID:     periodID,
+			SourceType:   excel.SourceTypeSchedule,
+			Name:         meta.Name,
+			URL:          meta.URI,
+			SourceDate:   meta.Date,
+			ParsedAt:     finishedAt,
+			ParsedSheets: sheetCount,
+		})
+		if err != nil {
+			return fmt.Errorf("failed to save excel version (parse error: %v): %w", parseErr, err)
 		}
+
+		audit.VersionID = &versionID
+	} else {
+		audit.Error = parseErr.Error()
 	}
 
-	return nil, ErrNoSheetVersion
+	if err := e.excelRepository.SaveAudit(ctx, audit); err != nil {
+		return fmt.Errorf("failed to save parse audit (parse error: %v): %w", parseErr, err)
+	}
+
+	if parseErr != nil {
+		return fmt.Errorf("excel persistence transaction failed: %w", parseErr)
+	}
+
+	return nil
 }
 
-func (e ExcelService) ListVersions(ctx context.Context) ([]*excel.SheetVersion, error) {
-	return e.excelRepository.ListAllVersions(ctx)
-}
-
-func (e ExcelService) PersistScheduleSource(ctx context.Context, source source.ScheduleSource) error {
+func (e ExcelService) parseScheduleSource(ctx context.Context, source source.ScheduleSource) (academicModel.PeriodID, int, error) {
 	content, err := source.Content(ctx)
 	if err != nil {
-		return fmt.Errorf("cannot open Excel source: %w", err)
+		return 0, 0, fmt.Errorf("cannot open Excel source: %w", err)
 	}
 	defer content.Close()
 
 	p, err := parser.NewScheduleParser(content, e.layoutsDir)
 	if err != nil {
-		return fmt.Errorf("cannot initialize excel parser: %w", err)
+		return 0, 0, fmt.Errorf("cannot initialize excel parser: %w", err)
 	}
+	defer p.Close()
 
 	// Upsert the period based on the provided source metadata
 	periodID, err := e.periodRepository.Upsert(ctx, academicModel.Period{
@@ -114,7 +160,7 @@ func (e ExcelService) PersistScheduleSource(ctx context.Context, source source.S
 		Semester: academicModel.YearSemester(source.Metadata().Semester),
 	})
 	if err != nil {
-		return fmt.Errorf("failed to upsert period: %w", err)
+		return 0, 0, fmt.Errorf("failed to upsert period: %w", err)
 	}
 
 	sheetCount := 0
@@ -223,43 +269,21 @@ func (e ExcelService) PersistScheduleSource(ctx context.Context, source source.S
 		return nil
 	})
 
-	// Close parser after all sheets are processed
-	p.Close()
-
-	// REFACTOR: deberia de tener una tabla a parte de auditoria de parseo y una sola tabla para
-	// las versiones de excel parseadas correctamente, asi puedo discernir entre lo correcto e
-	// incorrecto sin problemas.
-
-	// Prepare and save audit entries for the source persistence attemp
-	var errMsg string
 	if txErr != nil {
-		errMsg = txErr.Error()
+		return periodID, sheetCount, txErr
 	}
 
-	// Save audit entry, independently if the parsing and persistence process was succesfull or
-	// not
-	auditErr := e.excelRepository.SaveVersion(ctx, &excel.SheetVersion{
-		PeriodID:     periodID,
-		Name:         source.Metadata().Name,
-		URL:          source.Metadata().URI,
-		ParsedAt:     time.Now().In(timezone.ParaguayTZ),
-		ParsedSheets: sheetCount,
-		Succeeded:    txErr == nil,
-		Error:        errMsg,
-	})
-	if auditErr != nil {
-		return fmt.Errorf("failed to save excel version audit (original error: %v): %w", txErr, auditErr)
-	}
-
-	// Return error if the parsing and persist fails after saving the audit entry
-	if txErr != nil {
-		return fmt.Errorf("excel persistence transaction failed: %w", txErr)
-	}
-
-	// Correctly parsed and persisted
-	return nil
+	return periodID, sheetCount, nil
 }
 
 func (e ExcelService) PersistLabSource(ctx context.Context, source source.LabSource) error {
+	logger.Debug("Persisting lab", "source", source.Metadata().Name)
+
+	// TODO: Crear el repositorio para guardar y consultar los laboratorios
+
+	// TODO: Implementar el servicio de laboratorios cuya API ya esta definida
+
+	// TODO: Implementar la visualizacion en el frontend del dashboard
+
 	return nil
 }

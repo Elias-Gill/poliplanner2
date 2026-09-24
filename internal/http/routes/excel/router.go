@@ -12,6 +12,7 @@ import (
 	"github.com/elias-gill/poliplanner2/internal/config/timezone"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/source"
 	"github.com/elias-gill/poliplanner2/internal/model/academic"
+	excelModel "github.com/elias-gill/poliplanner2/internal/model/excel"
 	render "github.com/elias-gill/poliplanner2/internal/render/html"
 	"github.com/elias-gill/poliplanner2/internal/service/excel"
 	"github.com/elias-gill/poliplanner2/logger"
@@ -80,14 +81,14 @@ func (h *Handler) sync(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) listVersions(w http.ResponseWriter, r *http.Request) {
-	versions, err := h.excelService.ListVersions(r.Context())
+	versions, err := h.excelService.ListVersions(r.Context(), excelModel.SourceTypeSchedule)
 	if err != nil {
 		logger.Error("Error listing excel versions", "error", err)
 		http.Error(w, "No se pudieron obtener las versiones de Excel", http.StatusInternalServerError)
 		return
 	}
 
-	lastSync, err := h.syncService.GetLastSyncAttempt(r.Context())
+	state, err := h.syncService.GetSyncState(r.Context(), excelModel.SourceTypeSchedule)
 	if err != nil {
 		logger.Error("Error listing excel versions", "error", err)
 		http.Error(w, "No se pudo obtener el ultimo auto sync de versiones excel", http.StatusInternalServerError)
@@ -96,7 +97,7 @@ func (h *Handler) listVersions(w http.ResponseWriter, r *http.Request) {
 
 	data := map[string]any{
 		"Versions": versions,
-		"LastSync": lastSync,
+		"LastSync": state.LastSearchAt,
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")

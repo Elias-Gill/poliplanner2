@@ -6,9 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"time"
-)
 
-const autoSyncRowID = 1
+	"github.com/elias-gill/poliplanner2/internal/model/excel"
+)
 
 type SQLiteSyncRepository struct {
 	db *sql.DB
@@ -18,54 +18,67 @@ func NewSyncRepository(db *sql.DB) *SQLiteSyncRepository {
 	return &SQLiteSyncRepository{db: db}
 }
 
-func (s *SQLiteSyncRepository) GetLastSyncAttempt(
-	ctx context.Context,
-) (*time.Time, error) {
-
-	var lastCheckedAt string
+func (s *SQLiteSyncRepository) GetSyncState(ctx context.Context, kind excel.SourceType) (*excel.SyncState, error) {
+	var lastSearch, lastSync sql.NullString
 
 	err := s.db.QueryRowContext(
 		ctx,
-		`SELECT last_checked_at FROM auto_sync_excel_check WHERE id = ?`,
-		autoSyncRowID,
-	).Scan(&lastCheckedAt)
+		`SELECT last_search_at, last_sync_at FROM excel_sync_state WHERE source_type = ?`,
+		string(kind),
+	).Scan(&lastSearch, &lastSync)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, nil
+			return &excel.SyncState{SourceType: kind}, nil
 		}
 
-		return nil, fmt.Errorf("query last sync attempt: %w", err)
+		return nil, fmt.Errorf("query sync state: %w", err)
 	}
 
-	t, err := time.Parse(time.RFC3339, lastCheckedAt)
-	if err != nil {
-		return nil, fmt.Errorf("parse last sync attempt %q: %w", lastCheckedAt, err)
+	state := &excel.SyncState{SourceType: kind}
+
+	if lastSearch.Valid {
+		t, err := time.Parse(time.RFC3339, lastSearch.String)
+		if err != nil {
+			return nil, fmt.Errorf("parse last search attempt %q: %w", lastSearch.String, err)
+		}
+
+		state.LastSearchAt = &t
 	}
 
-	return &t, nil
+	if lastSync.Valid {
+		t, err := time.Parse(time.RFC3339, lastSync.String)
+		if err != nil {
+			return nil, fmt.Errorf("parse last sync attempt %q: %w", lastSync.String, err)
+		}
+
+		state.LastSyncAt = &t
+	}
+
+	return state, nil
 }
 
-func (s *SQLiteSyncRepository) SetLastSyncAttempt(
-	ctx context.Context,
-	t time.Time,
-) error {
+func (s *SQLiteSyncRepository) SetLastSearchAttempt(ctx context.Context, kind excel.SourceType, t time.Time) error {
+	return s.setAttempt(ctx, kind, "last_search_at", t)
+}
 
-	value := t.Format(time.RFC3339)
+func (s *SQLiteSyncRepository) SetLastSyncAttempt(ctx context.Context, kind excel.SourceType, t time.Time) error {
+	return s.setAttempt(ctx, kind, "last_sync_at", t)
+}
 
+func (s *SQLiteSyncRepository) setAttempt(ctx context.Context, kind excel.SourceType, column string, t time.Time) error {
 	_, err := s.db.ExecContext(
 		ctx,
-		`
-		INSERT INTO auto_sync_excel_check (id, last_checked_at)
+		fmt.Sprintf(`
+		INSERT INTO excel_sync_state (source_type, %[1]s)
 		VALUES (?, ?)
-		ON CONFLICT(id) DO UPDATE SET
-			last_checked_at = excluded.last_checked_at
-		`,
-		autoSyncRowID,
-		value,
+		ON CONFLICT(source_type) DO UPDATE SET %[1]s = excluded.%[1]s
+		`, column),
+		string(kind),
+		t.Format(time.RFC3339),
 	)
 	if err != nil {
-		return fmt.Errorf("upsert last sync attempt: %w", err)
+		return fmt.Errorf("upsert %s: %w", column, err)
 	}
 
 	return nil

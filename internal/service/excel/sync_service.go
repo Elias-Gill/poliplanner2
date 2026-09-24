@@ -9,24 +9,30 @@ import (
 
 	"github.com/elias-gill/poliplanner2/internal/config/timezone"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/source"
-	"github.com/elias-gill/poliplanner2/internal/repository/excel"
+	"github.com/elias-gill/poliplanner2/internal/model/excel"
+	excelRepo "github.com/elias-gill/poliplanner2/internal/repository/excel"
 	"github.com/elias-gill/poliplanner2/logger"
 )
 
+// autoSyncInterval is how long a source type waits before searching the web
+// again. The last search timestamp is stored per type in the database.
 const autoSyncInterval = 6 * time.Hour
 
 var ErrCheckLastSync = errors.New("failed to retrieve last sync date")
 
+// sourceTypes lists every kind of Excel source the sync pipeline handles.
+var sourceTypes = []excel.SourceType{excel.SourceTypeSchedule, excel.SourceTypeLab}
+
 type SyncService struct {
 	importService  *DiscoveryService
 	excelService   *ExcelService
-	syncRepository excel.SyncRepository
+	syncRepository excelRepo.SyncRepository
 }
 
 func NewSyncService(
 	discvSrv *DiscoveryService,
 	excelService *ExcelService,
-	syncRepo excel.SyncRepository,
+	syncRepo excelRepo.SyncRepository,
 ) *SyncService {
 	return &SyncService{
 		importService:  discvSrv,
@@ -35,63 +41,70 @@ func NewSyncService(
 	}
 }
 
-func (s *SyncService) GetLastSyncAttempt(ctx context.Context) (*time.Time, error) {
-	return s.syncRepository.GetLastSyncAttempt(ctx)
+func (s *SyncService) GetSyncState(ctx context.Context, kind excel.SourceType) (*excel.SyncState, error) {
+	return s.syncRepository.GetSyncState(ctx, kind)
 }
 
+// AutoSync searches and syncs every source type whose last search is older than
+// autoSyncInterval.
 func (s *SyncService) AutoSync(ctx context.Context) error {
 	logger.Info("Auto sync check started")
 
-	lastCheck, err := s.syncRepository.GetLastSyncAttempt(ctx)
+	var errs []error
+
+	for _, kind := range sourceTypes {
+		if err := s.autoSyncType(ctx, kind); err != nil {
+			errs = append(errs, fmt.Errorf("%s: %w", kind, err))
+		}
+	}
+
+	return errors.Join(errs...)
+}
+
+func (s *SyncService) autoSyncType(ctx context.Context, kind excel.SourceType) error {
+	state, err := s.syncRepository.GetSyncState(ctx, kind)
 	if err != nil {
-		logger.Warn("Failed to retrieve last checked time", "error", err)
+		logger.Warn("Failed to retrieve sync state", "source_type", kind, "error", err)
 		return ErrCheckLastSync
 	}
 
-	if lastCheck == nil {
-		logger.Info("No previous sync check found, executing sync")
-		return s.Sync(ctx)
+	if state.LastSearchAt != nil {
+		elapsed := time.Since(*state.LastSearchAt)
+		logger.Info("Time since last search", "source_type", kind, "elapsed_hours", math.Round(elapsed.Hours()))
+
+		if elapsed < autoSyncInterval {
+			logger.Info("Source search not required", "source_type", kind)
+			return nil
+		}
 	}
 
-	elapsed := time.Since(*lastCheck)
-	logger.Info("Time since last check", "elapsed_hours", math.Round(elapsed.Hours()))
-
-	if elapsed >= autoSyncInterval {
-		return s.Sync(ctx)
-	}
-
-	logger.Info("Auto sync not required")
-	return nil
+	return s.syncType(ctx, kind)
 }
 
-// Sync synchronizes every published Excel source type. Schedule and laboratory
-// sources share the same last sync attempt marker: there is no separate check
-// per type.
+// Sync forces a search and sync of every source type, ignoring the interval.
 func (s *SyncService) Sync(ctx context.Context) error {
 	logger.Info("Starting sources sync")
 
 	var errs []error
 
-	if err := s.syncSchedules(ctx); err != nil {
-		logger.Error("Schedule sources sync failed", "error", err)
-		errs = append(errs, err)
+	for _, kind := range sourceTypes {
+		if err := s.syncType(ctx, kind); err != nil {
+			errs = append(errs, fmt.Errorf("%s: %w", kind, err))
+		}
 	}
 
-	if err := s.syncLabs(ctx); err != nil {
-		logger.Error("Laboratory sources sync failed", "error", err)
-		errs = append(errs, err)
-	}
+	return errors.Join(errs...)
+}
 
-	if err := s.syncRepository.SetLastSyncAttempt(ctx, time.Now().In(timezone.ParaguayTZ)); err != nil {
-		logger.Error("Failed to set sync date on database", "error", err)
-		errs = append(errs, fmt.Errorf("error setting sync date on database: %w", err))
+func (s *SyncService) syncType(ctx context.Context, kind excel.SourceType) error {
+	switch kind {
+	case excel.SourceTypeSchedule:
+		return s.syncSchedules(ctx)
+	case excel.SourceTypeLab:
+		return s.syncLabs(ctx)
+	default:
+		return fmt.Errorf("unknown source type %q", kind)
 	}
-
-	if len(errs) > 0 {
-		return errors.Join(errs...)
-	}
-
-	return nil
 }
 
 func (s *SyncService) syncSchedules(ctx context.Context) error {
@@ -99,43 +112,34 @@ func (s *SyncService) syncSchedules(ctx context.Context) error {
 
 	webSources, err := s.importService.FindLatestScheduleSources(ctx)
 	if err != nil {
-		logger.Error("Error retrieving latest sources from web", "error", err)
-		return fmt.Errorf("error retrieving latest sources from web: %w", err)
+		logger.Error("Error retrieving latest schedule sources from web", "error", err)
+		return fmt.Errorf("error retrieving latest schedule sources from web: %w", err)
 	}
+
+	s.recordSearchAttempt(ctx, excel.SourceTypeSchedule)
 
 	if webSources == nil || len(webSources.Sources) == 0 {
-		logger.Error("No schedule sources found on web")
-		return fmt.Errorf("no schedule sources found on web")
-	}
-
-	serverVersion, err := s.excelService.GetLatestValidVersion(ctx)
-	if err != nil && !errors.Is(err, ErrNoSheetVersion) {
-		logger.Error("Failed to get newest version from database", "error", err)
-		return fmt.Errorf("error retrieving latest version from db: %w", err)
-	}
-
-	if serverVersion == nil {
-		logger.Info("No previous version found in database, persisting all latest web sources", "count", len(webSources.Sources))
-		return s.persistAllScheduleSources(ctx, webSources.Sources)
-	}
-
-	if !webSources.Date.After(serverVersion.ParsedAt) {
-		logger.Info(
-			"Current excel source is up to date",
-			"web_source_date", webSources.Date,
-			"db_source_date", serverVersion.ParsedAt,
-		)
+		logger.Warn("No schedule sources found on web")
 		return nil
 	}
 
-	logger.Info(
-		"Newer excel sources found, starting import",
-		"web_source_date", webSources.Date,
-		"db_source_date", serverVersion.ParsedAt,
-		"count", len(webSources.Sources),
-	)
+	pending, err := s.pendingScheduleSources(ctx, webSources.Sources)
+	if err != nil {
+		return err
+	}
 
-	return s.persistAllScheduleSources(ctx, webSources.Sources)
+	if len(pending) == 0 {
+		logger.Info("All schedule sources are up to date")
+		return nil
+	}
+
+	logger.Info("New schedule sources found, starting import", "count", len(pending))
+
+	if err := s.persistAllScheduleSources(ctx, pending); err != nil {
+		return err
+	}
+
+	return s.recordSyncAttempt(ctx, excel.SourceTypeSchedule)
 }
 
 func (s *SyncService) syncLabs(ctx context.Context) error {
@@ -147,12 +151,68 @@ func (s *SyncService) syncLabs(ctx context.Context) error {
 		return fmt.Errorf("error retrieving latest laboratory sources from web: %w", err)
 	}
 
+	s.recordSearchAttempt(ctx, excel.SourceTypeLab)
+
 	if labSources == nil || len(labSources.Sources) == 0 {
 		logger.Warn("No laboratory sources found on web")
 		return nil
 	}
 
-	return s.persistAllLabSources(ctx, labSources.Sources)
+	pending, err := s.pendingLabSources(ctx, labSources.Sources)
+	if err != nil {
+		return err
+	}
+
+	if len(pending) == 0 {
+		logger.Info("All laboratory sources are up to date")
+		return nil
+	}
+
+	logger.Info("New laboratory sources found, starting import", "count", len(pending))
+
+	if err := s.persistAllLabSources(ctx, pending); err != nil {
+		return err
+	}
+
+	return s.recordSyncAttempt(ctx, excel.SourceTypeLab)
+}
+
+func (s *SyncService) pendingScheduleSources(ctx context.Context, sources []source.ScheduleSource) ([]source.ScheduleSource, error) {
+	pending := make([]source.ScheduleSource, 0, len(sources))
+
+	for _, src := range sources {
+		meta := src.Metadata()
+
+		upToDate, err := s.excelService.IsSourceUpToDate(ctx, excel.SourceTypeSchedule, meta.Name, meta.URI, meta.Date)
+		if err != nil {
+			return nil, fmt.Errorf("error checking schedule source '%s': %w", meta.Name, err)
+		}
+
+		if !upToDate {
+			pending = append(pending, src)
+		}
+	}
+
+	return pending, nil
+}
+
+func (s *SyncService) pendingLabSources(ctx context.Context, sources []source.LabSource) ([]source.LabSource, error) {
+	pending := make([]source.LabSource, 0, len(sources))
+
+	for _, src := range sources {
+		meta := src.Metadata()
+
+		upToDate, err := s.excelService.IsSourceUpToDate(ctx, excel.SourceTypeLab, meta.Name, meta.URI, meta.Date)
+		if err != nil {
+			return nil, fmt.Errorf("error checking laboratory source '%s': %w", meta.Name, err)
+		}
+
+		if !upToDate {
+			pending = append(pending, src)
+		}
+	}
+
+	return pending, nil
 }
 
 func (s *SyncService) persistAllScheduleSources(ctx context.Context, sources []source.ScheduleSource) error {
@@ -184,6 +244,23 @@ func (s *SyncService) persistAllLabSources(ctx context.Context, sources []source
 
 	if len(errs) > 0 {
 		return fmt.Errorf("errors persisting laboratory sources: %w", errors.Join(errs...))
+	}
+
+	return nil
+}
+
+// recordSearchAttempt stores the search timestamp per type. Failures are logged
+// but never abort the sync: the marker is an optimization, not critical state.
+func (s *SyncService) recordSearchAttempt(ctx context.Context, kind excel.SourceType) {
+	if err := s.syncRepository.SetLastSearchAttempt(ctx, kind, time.Now().In(timezone.ParaguayTZ)); err != nil {
+		logger.Error("Failed to set last search attempt", "source_type", kind, "error", err)
+	}
+}
+
+func (s *SyncService) recordSyncAttempt(ctx context.Context, kind excel.SourceType) error {
+	if err := s.syncRepository.SetLastSyncAttempt(ctx, kind, time.Now().In(timezone.ParaguayTZ)); err != nil {
+		logger.Error("Failed to set last sync attempt", "source_type", kind, "error", err)
+		return fmt.Errorf("error setting last sync attempt: %w", err)
 	}
 
 	return nil
