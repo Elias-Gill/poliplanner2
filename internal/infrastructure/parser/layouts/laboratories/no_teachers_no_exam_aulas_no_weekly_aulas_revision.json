@@ -13,7 +13,7 @@
         { "encabezado": "ignorar", "patron": [""] },
         { "encabezado": "ignorar", "patron": [""] },
         { "encabezado": "ignorar", "patron": [""] },
-        { "encabezado": "ignorar", "patron": [""] },
+        { "encabezado": "carrera", "patron": ["carrera", "carrer"] },
         { "encabezado": "ignorar", "patron": [""] },
         { "encabezado": "plan", "patron": ["plan", "programa"] },
         { "encabezado": "ignorar", "patron": [""] },
