@@ -22,12 +22,27 @@
         <p class="text-xs text-gray-500">
           Último check:
           <span class="font-mono font-semibold text-gray-700">
-            {{ .LastSync.Format "02/01/2006 - 15:04" }}
+            {{ if .LastSync }}{{ .LastSync.Format "02/01/2006 - 15:04" }}{{ else }}Nunca{{ end }}
           </span>
         </p>
       </div>
       <a href="/excel/" class="text-xs text-primary-600 font-semibold shrink-0">
         &larr; Sincronización
+      </a>
+    </div>
+
+    <!-- Type tabs -->
+    <div
+      class="flex gap-1 rounded-sm border border-gray-200 bg-gray-100 p-1 w-fit">
+      <a
+        href="/excel/list?type=schedule"
+        class="rounded-sm px-3 py-1.5 text-xs font-semibold transition {{ if not .IsLab }}bg-white text-primary-700 shadow-sm{{ else }}text-gray-600 hover:text-gray-900{{ end }}">
+        Horarios
+      </a>
+      <a
+        href="/excel/list?type=lab"
+        class="rounded-sm px-3 py-1.5 text-xs font-semibold transition {{ if .IsLab }}bg-white text-primary-700 shadow-sm{{ else }}text-gray-600 hover:text-gray-900{{ end }}">
+        Laboratorios
       </a>
     </div>
 

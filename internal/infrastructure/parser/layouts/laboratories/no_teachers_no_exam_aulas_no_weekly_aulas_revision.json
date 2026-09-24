@@ -53,7 +53,6 @@
         { "encabezado": "ignorar", "patron": [""] },
         { "encabezado": "ignorar", "patron": [""] },
         { "encabezado": "ignorar", "patron": [""] },
-        { "encabezado": "ignorar", "patron": [""] },
         { "encabezado": "aulaLunes", "patron": ["aula", "aula lunes"] },
         { "encabezado": "horaLunes", "patron": ["lunes", "horario lunes"] },
         { "encabezado": "aulaMartes", "patron": ["aula", "aula martes"] },

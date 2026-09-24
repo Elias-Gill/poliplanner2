@@ -19,6 +19,10 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+[x-cloak] {
+    display: none !important;
+}
+
 .medium-zoom-overlay {
     z-index: 99999 !important;
 }

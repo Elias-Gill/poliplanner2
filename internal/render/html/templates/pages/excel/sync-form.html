@@ -17,302 +17,439 @@
   <meta property="og:url" content="https://poliplanner.fly.dev/excel" />
   <meta property="og:type" content="website" />
 {{ end }}
+
 {{ define "content" }}
   <div
-    class="flex items-center justify-center min-h-screen px-0 sm:px-6 lg:px-8">
-    <div
-      class="w-full border-gray-300 border max-w-3xl py-4 bg-gray-50 rounded-sm shadow-xl overflow-hidden">
-      <div class="px-6 md:px-10 pt-10 pb-6 space-y-8 md:space-y-10">
-        <!-- Sección 1 -->
-        <section class="space-y-4">
-          <div class="pb-2 border-b border-gray-200">
-            <h2 class="text-xl font-semibold text-gray-900">
-              Sincronización automática
-            </h2>
-            <p class="mt-1 text-sm text-gray-600">
-              Ejecuta la actualización del Excel más reciente desde la fuente
-              web.
-            </p>
-          </div>
-          <form
-            id="syncForm"
-            class="p-5 space-y-4 border border-gray-300 rounded-sm bg-gray-50/40">
-            <div>
-              <label
-                for="syncKey"
-                class="block mb-1.5 text-sm font-medium text-gray-700"
-                >Contraseña de autorización</label
-              >
-              <input
-                type="password"
-                id="syncKey"
-                name="syncKey"
-                required
-                placeholder="Ingresa la clave"
-                class="block w-full px-4 py-2.5 text-gray-900 placeholder-gray-400 border border-gray-300 rounded-sm shadow-sm transition focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
-            </div>
-            <button
-              type="submit"
-              class="w-full px-4 py-2.5 font-medium text-white transition duration-150 rounded-sm bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
-              Sincronizar ahora
-            </button>
-          </form>
-          <div
-            id="syncResult"
-            class="pt-1 text-sm font-medium min-h-[2rem]"></div>
-        </section>
+    x-data="excelPanel()"
+    class="mx-auto flex w-full max-w-4xl flex-col gap-5 py-2">
+    <!-- Header -->
+    <header
+      class="flex flex-wrap items-center justify-between gap-3 rounded-sm border border-gray-200 bg-white px-5 py-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <div class="min-w-0">
+        <h1 class="text-lg font-bold text-gray-900 dark:text-zinc-100">
+          Panel de Excel
+        </h1>
+        <p class="mt-0.5 text-sm text-gray-500 dark:text-zinc-400">
+          Sincroniza automáticamente o carga horarios y laboratorios a mano.
+        </p>
+      </div>
+      <a
+        href="/excel/list"
+        class="shrink-0 rounded-sm border border-gray-300 px-3 py-2 text-xs font-semibold text-primary-700 transition hover:bg-gray-50 dark:border-zinc-700 dark:text-primary-300 dark:hover:bg-zinc-800">
+        Ver versiones &rarr;
+      </a>
+    </header>
 
-        <!-- Divider -->
-        <div class="relative">
-          <div class="absolute inset-0 flex items-center">
-            <div class="w-full border-t border-gray-300"></div>
-          </div>
-          <div class="relative flex justify-center text-sm">
-            <span class="px-4 font-medium text-gray-500 bg-white"
-              >O sube manualmente</span
-            >
+    <!-- Credentials -->
+    <section
+      class="rounded-sm border border-gray-200 bg-white px-5 py-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <label
+        for="authKey"
+        class="block text-sm font-medium text-gray-700 dark:text-zinc-300">
+        Clave de autorización
+      </label>
+      <div class="relative mt-1.5">
+        <input
+          :type="showKey ? 'text' : 'password'"
+          id="authKey"
+          x-model="key"
+          autocomplete="off"
+          placeholder="Ingresa la clave de administrador"
+          class="block w-full rounded-sm border border-gray-300 px-4 py-2.5 pr-12 text-gray-900 placeholder-gray-400 shadow-sm transition focus:border-primary-500 focus:ring-2 focus:ring-primary-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder-zinc-600" />
+        <button
+          type="button"
+          x-on:click="showKey = !showKey"
+          class="absolute inset-y-0 right-0 px-3 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+          x-text="showKey ? 'Ocultar' : 'Ver'"></button>
+      </div>
+      <p class="mt-1.5 text-xs text-gray-500 dark:text-zinc-500">
+        Se usa para ambas acciones: sincronización automática y subida manual.
+      </p>
+    </section>
+
+    <!-- Automatic sync -->
+    <section
+      class="rounded-sm border border-gray-200 bg-white px-5 py-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h2 class="text-base font-semibold text-gray-900 dark:text-zinc-100">
+            Sincronización automática
+          </h2>
+          <p class="mt-1 text-sm text-gray-500 dark:text-zinc-400">
+            Busca en la web y procesa la última versión de horarios y
+            laboratorios.
+          </p>
+        </div>
+        <i
+          class="bi bi-cloud-arrow-down mt-0.5 text-2xl text-primary-500"
+          aria-hidden="true"></i>
+      </div>
+
+      <button
+        type="button"
+        x-on:click="runSync()"
+        x-bind:disabled="syncing"
+        class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-sm bg-primary-600 px-4 py-2.5 font-medium text-white transition hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
+        <svg
+          x-show="syncing"
+          class="h-4 w-4 animate-spin"
+          viewBox="0 0 24 24"
+          fill="none">
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        <span x-text="syncing ? 'Sincronizando…' : 'Sincronizar ahora'"
+          >Sincronizar ahora</span
+        >
+      </button>
+
+      <div class="mt-3 min-h-[1.5rem] text-sm font-medium">
+        <p
+          x-show="syncMessage"
+          x-text="syncMessage"
+          :class="syncError ? 'text-red-700 dark:text-red-400' : 'text-emerald-700 dark:text-emerald-400'"></p>
+      </div>
+    </section>
+
+    <!-- Manual upload -->
+    <section
+      class="rounded-sm border border-gray-200 bg-white px-5 py-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <div>
+        <h2 class="text-base font-semibold text-gray-900 dark:text-zinc-100">
+          Subida manual
+        </h2>
+        <p class="mt-1 text-sm text-gray-500 dark:text-zinc-400">
+          Carga un archivo Excel o descárgalo desde un link directo. El link es
+          obligatorio.
+        </p>
+      </div>
+
+      <form x-on:submit.prevent="runUpload()" class="mt-4 space-y-4">
+        <!-- Source type -->
+        <div>
+          <span
+            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-zinc-300">
+            Tipo de fuente
+          </span>
+          <div
+            class="grid grid-cols-2 gap-1 rounded-sm border border-gray-300 bg-gray-100 p-1 dark:border-zinc-700 dark:bg-zinc-950">
+            <template x-for="option in types" :key="option.value">
+              <label
+                class="cursor-pointer rounded-sm px-3 py-2 text-center text-sm font-medium transition"
+                :class="type === option.value
+                  ? 'bg-white text-primary-700 shadow-sm dark:bg-zinc-800 dark:text-primary-300'
+                  : 'text-gray-600 hover:text-gray-900 dark:text-zinc-400 dark:hover:text-zinc-100'">
+                <input
+                  type="radio"
+                  name="type"
+                  class="sr-only"
+                  :value="option.value"
+                  x-model="type" />
+                <span x-text="option.label"></span>
+              </label>
+            </template>
           </div>
         </div>
 
-        <!-- Sección 2 -->
-        <section class="space-y-4">
-          <div class="pb-2 border-b border-gray-200">
-            <h2 class="text-xl font-semibold text-gray-900">
-              Subida manual de archivo
-            </h2>
-            <p class="mt-1 text-sm text-gray-600">
-              Carga tu propio archivo Excel y selecciona el período
-              correspondiente.
-            </p>
+        <!-- Period + date -->
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label
+              for="periodSelect"
+              class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-zinc-300">
+              Período académico
+            </label>
+            <select
+              id="periodSelect"
+              x-model="period"
+              required
+              class="block w-full rounded-sm border border-gray-300 bg-white px-4 py-2.5 text-gray-900 shadow-sm transition focus:border-primary-500 focus:ring-2 focus:ring-primary-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100">
+              <option value="" disabled>Seleccione período</option>
+              <option value="1">Período 1</option>
+              <option value="2">Período 2</option>
+            </select>
           </div>
-          <form
-            id="uploadForm"
-            enctype="multipart/form-data"
-            class="p-5 space-y-4 border border-gray-300 rounded-sm bg-gray-50/40">
-            <!-- Contraseña -->
-            <div>
-              <label
-                for="uploadKey"
-                class="block mb-1.5 text-sm font-medium text-gray-700">
-                Contraseña de autorización
-              </label>
-              <input
-                type="password"
-                id="uploadKey"
-                name="uploadKey"
-                required
-                placeholder="Ingresa la clave"
-                class="block w-full px-4 py-2.5 text-gray-900 placeholder-gray-400 border border-gray-300 rounded-sm shadow-sm transition focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
-            </div>
-            <!-- Período -->
-            <div>
-              <label
-                for="periodSelect"
-                class="block mb-1.5 text-sm font-medium text-gray-700"
-                >Período académico</label
-              >
-              <select
-                id="periodSelect"
-                name="period"
-                required
-                class="block w-full px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-sm shadow-sm transition focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
-                <option value="" disabled selected>Seleccione período</option>
-                <option value="1">Período 1</option>
-                <option value="2">Período 2</option>
-              </select>
-            </div>
-            <!-- Fecha -->
-            <div>
-              <label
-                for="dateInput"
-                class="block mb-1.5 text-sm font-medium text-gray-700">
-                Fecha de subida
-              </label>
-              <input
-                type="date"
-                id="dateInput"
-                name="date"
-                required
-                class="block w-full px-4 py-2.5 text-gray-900 bg-white border border-gray-300 rounded-sm shadow-sm transition focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
-            </div>
-            <!-- URL -->
-            <div>
-              <label
-                for="downloadUrl"
-                class="block mb-1.5 text-sm font-medium text-gray-700">
-                URL de descarga (opcional)
-              </label>
-              <input
-                type="url"
-                id="downloadUrl"
-                name="downloadUrl"
-                placeholder="https://ejemplo.com/archivo.xlsx"
-                class="block w-full px-4 py-2.5 text-gray-900 placeholder-gray-400 border border-gray-300 rounded-sm shadow-sm transition focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
-            </div>
-            <!-- File -->
-            <div>
-              <label
-                for="fileInput"
-                class="block mb-1.5 text-sm font-medium text-gray-700"
-                >Archivo Excel</label
-              >
-              <div class="relative">
-                <input
-                  type="file"
-                  id="fileInput"
-                  name="file"
-                  accept=".xls,.xlsx"
-                  required
-                  class="absolute inset-0 z-10 w-full h-full opacity-0 cursor-pointer" />
-                <div
-                  class="flex items-center overflow-hidden bg-white border border-gray-300 rounded-sm shadow-sm transition focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-primary-500">
-                  <div class="px-4 py-2.5 bg-gray-100 border-r border-gray-300">
-                    <i
-                      class="text-xl text-primary-600 bi bi-file-earmark-spreadsheet"></i>
-                  </div>
-                  <div
-                    class="flex-1 px-4 py-2.5 text-sm text-gray-500 truncate">
-                    <span id="fileNameDisplay"
-                      >Ningún archivo seleccionado</span
-                    >
-                  </div>
-                </div>
-              </div>
-              <p class="mt-1 text-xs text-gray-500">
-                Formatos permitidos: .xls, .xlsx
-              </p>
+          <div>
+            <label
+              for="dateInput"
+              class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-zinc-300">
+              Fecha de la fuente
+            </label>
+            <input
+              type="date"
+              id="dateInput"
+              x-model="date"
+              required
+              class="block w-full rounded-sm border border-gray-300 bg-white px-4 py-2.5 text-gray-900 shadow-sm transition focus:border-primary-500 focus:ring-2 focus:ring-primary-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100" />
+          </div>
+        </div>
+
+        <!-- Download URL -->
+        <div>
+          <label
+            for="downloadUrl"
+            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-zinc-300">
+            Link de descarga directa
+            <span class="text-red-600">*</span>
+          </label>
+          <input
+            type="url"
+            id="downloadUrl"
+            x-model="url"
+            required
+            placeholder="https://ejemplo.com/archivo.xlsx"
+            class="block w-full rounded-sm border border-gray-300 px-4 py-2.5 text-gray-900 placeholder-gray-400 shadow-sm transition focus:border-primary-500 focus:ring-2 focus:ring-primary-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder-zinc-600" />
+          <p class="mt-1.5 text-xs text-gray-500 dark:text-zinc-500">
+            Identifica la fuente y, si no subes archivo, se descarga desde aquí.
+          </p>
+        </div>
+
+        <!-- Optional name -->
+        <div>
+          <label
+            for="nameInput"
+            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-zinc-300">
+            Nombre de la fuente
+            <span class="font-normal text-gray-400">(opcional)</span>
+          </label>
+          <input
+            type="text"
+            id="nameInput"
+            x-model="name"
+            placeholder="Se deduce del archivo o del link"
+            class="block w-full rounded-sm border border-gray-300 px-4 py-2.5 text-gray-900 placeholder-gray-400 shadow-sm transition focus:border-primary-500 focus:ring-2 focus:ring-primary-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder-zinc-600" />
+        </div>
+
+        <!-- Optional file -->
+        <div>
+          <span
+            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-zinc-300">
+            Archivo Excel
+            <span class="font-normal text-gray-400">(opcional)</span>
+          </span>
+
+          <label
+            x-show="!fileName"
+            class="flex cursor-pointer flex-col items-center justify-center gap-1 rounded-sm border border-dashed border-gray-300 bg-gray-50 px-4 py-6 text-center transition hover:border-primary-400 hover:bg-primary-50 dark:border-zinc-700 dark:bg-zinc-950 dark:hover:border-primary-500 dark:hover:bg-zinc-900">
+            <i
+              class="bi bi-file-earmark-spreadsheet text-2xl text-primary-500"
+              aria-hidden="true"></i>
+            <span class="text-sm font-medium text-gray-700 dark:text-zinc-200">
+              Arrastra o selecciona un archivo
+            </span>
+            <span class="text-xs text-gray-500 dark:text-zinc-500">
+              .xls, .xlsx — si no subes uno, se usa el link
+            </span>
+            <input
+              type="file"
+              id="fileInput"
+              accept=".xls,.xlsx"
+              x-on:change="setFile($event)"
+              class="sr-only" />
+          </label>
+
+          <div
+            x-show="fileName"
+            x-cloak
+            class="flex items-center justify-between gap-3 rounded-sm border border-gray-300 bg-white px-4 py-2.5 dark:border-zinc-700 dark:bg-zinc-950">
+            <div class="flex min-w-0 items-center gap-2">
+              <i
+                class="bi bi-file-earmark-spreadsheet text-lg text-primary-500"
+                aria-hidden="true"></i>
+              <span
+                class="truncate text-sm text-gray-800 dark:text-zinc-200"
+                x-text="fileName"></span>
             </div>
             <button
-              type="submit"
-              class="w-full px-4 py-2.5 font-medium text-white transition duration-150 rounded-sm bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
-              Subir Archivo
+              type="button"
+              x-on:click="clearFile()"
+              class="shrink-0 text-xs font-semibold text-red-600 hover:text-red-700">
+              Quitar
             </button>
-          </form>
-          <div
-            id="uploadResult"
-            class="pt-1 text-sm font-medium min-h-[2rem]"></div>
-        </section>
-      </div>
-    </div>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          x-bind:disabled="uploading"
+          class="inline-flex w-full items-center justify-center gap-2 rounded-sm bg-primary-600 px-4 py-2.5 font-medium text-white transition hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
+          <svg
+            x-show="uploading"
+            class="h-4 w-4 animate-spin"
+            viewBox="0 0 24 24"
+            fill="none">
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          <span x-text="uploading ? 'Procesando…' : 'Cargar fuente'"
+            >Cargar fuente</span
+          >
+        </button>
+
+        <div class="min-h-[1.5rem] text-sm font-medium">
+          <p
+            x-show="uploadMessage"
+            x-text="uploadMessage"
+            :class="uploadError ? 'text-red-700 dark:text-red-400' : 'text-emerald-700 dark:text-emerald-400'"></p>
+        </div>
+      </form>
+    </section>
   </div>
-  <!-- Scripts -->
+
   <script>
-    // Sync autónomo
-    document
-      .getElementById("syncForm")
-      .addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const key = document.getElementById("syncKey").value;
-        const resultEl = document.getElementById("syncResult");
+    function excelPanel() {
+      return {
+        key: "",
+        showKey: false,
 
-        resultEl.className = "min-h-[2rem] text-sm font-medium";
-        resultEl.textContent = "Procesando...";
+        types: [
+          { value: "schedule", label: "Horario" },
+          { value: "lab", label: "Laboratorio" },
+        ],
+        type: "schedule",
+        period: "1",
+        date: new Date().toISOString().slice(0, 10),
+        url: "",
+        name: "",
+        fileName: "",
+        file: null,
 
-        try {
-          const res = await fetch("/excel/sync", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${key}`,
-            },
-          });
+        syncing: false,
+        syncMessage: "",
+        syncError: false,
 
-          if (res.ok) {
-            resultEl.className += " text-green-700";
-            resultEl.textContent = "Sincronización iniciada con éxito.";
-          } else {
-            const text = await res.text();
-            resultEl.className += " text-red-700";
-            resultEl.textContent = `Error: ${text || "Solicitud fallida"}`;
+        uploading: false,
+        uploadMessage: "",
+        uploadError: false,
+
+        setFile(event) {
+          const selected = event.target.files[0];
+          if (!selected) {
+            this.clearFile();
+            return;
           }
-        } catch (err) {
-          resultEl.className += " text-red-700";
-          resultEl.textContent = `Error de conexión: ${err.message}`;
-        }
-      });
+          this.file = selected;
+          this.fileName = selected.name;
+        },
 
-    // Subida manual
-    document
-      .getElementById("uploadForm")
-      .addEventListener("submit", async (e) => {
-        e.preventDefault();
+        clearFile() {
+          this.file = null;
+          this.fileName = "";
+          const input = document.getElementById("fileInput");
+          if (input) input.value = "";
+        },
 
-        const key = document.getElementById("uploadKey").value;
-        const period = document.getElementById("periodSelect").value;
-        const date = document.getElementById("dateInput").value;
-        const fileInput = document.getElementById("fileInput");
-        const urlInput = document.getElementById("downloadUrl");
-        const resultEl = document.getElementById("uploadResult");
-
-        if (!period) {
-          resultEl.className = "text-red-700 text-sm font-medium";
-          resultEl.textContent = "Selecciona un período válido.";
-          return;
-        }
-        if (!date) {
-          resultEl.className = "text-red-700 text-sm font-medium";
-          resultEl.textContent = "Selecciona una fecha válida.";
-          return;
-        }
-        if (fileInput.files.length === 0) {
-          resultEl.className = "text-red-700 text-sm font-medium";
-          resultEl.textContent = "Selecciona un archivo Excel.";
-          return;
-        }
-
-        resultEl.className = "min-h-[2rem] text-sm font-medium";
-        resultEl.textContent = "Subiendo archivo...";
-
-        const formData = new FormData();
-        formData.append("file", fileInput.files[0]);
-        formData.append("downloadUrl", urlInput.value);
-        formData.append("period", period);
-        formData.append("date", date);
-
-        try {
-          const res = await fetch("/excel/sync", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${key}`,
-            },
-            body: formData,
-          });
-
-          if (res.ok) {
-            resultEl.className += " text-green-700";
-            resultEl.textContent = "Archivo subido y procesado correctamente.";
-          } else {
-            const text = await res.text();
-            resultEl.className += " text-red-700";
-            resultEl.textContent = `Error: ${text || "Fallo en la subida"}`;
+        validate() {
+          if (!this.key.trim()) {
+            this.uploadError = true;
+            this.uploadMessage = "Ingresa la clave de autorización.";
+            return false;
           }
-        } catch (err) {
-          resultEl.className += " text-red-700";
-          resultEl.textContent = `Error de conexión: ${err.message}`;
-        }
-      });
+          if (!this.period) {
+            this.uploadError = true;
+            this.uploadMessage = "Selecciona un período válido.";
+            return false;
+          }
+          if (!this.date) {
+            this.uploadError = true;
+            this.uploadMessage = "Selecciona una fecha válida.";
+            return false;
+          }
+          if (!this.url.trim()) {
+            this.uploadError = true;
+            this.uploadMessage = "El link de descarga es obligatorio.";
+            return false;
+          }
+          return true;
+        },
 
-    // Mostrar nombre del archivo seleccionado
-    const fileInput = document.getElementById("fileInput");
-    const fileNameDisplay = document.getElementById("fileNameDisplay");
-    const dateInput = document.getElementById("dateInput");
+        async runSync() {
+          if (!this.key.trim()) {
+            this.syncError = true;
+            this.syncMessage = "Ingresa la clave de autorización.";
+            return;
+          }
 
-    if (dateInput) {
-      dateInput.valueAsDate = new Date();
-    }
+          this.syncing = true;
+          this.syncError = false;
+          this.syncMessage = "Procesando…";
 
-    if (fileInput && fileNameDisplay) {
-      fileInput.addEventListener("change", function (e) {
-        if (this.files && this.files.length > 0) {
-          const fileName = this.files[0].name;
-          fileNameDisplay.textContent = fileName;
-          fileNameDisplay.className = "text-gray-900 font-medium truncate";
-        } else {
-          fileNameDisplay.textContent = "Ningún archivo seleccionado";
-          fileNameDisplay.className = "text-gray-500 italic truncate";
-        }
-      });
-    } else {
-      console.warn("Elementos fileInput o fileNameDisplay no encontrados");
+          try {
+            const res = await fetch("/excel/sync", {
+              method: "POST",
+              headers: { Authorization: `Bearer ${this.key}` },
+            });
+
+            if (res.ok) {
+              this.syncMessage = "Sincronización completada con éxito.";
+            } else {
+              this.syncError = true;
+              this.syncMessage = `Error: ${(await res.text()) || "Solicitud fallida"}`;
+            }
+          } catch (err) {
+            this.syncError = true;
+            this.syncMessage = `Error de conexión: ${err.message}`;
+          } finally {
+            this.syncing = false;
+          }
+        },
+
+        async runUpload() {
+          if (!this.validate()) return;
+
+          this.uploading = true;
+          this.uploadError = false;
+          this.uploadMessage = "Procesando archivo…";
+
+          const formData = new FormData();
+          formData.append("type", this.type);
+          formData.append("period", this.period);
+          formData.append("date", this.date);
+          formData.append("downloadUrl", this.url.trim());
+          if (this.name.trim()) formData.append("name", this.name.trim());
+          if (this.file) formData.append("file", this.file);
+
+          try {
+            const res = await fetch("/excel/sync", {
+              method: "POST",
+              headers: { Authorization: `Bearer ${this.key}` },
+              body: formData,
+            });
+
+            if (res.ok) {
+              this.uploadMessage = "Fuente procesada correctamente.";
+              this.clearFile();
+              this.name = "";
+            } else {
+              this.uploadError = true;
+              this.uploadMessage = `Error: ${(await res.text()) || "Fallo en la subida"}`;
+            }
+          } catch (err) {
+            this.uploadError = true;
+            this.uploadMessage = `Error de conexión: ${err.message}`;
+          } finally {
+            this.uploading = false;
+          }
+        },
+      };
     }
   </script>
 {{ end }}

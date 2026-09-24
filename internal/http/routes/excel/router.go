@@ -3,8 +3,13 @@ package excel
 import (
 	"context"
 	"crypto/subtle"
+	"errors"
 	"fmt"
+	"io"
+	"mime/multipart"
 	"net/http"
+	"net/url"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -81,16 +86,18 @@ func (h *Handler) sync(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) listVersions(w http.ResponseWriter, r *http.Request) {
-	versions, err := h.excelService.ListVersions(r.Context(), excelModel.SourceTypeSchedule)
+	kind := parseSourceType(r.URL.Query().Get("type"))
+
+	versions, err := h.excelService.ListVersions(r.Context(), kind)
 	if err != nil {
 		logger.Error("Error listing excel versions", "error", err)
 		http.Error(w, "No se pudieron obtener las versiones de Excel", http.StatusInternalServerError)
 		return
 	}
 
-	state, err := h.syncService.GetSyncState(r.Context(), excelModel.SourceTypeSchedule)
+	state, err := h.syncService.GetSyncState(r.Context(), kind)
 	if err != nil {
-		logger.Error("Error listing excel versions", "error", err)
+		logger.Error("Error getting excel sync state", "error", err)
 		http.Error(w, "No se pudo obtener el ultimo auto sync de versiones excel", http.StatusInternalServerError)
 		return
 	}
@@ -98,6 +105,8 @@ func (h *Handler) listVersions(w http.ResponseWriter, r *http.Request) {
 	data := map[string]any{
 		"Versions": versions,
 		"LastSync": state.LastSearchAt,
+		"Type":     kind,
+		"IsLab":    kind == excelModel.SourceTypeLab,
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -120,45 +129,140 @@ func (h *Handler) handleUpload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file, header, err := r.FormFile("file")
+	kind := parseSourceType(r.FormValue("type"))
+
+	semester, err := parseSemester(r.FormValue("period"))
 	if err != nil {
-		http.Error(w, "Excel file is required", http.StatusBadRequest)
-		return
-	}
-	defer file.Close()
-
-	periodStr := r.FormValue("period")
-	semester, err := strconv.Atoi(periodStr)
-	if err != nil || (semester != 1 && semester != 2) {
-		http.Error(w, "Invalid period, must be 1 or 2", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	dateStr := r.FormValue("date")
-	uploadDate, err := time.Parse("2006-01-02", dateStr)
+	uploadDate, err := parseUploadDate(r.FormValue("date"))
 	if err != nil {
-		http.Error(w, "Invalid date format, expected YYYY-MM-DD", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	downloadURL := strings.TrimSpace(r.FormValue("downloadUrl"))
-	if downloadURL == "" {
-		downloadURL = "manual-upload"
+	downloadURL, err := parseDownloadURL(r.FormValue("downloadUrl"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
-	src := source.NewScheduleSourceFromReader(file, source.SourceMetadata{
-		Name:     header.Filename,
+	// The file is optional: when absent, the source is downloaded from the URL.
+	file, header, fileErr := r.FormFile("file")
+	hasFile := fileErr == nil
+	if fileErr != nil && !errors.Is(fileErr, http.ErrMissingFile) {
+		http.Error(w, "Invalid file upload: "+fileErr.Error(), http.StatusBadRequest)
+		return
+	}
+	if hasFile {
+		defer file.Close()
+	}
+
+	name := resolveSourceName(r.FormValue("name"), header, downloadURL)
+
+	meta := source.SourceMetadata{
+		Name:     name,
 		URI:      downloadURL,
-		Semester: academic.YearSemester(semester),
+		Semester: semester,
 		Date:     uploadDate.In(timezone.ParaguayTZ),
-	})
+	}
 
-	if err := h.excelService.PersistScheduleSource(r.Context(), src); err != nil {
+	if err := h.persistSource(r.Context(), kind, file, hasFile, meta); err != nil {
+		logger.Error("Could not process uploaded excel source", "type", kind, "error", err)
 		http.Error(w, "Could not process the file: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	respondHTML(w, http.StatusOK, "File processed successfully")
+}
+
+// persistSource builds the right source type from an uploaded file or a download
+// URL and hands it to the excel service.
+func (h *Handler) persistSource(
+	ctx context.Context,
+	kind excelModel.SourceType,
+	file io.ReadCloser,
+	hasFile bool,
+	meta source.SourceMetadata,
+) error {
+	if kind == excelModel.SourceTypeLab {
+		var src source.LabSource
+		if hasFile {
+			src = source.NewLabSourceFromReader(file, meta)
+		} else {
+			src = source.NewLabSourceFromURL(meta.URI, meta.Name, meta.Semester, meta.Date)
+		}
+		return h.excelService.PersistLabSource(ctx, src)
+	}
+
+	var src source.ScheduleSource
+	if hasFile {
+		src = source.NewScheduleSourceFromReader(file, meta)
+	} else {
+		src = source.NewScheduleSourceFromURL(meta.URI, meta.Name, meta.Semester, meta.Date)
+	}
+	return h.excelService.PersistScheduleSource(ctx, src)
+}
+
+// ==================== Form parsing helpers ====================
+
+func parseSourceType(raw string) excelModel.SourceType {
+	if strings.TrimSpace(strings.ToLower(raw)) == string(excelModel.SourceTypeLab) {
+		return excelModel.SourceTypeLab
+	}
+	return excelModel.SourceTypeSchedule
+}
+
+func parseSemester(raw string) (academic.YearSemester, error) {
+	semester, err := strconv.Atoi(strings.TrimSpace(raw))
+	if err != nil || (semester != 1 && semester != 2) {
+		return 0, errors.New("Invalid period, must be 1 or 2")
+	}
+	return academic.YearSemester(semester), nil
+}
+
+func parseUploadDate(raw string) (time.Time, error) {
+	date, err := time.Parse("2006-01-02", strings.TrimSpace(raw))
+	if err != nil {
+		return time.Time{}, errors.New("Invalid date format, expected YYYY-MM-DD")
+	}
+	return date, nil
+}
+
+func parseDownloadURL(raw string) (string, error) {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return "", errors.New("downloadUrl is required")
+	}
+
+	parsed, err := url.Parse(raw)
+	if err != nil || (parsed.Scheme != "http" && parsed.Scheme != "https") || parsed.Host == "" {
+		return "", errors.New("downloadUrl must be a valid http(s) URL")
+	}
+
+	return raw, nil
+}
+
+// resolveSourceName prefers an explicit name, then the uploaded filename, and
+// finally the basename of the download URL.
+func resolveSourceName(raw string, header *multipart.FileHeader, downloadURL string) string {
+	if name := strings.TrimSpace(raw); name != "" {
+		return name
+	}
+
+	if header != nil && header.Filename != "" {
+		return header.Filename
+	}
+
+	if parsed, err := url.Parse(downloadURL); err == nil {
+		if base := filepath.Base(parsed.Path); base != "." && base != "/" && base != "" {
+			return base
+		}
+	}
+
+	return "excel-source"
 }
 
 func (h *Handler) handleSync(w http.ResponseWriter, r *http.Request) {

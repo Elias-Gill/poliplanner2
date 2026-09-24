@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
-	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly/v2"
@@ -30,14 +29,6 @@ var (
 	googleSpreadsheetPattern = regexp.MustCompile(
 		`^https://docs\.google\.com/spreadsheets/d/[\w-]+`)
 )
-
-var httpClient = &http.Client{
-	Transport: &http.Transport{
-		MaxIdleConns:       10,
-		IdleConnTimeout:    30 * time.Second,
-		DisableCompression: false,
-	},
-}
 
 // Filter decides whether a discovered Excel file name is relevant for a given
 // domain scraper. The engine is agnostic to what "relevant" means, which keeps
