@@ -77,6 +77,7 @@ type CourseDetailView struct {
 	Shift              string
 	Type               academic.CourseType
 	Teachers           []TeacherContactView
+	Labs               []academic.Laboratory
 	SaturdayDates      string
 	CommitteePresident string
 	CommitteeMember1   string

@@ -1,8 +1,86 @@
 {{ define "dashboard/schedule_content" }}
-  <div class="mt-4 space-y-10">
-    <!-- Horario Semanal -->
-    <div id="vista_semana" class="transition-colors">
-      {{ template "dashboard/schedule_week" . }}
+  <div class="mt-4 space-y-6" x-data="{ tab: 'clases' }">
+    <!-- Tarjeta unificada: horario de clases / laboratorios -->
+    <div
+      class="bg-white dark:bg-zinc-900 rounded-sm shadow-2xs border border-gray-200 dark:border-zinc-800 overflow-hidden">
+      <!-- Cabecera con selector de vista -->
+      <div
+        class="p-4 bg-primary-700 dark:bg-zinc-900 border-b border-primary-800 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div
+            class="w-7 h-7 rounded-xs bg-primary-600 dark:bg-primary-950/60 border border-primary-500/50 dark:border-primary-800/50 flex items-center justify-center shrink-0">
+            <svg
+              x-show="tab === 'clases'"
+              class="w-4 h-4 text-white dark:text-primary-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 012-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <svg
+              x-show="tab === 'labs'"
+              x-cloak
+              class="w-4 h-4 text-white dark:text-primary-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 3h6m-6 0a2 2 0 00-2 2v14a2 2 0 002 2h6a2 2 0 002-2V5a2 2 0 00-2-2m-6 0h6M9 12h6M9 16h6" />
+            </svg>
+          </div>
+
+          <div class="min-w-0">
+            <h2
+              class="text-sm font-bold text-white dark:text-zinc-100 leading-tight"
+              x-text="tab === 'clases' ? 'Horario de Clases' : 'Laboratorios Disponibles'"></h2>
+            <p
+              class="text-[11px] text-primary-200 dark:text-zinc-400 mt-0.5"
+              x-text="tab === 'clases'
+                ? 'Distribución semanal de asignaturas'
+                : 'Secciones de laboratorio disponibles para las materias de este horario'"></p>
+          </div>
+        </div>
+
+        <!-- Selector -->
+        <div
+          class="inline-flex items-center p-0.5 rounded-sm bg-primary-800/60 dark:bg-zinc-950 border border-primary-500/40 dark:border-zinc-800 shrink-0 self-start sm:self-auto">
+          <button
+            type="button"
+            @click="tab = 'clases'"
+            :class="tab === 'clases'
+              ? 'bg-white text-primary-700 dark:bg-zinc-800 dark:text-zinc-100 shadow-2xs'
+              : 'text-primary-100 dark:text-zinc-400 hover:text-white'"
+            class="px-3 py-1 rounded-xs text-[11px] font-semibold cursor-pointer transition-colors">
+            Clases
+          </button>
+          <button
+            type="button"
+            @click="tab = 'labs'"
+            :class="tab === 'labs'
+              ? 'bg-white text-primary-700 dark:bg-zinc-800 dark:text-zinc-100 shadow-2xs'
+              : 'text-primary-100 dark:text-zinc-400 hover:text-white'"
+            class="px-3 py-1 rounded-xs text-[11px] font-semibold cursor-pointer transition-colors">
+            Laboratorios
+          </button>
+        </div>
+      </div>
+
+      <!-- Cuerpo: horario semanal -->
+      <div x-show="tab === 'clases'" id="vista_semana">
+        {{ template "dashboard/schedule_week" . }}
+      </div>
+
+      <!-- Cuerpo: laboratorios -->
+      <div x-show="tab === 'labs'" x-cloak id="vista_labs">
+        {{ template "dashboard/schedule_labs" . }}
+      </div>
     </div>
 
     <!-- Cronograma de Exámenes -->

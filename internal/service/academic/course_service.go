@@ -9,17 +9,20 @@ import (
 )
 
 type CourseService struct {
-	courseRepository academic.CourseRepository
-	periodService    *PeriodService
+	courseRepository  academic.CourseRepository
+	periodService     *PeriodService
+	laboratoryService *LaboratoryService
 }
 
 func NewCourseService(
 	courseRepo academic.CourseRepository,
 	periodService *PeriodService,
+	laboratoryService *LaboratoryService,
 ) *CourseService {
 	return &CourseService{
-		periodService:    periodService,
-		courseRepository: courseRepo,
+		periodService:     periodService,
+		courseRepository:  courseRepo,
+		laboratoryService: laboratoryService,
 	}
 }
 
@@ -75,12 +78,20 @@ func (c *CourseService) GetCourseSummary(ctx context.Context, courseID academicM
 	course.Shift = basicData.Shift
 	course.Name = basicData.Name
 	course.Type = basicData.Type
+	course.Curriculum = basicData.Curriculum
+	course.Period = basicData.Period
 	course.SaturdayDates = basicData.SaturdayDates
 	course.Committee = basicData.Committee
 
 	course.Teachers = teachers
 	course.Schedules = schedules
 	course.Exams = exams
+
+	labs, err := c.laboratoryService.GetOfferings(ctx, basicData.Curriculum, basicData.Period)
+	if err != nil {
+		return nil, fmt.Errorf("get laboratories for course %v: %w", courseID, err)
+	}
+	course.Labs = labs
 
 	return &course, nil
 }

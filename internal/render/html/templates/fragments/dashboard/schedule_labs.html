@@ -1,0 +1,85 @@
+{{ define "dashboard/schedule_labs" }}
+  <div class="p-4 md:p-5 bg-white dark:bg-zinc-900">
+    {{ $hasLabs := false }}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[480px] overflow-y-auto">
+      {{ range .Info }}
+        {{ if .Labs }}
+          {{ $hasLabs = true }}
+          <div
+            class="bg-white dark:bg-zinc-950/70 border border-gray-200/80 dark:border-zinc-800 rounded-xs shadow-2xs overflow-hidden">
+            <!-- Materia -->
+            <div
+              class="p-3.5 border-b border-gray-100 dark:border-zinc-800/80 flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <h3
+                  class="text-xs font-bold text-gray-900 dark:text-zinc-100 leading-tight">
+                  {{ .Name }}
+                </h3>
+                <p class="text-[10px] text-gray-400 dark:text-zinc-500 mt-0.5">
+                  Curso de tu horario
+                </p>
+              </div>
+              <span
+                class="inline-flex items-center px-1.5 py-0.5 rounded-xs text-[10px] font-semibold bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 border border-gray-200/80 dark:border-zinc-700 shrink-0">
+                Curso {{ .Section }}
+              </span>
+            </div>
+
+            <div class="p-3.5 space-y-2">
+              <p
+                class="text-[10px] font-semibold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
+                Secciones de laboratorio
+              </p>
+
+              {{ range .Labs }}
+                <div
+                  class="p-2.5 rounded-xs border border-gray-200/70 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-950">
+                  <div class="flex items-center gap-1.5 mb-1.5">
+                    <svg
+                      class="w-3.5 h-3.5 text-primary-600 dark:text-primary-400 shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                    <span
+                      class="text-[11px] font-bold text-gray-800 dark:text-zinc-200 truncate">
+                      Sección {{ .Section }}
+                    </span>
+                  </div>
+
+                  {{ if .Schedule }}
+                    <div class="flex flex-wrap gap-1.5">
+                      {{ range .Schedule }}
+                        <span
+                          class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-xs text-[10px] font-mono font-semibold bg-primary-50 dark:bg-primary-900/70 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/50">
+                          {{ .Day }} {{ .Time }}
+                        </span>
+                      {{ end }}
+                    </div>
+                  {{ else }}
+                    <p
+                      class="text-[10px] text-gray-400 dark:text-zinc-600 italic">
+                      Sin horario asignado
+                    </p>
+                  {{ end }}
+                </div>
+              {{ end }}
+            </div>
+          </div>
+        {{ end }}
+      {{ end }}
+    </div>
+
+    {{ if not $hasLabs }}
+      <div
+        class="text-center py-8 text-gray-400 dark:text-zinc-500 text-xs italic bg-gray-50/50 dark:bg-zinc-950/40 rounded-xs border border-dashed border-gray-200 dark:border-zinc-800">
+        No hay laboratorios asociados a tus materias inscritas.
+      </div>
+    {{ end }}
+  </div>
+{{ end }}

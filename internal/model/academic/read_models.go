@@ -30,6 +30,8 @@ type CourseBasicData struct {
 	Shift         string
 	Name          string
 	Type          CourseType
+	Curriculum    CurriculumID
+	Period        PeriodID
 	SaturdayDates string
 	Committee     Committee
 }
@@ -40,9 +42,12 @@ type CourseSummaryView struct {
 	Shift         string
 	Name          string
 	Type          CourseType
+	Curriculum    CurriculumID
+	Period        PeriodID
 	Teachers      []Teacher
 	Schedules     []ClassSession
 	Exams         []Exam
+	Labs          []Laboratory
 	SaturdayDates string
 	Committee     Committee
 }
@@ -50,12 +55,6 @@ type CourseSummaryView struct {
 type CourseHistoryEntry struct {
 	Period   Period
 	Offering []CourseSummaryView
-}
-
-type LaboratoryEntryView struct {
-	ID       LaboratoryID
-	section  string
-	schedule []ClassSession
 }
 
 // ==========================

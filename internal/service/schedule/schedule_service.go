@@ -310,6 +310,7 @@ func (s ScheduleService) buildCoursesInfo(courses []academic.CourseSummaryView) 
 			Shift:              course.Shift,
 			Type:               course.Type,
 			Teachers:           teachers,
+			Labs:               course.Labs,
 			SaturdayDates:      course.SaturdayDates,
 			CommitteePresident: course.Committee.President,
 			CommitteeMember1:   course.Committee.Member1,

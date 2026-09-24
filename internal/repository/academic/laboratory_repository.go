@@ -17,4 +17,8 @@ type LaboratorySaveParams struct {
 type LaboratoryRepository interface {
 	// Replace upserts the laboratory offering and replaces its full schedule.
 	Upsert(ctx context.Context, params LaboratorySaveParams) (academic.LaboratoryID, error)
+
+	// ListByCurriculum returns every laboratory offering of a curriculum within a period,
+	// each one with its own weekly schedule.
+	ListByCurriculum(ctx context.Context, curriculum academic.CurriculumID, period academic.PeriodID) ([]academic.Laboratory, error)
 }

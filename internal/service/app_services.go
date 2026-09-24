@@ -24,6 +24,7 @@ type AppServices struct {
 	CurriculumService *academicSrv.CurriculumService
 	CareerService     *academicSrv.CareerService
 	TeacherService    *academicSrv.TeacherService
+	LaboratoryService *academicSrv.LaboratoryService
 
 	ExcelService    *excelSrv.ExcelService
 	SyncService     *excelSrv.SyncService
@@ -97,7 +98,9 @@ func NewAppServices(repos RepositoriesInput, cfg AppConfig) *AppServices {
 		repos.SyncRepo,
 	)
 
-	courseService := academicSrv.NewCourseService(repos.CourseRepo, periodService)
+	laboratoryService := academicSrv.NewLaboratoryService(repos.LaboratoryRepo, repos.CourseRepo)
+
+	courseService := academicSrv.NewCourseService(repos.CourseRepo, periodService, laboratoryService)
 
 	curriculumService := academicSrv.NewCurriculumService(repos.CurriculumRepo, repos.CareerRepo)
 
@@ -119,6 +122,7 @@ func NewAppServices(repos RepositoriesInput, cfg AppConfig) *AppServices {
 		CurriculumService: curriculumService,
 		CareerService:     careerService,
 		TeacherService:    teacherService,
+		LaboratoryService: laboratoryService,
 
 		// Parsing
 		ExcelService: excelService,
