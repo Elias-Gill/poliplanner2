@@ -1,6 +1,17 @@
 {
-    "latest": "2.0.9",
+    "latest": "2.1.0",
     "entries": [
+        {
+            "version": "2.1.0",
+            "date": "2026-09-24",
+            "important": false,
+            "title": "Visualizacion de horarios de laboratorio",
+            "changes": [
+                "Aunque un poco tarde, finalmente llegó el soporte para visualizar horarios de laboratorio.",
+                "Se parsean y actualizan automáticamente los Excel de horarios de laboratorio.",
+                "Ahora podés ver las secciones de laboratorio disponibles según las materias de tu horario."
+            ]
+        },
         {
             "version": "2.0.9",
             "date": "2026-09-20",
