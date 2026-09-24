@@ -17,6 +17,39 @@
   <script src="/static/vendor/fullcalendar/index.global.min.js"></script>
   <script src="/static/js/calendar.js?2"></script>
   <script src="/static/vendor/htmx/htmx.min.js" defer></script>
+
+  <style>
+    /* Mobile: cada sección ocupa al menos el viewport y el scroll de la página
+       se detiene en cada una (snap). Sin scroll anidado. */
+    @media (max-width: 767px) {
+      main {
+        scroll-snap-type: y proximity;
+        scroll-padding-top: 0.75rem;
+      }
+
+      .dash-section {
+        scroll-snap-align: start;
+        min-height: calc(100vh - 5.5rem);
+        min-height: calc(100dvh - 5.5rem);
+      }
+
+      /* Encadena el crecimiento para que el contenido llene la tarjeta. */
+      .dash-fill {
+        display: flex;
+        flex-direction: column;
+      }
+      .dash-fill > :not(.dash-grow) {
+        flex: 0 0 auto;
+      }
+      .dash-grow {
+        flex: 1 1 auto;
+        min-height: 0;
+      }
+      .dash-fill-grid {
+        grid-auto-rows: minmax(min-content, 1fr);
+      }
+    }
+  </style>
 {{ end }}
 
 {{ define "content" }}

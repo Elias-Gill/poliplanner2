@@ -3,7 +3,7 @@
 
   <div
     x-data="examScheduleApp()"
-    class="bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-2xs overflow-hidden transition-colors">
+    class="dash-section dash-fill bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-2xs overflow-hidden transition-colors">
     <!-- JSON Data for FullCalendar -->
     <script type="application/json" x-ref="eventsData">
     [
@@ -86,7 +86,7 @@
 
     <!-- Contenido General con scroll vertical -->
     <div
-      class="p-4 md:p-5 space-y-6 bg-white dark:bg-zinc-900 max-h-[480px] overflow-y-auto">
+      class="dash-grow p-4 md:p-5 space-y-6 bg-white dark:bg-zinc-900 md:max-h-[640px] lg:max-h-[72vh] md:overflow-y-auto">
       <!-- 1. Parciales 1° -->
       <div>
         <div class="flex items-center gap-2 mb-2.5">

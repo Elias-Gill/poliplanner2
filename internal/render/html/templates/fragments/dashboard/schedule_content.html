@@ -2,7 +2,7 @@
   <div class="mt-4 space-y-6" x-data="{ tab: 'clases' }">
     <!-- Tarjeta unificada: horario de clases / laboratorios -->
     <div
-      class="bg-white dark:bg-zinc-900 rounded-sm shadow-2xs border border-gray-200 dark:border-zinc-800 overflow-hidden">
+      class="dash-section dash-fill bg-white dark:bg-zinc-900 rounded-sm shadow-2xs border border-gray-200 dark:border-zinc-800 overflow-hidden">
       <!-- Cabecera con selector de vista -->
       <div
         class="p-4 bg-primary-700 dark:bg-zinc-900 border-b border-primary-800 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -73,12 +73,19 @@
       </div>
 
       <!-- Cuerpo: horario semanal -->
-      <div x-show="tab === 'clases'" id="vista_semana">
+      <div
+        x-show="tab === 'clases'"
+        id="vista_semana"
+        class="dash-grow dash-fill">
         {{ template "dashboard/schedule_week" . }}
       </div>
 
       <!-- Cuerpo: laboratorios -->
-      <div x-show="tab === 'labs'" x-cloak id="vista_labs">
+      <div
+        x-show="tab === 'labs'"
+        x-cloak
+        id="vista_labs"
+        class="dash-grow dash-fill">
         {{ template "dashboard/schedule_labs" . }}
       </div>
     </div>

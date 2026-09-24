@@ -1,7 +1,8 @@
 {{ define "dashboard/schedule_labs" }}
-  <div class="p-4 md:p-5 bg-white dark:bg-zinc-900">
+  <div class="dash-grow dash-fill p-4 md:p-5 bg-white dark:bg-zinc-900">
     {{ $hasLabs := false }}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[480px] overflow-y-auto">
+    <div
+      class="dash-grow dash-fill-grid grid grid-cols-1 md:grid-cols-2 gap-4 md:max-h-[480px] md:overflow-y-auto">
       {{ range .Info }}
         {{ if .Labs }}
           {{ $hasLabs = true }}

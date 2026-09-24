@@ -1,6 +1,6 @@
 {{ define "dashboard/schedule_sections" }}
   <div
-    class="bg-white dark:bg-zinc-900 rounded-sm shadow-2xs border border-gray-200 dark:border-zinc-800 overflow-hidden transition-colors">
+    class="dash-section dash-fill bg-white dark:bg-zinc-900 rounded-sm shadow-2xs border border-gray-200 dark:border-zinc-800 overflow-hidden transition-colors">
     <div
       class="p-4 bg-primary-700 dark:bg-zinc-900 border-b border-primary-800 dark:border-zinc-800 flex items-center justify-between gap-4">
       <div class="flex items-center gap-2.5 min-w-0">
@@ -35,7 +35,7 @@
 
     <!-- Grid de Secciones -->
     <div
-      class="p-4 md:p-5 grid grid-cols-1 md:grid-cols-2 gap-4 bg-white dark:bg-zinc-900">
+      class="dash-grow dash-fill-grid p-4 md:p-5 grid grid-cols-1 md:grid-cols-2 gap-4 bg-white dark:bg-zinc-900">
       {{ range .Info }}
         <div
           class="bg-white dark:bg-zinc-950/70 border border-gray-200/80 dark:border-zinc-800 rounded-xs shadow-2xs overflow-hidden flex flex-col justify-between">
