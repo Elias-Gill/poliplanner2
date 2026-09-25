@@ -3,7 +3,7 @@
 
   <div
     x-data="examScheduleApp()"
-    class="dash-section dash-fill bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-2xs overflow-hidden transition-colors">
+    class="bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-2xs overflow-hidden transition-colors">
     <!-- JSON Data for FullCalendar -->
     <script type="application/json" x-ref="eventsData">
     [
@@ -86,70 +86,102 @@
 
     <!-- Contenido General con scroll vertical -->
     <div
-      class="dash-grow p-4 md:p-5 space-y-6 bg-white dark:bg-zinc-900 md:max-h-[640px] lg:max-h-[72vh] md:overflow-y-auto">
-      <!-- 1. Parciales 1° -->
-      <div>
-        <div class="flex items-center gap-2 mb-2.5">
-          <h3
-            class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
-            Primer Parcial
-          </h3>
-          <div class="h-px flex-1 bg-gray-100 dark:bg-zinc-800"></div>
-        </div>
+      class="p-4 md:p-5 space-y-6 bg-white dark:bg-zinc-900 md:max-h-[640px] lg:max-h-[72vh] md:overflow-y-auto">
+      {{ if or .Exams.Partial1 .Exams.Partial2 .Exams.Final1 .Exams.Final2 }}
+        <p
+          class="flex items-center gap-1.5 text-[11px] text-gray-400 dark:text-zinc-500">
+          <svg
+            class="w-3.5 h-3.5 text-gray-300 dark:text-zinc-600 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 012-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <span>Tocá un examen para verlo en el calendario.</span>
+        </p>
 
-        <div
-          class="border border-gray-200 dark:border-zinc-800 rounded-xs bg-white dark:bg-zinc-950/50">
-          {{ template "exam_group" dict "Exams" .Exams.Partial1 "Prefix" "p1" "Label" "Primeros Parciales" "Type" "partial1" }}
+      <!-- 1. Parciales 1° -->
+      {{ if .Exams.Partial1 }}
+        <div>
+          <div class="flex items-center gap-2 mb-2.5">
+            <h3
+              class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
+              Primer Parcial
+            </h3>
+            <div class="h-px flex-1 bg-gray-100 dark:bg-zinc-800"></div>
+          </div>
+
+          <div
+            class="border border-gray-200 dark:border-zinc-800 rounded-xs bg-white dark:bg-zinc-950/50">
+            {{ template "exam_group" dict "Exams" .Exams.Partial1 "Prefix" "p1" "Label" "Primeros Parciales" "Type" "partial1" }}
+          </div>
         </div>
-      </div>
+      {{ end }}
 
       <!-- 2. Parciales 2° -->
-      <div>
-        <div class="flex items-center gap-2 mb-2.5">
-          <h3
-            class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
-            Segundo Parcial
-          </h3>
-          <div class="h-px flex-1 bg-gray-100 dark:bg-zinc-800"></div>
-        </div>
+      {{ if .Exams.Partial2 }}
+        <div>
+          <div class="flex items-center gap-2 mb-2.5">
+            <h3
+              class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
+              Segundo Parcial
+            </h3>
+            <div class="h-px flex-1 bg-gray-100 dark:bg-zinc-800"></div>
+          </div>
 
-        <div
-          class="border border-gray-200 dark:border-zinc-800 rounded-xs bg-white dark:bg-zinc-950/50">
-          {{ template "exam_group" dict "Exams" .Exams.Partial2 "Prefix" "p2" "Label" "Segundos Parcial" "Type" "partial2" }}
+          <div
+            class="border border-gray-200 dark:border-zinc-800 rounded-xs bg-white dark:bg-zinc-950/50">
+            {{ template "exam_group" dict "Exams" .Exams.Partial2 "Prefix" "p2" "Label" "Segundos Parcial" "Type" "partial2" }}
+          </div>
         </div>
-      </div>
+      {{ end }}
 
       <!-- 3. Finales 1° -->
-      <div>
-        <div class="flex items-center gap-2 mb-2.5">
-          <h3
-            class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
-            Primer Final
-          </h3>
-          <div class="h-px flex-1 bg-gray-100 dark:bg-zinc-800"></div>
-        </div>
+      {{ if .Exams.Final1 }}
+        <div>
+          <div class="flex items-center gap-2 mb-2.5">
+            <h3
+              class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
+              Primer Final
+            </h3>
+            <div class="h-px flex-1 bg-gray-100 dark:bg-zinc-800"></div>
+          </div>
 
-        <div
-          class="border border-gray-200 dark:border-zinc-800 rounded-xs bg-white dark:bg-zinc-950/50">
-          {{ template "exam_group" dict "Exams" .Exams.Final1 "Prefix" "f1" "Label" "Primeros Finales" "Type" "final1" }}
+          <div
+            class="border border-gray-200 dark:border-zinc-800 rounded-xs bg-white dark:bg-zinc-950/50">
+            {{ template "exam_group" dict "Exams" .Exams.Final1 "Prefix" "f1" "Label" "Primeros Finales" "Type" "final1" }}
+          </div>
         </div>
-      </div>
+      {{ end }}
 
       <!-- 4. Finales 2° -->
-      <div>
-        <div class="flex items-center gap-2 mb-2.5">
-          <h3
-            class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
-            Segunda Final
-          </h3>
-          <div class="h-px flex-1 bg-gray-100 dark:bg-zinc-800"></div>
-        </div>
+      {{ if .Exams.Final2 }}
+        <div>
+          <div class="flex items-center gap-2 mb-2.5">
+            <h3
+              class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
+              Segunda Final
+            </h3>
+            <div class="h-px flex-1 bg-gray-100 dark:bg-zinc-800"></div>
+          </div>
 
-        <div
-          class="border border-gray-200 dark:border-zinc-800 rounded-xs bg-white dark:bg-zinc-950/50">
-          {{ template "exam_group" dict "Exams" .Exams.Final2 "Prefix" "f2" "Label" "Segundos Finales" "Type" "final2" }}
+          <div
+            class="border border-gray-200 dark:border-zinc-800 rounded-xs bg-white dark:bg-zinc-950/50">
+            {{ template "exam_group" dict "Exams" .Exams.Final2 "Prefix" "f2" "Label" "Segundos Finales" "Type" "final2" }}
+          </div>
         </div>
-      </div>
+      {{ end }}
+
+      {{ else }}
+        <div
+          class="text-center py-8 text-gray-400 dark:text-zinc-500 text-xs italic bg-gray-50/50 dark:bg-zinc-950/40 rounded-xs border border-dashed border-gray-200 dark:border-zinc-800">
+          No hay exámenes programados para este horario.
+        </div>
+      {{ end }}
     </div>
 
     <!-- Modal del Calendario Integrado -->

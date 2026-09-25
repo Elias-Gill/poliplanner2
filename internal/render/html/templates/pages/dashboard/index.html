@@ -19,49 +19,107 @@
   <script src="/static/vendor/htmx/htmx.min.js" defer></script>
 
   <style>
-    /* Mobile: cada sección ocupa al menos el viewport y el scroll de la página
-       se detiene en cada una (snap). Sin scroll anidado. */
+    /* Mobile: las vistas se alternan con los tabs. La clase la aplica Alpine;
+       en desktop la media query la neutraliza. */
+    .dash-view-collapsed {
+      display: none;
+    }
+    @media (min-width: 768px) {
+      .dash-view-collapsed {
+        display: block;
+      }
+    }
+
+    /* Selector de vistas (solo móvil): tabs con subrayado, sin contenedor.
+       Va en media query para no pisar el md:hidden de Tailwind. */
     @media (max-width: 767px) {
-      main {
-        scroll-snap-type: y proximity;
-        scroll-padding-top: 0.75rem;
-      }
-
-      .dash-section {
-        scroll-snap-align: start;
-        min-height: calc(100vh - 5.5rem);
-        min-height: calc(100dvh - 5.5rem);
-      }
-
-      /* Encadena el crecimiento para que el contenido llene la tarjeta. */
-      .dash-fill {
+      .dash-tabs {
         display: flex;
-        flex-direction: column;
+        align-items: stretch;
+        border-bottom: 1px solid var(--color-gray-200);
       }
-      .dash-fill > :not(.dash-grow) {
-        flex: 0 0 auto;
+      .dark .dash-tabs {
+        border-bottom-color: var(--color-zinc-800);
       }
-      .dash-grow {
-        flex: 1 1 auto;
-        min-height: 0;
+      .dash-tab {
+        flex: 1 1 0%;
+        padding: 0.5rem 0.25rem;
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1rem;
+        color: var(--color-gray-500);
+        background: none;
+        border: 0;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+        cursor: pointer;
+        transition: color 0.15s ease, border-color 0.15s ease;
       }
-      .dash-fill-grid {
-        grid-auto-rows: minmax(min-content, 1fr);
+      .dash-tab:hover {
+        color: var(--color-gray-700);
       }
+      .dash-tab-active,
+      .dash-tab-active:hover {
+        color: var(--color-primary-700);
+        border-bottom-color: var(--color-primary-600);
+      }
+      .dark .dash-tab {
+        color: var(--color-zinc-400);
+      }
+      .dark .dash-tab:hover {
+        color: var(--color-zinc-200);
+      }
+      .dark .dash-tab-active,
+      .dark .dash-tab-active:hover {
+        color: var(--color-primary-300);
+        border-bottom-color: var(--color-primary-400);
+      }
+    }
+
+    /* Safe area inferior (home indicator de iOS) */
+    .dash-safe-bottom {
+      padding-bottom: max(env(safe-area-inset-bottom), 0.75rem);
+    }
+
+    /* Semana: scroll horizontal sin barra y sin rebote lateral */
+    .dash-week-scroll {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      overscroll-behavior-x: contain;
+    }
+    .dash-week-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Botón de horarios: en móvil limita el ancho para no aplastar el título */
+    .dash-header-btn {
+      max-width: 55%;
+    }
+    @media (min-width: 640px) {
+      .dash-header-btn {
+        max-width: none;
+      }
+    }
+
+    /* Feedback al cambiar de horario */
+    #dashboard-content.htmx-request {
+      opacity: 0.55;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
     }
   </style>
 {{ end }}
 
 {{ define "content" }}
   <div
-    x-data="{ sidebarOpen: false, selectedId: '{{ .SelectedID }}' }"
-    class="max-w-7xl mx-auto py-2 min-h-[calc(100vh-4rem)] flex flex-col gap-4 relative">
+    x-data="{ sidebarOpen: false, selectedId: '{{ .SelectedID }}', activeView: 'horario', switchView(view) { this.activeView = view; const content = document.getElementById('dashboard-content'); if (content) content.scrollIntoView({ block: 'start' }); } }"
+    class="dash-safe-bottom max-w-7xl mx-auto py-2 min-h-[calc(100vh-4rem)] flex flex-col gap-4 relative">
     <!-- Header principal elevado con paleta Zinc -->
     <div
       class="bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 p-4 space-y-3 shadow-2xs">
       <!-- Fila principal: Título y descripción -->
-      <div class="flex items-center justify-between">
-        <div>
+      <div class="flex items-center justify-between gap-3">
+        <div class="min-w-0">
           <h1 class="text-xl font-bold text-gray-900 dark:text-zinc-100">
             Dashboard
           </h1>
@@ -70,13 +128,13 @@
           </p>
         </div>
 
-        <!-- Botón de apertura de horarios en Desktop -->
+        <!-- Apertura de horarios (abre el drawer) -->
         <button
           @click="sidebarOpen = true"
           type="button"
-          class="hidden sm:inline-flex shrink-0 items-center gap-2 bg-white dark:bg-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-700/60 text-gray-700 dark:text-zinc-200 border border-gray-300 dark:border-zinc-700 px-3 py-1.5 rounded-sm text-xs font-medium cursor-pointer transition-colors shadow-2xs">
+          class="dash-header-btn shrink-0 inline-flex items-center gap-2 bg-white dark:bg-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-700/60 text-gray-700 dark:text-zinc-200 border border-gray-300 dark:border-zinc-700 px-3 py-1.5 rounded-sm text-xs font-medium cursor-pointer transition-colors shadow-2xs">
           <svg
-            class="w-4 h-4 text-gray-500 dark:text-zinc-400"
+            class="w-4 h-4 text-gray-500 dark:text-zinc-400 shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24">
@@ -86,7 +144,20 @@
               stroke-width="2"
               d="M4 6h16M4 10h16M4 14h16M4 18h16" />
           </svg>
-          <span>Mis horarios</span>
+          <span id="active-schedule-title" class="truncate"
+            >{{ if .ActiveSchedule }}{{ range .Schedules }}{{ if eq .ID $.SelectedID }}{{ .Title }}{{ end }}{{ end }}{{ else }}Mis horarios{{ end }}</span
+          >
+          <svg
+            class="w-3.5 h-3.5 text-gray-400 dark:text-zinc-500 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7" />
+          </svg>
         </button>
       </div>
 
@@ -98,7 +169,7 @@
           >Accesos rápidos:</span
         >
 
-        <div class="flex flex-col sm:flex-row gap-2">
+        <div class="grid grid-cols-2 sm:flex sm:flex-row gap-2">
           <a
             href="/guides"
             class="inline-flex items-center gap-1.5 bg-gray-50 dark:bg-zinc-950/60 hover:bg-primary-50 dark:hover:bg-zinc-800/80 text-gray-700 dark:text-zinc-300 hover:text-primary-600 dark:hover:text-zinc-100 border border-gray-200 dark:border-zinc-800 hover:border-primary-300 dark:hover:border-zinc-700 px-2.5 py-1.5 sm:py-1 rounded-xs transition-all font-medium">
@@ -136,29 +207,11 @@
       </div>
     </div>
 
-    <!-- Botón flotante lateral (Mobile) -->
-    <button
-      @click="sidebarOpen = true"
-      type="button"
-      class="sm:hidden fixed right-0 top-20 z-40 flex items-center justify-center w-7 h-9 bg-primary-700 dark:bg-primary-800 text-white rounded-l-md shadow-md active:scale-90 transition-transform cursor-pointer"
-      aria-label="Abrir mis horarios">
-      <svg
-        class="w-4 h-4"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2.5"
-          d="M4 6h16M4 12h16M4 18h16" />
-      </svg>
-    </button>
-
     <!-- Overlay Sidebar -->
     <div
       x-show="sidebarOpen"
       x-cloak
+      x-transition.opacity.duration.200
       @click="sidebarOpen = false"
       class="fixed inset-0 bg-black/60 backdrop-blur-xs z-40"></div>
 
@@ -166,6 +219,12 @@
     <aside
       x-show="sidebarOpen"
       x-cloak
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="translate-x-full"
+      x-transition:enter-end="translate-x-0"
+      x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="translate-x-0"
+      x-transition:leave-end="translate-x-full"
       class="fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white dark:bg-zinc-900 border-l border-gray-200 dark:border-zinc-800 z-50 flex flex-col shadow-2xl">
       <div
         class="p-4 border-b border-gray-200 dark:border-zinc-800 flex items-center justify-between">
@@ -209,7 +268,7 @@
       </div>
 
       <!-- Lista de Horarios -->
-      <div class="flex-1 overflow-y-auto p-4 space-y-2">
+      <div class="dash-safe-bottom flex-1 overflow-y-auto p-4 space-y-2">
         {{ range .Schedules }}
           <div
             x-data="{ menuOpen: false }"
@@ -219,7 +278,9 @@
             <button
               hx-get="/dashboard/?id={{ .ID }}"
               hx-target="#dashboard-content"
-              @click="selectedId = '{{ .ID }}'; sidebarOpen = false"
+              hx-indicator="#dashboard-content"
+              data-title="{{ .Title }}"
+              @click="selectedId = '{{ .ID }}'; document.getElementById('active-schedule-title').textContent = $el.dataset.title; sidebarOpen = false"
               class="absolute inset-0 w-full h-full text-left cursor-pointer focus:outline-none z-0"
               aria-label="Seleccionar {{ .Title }}"></button>
 

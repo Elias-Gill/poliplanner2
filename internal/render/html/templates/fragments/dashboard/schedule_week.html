@@ -1,8 +1,65 @@
 {{ define "dashboard/schedule_week" }}
   <!-- Vista Única: Flex/Scroll en Móvil -> Grid 6 Cols en Desktop -->
-  <div class="dash-grow dash-fill p-4 md:p-6 bg-white dark:bg-zinc-900">
+  <div
+    class="p-4 md:p-6 bg-white dark:bg-zinc-900"
+    x-data="{
+      activeDay: new Date().getDay() === 0 ? 0 : new Date().getDay() - 1,
+      goToDay(i) {
+        this.activeDay = i;
+        const container = this.$refs.weekScroll;
+        const day = container && container.children[i];
+        if (!day) return;
+        container.scrollTo({
+          left: Math.max(0, day.offsetLeft - (container.clientWidth - day.offsetWidth) / 2),
+          behavior: 'smooth'
+        });
+      },
+      syncDay(event) {
+        const container = event.target;
+        const center = container.scrollLeft + container.clientWidth / 2;
+        let closest = 0;
+        let minDistance = Infinity;
+        Array.from(container.children).forEach((day, i) => {
+          const distance = Math.abs(day.offsetLeft + day.offsetWidth / 2 - center);
+          if (distance < minDistance) {
+            minDistance = distance;
+            closest = i;
+          }
+        });
+        this.activeDay = closest;
+      },
+      initWeek() {
+        const container = this.$refs.weekScroll;
+        if (!container || container.scrollWidth <= container.clientWidth) return;
+        const day = container.children[this.activeDay];
+        if (!day) return;
+        container.scrollTo({
+          left: Math.max(0, day.offsetLeft - (container.clientWidth - day.offsetWidth) / 2)
+        });
+      }
+    }"
+    x-init="$nextTick(() => initWeek())">
+      <!-- Selector de día (solo móvil) -->
       <div
-        class="dash-grow flex md:grid md:grid-cols-6 gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 md:pb-0 no-scrollbar">
+        class="md:hidden flex items-center gap-1 mb-3"
+        aria-label="Días de la semana">
+        <template x-for="(day, i) in ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']" :key="i">
+          <button
+            type="button"
+            @click="goToDay(i)"
+            :aria-pressed="activeDay === i"
+            :class="activeDay === i
+              ? 'bg-primary-700 border-primary-700 text-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-100'
+              : 'bg-white dark:bg-zinc-950 border-gray-200 dark:border-zinc-800 text-gray-600 dark:text-zinc-400'"
+            class="flex-1 px-1 py-1.5 rounded-xs border text-[11px] font-semibold cursor-pointer transition-colors"
+            x-text="day"></button>
+        </template>
+      </div>
+
+      <div
+        x-ref="weekScroll"
+        @scroll.debounce.100ms="syncDay($event)"
+        class="dash-week-scroll flex md:grid md:grid-cols-6 gap-4 overflow-x-auto snap-x snap-mandatory pb-2 md:pb-0">
         <!-- Lunes -->
         <div
           class="snap-center shrink-0 w-[85vw] sm:w-[300px] md:w-auto space-y-2">
