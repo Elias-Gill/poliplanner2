@@ -120,6 +120,7 @@ func initRouter(srvs *services.AppServices, cfg *config.Config) chi.Router {
 	r := chi.NewRouter()
 
 	// Register middlewares
+	r.Use(middleware.HeadAsGet)
 	r.Use(middleware.NewSessionMiddleware(srvs.SessionService))
 
 	r.Mount("/", auth.NewHandler(tmplManager, srvs.UserService, srvs.SessionService, srvs.EmailService, cfg.Security.SecureHTTP).Routes())

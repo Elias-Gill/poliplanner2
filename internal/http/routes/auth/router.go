@@ -7,6 +7,7 @@ import (
 
 	utils "github.com/elias-gill/poliplanner2/internal/http"
 	"github.com/elias-gill/poliplanner2/internal/http/cookie"
+	authModel "github.com/elias-gill/poliplanner2/internal/model/auth"
 	userModel "github.com/elias-gill/poliplanner2/internal/model/user"
 	"github.com/elias-gill/poliplanner2/internal/render/html"
 	"github.com/elias-gill/poliplanner2/internal/service/auth"
@@ -43,9 +44,7 @@ func NewHandler(
 func (h *Handler) Routes() chi.Router {
 	r := chi.NewRouter()
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		utils.Redirect(w, r, "/dashboard")
-	})
+	r.Get("/", h.homePage)
 
 	r.Get("/500", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
@@ -87,6 +86,22 @@ func (h *Handler) Routes() chi.Router {
 // ======================================
 // =         Handlers HTTP              =
 // ======================================
+
+// homePage renders the public landing page. Logged in users keep the old
+// behavior and are sent straight to the dashboard.
+func (h *Handler) homePage(w http.ResponseWriter, r *http.Request) {
+	if c, err := r.Cookie(cookie.SessionIDCookie); err == nil {
+		if _, err := h.authService.ValidateSession(r.Context(), authModel.SessionID(c.Value)); err == nil {
+			utils.Redirect(w, r, "/dashboard")
+			return
+		}
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := h.tmpl.RenderPage(w, "landing.html", nil); err != nil {
+		logger.Error("Cannot render landing template", "error", err)
+	}
+}
 
 func (h *Handler) loginPage(w http.ResponseWriter, r *http.Request) {
 	data := map[string]any{

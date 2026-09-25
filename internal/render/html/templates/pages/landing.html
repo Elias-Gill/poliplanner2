@@ -1,0 +1,221 @@
+{{ define "custom_tags" }}
+  <!-- Título y Descripción de la página principal -->
+  <title>PoliPlanner — Horarios y planificación universitaria</title>
+  <meta
+    name="description"
+    content="PoliPlanner es un planificador académico para estudiantes universitarios: organizá tus horarios, materias y exámenes, calculá tus notas y explorá tu malla curricular de forma gratuita." />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://poliplanner.fly.dev/" />
+
+  <!-- Open Graph -->
+  <meta
+    property="og:title"
+    content="PoliPlanner — Horarios y planificación universitaria" />
+  <meta
+    property="og:description"
+    content="Planificador de horarios, calculadora de notas y malla curricular interactiva para estudiantes universitarios." />
+  <meta property="og:url" content="https://poliplanner.fly.dev/" />
+  <meta property="og:type" content="website" />
+
+  <!-- Schema de tipo WebApplication -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "PoliPlanner",
+      "url": "https://poliplanner.fly.dev/",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Web",
+      "inLanguage": "es",
+      "isAccessibleForFree": true,
+      "description": "Planificador académico para estudiantes universitarios: horarios, materias, exámenes, cálculo de notas y malla curricular interactiva.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "PoliPlanner",
+        "url": "https://poliplanner.fly.dev"
+      }
+    }
+  </script>
+{{ end }}
+
+{{ define "content" }}
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Hero -->
+    <section class="mb-12">
+      <h1
+        class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-zinc-100 tracking-tight">
+        Tu horario universitario, ordenado de una vez
+      </h1>
+      <p
+        class="mt-4 text-base text-gray-500 dark:text-zinc-400 leading-relaxed max-w-2xl">
+        PoliPlanner es un planificador académico pensado para estudiantes
+        universitarios. Armá tu horario del semestre, organizá materias,
+        secciones y exámenes en un solo lugar, y consultá la información
+        académica sin depender de planillas sueltas o fotos del pizarrón.
+      </p>
+      <p
+        class="mt-3 text-base text-gray-500 dark:text-zinc-400 leading-relaxed max-w-2xl">
+        El servicio es gratuito, funciona desde el navegador y también podés
+        instalarlo en el celular para consultar tus horarios sin conexión.
+      </p>
+
+      <div class="mt-6 flex flex-wrap items-center gap-3">
+        <a
+          href="/login"
+          class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-600 dark:hover:bg-primary-500 rounded-sm shadow-sm transition-all duration-200 focus:ring-2 focus:ring-primary-500 focus:outline-none">
+          Ingresar al panel
+        </a>
+        <a
+          href="/signup"
+          class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-gray-700 dark:text-zinc-200 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-700 rounded-sm hover:border-primary-400 dark:hover:border-primary-500 transition-all duration-200 focus:ring-2 focus:ring-primary-500 focus:outline-none">
+          Crear cuenta
+        </a>
+      </div>
+    </section>
+
+    <!-- Herramientas -->
+    <section class="mb-12">
+      <h2
+        class="text-xl font-semibold text-gray-900 dark:text-zinc-100 tracking-tight">
+        Herramientas para tu semestre
+      </h2>
+      <p
+        class="mt-2 text-sm text-gray-500 dark:text-zinc-400 leading-relaxed max-w-2xl">
+        Utilidades interactivas que no necesitan cuenta y podés usar en
+        cualquier momento.
+      </p>
+
+      <div class="mt-6 grid gap-4 sm:grid-cols-2">
+        <a
+          href="/tools/calculator"
+          class="group flex flex-col gap-3 p-6 rounded-sm border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-primary-400 dark:hover:border-primary-500 hover:shadow-lg transition-all duration-200">
+          <h3
+            class="text-base font-semibold text-gray-900 dark:text-zinc-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+            Calculadora de notas
+          </h3>
+          <p class="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">
+            Simulá promedios ponderados, calculá qué puntaje necesitás para
+            habilitar exámenes finales y proyectá tus calificaciones.
+          </p>
+        </a>
+
+        <a
+          href="/tools/interactive_graph"
+          class="group flex flex-col gap-3 p-6 rounded-sm border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-primary-400 dark:hover:border-primary-500 hover:shadow-lg transition-all duration-200">
+          <h3
+            class="text-base font-semibold text-gray-900 dark:text-zinc-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+            Malla curricular interactiva
+          </h3>
+          <p class="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">
+            Explorá las materias de tu carrera, sus prerrequisitos y
+            correlatividades en un gráfico navegable.
+          </p>
+        </a>
+
+        <a
+          href="/tools/course-offering-history"
+          class="group flex flex-col gap-3 p-6 rounded-sm border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-primary-400 dark:hover:border-primary-500 hover:shadow-lg transition-all duration-200">
+          <h3
+            class="text-base font-semibold text-gray-900 dark:text-zinc-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+            Historial de secciones
+          </h3>
+          <p class="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">
+            Consultá cómo cambiaron las secciones, docentes y exámenes de tus
+            materias en los últimos periodos académicos.
+          </p>
+        </a>
+
+        <a
+          href="/tools/teacher-history"
+          class="group flex flex-col gap-3 p-6 rounded-sm border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-primary-400 dark:hover:border-primary-500 hover:shadow-lg transition-all duration-200">
+          <h3
+            class="text-base font-semibold text-gray-900 dark:text-zinc-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+            Historial de docentes
+          </h3>
+          <p class="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">
+            Buscá un docente y revisá las materias, secciones y horarios que
+            fue impartiendo a lo largo del tiempo.
+          </p>
+        </a>
+      </div>
+    </section>
+
+    <!-- Guías -->
+    <section class="mb-12">
+      <h2
+        class="text-xl font-semibold text-gray-900 dark:text-zinc-100 tracking-tight">
+        Guías para arrancar
+      </h2>
+      <p
+        class="mt-2 text-sm text-gray-500 dark:text-zinc-400 leading-relaxed max-w-2xl">
+        Explicaciones claras sobre la vida académica y sobre cómo usar el
+        planificador.
+      </p>
+
+      <ul class="mt-6 space-y-3">
+        <li>
+          <a
+            href="/guides/manual_del_bicho"
+            class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline">
+            Manual del Bicho: lo básico para el primer año
+          </a>
+        </li>
+        <li>
+          <a
+            href="/guides/calculo_notas"
+            class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline">
+            Cómo se calculan las notas y los promedios ponderados
+          </a>
+        </li>
+        <li>
+          <a
+            href="/guides/tramites_academicos"
+            class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline">
+            Trámites académicos: inscripciones, certificados y solicitudes
+          </a>
+        </li>
+        <li>
+          <a
+            href="/guides/actualizaciones"
+            class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline">
+            Actualizaciones y novedades del proyecto
+          </a>
+        </li>
+        <li>
+          <a
+            href="/guides/about"
+            class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline">
+            Sobre PoliPlanner
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Cierre -->
+    <section
+      class="p-6 rounded-sm border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+      <h2
+        class="text-lg font-semibold text-gray-900 dark:text-zinc-100 tracking-tight">
+        Empezá a organizar tu semestre
+      </h2>
+      <p
+        class="mt-2 text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">
+        Creá tu cuenta gratis y cargá tu horario en minutos. También podés
+        explorar el
+        <a
+          href="/guides/"
+          class="text-primary-600 dark:text-primary-400 hover:underline">
+          centro de guías
+        </a>
+        o el
+        <a
+          href="/tools/"
+          class="text-primary-600 dark:text-primary-400 hover:underline">
+          listado de herramientas
+        </a>
+        .
+      </p>
+    </section>
+  </div>
+{{ end }}
