@@ -140,6 +140,10 @@ func (a *labAccumulator) parseRow(row []string, lay *engine.Layout, startingCell
 	var subject, plan, career, semester string
 	var days [7]string
 
+	// Room of each weekday. Laboratories expose a single room per column, which applies to
+	// every section scheduled on that day.
+	var rooms [7]string
+
 	current := startingCell - 1
 	// Parse the entire row first after creating the new object
 	for _, field := range lay.Headers {
@@ -174,6 +178,18 @@ func (a *labAccumulator) parseRow(row []string, lay *engine.Layout, startingCell
 			days[academic.Friday] = val
 		case "horaSabado":
 			days[academic.Saturday] = val
+		case "aulaLunes":
+			rooms[academic.Monday] = val
+		case "aulaMartes":
+			rooms[academic.Tuesday] = val
+		case "aulaMiercoles":
+			rooms[academic.Wednesday] = val
+		case "aulaJueves":
+			rooms[academic.Thursday] = val
+		case "aulaViernes":
+			rooms[academic.Friday] = val
+		case "aulaSabado":
+			rooms[academic.Saturday] = val
 		default:
 			// Ignore any other column: this is our wildcard.
 		}
@@ -206,14 +222,15 @@ func (a *labAccumulator) parseRow(row []string, lay *engine.Layout, startingCell
 		if days[day] == "" {
 			continue
 		}
-		a.addDay(day, days[day], rowCareer)
+		a.addDay(day, days[day], rooms[day], rowCareer)
 	}
 }
 
-// addDay parses a day cell and stores every extracted section into the accumulator.
-func (a *labAccumulator) addDay(day academic.WeekDay, cell string, career string) {
+// addDay parses a day cell and stores every extracted section into the accumulator. The room
+// is the single weekday room shared by every section scheduled on that day.
+func (a *labAccumulator) addDay(day academic.WeekDay, cell string, room string, career string) {
 	for _, entry := range parseDayCell(cell) {
-		a.addEntry(day, entry, career)
+		a.addEntry(day, entry, room, career)
 	}
 }
 
@@ -222,7 +239,10 @@ func (a *labAccumulator) addDay(day academic.WeekDay, cell string, career string
 // section with the same name when its day is free or already holds the same time; when every
 // candidate already has a different time for that day, it is a different section and a new
 // one is created instead of overwriting.
-func (a *labAccumulator) addEntry(day academic.WeekDay, entry dayEntry, career string) {
+//
+// The room belongs to the weekday column, not to a single section, so it is copied into every
+// section that receives a slot on that day.
+func (a *labAccumulator) addEntry(day academic.WeekDay, entry dayEntry, room string, career string) {
 	key := labKey{
 		subject: commons.NormalizeKey(a.currentSubject),
 		plan:    commons.NormalizeKey(a.currentPlan),
@@ -234,12 +254,15 @@ func (a *labAccumulator) addEntry(day academic.WeekDay, entry dayEntry, career s
 	// section with the same name does not steal the occurrence.
 	for _, dto := range a.labs[key] {
 		if dto.WeekSchedule[day].Time == entry.Time {
+			if room != "" {
+				dto.WeekSchedule[day].Room = room
+			}
 			return
 		}
 	}
 	for _, dto := range a.labs[key] {
 		if !dto.WeekSchedule[day].Time.Start.Valid {
-			dto.WeekSchedule[day] = WeekDayData{Time: entry.Time}
+			dto.WeekSchedule[day] = WeekDayData{Room: room, Time: entry.Time}
 			return
 		}
 	}
@@ -255,7 +278,7 @@ func (a *labAccumulator) addEntry(day academic.WeekDay, entry dayEntry, career s
 		Section:  entry.Section,
 		Semester: int(semester),
 	}
-	dto.WeekSchedule[day] = WeekDayData{Time: entry.Time}
+	dto.WeekSchedule[day] = WeekDayData{Room: room, Time: entry.Time}
 	a.labs[key] = append(a.labs[key], dto)
 
 	if strings.EqualFold(entry.Section, defaultSection) && len(a.labs[key]) > 1 {

@@ -192,6 +192,56 @@ func TestAccumulatorMergesIdenticalSchedules(t *testing.T) {
 	}
 }
 
+func TestAccumulatorAppliesRoomToEverySectionInColumn(t *testing.T) {
+	lay := &engine.Layout{Headers: []string{"asignatura", "plan", "carrera", "aulaLunes", "horaLunes", "aulaMartes", "horaMartes"}}
+	acc := newLabAccumulator(commons.NormalizeCareer("IIN"))
+
+	acc.parseRow([]string{
+		"Fisica", "2010", "IIN",
+		"Lab 5", "18:00 - 20:00 (T1)\n20:00 - 22:00 (T2)",
+		"Lab 9", "07:00 - 09:00 (T1)",
+	}, lay, 0)
+
+	labs := acc.flatten()
+	if len(labs) != 2 {
+		t.Fatalf("got %d labs, want 2: %+v", len(labs), labs)
+	}
+
+	bySection := map[string]LaboratoryDTO{}
+	for _, l := range labs {
+		bySection[l.Section] = l
+	}
+
+	t1 := bySection["T1"]
+	if got := t1.WeekSchedule[academic.Monday].Room; got != "Lab 5" {
+		t.Errorf("T1 Monday room = %q, want %q", got, "Lab 5")
+	}
+	if got := t1.WeekSchedule[academic.Tuesday].Room; got != "Lab 9" {
+		t.Errorf("T1 Tuesday room = %q, want %q", got, "Lab 9")
+	}
+
+	t2 := bySection["T2"]
+	if got := t2.WeekSchedule[academic.Monday].Room; got != "Lab 5" {
+		t.Errorf("T2 Monday room = %q, want %q", got, "Lab 5")
+	}
+}
+
+func TestAccumulatorRoomArrivesInLaterRow(t *testing.T) {
+	lay := &engine.Layout{Headers: []string{"asignatura", "plan", "carrera", "aulaLunes", "horaLunes"}}
+	acc := newLabAccumulator(commons.NormalizeCareer("IIN"))
+
+	acc.parseRow([]string{"Fisica", "2010", "IIN", "", "18:00 - 20:00 (T1)"}, lay, 0)
+	acc.parseRow([]string{"", "", "", "Lab 7", "18:00 - 20:00 (T1)"}, lay, 0)
+
+	labs := acc.flatten()
+	if len(labs) != 1 {
+		t.Fatalf("got %d labs, want 1: %+v", len(labs), labs)
+	}
+	if got := labs[0].WeekSchedule[academic.Monday].Room; got != "Lab 7" {
+		t.Fatalf("Monday room = %q, want %q", got, "Lab 7")
+	}
+}
+
 func TestAccumulatorCapturesPeriodo(t *testing.T) {
 	lay := &engine.Layout{Headers: []string{"asignatura", "plan", "carrera", "periodo", "horaLunes"}}
 	acc := newLabAccumulator(commons.NormalizeCareer("IIN"))

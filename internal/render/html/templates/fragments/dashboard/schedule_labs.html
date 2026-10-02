@@ -58,7 +58,7 @@
                       {{ range .Schedule }}
                         <span
                           class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-xs text-[10px] font-mono font-semibold bg-primary-50 dark:bg-primary-900/70 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/50">
-                          {{ .Day }} {{ .Time }}
+                          {{ .Day }} {{ .Time }}{{ if .Room }} · Aula {{ .Room }}{{ end }}
                         </span>
                       {{ end }}
                     </div>

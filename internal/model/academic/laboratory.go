@@ -23,7 +23,11 @@ func (l Laboratory) FormattedSchedule() string {
 
 	parts := make([]string, 0, len(l.Schedule))
 	for _, s := range l.Schedule {
-		parts = append(parts, fmt.Sprintf("%s %s", s.Day, s.Time))
+		entry := fmt.Sprintf("%s %s", s.Day, s.Time)
+		if s.Room != "" {
+			entry = fmt.Sprintf("%s (Aula %s)", entry, s.Room)
+		}
+		parts = append(parts, entry)
 	}
 	return strings.Join(parts, " | ")
 }

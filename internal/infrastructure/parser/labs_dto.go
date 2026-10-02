@@ -12,5 +12,7 @@ type LaboratoryDTO struct {
 	// data from other periods.
 	Semester int
 
+	Room string
+
 	WeekSchedule [7]WeekDayData
 }
