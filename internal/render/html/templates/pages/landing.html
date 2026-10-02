@@ -39,143 +39,242 @@
   </script>
 {{ end }}
 
+{{ define "custom_head" }}
+  <link rel="stylesheet" href="/static/css/landing.css?5" />
+{{ end }}
+
+<!-- sobreescribimos base para no contar con el resto de partes del layout como el header,
+sidebar, etc -->
+{{ define "base" }}
+  <!doctype html>
+  <html lang="es" class="h-full">
+    <head>
+      <meta charset="UTF-8" />
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+      <meta name="color-scheme" content="dark light" />
+
+      {{ template "fragments/seo_meta" . }}
+      {{ template "custom_tags" . }}
+
+      {{ template "fragments/head_scripts" . }}
+      {{ template "custom_head" . }}
+    </head>
+    <body
+      class="min-h-full bg-white text-gray-900 dark:bg-black dark:text-zinc-100 antialiased selection:bg-primary-500 selection:text-white">
+      {{ template "fragments/versions" . }}
+
+      <div class="lp-page">
+        <header class="lp-topbar">
+          <div class="lp-container lp-topbar-inner">
+            <a href="/" class="lp-brand">
+              <img src="/static/favicon.ico" alt="Logo PoliPlanner" />
+              <span class="lp-brand-name">PoliPlanner</span>
+            </a>
+
+            <div class="lp-topbar-actions">
+              {{ template "fragments/theme-toggle" "theme-toggle-landing" }}
+              <a href="/login" class="lp-btn">Ingresar</a>
+            </div>
+          </div>
+        </header>
+
+        <main>
+          {{ template "content" . }}
+        </main>
+
+        <footer class="lp-band lp-band--footer lp-footer">
+          <div class="lp-container">
+            <p class="lp-footer-brand">PoliPlanner</p>
+            <p>
+              PoliPlanner es un proyecto independiente, desarrollado por y para estudiantes. No
+              estamos afiliados, asociados ni respaldados por la Universidad Nacional de Asunción,
+              la Facultad Politécnica, centros de estudiantes ni ninguna otra autoridad u
+              organización de la institución.
+            </p>
+          </div>
+        </footer>
+      </div>
+
+      {{ template "fragments/body_scripts" . }}
+    </body>
+  </html>
+{{ end }}
+
 {{ define "content" }}
-  <div class="max-w-4xl mx-auto px-4 py-8">
-    <!-- Hero -->
-    <section class="mb-12">
-      <h1
-        class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-zinc-100 tracking-tight">
-        Tu horario universitario a mano
-      </h1>
-      <p
-        class="mt-4 text-base text-gray-500 dark:text-zinc-400 leading-relaxed max-w-2xl">
-        PoliPlanner es un planificador académico pensado para estudiantes de la FP-UNA. Utiliza
-        las planillas de horarios académicos (informacion pública de la universidad), para que
-        puedas armar tu horario del semestre, organizar materias, secciones y exámenes en
-        un solo lugar.
-      </p>
-      <p
-        class="mt-3 text-base text-gray-500 dark:text-zinc-400 leading-relaxed max-w-2xl">
-        La información se actualiza automáticamente cuando la universidad publica nuevas
-        versiones de sus planillas. El servicio es gratuito y funciona exclusivamente desde
-        el navegador.
-      </p>
-      <div class="mt-6 flex flex-wrap items-center gap-3">
-        <a
-          href="/login"
-          class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-600 dark:hover:bg-primary-500 rounded-sm shadow-sm transition-all duration-200 focus:ring-2 focus:ring-primary-500 focus:outline-none">
-          Ingresar
-        </a>
+  <!-- Hero -->
+  <section class="lp-band lp-band--hero">
+    <div class="lp-band-pad">
+      <div class="lp-container">
+        <div class="lp-hero-grid">
+          <div class="lp-hero">
+            <span class="lp-eyebrow">Planificador académico FP-UNA</span>
+            <h1>Tu horario universitario a mano</h1>
+            <p>
+              PoliPlanner es un planificador académico pensado para estudiantes de la FP-UNA.
+              Utiliza las planillas de horarios académicos (informacion pública de la universidad),
+              para que puedas armar tu horario del semestre, organizar materias, secciones y
+              exámenes en un solo lugar.
+            </p>
+            <p class="lp-hero-sub">
+              La información se actualiza automáticamente cuando la universidad publica nuevas
+              versiones de sus planillas. El servicio es gratuito y funciona exclusivamente desde
+              el navegador.
+            </p>
+            <div class="lp-hero-cta">
+              <a href="/login" class="lp-btn lp-btn--light lp-btn--lg">Ingresar</a>
+            </div>
+          </div>
+
+          <div class="lp-hero-media">
+            <img src="/static/images/hero_landing.png" alt="Vista del horario semanal en PoliPlanner" />
+          </div>
+        </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Herramientas -->
-    <section class="mb-12">
-      <h2
-        class="text-xl font-semibold text-gray-900 dark:text-zinc-100 tracking-tight">
-        Herramientas disponibles
-      </h2>
-      <p
-        class="mt-2 text-sm text-gray-500 dark:text-zinc-400 leading-relaxed max-w-2xl">
-        Para guardar y sincronizar tus horarios necesitamos que te registres en el sistema. Sin
-        embargo, si solo querés consultar materias, usar la calculadora u otras de las
-        herramientas y guías que desarrollamos, podés hacerlo sin iniciar sesión.
-      </p>
-
-      <div class="mt-6 grid gap-4 sm:grid-cols-2">
-        <a
-          href="/tools/calculator"
-          class="group flex flex-col gap-3 p-6 rounded-sm border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-primary-400 dark:hover:border-primary-500 hover:shadow-lg transition-all duration-200">
-          <h3
-            class="text-base font-semibold text-gray-900 dark:text-zinc-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-            Calculadora de notas
-          </h3>
-          <p class="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">
-            Simulá promedios de proceso, calculá qué puntaje necesitás para
-            habilitar exámenes finales y proyectá tus calificaciones.
-          </p>
-        </a>
-
-        <a
-          href="/tools/interactive_graph"
-          class="group flex flex-col gap-3 p-6 rounded-sm border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-primary-400 dark:hover:border-primary-500 hover:shadow-lg transition-all duration-200">
-          <h3
-            class="text-base font-semibold text-gray-900 dark:text-zinc-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-            Malla curricular interactiva
-          </h3>
-          <p class="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">
-            Explorá las materias de tu carrera, sus prerrequisitos y
-            correlatividades en un gráfico navegable.
-          </p>
-        </a>
-
-        <a
-          href="/tools/course-offering-history"
-          class="group flex flex-col gap-3 p-6 rounded-sm border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-primary-400 dark:hover:border-primary-500 hover:shadow-lg transition-all duration-200">
-          <h3
-            class="text-base font-semibold text-gray-900 dark:text-zinc-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-            Historial de secciones
-          </h3>
-          <p class="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">
-            Consultá cómo cambiaron las secciones, docentes y exámenes de tus
-            materias en los últimos periodos académicos.
-          </p>
-        </a>
-
-        <a
-          href="/tools/teacher-history"
-          class="group flex flex-col gap-3 p-6 rounded-sm border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-primary-400 dark:hover:border-primary-500 hover:shadow-lg transition-all duration-200">
-          <h3
-            class="text-base font-semibold text-gray-900 dark:text-zinc-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-            Historial de docentes
-          </h3>
-          <p class="text-sm text-gray-500 dark:text-zinc-400 leading-relaxed">
-            Buscá un docente y revisá las materias, secciones y horarios que
-            fue impartiendo a lo largo del tiempo.
-          </p>
-        </a>
-      </div>
-    </section>
-
-    <!-- Guías -->
-    <section class="mb-12">
-      <h2
-        class="text-xl font-semibold text-gray-900 dark:text-zinc-100 tracking-tight">
-        Guías académicas
-      </h2>
-      <ul class="mt-6 space-y-3">
-        <li>
-          <a
-            href="/guides/manual_del_bicho"
-            class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline">
-            Manual del Bicho: lo básico para el primer año
-          </a>
-        </li>
-        <li>
-          <a
-            href="/guides/actualizaciones"
-            class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline">
-            Actualizaciones y novedades del proyecto
-          </a>
-        </li>
-        <li>
-          <a
-            href="/guides/about"
-            class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline">
-            Sobre PoliPlanner
-          </a>
-        </li>
-      </ul>
-    </section>
-
-    <section>
-        <p class="mt-4 text-xs text-gray-400 dark:text-zinc-500 leading-relaxed max-w-2xl">
-            PoliPlanner es un proyecto independiente, desarrollado por y para estudiantes. No
-            estamos afiliados, asociados ni respaldados por la Universidad Nacional de Asunción,
-            la Facultad Politécnica, centros de estudiantes ni ninguna otra autoridad u organización
-            de la institución.
+  <!-- Herramientas -->
+  <section class="lp-band lp-band--tools">
+    <div class="lp-band-pad">
+      <div class="lp-container">
+        <span class="lp-eyebrow lp-eyebrow--dark">Herramientas</span>
+        <h2 class="lp-title">Herramientas disponibles</h2>
+        <p class="lp-sub">
+          Para guardar y sincronizar tus horarios necesitamos que te registres en el sistema.
+          Sin embargo, si solo querés consultar materias, usar la calculadora u otras de las
+          herramientas y guías que desarrollamos, podés hacerlo sin iniciar sesión.
         </p>
-    </section>
 
-  </div>
+        <div class="lp-rows">
+          <a href="/tools/calculator" class="lp-row-link lp-row-link--primary">
+            <span class="lp-row-icon">
+              <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m-6 4h.01M9 15h.01M13 11h2M13 15h2M6 3h12a1 1 0 011 1v16a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1z" />
+              </svg>
+            </span>
+            <span class="lp-row-body">
+              <span class="lp-row-title">Calculadora de notas</span>
+              <span class="lp-row-desc">
+                Simulá promedios de proceso, calculá qué puntaje necesitás para
+                habilitar exámenes finales y proyectá tus calificaciones.
+              </span>
+            </span>
+            <svg class="lp-row-arrow" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+
+          <a href="/tools/interactive_graph" class="lp-row-link lp-row-link--emerald">
+            <span class="lp-row-icon">
+              <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h4v4H4V6zm12 0h4v4h-4V6zM10 14h4v4h-4v-4zM8 8h8M6 10v2a2 2 0 002 2h1M18 10v2a2 2 0 01-2 2h-1" />
+              </svg>
+            </span>
+            <span class="lp-row-body">
+              <span class="lp-row-title">Malla curricular interactiva</span>
+              <span class="lp-row-desc">
+                Explorá las materias de tu carrera, sus prerrequisitos y
+                correlatividades en un gráfico navegable.
+              </span>
+            </span>
+            <svg class="lp-row-arrow" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+
+          <a href="/tools/course-offering-history" class="lp-row-link lp-row-link--amber">
+            <span class="lp-row-icon">
+              <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </span>
+            <span class="lp-row-body">
+              <span class="lp-row-title">Historial de secciones</span>
+              <span class="lp-row-desc">
+                Consultá cómo cambiaron las secciones, docentes y exámenes de tus
+                materias en los últimos periodos académicos.
+              </span>
+            </span>
+            <svg class="lp-row-arrow" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+
+          <a href="/tools/teacher-history" class="lp-row-link lp-row-link--sky">
+            <span class="lp-row-icon">
+              <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </span>
+            <span class="lp-row-body">
+              <span class="lp-row-title">Historial de docentes</span>
+              <span class="lp-row-desc">
+                Buscá un docente y revisá las materias, secciones y horarios que
+                fue impartiendo a lo largo del tiempo.
+              </span>
+            </span>
+            <svg class="lp-row-arrow" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Guías -->
+  <section class="lp-band lp-band--guides">
+    <div class="lp-band-pad">
+      <div class="lp-container">
+        <span class="lp-eyebrow lp-eyebrow--dark">Recursos</span>
+        <h2 class="lp-title">Guías académicas</h2>
+
+        <div class="lp-rows">
+          <a href="/guides/manual_del_bicho" class="lp-row-link lp-row-link--primary">
+            <span class="lp-row-icon">
+              <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.247m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.247" />
+              </svg>
+            </span>
+            <span class="lp-row-body">
+              <span class="lp-row-title">Manual del Bicho: lo básico para el primer año</span>
+            </span>
+            <svg class="lp-row-arrow" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+
+          <a href="/guides/actualizaciones" class="lp-row-link lp-row-link--sky">
+            <span class="lp-row-icon">
+              <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+            </span>
+            <span class="lp-row-body">
+              <span class="lp-row-title">Actualizaciones y novedades del proyecto</span>
+            </span>
+            <svg class="lp-row-arrow" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+
+          <a href="/guides/about" class="lp-row-link lp-row-link--amber">
+            <span class="lp-row-icon">
+              <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </span>
+            <span class="lp-row-body">
+              <span class="lp-row-title">Sobre PoliPlanner</span>
+            </span>
+            <svg class="lp-row-arrow" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
 {{ end }}
