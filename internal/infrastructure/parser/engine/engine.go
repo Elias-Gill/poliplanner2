@@ -127,31 +127,47 @@ func (ep *ParserEngine) findFittingLayout(lowerHeader []string) (*Layout, error)
 	return nil, exceptions.NewLayoutMatchException("No matching layout found for sheet")
 }
 
-func (ep *ParserEngine) layoutMatches(l *Layout, lower []string) bool {
-	cellIdx, hdrIdx := 0, 0
-	for hdrIdx < len(l.Headers) && cellIdx < len(lower) {
-		val := lower[cellIdx]
-		cellIdx++
-		if val == "" {
+func (ep *ParserEngine) layoutMatches(layout *Layout, cells []string) bool {
+	cellIndex := 0
+	headerIndex := 0
+
+	startedMatching := false
+
+	for headerIndex < len(layout.Headers) && cellIndex < len(cells) {
+		cellValue := cells[cellIndex]
+		cellIndex++
+
+		// Ignore empty cells before matching the first header.
+		// Once matching starts, subsequent cells are parsed normally.
+		if cellValue == "" && !startedMatching {
 			continue
 		}
-		patterns, ok := l.Patterns[l.Headers[hdrIdx]]
-		if !ok {
+
+		startedMatching = true
+
+		header := layout.Headers[headerIndex]
+		headerPatterns, exists := layout.Patterns[header]
+
+		if !exists {
 			return false
 		}
-		match := false
-		for _, p := range patterns {
-			if strings.Contains(val, p) {
-				match = true
+
+		headerMatches := false
+		for _, pattern := range headerPatterns {
+			if strings.Contains(cellValue, pattern) {
+				headerMatches = true
 				break
 			}
 		}
-		if !match {
+
+		if !headerMatches {
 			return false
 		}
-		hdrIdx++
+
+		headerIndex++
 	}
-	return hdrIdx == len(l.Headers)
+
+	return headerIndex == len(layout.Headers)
 }
 
 func (ep *ParserEngine) isHeaderRow(row []string) bool {

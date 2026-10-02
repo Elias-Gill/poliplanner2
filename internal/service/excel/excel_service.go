@@ -172,7 +172,7 @@ func (e ExcelService) parseScheduleSource(ctx context.Context, source source.Sch
 		for {
 			sheet, err := p.ParseNextSheet()
 			if err != nil {
-				return fmt.Errorf("error parsing sheet: %w", err)
+				return fmt.Errorf("excel service error: %w", err)
 			}
 			if sheet == nil {
 				break
@@ -357,17 +357,17 @@ func (e ExcelService) parseLabSource(ctx context.Context, src source.LabSource) 
 
 	txErr := e.txManager.WithTransaction(ctx, func(ctx context.Context) error {
 		for {
-			sheet, err := p.ParseNextSheet()
+			parsed, err := p.ParseNextSheet()
 			if err != nil {
 				return fmt.Errorf("error parsing laboratory sheet: %w", err)
 			}
-			if sheet == nil {
+			if parsed == nil {
 				break
 			}
 
-			logger.Info("Laboratory sheet parsed", "career", sheet.Career, "labs", len(sheet.Labs))
+			logger.Info("Laboratory sheet parsed", "career", parsed.Career, "labs", len(parsed.Labs))
 
-			career := buildCareerFromDTO(sheet.Career)
+			career := buildCareerFromDTO(parsed.Career)
 
 			metadataService, err := metaServices.NewMetadataService(career.Code, e.metadataDir)
 			if err != nil {
@@ -380,7 +380,7 @@ func (e ExcelService) parseLabSource(ctx context.Context, src source.LabSource) 
 				return fmt.Errorf("failed to upsert career '%s': %w", career.Code, err)
 			}
 
-			for _, lab := range sheet.Labs {
+			for _, lab := range parsed.Labs {
 				// IMPORTANT: check the period, cause this shitty excel has a lot of trash and junk
 				// inserted on it, so we have to filter the dtos by period. And fuck the entry
 				// if the period if not setted.
@@ -429,7 +429,7 @@ func (e ExcelService) parseLabSource(ctx context.Context, src source.LabSource) 
 
 			sheetCount++
 
-			sheet.Labs = nil
+			parsed.Labs = nil
 			runtime.GC()
 		}
 

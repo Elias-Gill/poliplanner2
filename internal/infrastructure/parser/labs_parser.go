@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"io"
 	"path/filepath"
 	"sort"
@@ -93,7 +94,7 @@ func (ep *LaboratoriesParser) ParseNextSheet() (*ParsedLaboratories, error) {
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error parsing sheet %s: %w", name, err)
 	}
 
 	return &ParsedLaboratories{
@@ -119,9 +120,9 @@ type labAccumulator struct {
 
 	// Last non-empty subject/plan/career/semester seen. Excel tends to merge these cells
 	// vertically, so a row may not repeat them and we need to carry them forward.
-	currentSubject string
-	currentPlan    string
-	currentCareer  string
+	currentSubject  string
+	currentPlan     string
+	currentCareer   string
 	currentSemester string
 }
 

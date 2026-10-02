@@ -55,7 +55,7 @@
         { "encabezado": "ignorar", "patron": [""] },
         { "encabezado": "aulaLunes", "patron": ["aula", "aula lunes"] },
         { "encabezado": "horaLunes", "patron": ["lunes", "horario lunes"] },
-        { "encabezado": "aulaMartes", "patron": ["aula", "aula martes"] },
+        { "encabezado": "aulaMartes", "patron": ["aula", "aula martes", ""] },
         { "encabezado": "horaMartes", "patron": ["martes", "horario martes"] },
         { "encabezado": "aulaMiercoles", "patron": ["aula", "aula miercoles"] },
         { "encabezado": "horaMiercoles", "patron": ["miércoles", "miercoles", "horario miércoles"] },
