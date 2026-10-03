@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/elias-gill/poliplanner2/internal/model/auth"
 	txManager "github.com/elias-gill/poliplanner2/internal/infrastructure/persistence/sqlite/tx_manager"
+	"github.com/elias-gill/poliplanner2/internal/model/auth"
 )
 
 type SqliteAuthRepository struct {

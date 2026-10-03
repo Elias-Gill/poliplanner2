@@ -1,30 +1,66 @@
+let fullCalendarPromise = null;
+
+// Lazily load the FullCalendar vendor bundle the first time it is needed. It is
+// ~280KB, so keeping it out of the initial page load matters on low-end devices.
+function loadFullCalendar() {
+    if (typeof FullCalendar !== 'undefined') return Promise.resolve();
+    if (fullCalendarPromise) return fullCalendarPromise;
+
+    fullCalendarPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = '/static/vendor/fullcalendar/index.global.min.js';
+        script.async = true;
+        script.onload = () => resolve();
+        script.onerror = () => {
+            fullCalendarPromise = null;
+            reject(new Error('No se pudo cargar FullCalendar'));
+        };
+        document.head.appendChild(script);
+    });
+
+    return fullCalendarPromise;
+}
+
 document.addEventListener('alpine:init', () => {
     Alpine.data('examScheduleApp', () => ({
         showCalendarModal: false,
         selectedExamId: null,
         calendar: null,
+        themeObserver: null,
         highlightTimer: null,
 
-        openCalendarModal(examId = null) {
+        init() {
+            // Any close path (buttons, overlay) tears the calendar down so the
+            // x-if container can be dropped without leaving stale instances.
+            this.$watch('showCalendarModal', (open) => {
+                if (!open) this.teardownCalendar();
+            });
+        },
+
+        async openCalendarModal(examId = null) {
             this.selectedExamId = examId;
             this.showCalendarModal = true;
 
-            this.$nextTick(() => {
-                if (!this.calendar) {
-                    this.initCalendar();
-                } else {
-                    this.calendar.updateSize();
-                }
+            await this.$nextTick();
 
-                if (examId) {
-                    this.applyCalendarEventHighlight(examId);
-                    const events = this.calendar.getEvents();
-                    const target = events.find(e => e.id === String(examId));
-                    if (target && target.start) {
-                        this.calendar.gotoDate(target.start);
-                    }
+            try {
+                await loadFullCalendar();
+            } catch (err) {
+                console.error(err);
+                return;
+            }
+
+            this.teardownCalendar();
+            this.initCalendar();
+
+            if (examId && this.calendar) {
+                this.applyCalendarEventHighlight(examId);
+                const events = this.calendar.getEvents();
+                const target = events.find((e) => e.id === String(examId));
+                if (target && target.start) {
+                    this.calendar.gotoDate(target.start);
                 }
-            });
+            }
         },
 
         initCalendar() {
@@ -39,7 +75,7 @@ document.addEventListener('alpine:init', () => {
                 console.error('Error parseando JSON de exámenes:', e);
             }
 
-            let initialDate = undefined;
+            let initialDate;
             if (events && events.length > 0) {
                 const sorted = [...events].sort((a, b) => new Date(a.start) - new Date(b.start));
                 initialDate = sorted[0].start;
@@ -73,22 +109,32 @@ document.addEventListener('alpine:init', () => {
 
             this.calendar.render();
 
-            setTimeout(() => {
-                if (this.calendar) {
-                    this.calendar.updateSize();
-                }
-            }, 100);
-
-            // Observador para cambios de modo oscuro/claro
-            const observer = new MutationObserver(() => {
+            requestAnimationFrame(() => {
                 if (this.calendar) {
                     this.calendar.updateSize();
                 }
             });
-            observer.observe(document.documentElement, {
+
+            this.themeObserver = new MutationObserver(() => {
+                if (this.calendar) {
+                    this.calendar.updateSize();
+                }
+            });
+            this.themeObserver.observe(document.documentElement, {
                 attributes: true,
                 attributeFilter: ['class']
             });
+        },
+
+        teardownCalendar() {
+            if (this.themeObserver) {
+                this.themeObserver.disconnect();
+                this.themeObserver = null;
+            }
+            if (this.calendar) {
+                this.calendar.destroy();
+                this.calendar = null;
+            }
         },
 
         applyCalendarEventHighlight(id) {
@@ -116,6 +162,11 @@ document.addEventListener('alpine:init', () => {
                     this.selectedExamId = null;
                 }, 2500);
             });
+        },
+
+        destroy() {
+            if (this.highlightTimer) clearTimeout(this.highlightTimer);
+            this.teardownCalendar();
         }
     }));
 });

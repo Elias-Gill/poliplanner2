@@ -6,8 +6,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/elias-gill/poliplanner2/internal/model/academic"
 	txManager "github.com/elias-gill/poliplanner2/internal/infrastructure/persistence/sqlite/tx_manager"
+	"github.com/elias-gill/poliplanner2/internal/model/academic"
 )
 
 type SqliteAcademicPlanStore struct {

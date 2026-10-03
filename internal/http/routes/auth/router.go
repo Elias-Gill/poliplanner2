@@ -87,8 +87,8 @@ func (h *Handler) Routes() chi.Router {
 // =         Handlers HTTP              =
 // ======================================
 
-// homePage renders the public landing page. Logged in users keep the old
-// behavior and are sent straight to the dashboard.
+// homePage renders the public landing page. Logged in users are redirected
+// straight to the dashboard.
 func (h *Handler) homePage(w http.ResponseWriter, r *http.Request) {
 	if c, err := r.Cookie(cookie.SessionIDCookie); err == nil {
 		if _, err := h.authService.ValidateSession(r.Context(), authModel.SessionID(c.Value)); err == nil {
@@ -121,10 +121,6 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid form", http.StatusBadRequest)
 		return
 	}
-
-	// FIX: En Login, asegúrate de que antes de crear una nueva sesión, se destruya cualquier sesión previa si el usuario ya tenía una cookie válida.
-	// * Riesgo: Si no destruyes la sesión anterior, podrías dejar sesiones "huérfanas" en la base de datos hasta que expiren por tiempo.
-	// * Recomendación: En el flujo de login, intenta leer la cookie session_id existente y llama a Logout (para borrarla del repo) antes de asignar la nueva.
 
 	username := strings.TrimSpace(r.FormValue("username"))
 	password := r.FormValue("password")

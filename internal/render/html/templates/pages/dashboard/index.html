@@ -14,8 +14,8 @@
 {{ end }}
 
 {{ define "custom_head" }}
-  <script src="/static/vendor/fullcalendar/index.global.min.js"></script>
-  <script src="/static/js/calendar.js?2"></script>
+  <script src="/static/js/dashboard.js?1" defer></script>
+  <script src="/static/js/calendar.js?3"></script>
   <script src="/static/vendor/htmx/htmx.min.js" defer></script>
 
   <style>
@@ -53,7 +53,9 @@
         border-bottom: 2px solid transparent;
         margin-bottom: -1px;
         cursor: pointer;
-        transition: color 0.15s ease, border-color 0.15s ease;
+        transition:
+          color 0.15s ease,
+          border-color 0.15s ease;
       }
       .dash-tab:hover {
         color: var(--color-gray-700);
@@ -145,7 +147,13 @@
               d="M4 6h16M4 10h16M4 14h16M4 18h16" />
           </svg>
           <span id="active-schedule-title" class="truncate"
-            >{{ if .ActiveSchedule }}{{ range .Schedules }}{{ if eq .ID $.SelectedID }}{{ .Title }}{{ end }}{{ end }}{{ else }}Mis horarios{{ end }}</span
+            >{{ if .ActiveSchedule }}
+              {{ range .Schedules }}
+                {{ if eq .ID $.SelectedID }}{{ .Title }}{{ end }}
+              {{ end }}
+            {{ else }}
+              Mis horarios
+            {{ end }}</span
           >
           <svg
             class="w-3.5 h-3.5 text-gray-400 dark:text-zinc-500 shrink-0"
@@ -213,7 +221,7 @@
       x-cloak
       x-transition.opacity.duration.200
       @click="sidebarOpen = false"
-      class="fixed inset-0 bg-black/60 backdrop-blur-xs z-40"></div>
+      class="fixed inset-0 bg-black/60 z-40"></div>
 
     <!-- Sidebar Drawer -->
     <aside

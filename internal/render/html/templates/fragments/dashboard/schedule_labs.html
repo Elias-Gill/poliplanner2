@@ -22,7 +22,8 @@
               </div>
               <span
                 class="inline-flex items-center px-1.5 py-0.5 rounded-xs text-[10px] font-semibold bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 border border-gray-200/80 dark:border-zinc-700 shrink-0">
-                Curso {{ .Section }}
+                Curso
+                {{ .Section }}
               </span>
             </div>
 
@@ -49,7 +50,8 @@
                     </svg>
                     <span
                       class="text-[11px] font-bold text-gray-800 dark:text-zinc-200 truncate">
-                      Sección {{ .Section }}
+                      Sección
+                      {{ .Section }}
                     </span>
                   </div>
 
@@ -58,7 +60,8 @@
                       {{ range .Schedule }}
                         <span
                           class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-xs text-[10px] font-mono font-semibold bg-primary-50 dark:bg-primary-900/70 text-primary-700 dark:text-primary-300 border border-primary-200/60 dark:border-primary-800/50">
-                          {{ .Day }} {{ .Time }}{{ if .Room }} · Aula {{ .Room }}{{ end }}
+                          {{ .Day }}
+                          {{ .Time }}{{ if .Room }}· Aula {{ .Room }}{{ end }}
                         </span>
                       {{ end }}
                     </div>

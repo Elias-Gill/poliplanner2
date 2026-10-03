@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/elias-gill/poliplanner2/internal/model/user"
 	txManager "github.com/elias-gill/poliplanner2/internal/infrastructure/persistence/sqlite/tx_manager"
+	"github.com/elias-gill/poliplanner2/internal/model/user"
 	"github.com/elias-gill/poliplanner2/logger"
 )
 

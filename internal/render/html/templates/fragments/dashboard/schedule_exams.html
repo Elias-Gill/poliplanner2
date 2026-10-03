@@ -104,77 +104,80 @@
           <span>Tocá un examen para verlo en el calendario.</span>
         </p>
 
-      <!-- 1. Parciales 1° -->
-      {{ if .Exams.Partial1 }}
-        <div>
-          <div class="flex items-center gap-2 mb-2.5">
-            <h3
-              class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
-              Primer Parcial
-            </h3>
-            <div class="h-px flex-1 bg-gray-100 dark:bg-zinc-800"></div>
-          </div>
+        <!-- 1. Parciales 1° -->
+        {{ if .Exams.Partial1 }}
+          <div>
+            <div class="flex items-center gap-2 mb-2.5">
+              <h3
+                class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
+                Primer Parcial
+              </h3>
+              <div class="h-px flex-1 bg-gray-100 dark:bg-zinc-800"></div>
+            </div>
 
-          <div
-            class="border border-gray-200 dark:border-zinc-800 rounded-xs bg-white dark:bg-zinc-950/50">
-            {{ template "exam_group" dict "Exams" .Exams.Partial1 "Prefix" "p1" "Label" "Primeros Parciales" "Type" "partial1" }}
+            <div
+              class="border border-gray-200 dark:border-zinc-800 rounded-xs bg-white dark:bg-zinc-950/50">
+              {{ template "exam_group" dict "Exams" .Exams.Partial1 "Prefix" "p1" "Label" "Primeros Parciales" "Type" "partial1" }}
+            </div>
           </div>
-        </div>
-      {{ end }}
+        {{ end }}
 
-      <!-- 2. Parciales 2° -->
-      {{ if .Exams.Partial2 }}
-        <div>
-          <div class="flex items-center gap-2 mb-2.5">
-            <h3
-              class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
-              Segundo Parcial
-            </h3>
-            <div class="h-px flex-1 bg-gray-100 dark:bg-zinc-800"></div>
-          </div>
 
-          <div
-            class="border border-gray-200 dark:border-zinc-800 rounded-xs bg-white dark:bg-zinc-950/50">
-            {{ template "exam_group" dict "Exams" .Exams.Partial2 "Prefix" "p2" "Label" "Segundos Parcial" "Type" "partial2" }}
-          </div>
-        </div>
-      {{ end }}
+        <!-- 2. Parciales 2° -->
+        {{ if .Exams.Partial2 }}
+          <div>
+            <div class="flex items-center gap-2 mb-2.5">
+              <h3
+                class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
+                Segundo Parcial
+              </h3>
+              <div class="h-px flex-1 bg-gray-100 dark:bg-zinc-800"></div>
+            </div>
 
-      <!-- 3. Finales 1° -->
-      {{ if .Exams.Final1 }}
-        <div>
-          <div class="flex items-center gap-2 mb-2.5">
-            <h3
-              class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
-              Primer Final
-            </h3>
-            <div class="h-px flex-1 bg-gray-100 dark:bg-zinc-800"></div>
+            <div
+              class="border border-gray-200 dark:border-zinc-800 rounded-xs bg-white dark:bg-zinc-950/50">
+              {{ template "exam_group" dict "Exams" .Exams.Partial2 "Prefix" "p2" "Label" "Segundos Parcial" "Type" "partial2" }}
+            </div>
           </div>
+        {{ end }}
 
-          <div
-            class="border border-gray-200 dark:border-zinc-800 rounded-xs bg-white dark:bg-zinc-950/50">
-            {{ template "exam_group" dict "Exams" .Exams.Final1 "Prefix" "f1" "Label" "Primeros Finales" "Type" "final1" }}
-          </div>
-        </div>
-      {{ end }}
 
-      <!-- 4. Finales 2° -->
-      {{ if .Exams.Final2 }}
-        <div>
-          <div class="flex items-center gap-2 mb-2.5">
-            <h3
-              class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
-              Segunda Final
-            </h3>
-            <div class="h-px flex-1 bg-gray-100 dark:bg-zinc-800"></div>
-          </div>
+        <!-- 3. Finales 1° -->
+        {{ if .Exams.Final1 }}
+          <div>
+            <div class="flex items-center gap-2 mb-2.5">
+              <h3
+                class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
+                Primer Final
+              </h3>
+              <div class="h-px flex-1 bg-gray-100 dark:bg-zinc-800"></div>
+            </div>
 
-          <div
-            class="border border-gray-200 dark:border-zinc-800 rounded-xs bg-white dark:bg-zinc-950/50">
-            {{ template "exam_group" dict "Exams" .Exams.Final2 "Prefix" "f2" "Label" "Segundos Finales" "Type" "final2" }}
+            <div
+              class="border border-gray-200 dark:border-zinc-800 rounded-xs bg-white dark:bg-zinc-950/50">
+              {{ template "exam_group" dict "Exams" .Exams.Final1 "Prefix" "f1" "Label" "Primeros Finales" "Type" "final1" }}
+            </div>
           </div>
-        </div>
-      {{ end }}
+        {{ end }}
+
+
+        <!-- 4. Finales 2° -->
+        {{ if .Exams.Final2 }}
+          <div>
+            <div class="flex items-center gap-2 mb-2.5">
+              <h3
+                class="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-zinc-400">
+                Segunda Final
+              </h3>
+              <div class="h-px flex-1 bg-gray-100 dark:bg-zinc-800"></div>
+            </div>
+
+            <div
+              class="border border-gray-200 dark:border-zinc-800 rounded-xs bg-white dark:bg-zinc-950/50">
+              {{ template "exam_group" dict "Exams" .Exams.Final2 "Prefix" "f2" "Label" "Segundos Finales" "Type" "final2" }}
+            </div>
+          </div>
+        {{ end }}
 
       {{ else }}
         <div
@@ -185,11 +188,10 @@
     </div>
 
     <!-- Modal del Calendario Integrado -->
-    <div
-      x-show="showCalendarModal"
-      x-cloak
-      class="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-black/60 backdrop-blur-xs">
-      <div class="absolute inset-0" @click="showCalendarModal = false"></div>
+    <template x-if="showCalendarModal">
+      <div
+        class="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-black/60">
+        <div class="absolute inset-0" @click="showCalendarModal = false"></div>
 
       <div
         class="relative w-full max-w-4xl bg-white dark:bg-zinc-900 rounded-xs shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden z-10 flex flex-col max-h-[90vh]">
@@ -235,6 +237,7 @@
         </div>
       </div>
     </div>
+    </template>
   </div>
 {{ end }}
 
