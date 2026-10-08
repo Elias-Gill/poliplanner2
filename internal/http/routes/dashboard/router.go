@@ -7,9 +7,11 @@ import (
 
 	utils "github.com/elias-gill/poliplanner2/internal/http"
 	"github.com/elias-gill/poliplanner2/internal/http/cookie"
+	excelModel "github.com/elias-gill/poliplanner2/internal/model/excel"
 	scheduleModel "github.com/elias-gill/poliplanner2/internal/model/schedule"
 	render "github.com/elias-gill/poliplanner2/internal/render/html"
 	"github.com/elias-gill/poliplanner2/internal/service/academic"
+	excelSrv "github.com/elias-gill/poliplanner2/internal/service/excel"
 	"github.com/elias-gill/poliplanner2/internal/service/schedule"
 	"github.com/elias-gill/poliplanner2/logger"
 	"github.com/go-chi/chi/v5"
@@ -20,6 +22,7 @@ type Handler struct {
 	tmpl            *render.TemplateManager
 	scheduleService *schedule.ScheduleService
 	planService     *academic.CourseService
+	excelService    *excelSrv.ExcelService
 	secureHTTP      bool
 }
 
@@ -28,12 +31,14 @@ func NewHandler(
 	tmpl *render.TemplateManager,
 	scheduleService *schedule.ScheduleService,
 	planService *academic.CourseService,
+	excelService *excelSrv.ExcelService,
 	secureHTTP bool,
 ) *Handler {
 	return &Handler{
 		tmpl:            tmpl,
 		scheduleService: scheduleService,
 		planService:     planService,
+		excelService:    excelService,
 		secureHTTP:      secureHTTP,
 	}
 }
@@ -53,6 +58,10 @@ type DashboardPageData struct {
 	Schedules      []scheduleModel.ScheduleSummaryView
 	SelectedID     int64
 	ActiveSchedule *scheduleModel.StudentScheduleView
+
+	// Latest successfully parsed Excel sources, for the transparency notice.
+	ScheduleVersion *excelModel.SheetVersion
+	LabVersion      *excelModel.SheetVersion
 }
 
 // dashboard renders the main dashboard page or partials if requested via HTMX query parameter.
@@ -93,6 +102,19 @@ func (h *Handler) dashboard(w http.ResponseWriter, r *http.Request) {
 
 	data := DashboardPageData{
 		Schedules: userSchedules,
+	}
+
+	// Transparency notice: last successfully parsed Excel source per type.
+	if scheduleVersion, err := h.excelService.LatestVersion(ctx, excelModel.SourceTypeSchedule); err != nil {
+		logger.Error("Failed to fetch latest schedule excel version", "error", err)
+	} else {
+		data.ScheduleVersion = scheduleVersion
+	}
+
+	if labVersion, err := h.excelService.LatestVersion(ctx, excelModel.SourceTypeLab); err != nil {
+		logger.Error("Failed to fetch latest lab excel version", "error", err)
+	} else {
+		data.LabVersion = labVersion
 	}
 
 	if len(userSchedules) > 0 {

@@ -209,10 +209,11 @@
                 stroke-width="2"
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <span>Buscador de Materias</span>
+            <span>Buscar una materia</span>
           </a>
         </div>
       </div>
+
     </div>
 
     <!-- Overlay Sidebar -->
@@ -399,5 +400,70 @@
         </div>
       {{ end }}
     </div>
+
+    <!-- Estado de datos actualizados -->
+    <footer
+      class="mt-auto pt-3 flex justify-start sm:justify-end border-t border-gray-100 dark:border-zinc-800">
+      <div
+        class="flex flex-col gap-1 text-left text-[11px] text-gray-400 dark:text-zinc-500">
+      <span
+        class="inline-flex items-center gap-1.5 font-semibold tracking-wider uppercase text-gray-400 dark:text-zinc-500">
+        <svg
+          class="w-3.5 h-3.5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Última actualización
+      </span>
+
+      <span class="flex flex-wrap items-center gap-2">
+        <span class="font-medium text-gray-500 dark:text-zinc-400"
+          >Horarios:</span
+        >
+        {{ if .ScheduleVersion }}
+          <span class="font-mono"
+            >{{ .ScheduleVersion.ParsedAt.Format "02/01/2006 - 15:04hs" }}</span
+          >
+          {{ if .ScheduleVersion.URL }}
+            <a
+              href="{{ .ScheduleVersion.URL }}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary-600 dark:text-primary-400 hover:underline"
+              >descargar</a
+            >
+          {{ end }}
+        {{ else }}
+          <span class="italic">sin datos</span>
+        {{ end }}
+      </span>
+
+      <span class="flex flex-wrap items-center gap-2">
+        <span class="font-medium text-gray-500 dark:text-zinc-400">Labs:</span>
+        {{ if .LabVersion }}
+          <span class="font-mono"
+            >{{ .LabVersion.ParsedAt.Format "02/01/2006 - 15:04hs" }}</span
+          >
+          {{ if .LabVersion.URL }}
+            <a
+              href="{{ .LabVersion.URL }}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary-600 dark:text-primary-400 hover:underline"
+              >descargar</a
+            >
+          {{ end }}
+        {{ else }}
+          <span class="italic">sin datos</span>
+        {{ end }}
+      </span>
+      </div>
+    </footer>
   </div>
 {{ end }}

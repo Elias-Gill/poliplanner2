@@ -125,7 +125,7 @@ func initRouter(srvs *services.AppServices, cfg *config.Config) chi.Router {
 
 	r.Mount("/", auth.NewHandler(tmplManager, srvs.UserService, srvs.SessionService, srvs.EmailService, cfg.Security.SecureHTTP).Routes())
 
-	r.Mount("/dashboard", dashboard.NewHandler(tmplManager, srvs.ScheduleService, srvs.CourseService, cfg.Security.SecureHTTP).Routes())
+	r.Mount("/dashboard", dashboard.NewHandler(tmplManager, srvs.ScheduleService, srvs.CourseService, srvs.ExcelService, cfg.Security.SecureHTTP).Routes())
 
 	r.Mount("/schedule", schedules.NewHandler(
 		tmplManager,
