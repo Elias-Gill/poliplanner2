@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/elias-gill/poliplanner2/internal/config/timezone"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/scraper"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/scraper/engine"
 	"github.com/elias-gill/poliplanner2/internal/infrastructure/source"
@@ -50,9 +51,18 @@ func (i DiscoveryService) FindLatestScheduleSources(ctx context.Context) (*sched
 	for _, s := range sources {
 		meta := s.Metadata()
 
+		logger.Info("Discovered schedule source",
+			"name", meta.Name,
+			"uri", meta.URI,
+			"year", meta.Date.Year(),
+			"period", meta.Semester.String(),
+			"date", meta.Date.Format("2006-01-02"),
+		)
+
 		newer, same := tracker.Add(meta.Date)
 		switch {
 		case newer:
+			// Discard the old sources and append the newest one
 			latestSources = []source.ScheduleSource{s}
 			logger.Info("Source from a newer day found", "name", meta.Name, "uri", meta.URI, "date", meta.Date)
 		case same:
@@ -94,6 +104,14 @@ func (i DiscoveryService) FindLatestLabSources(ctx context.Context) (*labSources
 
 	for _, s := range sources {
 		meta := s.Metadata()
+
+		logger.Info("Discovered laboratory source",
+			"name", meta.Name,
+			"uri", meta.URI,
+			"year", meta.Date.Year(),
+			"period", meta.Semester.String(),
+			"date", meta.Date.Format("2006-01-02"),
+		)
 
 		newer, same := tracker.Add(meta.Date)
 		switch {
@@ -147,7 +165,7 @@ type labSourcesResult struct {
 //     it to the current batch.
 type latestDayTracker struct {
 	newestDate time.Time
-	seen       bool
+	seen       bool // used just for the first time a the tracker is used (default for golang is false)
 }
 
 func (t *latestDayTracker) Add(currentDate time.Time) (newer, same bool) {

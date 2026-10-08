@@ -167,6 +167,16 @@ func (e ExcelService) PersistScheduleSource(ctx context.Context, src source.Sche
 }
 
 func (e ExcelService) parseScheduleSource(ctx context.Context, source source.ScheduleSource) (academicModel.PeriodID, int, error) {
+	meta := source.Metadata()
+
+	logger.Info("Parsing schedule source",
+		"name", meta.Name,
+		"uri", meta.URI,
+		"year", meta.Date.Year(),
+		"period", meta.Semester.String(),
+		"date", meta.Date.Format("2006-01-02"),
+	)
+
 	content, err := source.Content(ctx)
 	if err != nil {
 		return 0, 0, fmt.Errorf("cannot open Excel source: %w", err)
@@ -200,7 +210,7 @@ func (e ExcelService) parseScheduleSource(ctx context.Context, source source.Sch
 				break
 			}
 
-			logger.Info("Sheet parsing succesfull", "career", sheet.Career)
+			logger.Info("Sheet parsing succesfull", "career", sheet.Career, "subjects", len(sheet.Subjects))
 
 			career := buildCareerFromDTO(sheet.Career)
 
@@ -353,6 +363,16 @@ func (e ExcelService) PersistLabSource(ctx context.Context, src source.LabSource
 }
 
 func (e ExcelService) parseLabSource(ctx context.Context, src source.LabSource) (academicModel.PeriodID, int, error) {
+	meta := src.Metadata()
+
+	logger.Info("Parsing laboratory source",
+		"name", meta.Name,
+		"uri", meta.URI,
+		"year", meta.Date.Year(),
+		"period", meta.Semester.String(),
+		"date", meta.Date.Format("2006-01-02"),
+	)
+
 	content, err := src.Content(ctx)
 	if err != nil {
 		return 0, 0, fmt.Errorf("cannot open Excel source: %w", err)
