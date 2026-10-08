@@ -1,0 +1,113 @@
+{{ define "custom_tags" }}
+  <title>Planillas Excel — PoliPlanner</title>
+  <meta
+    name="description"
+    content="Últimas planillas Excel de horarios y laboratorios sincronizadas en PoliPlanner." />
+  <meta name="robots" content="noindex, nofollow" />
+{{ end }}
+
+{{ define "content" }}
+  <div
+    class="max-w-5xl mx-auto py-4 min-h-[calc(100vh-4rem)] flex flex-col gap-4">
+    <!-- Header -->
+    <div
+      class="flex items-center justify-between bg-white dark:bg-zinc-900 px-4 py-3 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
+      <div class="flex flex-col gap-0.5 min-w-0">
+        <h1 class="text-sm font-bold text-gray-900 dark:text-zinc-100">
+          Planillas Computadas
+        </h1>
+        <p class="text-xs mt-1 text-gray-500 dark:text-zinc-400">
+          Última busqueda:
+          <span class="ml-1 font-mono font-semibold text-gray-700 dark:text-zinc-300">
+            {{ if .LastSync }}
+              {{ .LastSync.Format "02/01/2006 - 15:04" }}
+            {{ else }}
+              Nunca
+            {{ end }}
+          </span>
+        </p>
+      </div>
+      <a
+        href="/tools/"
+        class="text-xs text-primary-600 font-semibold shrink-0">
+        &larr; Herramientas
+      </a>
+    </div>
+
+    <!-- Type tabs -->
+    <div
+      class="flex gap-1 rounded-sm border border-gray-200 dark:border-zinc-800 bg-gray-100 dark:bg-zinc-800 p-1 w-fit">
+      <a
+        href="/tools/excel-list?type=schedule"
+        class="rounded-sm px-3 py-1.5 text-xs font-semibold transition {{ if not .IsLab }}
+          bg-white dark:bg-zinc-900 text-primary-700 dark:text-primary-300 shadow-sm
+        {{ else }}
+          text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100
+        {{ end }}">
+        Horarios
+      </a>
+      <a
+        href="/tools/excel-list?type=lab"
+        class="rounded-sm px-3 py-1.5 text-xs font-semibold transition {{ if .IsLab }}
+          bg-white dark:bg-zinc-900 text-primary-700 dark:text-primary-300 shadow-sm
+        {{ else }}
+          text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100
+        {{ end }}">
+        Laboratorios
+      </a>
+    </div>
+
+    {{ if .Versions }}
+      <div class="space-y-3">
+        {{ range .Versions }}
+          <div
+            class="bg-white dark:bg-zinc-900 hover:bg-gray-50 dark:hover:bg-zinc-800/60 rounded-sm border border-gray-200 dark:border-zinc-800 border-l-2 border-l-gray-400 p-3.5 text-xs shadow-sm flex flex-col gap-2.5">
+            <div
+              class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 dark:border-zinc-800 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="font-mono text-gray-600 dark:text-zinc-400 text-[11px]">
+                  {{ .ParsedAt.Format "02/01/2006 - 15:04" }}
+                </span>
+              </div>
+
+              <div
+                class="flex items-center gap-3 text-[11px] font-mono text-gray-600 dark:text-zinc-400">
+                <span>Carreras: <strong class="text-gray-900 dark:text-zinc-100">{{ .ParsedSheets }}</strong></span>
+
+                {{ if .URL }}
+                  <a
+                    href="{{ .URL }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-primary-600 inline-flex items-center gap-1 font-sans font-medium">
+                    <span>Descargar</span>
+                    <svg
+                      class="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                {{ end }}
+              </div>
+            </div>
+
+            <div class="font-medium text-gray-900 dark:text-zinc-100 text-sm break-all">
+              {{ .Name }}
+            </div>
+          </div>
+        {{ end }}
+      </div>
+    {{ else }}
+      <div
+        class="bg-white dark:bg-zinc-900 p-8 rounded-sm border border-gray-200 dark:border-zinc-800 text-center text-xs text-gray-500 dark:text-zinc-400">
+        No hay ninguna planilla registrada aún.
+      </div>
+    {{ end }}
+  </div>
+{{ end }}

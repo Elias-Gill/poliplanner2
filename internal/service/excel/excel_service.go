@@ -72,14 +72,21 @@ func NewExcelService(
 	}
 }
 
-// ListVersions returns the successfully parsed versions of a source type.
-func (e ExcelService) ListVersions(ctx context.Context, kind excel.SourceType) ([]*excel.SheetVersion, error) {
-	return e.excelRepository.ListVersions(ctx, kind)
+// ListVersions returns the most recent successfully parsed versions of a source
+// type, latest first, up to limit rows.
+func (e ExcelService) ListVersions(ctx context.Context, kind excel.SourceType, limit int) ([]*excel.SheetVersion, error) {
+	return e.excelRepository.ListVersions(ctx, kind, limit)
 }
 
 // ListAudit returns the parse attempts of a source type, latest first.
 func (e ExcelService) ListAudit(ctx context.Context, kind excel.SourceType, limit int) ([]*excel.ParseAudit, error) {
 	return e.excelRepository.ListAudit(ctx, kind, limit)
+}
+
+// ListFailedAudit returns only the failed parse attempts of a source type,
+// latest first.
+func (e ExcelService) ListFailedAudit(ctx context.Context, kind excel.SourceType, limit int) ([]*excel.ParseAudit, error) {
+	return e.excelRepository.ListFailedAudit(ctx, kind, limit)
 }
 
 // IsSourceUpToDate reports whether a version of the same source (matched by name

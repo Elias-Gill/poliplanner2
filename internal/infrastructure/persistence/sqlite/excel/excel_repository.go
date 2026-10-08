@@ -55,8 +55,12 @@ func (r *SQLiteExcelRepository) SaveVersion(ctx context.Context, version *excel.
 	return excel.SheetVersionID(id), nil
 }
 
-func (r *SQLiteExcelRepository) ListVersions(ctx context.Context, kind excel.SourceType) ([]*excel.SheetVersion, error) {
+func (r *SQLiteExcelRepository) ListVersions(ctx context.Context, kind excel.SourceType, limit int) ([]*excel.SheetVersion, error) {
 	exec := txManager.GetExecutor(ctx, r.db)
+
+	if limit <= 0 {
+		limit = 100
+	}
 
 	rows, err := exec.QueryContext(ctx, `
 		SELECT
@@ -71,7 +75,8 @@ func (r *SQLiteExcelRepository) ListVersions(ctx context.Context, kind excel.Sou
 		FROM sheet_version
 		WHERE source_type = ?
 		ORDER BY source_date DESC, version_id DESC
-		`, string(kind))
+		LIMIT ?
+		`, string(kind), limit)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query sheet versions: %w", err)
 	}
@@ -187,13 +192,21 @@ func (r *SQLiteExcelRepository) SaveAudit(ctx context.Context, audit *excel.Pars
 }
 
 func (r *SQLiteExcelRepository) ListAudit(ctx context.Context, kind excel.SourceType, limit int) ([]*excel.ParseAudit, error) {
+	return r.listAudit(ctx, kind, limit, false)
+}
+
+func (r *SQLiteExcelRepository) ListFailedAudit(ctx context.Context, kind excel.SourceType, limit int) ([]*excel.ParseAudit, error) {
+	return r.listAudit(ctx, kind, limit, true)
+}
+
+func (r *SQLiteExcelRepository) listAudit(ctx context.Context, kind excel.SourceType, limit int, onlyFailed bool) ([]*excel.ParseAudit, error) {
 	exec := txManager.GetExecutor(ctx, r.db)
 
 	if limit <= 0 {
 		limit = 100
 	}
 
-	rows, err := exec.QueryContext(ctx, `
+	query := `
 		SELECT
 			audit_id,
 			version_id,
@@ -207,10 +220,15 @@ func (r *SQLiteExcelRepository) ListAudit(ctx context.Context, kind excel.Source
 			error_message,
 			parsed_sheets
 		FROM sheet_parse_audit
-		WHERE source_type = ?
-		ORDER BY audit_id DESC
-		LIMIT ?
-		`, string(kind), limit)
+		WHERE source_type = ?`
+
+	if onlyFailed {
+		query += ` AND success = 0`
+	}
+
+	query += ` ORDER BY audit_id DESC LIMIT ?`
+
+	rows, err := exec.QueryContext(ctx, query, string(kind), limit)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query parse audit: %w", err)
 	}

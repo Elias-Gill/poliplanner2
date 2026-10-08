@@ -1,0 +1,137 @@
+{{ define "custom_tags" }}
+  <title>Auditoría de Excel — PoliPlanner</title>
+  <meta
+    name="description"
+    content="Estado de parseo de planillas Excel: última versión correcta y últimos errores." />
+  <meta name="robots" content="noindex, nofollow" />
+{{ end }}
+
+{{ define "content" }}
+  <div
+    class="max-w-5xl mx-auto py-4 min-h-[calc(100vh-4rem)] flex flex-col gap-4">
+    <!-- Header -->
+    <div
+      class="flex items-center justify-between bg-white dark:bg-zinc-900 px-4 py-3 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
+      <div class="flex flex-col gap-0.5 min-w-0">
+        <h1 class="text-sm font-bold text-gray-900 dark:text-zinc-100">
+          Auditoría de Excel
+        </h1>
+        <p class="mt-1 text-xs text-gray-500 dark:text-zinc-400">
+          Última busqueda:
+          <span class="ml-1 font-mono font-semibold text-gray-700 dark:text-zinc-300">
+            {{ if .LastSync }}
+              {{ .LastSync.Format "02/01/2006 - 15:04" }}
+            {{ else }}
+              Nunca
+            {{ end }}
+          </span>
+        </p>
+      </div>
+      <a href="/excel/" class="text-xs text-primary-600 font-semibold shrink-0">
+        &larr; Sincronización
+      </a>
+    </div>
+
+    <!-- Type tabs -->
+    <div
+      class="flex gap-1 rounded-sm border border-gray-200 dark:border-zinc-800 bg-gray-100 dark:bg-zinc-800 p-1 w-fit">
+      <a
+        href="/excel/audit?type=schedule"
+        class="rounded-sm px-3 py-1.5 text-xs font-semibold transition {{ if not .IsLab }}
+          bg-white dark:bg-zinc-900 text-primary-700 dark:text-primary-300 shadow-sm
+        {{ else }}
+          text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100
+        {{ end }}">
+        Horarios
+      </a>
+      <a
+        href="/excel/audit?type=lab"
+        class="rounded-sm px-3 py-1.5 text-xs font-semibold transition {{ if .IsLab }}
+          bg-white dark:bg-zinc-900 text-primary-700 dark:text-primary-300 shadow-sm
+        {{ else }}
+          text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100
+        {{ end }}">
+        Laboratorios
+      </a>
+    </div>
+
+    <!-- Última versión correcta -->
+    <section class="flex flex-col gap-2">
+      <h2 class="text-xs font-bold uppercase tracking-wide text-gray-500 dark:text-zinc-400">
+        Última versión parseada
+      </h2>
+
+      {{ if .LastVersion }}
+        <div
+          class="bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 border-l-2 border-l-emerald-400 p-3.5 text-xs shadow-sm flex flex-col gap-2.5">
+          <div
+            class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 dark:border-zinc-800 pb-2">
+            <span class="font-mono text-gray-600 dark:text-zinc-400 text-[11px]">
+              {{ .LastVersion.ParsedAt.Format "02/01/2006 - 15:04" }}
+            </span>
+            <div class="flex items-center gap-3 text-[11px] font-mono text-gray-600 dark:text-zinc-400">
+              <span>periodID: <strong class="text-gray-900 dark:text-zinc-100">{{ .LastVersion.PeriodID }}</strong></span>
+              <span>Hojas: <strong class="text-gray-900 dark:text-zinc-100">{{ .LastVersion.ParsedSheets }}</strong></span>
+              {{ if .LastVersion.URL }}
+                <a
+                  href="{{ .LastVersion.URL }}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-primary-600 font-sans font-medium">Ver archivo</a>
+              {{ end }}
+            </div>
+          </div>
+          <div class="font-medium text-gray-900 dark:text-zinc-100 text-sm break-all">
+            {{ .LastVersion.Name }}
+          </div>
+        </div>
+      {{ else }}
+        <div
+          class="bg-white dark:bg-zinc-900 p-6 rounded-sm border border-gray-200 dark:border-zinc-800 text-center text-xs text-gray-500 dark:text-zinc-400">
+          Todavía no hay ninguna versión parseada correctamente.
+        </div>
+      {{ end }}
+    </section>
+
+    <!-- Últimos errores -->
+    <section class="flex flex-col gap-2">
+      <h2 class="text-xs font-bold uppercase tracking-wide text-gray-500 dark:text-zinc-400">
+        Últimos errores
+      </h2>
+
+      {{ if .Failures }}
+        <div class="space-y-3">
+          {{ range .Failures }}
+            <div
+              class="bg-white dark:bg-zinc-900 rounded-sm border border-red-200 dark:border-red-900/50 border-l-2 border-l-red-400 p-3.5 text-xs shadow-sm flex flex-col gap-2.5">
+              <div
+                class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 dark:border-zinc-800 pb-2">
+                <span class="font-mono text-gray-600 dark:text-zinc-400 text-[11px]">
+                  {{ .FinishedAt.Format "02/01/2006 - 15:04" }}
+                </span>
+                <span
+                  class="px-2 py-0.5 rounded-sm text-[10px] font-bold bg-red-100 text-red-800 border border-red-300">
+                  ERROR
+                </span>
+              </div>
+
+              <div class="font-medium text-gray-900 dark:text-zinc-100 text-sm break-all">
+                {{ .Name }}
+              </div>
+
+              <div
+                class="p-2.5 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-sm text-red-800 dark:text-red-300 font-mono text-[11px] leading-relaxed break-all">
+                {{ .Error }}
+              </div>
+            </div>
+          {{ end }}
+        </div>
+      {{ else }}
+        <div
+          class="bg-white dark:bg-zinc-900 p-6 rounded-sm border border-gray-200 dark:border-zinc-800 text-center text-xs text-gray-500 dark:text-zinc-400">
+          Sin errores registrados.
+        </div>
+      {{ end }}
+    </section>
+  </div>
+{{ end }}

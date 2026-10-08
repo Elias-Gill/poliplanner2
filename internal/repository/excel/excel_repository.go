@@ -11,8 +11,9 @@ type ExcelRepository interface {
 	// SaveVersion persists a successfully parsed source version and returns its id.
 	SaveVersion(ctx context.Context, version *excel.SheetVersion) (excel.SheetVersionID, error)
 
-	// ListVersions lists the successful versions of a source type, latest first.
-	ListVersions(ctx context.Context, kind excel.SourceType) ([]*excel.SheetVersion, error)
+	// ListVersions lists the most recent successful versions of a source type,
+	// latest first, up to limit rows (a non-positive limit falls back to a default).
+	ListVersions(ctx context.Context, kind excel.SourceType, limit int) ([]*excel.SheetVersion, error)
 
 	// IsSourceUpToDate reports whether a successful version of the same source
 	// (matched by name or url) with a source date at least as new already exists.
@@ -23,4 +24,8 @@ type ExcelRepository interface {
 
 	// ListAudit lists the parse attempts of a source type, latest first.
 	ListAudit(ctx context.Context, kind excel.SourceType, limit int) ([]*excel.ParseAudit, error)
+
+	// ListFailedAudit lists only the failed parse attempts of a source type,
+	// latest first, up to limit rows.
+	ListFailedAudit(ctx context.Context, kind excel.SourceType, limit int) ([]*excel.ParseAudit, error)
 }

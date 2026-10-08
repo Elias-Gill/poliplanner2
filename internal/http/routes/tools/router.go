@@ -1,18 +1,23 @@
 package tools
 
 import (
-	render "github.com/elias-gill/poliplanner2/internal/render/html"
-	"github.com/go-chi/chi/v5"
-
 	"context"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	academicModel "github.com/elias-gill/poliplanner2/internal/model/academic"
+	excelModel "github.com/elias-gill/poliplanner2/internal/model/excel"
+	render "github.com/elias-gill/poliplanner2/internal/render/html"
 	academicSrv "github.com/elias-gill/poliplanner2/internal/service/academic"
+	excelSrv "github.com/elias-gill/poliplanner2/internal/service/excel"
 	"github.com/elias-gill/poliplanner2/logger"
+	"github.com/go-chi/chi/v5"
 )
+
+// excelVersionsLimit caps how many versions are listed per source type.
+const excelVersionsLimit = 8
 
 type Handler struct {
 	tmpl              *render.TemplateManager
@@ -20,6 +25,8 @@ type Handler struct {
 	curriculumService *academicSrv.CurriculumService
 	courseService     *academicSrv.CourseService
 	teacherService    *academicSrv.TeacherService
+	excelService      *excelSrv.ExcelService
+	syncService       *excelSrv.SyncService
 }
 
 func NewHandler(
@@ -28,6 +35,8 @@ func NewHandler(
 	currSrv *academicSrv.CurriculumService,
 	courseSrv *academicSrv.CourseService,
 	teacherSrv *academicSrv.TeacherService,
+	excelService *excelSrv.ExcelService,
+	syncService *excelSrv.SyncService,
 ) *Handler {
 	return &Handler{
 		tmpl:              tmpl,
@@ -35,6 +44,8 @@ func NewHandler(
 		curriculumService: currSrv,
 		courseService:     courseSrv,
 		teacherService:    teacherSrv,
+		excelService:      excelService,
+		syncService:       syncService,
 	}
 }
 
@@ -51,6 +62,8 @@ func (h *Handler) Routes() chi.Router {
 
 	r.Get("/teacher-history", h.teacherHistory)
 	r.Get("/teacher-history/timeline", h.getTeacherTimeline)
+
+	r.Get("/excel-list", h.excelList)
 
 	return r
 }
@@ -78,6 +91,42 @@ func (h *Handler) interactiveGraph(w http.ResponseWriter, r *http.Request) {
 	if err := h.tmpl.RenderPage(w, "tools/interactive_graph.html", nil); err != nil {
 		logger.Error("Cannot render interactive_graph template", "error", err)
 	}
+}
+
+func (h *Handler) excelList(w http.ResponseWriter, r *http.Request) {
+	kind := parseExcelSourceType(r.URL.Query().Get("type"))
+
+	versions, err := h.excelService.ListVersions(r.Context(), kind, excelVersionsLimit)
+	if err != nil {
+		logger.Error("Error listing excel versions", "error", err)
+		http.Error(w, "No se pudieron obtener las versiones de Excel", http.StatusInternalServerError)
+		return
+	}
+
+	state, err := h.syncService.GetSyncState(r.Context(), kind)
+	if err != nil {
+		logger.Error("Error getting excel sync state", "error", err)
+		http.Error(w, "No se pudo obtener el ultimo auto sync de versiones excel", http.StatusInternalServerError)
+		return
+	}
+
+	data := map[string]any{
+		"Versions": versions,
+		"LastSync": state.LastSearchAt,
+		"IsLab":    kind == excelModel.SourceTypeLab,
+	}
+
+	w.Header().Set("Content-Type", "text/html")
+	if err := h.tmpl.RenderPage(w, "tools/excel_list.html", data); err != nil {
+		logger.Error("Cannot render excel_list template", "error", err)
+	}
+}
+
+func parseExcelSourceType(raw string) excelModel.SourceType {
+	if strings.TrimSpace(strings.ToLower(raw)) == string(excelModel.SourceTypeLab) {
+		return excelModel.SourceTypeLab
+	}
+	return excelModel.SourceTypeSchedule
 }
 
 func (h *Handler) courseOfferingHistory(w http.ResponseWriter, r *http.Request) {

@@ -26,6 +26,9 @@ import (
 
 const maxUploadSize = 8 << 20 // 8 MiB
 
+// excelAuditErrorLimit caps how many failed attempts the audit view shows.
+const excelAuditErrorLimit = 5
+
 type Handler struct {
 	tmpl           *render.TemplateManager
 	excelService   *excel.ExcelService
@@ -55,7 +58,7 @@ func (h *Handler) Routes() chi.Router {
 
 	r.Get("/", h.syncForm)
 	r.Post("/sync", h.sync)
-	r.Get("/list", h.listVersions) // <-- Nuevo endpoint para listar las versiones
+	r.Get("/audit", h.audit)
 
 	return r
 }
@@ -85,13 +88,25 @@ func (h *Handler) sync(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) listVersions(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) audit(w http.ResponseWriter, r *http.Request) {
 	kind := parseSourceType(r.URL.Query().Get("type"))
 
-	versions, err := h.excelService.ListVersions(r.Context(), kind)
+	versions, err := h.excelService.ListVersions(r.Context(), kind, 1)
 	if err != nil {
-		logger.Error("Error listing excel versions", "error", err)
-		http.Error(w, "No se pudieron obtener las versiones de Excel", http.StatusInternalServerError)
+		logger.Error("Error listing last excel version", "error", err)
+		http.Error(w, "No se pudo obtener la ultima version de Excel", http.StatusInternalServerError)
+		return
+	}
+
+	var lastVersion *excelModel.SheetVersion
+	if len(versions) > 0 {
+		lastVersion = versions[0]
+	}
+
+	failures, err := h.excelService.ListFailedAudit(r.Context(), kind, excelAuditErrorLimit)
+	if err != nil {
+		logger.Error("Error listing failed excel audits", "error", err)
+		http.Error(w, "No se pudieron obtener los errores de parseo", http.StatusInternalServerError)
 		return
 	}
 
@@ -103,15 +118,15 @@ func (h *Handler) listVersions(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := map[string]any{
-		"Versions": versions,
-		"LastSync": state.LastSearchAt,
-		"Type":     kind,
-		"IsLab":    kind == excelModel.SourceTypeLab,
+		"LastVersion": lastVersion,
+		"Failures":    failures,
+		"LastSync":    state.LastSearchAt,
+		"IsLab":       kind == excelModel.SourceTypeLab,
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if err := h.tmpl.RenderPage(w, "excel/list-versions.html", data); err != nil {
-		logger.Error("Cannot render list-versions template", "error", err)
+	if err := h.tmpl.RenderPage(w, "excel/audit.html", data); err != nil {
+		logger.Error("Cannot render excel audit template", "error", err)
 	}
 }
 
