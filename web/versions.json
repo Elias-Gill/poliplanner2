@@ -1,6 +1,17 @@
 {
-    "latest": "2.1.0",
+    "latest": "2.1.1",
     "entries": [
+        {
+            "version": "2.1.1",
+            "date": "2026-10-08",
+            "important": false,
+            "title": "Nueva herramienta disponible",
+            "changes": [
+                "Nueva herramienta para consultar las planillas descargadas por PoliPlanner.",
+                "PoliPlanner utiliza como fuente de datos a las planillas Excel oficiales publicadas por la FPUNA.",
+                "Buscamos brindar mayor transparencia sobre la información utilizada, para que los usuarios puedan conocer y verificar el origen de nuestros datos."
+            ]
+        },
         {
             "version": "2.1.0",
             "date": "2026-09-24",
