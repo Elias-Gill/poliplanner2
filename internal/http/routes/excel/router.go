@@ -91,16 +91,11 @@ func (h *Handler) sync(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) audit(w http.ResponseWriter, r *http.Request) {
 	kind := parseSourceType(r.URL.Query().Get("type"))
 
-	versions, err := h.excelService.ListVersions(r.Context(), kind, 1)
+	lastVersion, err := h.excelService.LatestVersion(r.Context(), kind)
 	if err != nil {
 		logger.Error("Error listing last excel version", "error", err)
 		http.Error(w, "No se pudo obtener la ultima version de Excel", http.StatusInternalServerError)
 		return
-	}
-
-	var lastVersion *excelModel.SheetVersion
-	if len(versions) > 0 {
-		lastVersion = versions[0]
 	}
 
 	failures, err := h.excelService.ListFailedAudit(r.Context(), kind, excelAuditErrorLimit)

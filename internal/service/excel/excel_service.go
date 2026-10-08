@@ -78,6 +78,21 @@ func (e ExcelService) ListVersions(ctx context.Context, kind excel.SourceType, l
 	return e.excelRepository.ListVersions(ctx, kind, limit)
 }
 
+// LatestVersion returns the most recent successfully parsed version of a source
+// type, or nil when there is none.
+func (e ExcelService) LatestVersion(ctx context.Context, kind excel.SourceType) (*excel.SheetVersion, error) {
+	versions, err := e.excelRepository.ListVersions(ctx, kind, 1)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(versions) == 0 {
+		return nil, nil
+	}
+
+	return versions[0], nil
+}
+
 // ListAudit returns the parse attempts of a source type, latest first.
 func (e ExcelService) ListAudit(ctx context.Context, kind excel.SourceType, limit int) ([]*excel.ParseAudit, error) {
 	return e.excelRepository.ListAudit(ctx, kind, limit)
