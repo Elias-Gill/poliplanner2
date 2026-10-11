@@ -18,7 +18,8 @@
         </h1>
         <p class="text-xs mt-1 text-gray-500 dark:text-zinc-400">
           Última busqueda:
-          <span class="ml-1 font-mono font-semibold text-gray-700 dark:text-zinc-300">
+          <span
+            class="ml-1 font-mono font-semibold text-gray-700 dark:text-zinc-300">
             {{ if .LastSync }}
               {{ .LastSync.Format "02/01/2006 - 15:04" }}
             {{ else }}
@@ -27,9 +28,7 @@
           </span>
         </p>
       </div>
-      <a
-        href="/tools/"
-        class="text-xs text-primary-600 font-semibold shrink-0">
+      <a href="/tools/" class="text-xs text-primary-600 font-semibold shrink-0">
         &larr; Herramientas
       </a>
     </div>
@@ -40,18 +39,22 @@
       <a
         href="/tools/excel-list?type=schedule"
         class="rounded-sm px-3 py-1.5 text-xs font-semibold transition {{ if not .IsLab }}
-          bg-white dark:bg-zinc-900 text-primary-700 dark:text-primary-300 shadow-sm
+          bg-white dark:bg-zinc-900 text-primary-700 dark:text-primary-300
+          shadow-sm
         {{ else }}
-          text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100
+          text-gray-600 dark:text-zinc-400 hover:text-gray-900
+          dark:hover:text-zinc-100
         {{ end }}">
         Horarios
       </a>
       <a
         href="/tools/excel-list?type=lab"
         class="rounded-sm px-3 py-1.5 text-xs font-semibold transition {{ if .IsLab }}
-          bg-white dark:bg-zinc-900 text-primary-700 dark:text-primary-300 shadow-sm
+          bg-white dark:bg-zinc-900 text-primary-700 dark:text-primary-300
+          shadow-sm
         {{ else }}
-          text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100
+          text-gray-600 dark:text-zinc-400 hover:text-gray-900
+          dark:hover:text-zinc-100
         {{ end }}">
         Laboratorios
       </a>
@@ -65,14 +68,20 @@
             <div
               class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 dark:border-zinc-800 pb-2">
               <div class="flex items-center gap-2">
-                <span class="font-mono text-gray-600 dark:text-zinc-400 text-[11px]">
+                <span
+                  class="font-mono text-gray-600 dark:text-zinc-400 text-[11px]">
                   {{ .ParsedAt.Format "02/01/2006 - 15:04" }}
                 </span>
               </div>
 
               <div
                 class="flex items-center gap-3 text-[11px] font-mono text-gray-600 dark:text-zinc-400">
-                <span>Carreras: <strong class="text-gray-900 dark:text-zinc-100">{{ .ParsedSheets }}</strong></span>
+                <span
+                  >Carreras:
+                  <strong class="text-gray-900 dark:text-zinc-100"
+                    >{{ .ParsedSheets }}</strong
+                  ></span
+                >
 
                 {{ if .URL }}
                   <a
@@ -97,7 +106,8 @@
               </div>
             </div>
 
-            <div class="font-medium text-gray-900 dark:text-zinc-100 text-sm break-all">
+            <div
+              class="font-medium text-gray-900 dark:text-zinc-100 text-sm break-all">
               {{ .Name }}
             </div>
           </div>

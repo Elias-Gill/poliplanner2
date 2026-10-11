@@ -193,50 +193,50 @@
         class="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-black/60">
         <div class="absolute inset-0" @click="showCalendarModal = false"></div>
 
-      <div
-        class="relative w-full max-w-4xl bg-white dark:bg-zinc-900 rounded-xs shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden z-10 flex flex-col max-h-[90vh]">
         <div
-          class="px-4 py-3 bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <svg
-              class="w-4 h-4 text-primary-600 dark:text-primary-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 012-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <h3 class="text-xs font-bold text-gray-900 dark:text-zinc-100">
-              Calendario de Exámenes
-            </h3>
+          class="relative w-full max-w-4xl bg-white dark:bg-zinc-900 rounded-xs shadow-2xl border border-gray-200 dark:border-zinc-800 overflow-hidden z-10 flex flex-col max-h-[90vh]">
+          <div
+            class="px-4 py-3 bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-800 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <svg
+                class="w-4 h-4 text-primary-600 dark:text-primary-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 012-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <h3 class="text-xs font-bold text-gray-900 dark:text-zinc-100">
+                Calendario de Exámenes
+              </h3>
+            </div>
+
+            <button
+              @click="showCalendarModal = false"
+              class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 transition cursor-pointer">
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
 
-          <button
-            @click="showCalendarModal = false"
-            class="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 transition cursor-pointer">
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <div
-          class="p-3 md:p-4 overflow-y-auto flex-1 bg-gray-50/50 dark:bg-zinc-950">
-          <div x-ref="calendarContainer" class="min-h-[400px] text-xs"></div>
+          <div
+            class="p-3 md:p-4 overflow-y-auto flex-1 bg-gray-50/50 dark:bg-zinc-950">
+            <div x-ref="calendarContainer" class="min-h-[400px] text-xs"></div>
+          </div>
         </div>
       </div>
-    </div>
     </template>
   </div>
 {{ end }}
