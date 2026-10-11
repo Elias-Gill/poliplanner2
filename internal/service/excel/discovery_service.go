@@ -170,8 +170,8 @@ type latestDayTracker struct {
 
 func (t *latestDayTracker) Add(currentDate time.Time) (newer, same bool) {
 	// Strip the time component to compare calendar days only.
-	currentDay := time.Date(currentDate.Year(), currentDate.Month(), currentDate.Day(), 0, 0, 0, 0, currentDate.Location())
-	newestDay := time.Date(t.newestDate.Year(), t.newestDate.Month(), t.newestDate.Day(), 0, 0, 0, 0, t.newestDate.Location())
+	currentDay := time.Date(currentDate.Year(), currentDate.Month(), currentDate.Day(), 0, 0, 0, 0, timezone.ParaguayTZ)
+	newestDay := time.Date(t.newestDate.Year(), t.newestDate.Month(), t.newestDate.Day(), 0, 0, 0, 0, timezone.ParaguayTZ)
 
 	if !t.seen || currentDay.After(newestDay) {
 		t.seen = true

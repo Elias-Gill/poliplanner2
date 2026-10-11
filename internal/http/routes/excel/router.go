@@ -26,6 +26,9 @@ import (
 
 const maxUploadSize = 8 << 20 // 8 MiB
 
+// excelAuditVersionLimit caps how many successful parses the audit view shows.
+const excelAuditVersionLimit = 5
+
 // excelAuditErrorLimit caps how many failed attempts the audit view shows.
 const excelAuditErrorLimit = 5
 
@@ -91,10 +94,10 @@ func (h *Handler) sync(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) audit(w http.ResponseWriter, r *http.Request) {
 	kind := parseSourceType(r.URL.Query().Get("type"))
 
-	lastVersion, err := h.excelService.LatestVersion(r.Context(), kind)
+	versions, err := h.excelService.ListVersions(r.Context(), kind, excelAuditVersionLimit)
 	if err != nil {
 		logger.Error("Error listing last excel version", "error", err)
-		http.Error(w, "No se pudo obtener la ultima version de Excel", http.StatusInternalServerError)
+		http.Error(w, "No se pudo obtener las ultimas versiones de Excel", http.StatusInternalServerError)
 		return
 	}
 
@@ -113,10 +116,10 @@ func (h *Handler) audit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := map[string]any{
-		"LastVersion": lastVersion,
-		"Failures":    failures,
-		"LastSync":    state.LastSearchAt,
-		"IsLab":       kind == excelModel.SourceTypeLab,
+		"Versions": versions,
+		"Failures": failures,
+		"LastSync": state.LastSearchAt,
+		"IsLab":    kind == excelModel.SourceTypeLab,
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")

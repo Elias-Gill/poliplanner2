@@ -55,35 +55,39 @@
       </a>
     </div>
 
-    <!-- Última versión correcta -->
+    <!-- Últimas versiones correctas -->
     <section class="flex flex-col gap-2">
       <h2 class="text-xs font-bold uppercase tracking-wide text-gray-500 dark:text-zinc-400">
-        Última versión parseada
+        Últimas versiones parseadas
       </h2>
 
-      {{ if .LastVersion }}
-        <div
-          class="bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 border-l-2 border-l-emerald-400 p-3.5 text-xs shadow-sm flex flex-col gap-2.5">
-          <div
-            class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 dark:border-zinc-800 pb-2">
-            <span class="font-mono text-gray-600 dark:text-zinc-400 text-[11px]">
-              {{ .LastVersion.ParsedAt.Format "02/01/2006 - 15:04" }}
-            </span>
-            <div class="flex items-center gap-3 text-[11px] font-mono text-gray-600 dark:text-zinc-400">
-              <span>periodID: <strong class="text-gray-900 dark:text-zinc-100">{{ .LastVersion.PeriodID }}</strong></span>
-              <span>Hojas: <strong class="text-gray-900 dark:text-zinc-100">{{ .LastVersion.ParsedSheets }}</strong></span>
-              {{ if .LastVersion.URL }}
-                <a
-                  href="{{ .LastVersion.URL }}"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-primary-600 font-sans font-medium">Ver archivo</a>
-              {{ end }}
+      {{ if .Versions }}
+        <div class="space-y-3">
+          {{ range .Versions }}
+            <div
+              class="bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 border-l-2 border-l-emerald-400 p-3.5 text-xs shadow-sm flex flex-col gap-2.5">
+              <div
+                class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 dark:border-zinc-800 pb-2">
+                <span class="font-mono text-gray-600 dark:text-zinc-400 text-[11px]">
+                  {{ .ParsedAt.Format "02/01/2006 - 15:04" }}
+                </span>
+                <div class="flex items-center gap-3 text-[11px] font-mono text-gray-600 dark:text-zinc-400">
+                  <span>periodID: <strong class="text-gray-900 dark:text-zinc-100">{{ .PeriodID }}</strong></span>
+                  <span>Hojas: <strong class="text-gray-900 dark:text-zinc-100">{{ .ParsedSheets }}</strong></span>
+                  {{ if .URL }}
+                    <a
+                      href="{{ .URL }}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-primary-600 font-sans font-medium">Ver archivo</a>
+                  {{ end }}
+                </div>
+              </div>
+              <div class="font-medium text-gray-900 dark:text-zinc-100 text-sm break-all">
+                {{ .Name }}
+              </div>
             </div>
-          </div>
-          <div class="font-medium text-gray-900 dark:text-zinc-100 text-sm break-all">
-            {{ .LastVersion.Name }}
-          </div>
+          {{ end }}
         </div>
       {{ else }}
         <div
