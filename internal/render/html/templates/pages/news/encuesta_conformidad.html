@@ -1,0 +1,71 @@
+{{ define "custom_head" }}
+  <link rel="stylesheet" href="/static/css/guides_styles.css?4" />
+{{ end }}
+
+{{ define "custom_tags" }}
+  <title>Encuesta de conformidad — PoliPlanner</title>
+  <meta
+    name="description"
+    content="Participá en la encuesta de conformidad de PoliPlanner. Contanos cómo usás la plataforma y ayudanos a priorizar las próximas mejoras." />
+
+  <link
+    rel="canonical"
+    href="https://poliplanner.fly.dev/news/encuesta_conformidad" />
+
+  <meta property="og:title" content="Encuesta de conformidad — PoliPlanner" />
+  <meta
+    property="og:description"
+    content="Contanos cómo usás PoliPlanner y qué podemos mejorar." />
+  <meta
+    property="og:url"
+    content="https://poliplanner.fly.dev/news/encuesta_conformidad" />
+  <meta property="og:type" content="article" />
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "headline": "Encuesta de conformidad de PoliPlanner",
+      "description": "Encuesta para conocer cómo los estudiantes usan PoliPlanner y priorizar futuras mejoras.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "PoliPlanner"
+      }
+    }
+  </script>
+{{ end }}
+
+{{ define "content" }}
+  <div class="guide_article">
+    <h1>Encuesta de conformidad</h1>
+
+    <p>
+      Queremos conocer cómo utilizas PoliPlanner, qué herramientas te
+      resultan más útiles y cómo podemos seguir mejorando. Tu respuesta nos ayuda
+      a darte una mejor experiencia de usuario.
+    </p>
+
+    <a
+      href="https://docs.google.com/forms/d/e/1FAIpQLSf9FjtWWe9P1wdNVOvPbCvMUZpyJbU_-xW76Um8NULV4iV1mw/viewform"
+      target="_blank"
+      rel="noopener noreferrer">
+      <img
+        src="/static/images/screenshot_form_conformidad.png"
+        alt="Encuesta de conformidad de PoliPlanner" />
+    </a>
+
+    <div class="text-center mt-6">
+      <a
+        href="https://docs.google.com/forms/d/e/1FAIpQLSf9FjtWWe9P1wdNVOvPbCvMUZpyJbU_-xW76Um8NULV4iV1mw/viewform"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-2 bg-white dark:bg-zinc-900 border border-primary-500 px-5 py-2 rounded-sm font-semibold shadow-sm transition-colors hover:bg-primary-50 dark:hover:bg-zinc-700">
+        Responder la encuesta
+      </a>
+    </div>
+
+    <div class="mt-8">
+      <a href="/">← Volver a la web</a>
+    </div>
+  </div>
+{{ end }}

@@ -1,6 +1,6 @@
 {
-  "latest": "1",
-  "url": "/news/limpieza_secciones_fantasma",
-  "valid_from": "2026-09-07T00:00:00Z",
-  "valid_until": "2026-09-15T23:59:59Z"
+  "latest": "encuesta-conformidad-2026-11",
+  "url": "/news/encuesta_conformidad",
+  "valid_from": "2026-10-29T00:00:00-03:00",
+  "valid_until": "2026-11-06T23:59:59-03:00"
 }
