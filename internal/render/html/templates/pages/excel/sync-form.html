@@ -18,13 +18,17 @@
   <meta property="og:type" content="website" />
 {{ end }}
 
+{{ define "custom_head" }}
+  <script src="/static/js/excel_sync.js?1"></script>
+{{ end }}
+
 {{ define "content" }}
   <div
     x-data="excelPanel()"
     class="mx-auto flex w-full max-w-4xl flex-col gap-5 py-2">
     <!-- Header -->
     <header
-      class="flex flex-wrap items-center justify-between gap-3 rounded-sm border border-gray-200 bg-white px-5 py-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      class="card flex flex-wrap items-center justify-between gap-3 px-5 py-4 shadow-sm">
       <div class="min-w-0">
         <h1 class="text-lg font-bold text-gray-900 dark:text-zinc-100">
           Panel de Excel
@@ -44,7 +48,7 @@
 
     <!-- Credentials -->
     <section
-      class="rounded-sm border border-gray-200 bg-white px-5 py-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      class="card px-5 py-4 shadow-sm">
       <label
         for="authKey"
         class="block text-sm font-medium text-gray-700 dark:text-zinc-300">
@@ -71,7 +75,7 @@
 
     <!-- Automatic sync -->
     <section
-      class="rounded-sm border border-gray-200 bg-white px-5 py-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      class="card px-5 py-5 shadow-sm">
       <div class="flex items-start justify-between gap-3">
         <div>
           <h2 class="text-base font-semibold text-gray-900 dark:text-zinc-100">
@@ -124,7 +128,7 @@
 
     <!-- Manual upload -->
     <section
-      class="rounded-sm border border-gray-200 bg-white px-5 py-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+      class="card px-5 py-5 shadow-sm">
       <div>
         <h2 class="text-base font-semibold text-gray-900 dark:text-zinc-100">
           Subida manual
@@ -139,7 +143,7 @@
         <!-- Source type -->
         <div>
           <span
-            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-zinc-300">
+            class="field-label mb-1.5">
             Tipo de fuente
           </span>
           <div
@@ -167,7 +171,7 @@
           <div>
             <label
               for="periodSelect"
-              class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-zinc-300">
+              class="field-label mb-1.5">
               Período académico
             </label>
             <select
@@ -183,7 +187,7 @@
           <div>
             <label
               for="dateInput"
-              class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-zinc-300">
+              class="field-label mb-1.5">
               Fecha de la fuente
             </label>
             <input
@@ -199,7 +203,7 @@
         <div>
           <label
             for="downloadUrl"
-            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-zinc-300">
+            class="field-label mb-1.5">
             Link de descarga directa
             <span class="text-red-600">*</span>
           </label>
@@ -219,7 +223,7 @@
         <div>
           <label
             for="nameInput"
-            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-zinc-300">
+            class="field-label mb-1.5">
             Nombre de la fuente
             <span class="font-normal text-gray-400">(opcional)</span>
           </label>
@@ -234,7 +238,7 @@
         <!-- Optional file -->
         <div>
           <span
-            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-zinc-300">
+            class="field-label mb-1.5">
             Archivo Excel
             <span class="font-normal text-gray-400">(opcional)</span>
           </span>
@@ -315,143 +319,4 @@
       </form>
     </section>
   </div>
-
-  <script>
-    function excelPanel() {
-      return {
-        key: "",
-        showKey: false,
-
-        types: [
-          { value: "schedule", label: "Horario" },
-          { value: "lab", label: "Laboratorio" },
-        ],
-        type: "schedule",
-        period: "1",
-        date: new Date().toISOString().slice(0, 10),
-        url: "",
-        name: "",
-        fileName: "",
-        file: null,
-
-        syncing: false,
-        syncMessage: "",
-        syncError: false,
-
-        uploading: false,
-        uploadMessage: "",
-        uploadError: false,
-
-        setFile(event) {
-          const selected = event.target.files[0];
-          if (!selected) {
-            this.clearFile();
-            return;
-          }
-          this.file = selected;
-          this.fileName = selected.name;
-        },
-
-        clearFile() {
-          this.file = null;
-          this.fileName = "";
-          const input = document.getElementById("fileInput");
-          if (input) input.value = "";
-        },
-
-        validate() {
-          if (!this.key.trim()) {
-            this.uploadError = true;
-            this.uploadMessage = "Ingresa la clave de autorización.";
-            return false;
-          }
-          if (!this.period) {
-            this.uploadError = true;
-            this.uploadMessage = "Selecciona un período válido.";
-            return false;
-          }
-          if (!this.date) {
-            this.uploadError = true;
-            this.uploadMessage = "Selecciona una fecha válida.";
-            return false;
-          }
-          if (!this.url.trim()) {
-            this.uploadError = true;
-            this.uploadMessage = "El link de descarga es obligatorio.";
-            return false;
-          }
-          return true;
-        },
-
-        async runSync() {
-          if (!this.key.trim()) {
-            this.syncError = true;
-            this.syncMessage = "Ingresa la clave de autorización.";
-            return;
-          }
-
-          this.syncing = true;
-          this.syncError = false;
-          this.syncMessage = "Procesando…";
-
-          try {
-            const res = await fetch("/excel/sync", {
-              method: "POST",
-              headers: { Authorization: `Bearer ${this.key}` },
-            });
-
-            if (res.ok) {
-              this.syncMessage = "Sincronización completada con éxito.";
-            } else {
-              this.syncError = true;
-              this.syncMessage = `Error: ${(await res.text()) || "Solicitud fallida"}`;
-            }
-          } catch (err) {
-            this.syncError = true;
-            this.syncMessage = `Error de conexión: ${err.message}`;
-          } finally {
-            this.syncing = false;
-          }
-        },
-
-        async runUpload() {
-          if (!this.validate()) return;
-
-          this.uploading = true;
-          this.uploadError = false;
-          this.uploadMessage = "Procesando archivo…";
-
-          const formData = new FormData();
-          formData.append("type", this.type);
-          formData.append("period", this.period);
-          formData.append("date", this.date);
-          formData.append("downloadUrl", this.url.trim());
-          if (this.name.trim()) formData.append("name", this.name.trim());
-          if (this.file) formData.append("file", this.file);
-
-          try {
-            const res = await fetch("/excel/sync", {
-              method: "POST",
-              headers: { Authorization: `Bearer ${this.key}` },
-              body: formData,
-            });
-
-            if (res.ok) {
-              this.uploadMessage = "Fuente procesada correctamente.";
-              this.clearFile();
-              this.name = "";
-            } else {
-              this.uploadError = true;
-              this.uploadMessage = `Error: ${(await res.text()) || "Fallo en la subida"}`;
-            }
-          } catch (err) {
-            this.uploadError = true;
-            this.uploadMessage = `Error de conexión: ${err.message}`;
-          } finally {
-            this.uploading = false;
-          }
-        },
-      };
-    }
-  </script>
 {{ end }}

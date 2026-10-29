@@ -18,93 +18,7 @@
   <script src="/static/js/calendar.js?3"></script>
   <script src="/static/vendor/htmx/htmx.min.js" defer></script>
 
-  <style>
-    /* Mobile: las vistas se alternan con los tabs. La clase la aplica Alpine;
-       en desktop la media query la neutraliza. */
-    .dash-view-collapsed {
-      display: none;
-    }
-    @media (min-width: 768px) {
-      .dash-view-collapsed {
-        display: block;
-      }
-    }
-
-    /* Selector de vistas (solo móvil): tabs con subrayado, sin contenedor.
-       Va en media query para no pisar el md:hidden de Tailwind. */
-    @media (max-width: 767px) {
-      .dash-tabs {
-        display: flex;
-        align-items: stretch;
-        border-bottom: 1px solid var(--color-gray-200);
-      }
-      .dark .dash-tabs {
-        border-bottom-color: var(--color-zinc-800);
-      }
-      .dash-tab {
-        flex: 1 1 0%;
-        padding: 0.5rem 0.25rem;
-        font-size: 11px;
-        font-weight: 600;
-        line-height: 1rem;
-        color: var(--color-gray-500);
-        background: none;
-        border: 0;
-        border-bottom: 2px solid transparent;
-        margin-bottom: -1px;
-        cursor: pointer;
-        transition:
-          color 0.15s ease,
-          border-color 0.15s ease;
-      }
-      .dash-tab:hover {
-        color: var(--color-gray-700);
-      }
-      .dash-tab-active,
-      .dash-tab-active:hover {
-        color: var(--color-primary-700);
-        border-bottom-color: var(--color-primary-600);
-      }
-      .dark .dash-tab {
-        color: var(--color-zinc-400);
-      }
-      .dark .dash-tab:hover {
-        color: var(--color-zinc-200);
-      }
-      .dark .dash-tab-active,
-      .dark .dash-tab-active:hover {
-        color: var(--color-primary-300);
-        border-bottom-color: var(--color-primary-400);
-      }
-    }
-
-    /* Semana: scroll horizontal sin barra y sin rebote lateral */
-    .dash-week-scroll {
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      overscroll-behavior-x: contain;
-    }
-    .dash-week-scroll::-webkit-scrollbar {
-      display: none;
-    }
-
-    /* Botón de horarios: en móvil limita el ancho para no aplastar el título */
-    .dash-header-btn {
-      max-width: 55%;
-    }
-    @media (min-width: 640px) {
-      .dash-header-btn {
-        max-width: none;
-      }
-    }
-
-    /* Feedback al cambiar de horario */
-    #dashboard-content.htmx-request {
-      opacity: 0.55;
-      pointer-events: none;
-      transition: opacity 0.15s ease;
-    }
-  </style>
+  <link rel="stylesheet" href="/static/css/dashboard.css?1" />
 {{ end }}
 
 {{ define "content" }}
@@ -113,7 +27,7 @@
     class="max-w-7xl mx-auto py-2 min-h-full flex flex-col gap-4 relative">
     <!-- Header principal elevado con paleta Zinc -->
     <div
-      class="bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 p-4 space-y-3 shadow-2xs">
+      class="card p-4 space-y-3 shadow-2xs">
       <!-- Fila principal: Título y descripción -->
       <div class="flex items-center justify-between gap-3">
         <div class="min-w-0">
@@ -320,7 +234,7 @@
               <div
                 x-show="menuOpen"
                 x-cloak
-                class="absolute right-0 mt-1 w-36 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-sm shadow-xl py-1 z-50">
+                class="card absolute right-0 mt-1 w-36 shadow-xl py-1 z-50">
                 <a
                   href="/schedule/export/pdf?id={{ .ID }}"
                   target="_blank"

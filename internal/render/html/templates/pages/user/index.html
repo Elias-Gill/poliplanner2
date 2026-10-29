@@ -1,5 +1,6 @@
 {{ define "content" }}
-  <div class="form-container">
+  <div
+    class="flex min-h-full flex-col items-center justify-center gap-8">
     <!-- Icono de usuario -->
     <div>
       <svg
@@ -19,15 +20,5 @@
     <form method="POST" action="/user/logout">
       <button type="submit">Cerrar Sesión</button>
     </form>
-    <style>
-      .form-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 80dvh;
-        gap: 2rem;
-      }
-    </style>
   </div>
 {{ end }}

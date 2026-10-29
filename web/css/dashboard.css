@@ -1,0 +1,93 @@
+/* Dashboard page styles */
+
+/* Mobile: views alternate through the tabs. Alpine applies the class;
+   on desktop the media query neutralizes it. */
+.dash-view-collapsed {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .dash-view-collapsed {
+        display: block;
+    }
+}
+
+/* View selector (mobile only): underlined tabs, no container.
+   Kept inside a media query so it does not fight Tailwind's md:hidden. */
+@media (max-width: 767px) {
+    .dash-tabs {
+        display: flex;
+        align-items: stretch;
+        border-bottom: 1px solid var(--app-line);
+    }
+
+    .dash-tab {
+        flex: 1 1 0%;
+        padding: 0.5rem 0.25rem;
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1rem;
+        color: var(--app-text-muted);
+        background: none;
+        border: 0;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+        cursor: pointer;
+        transition:
+            color 0.15s ease,
+            border-color 0.15s ease;
+    }
+
+    .dash-tab:hover {
+        color: var(--app-text-soft);
+    }
+
+    .dash-tab-active,
+    .dash-tab-active:hover {
+        color: var(--color-primary-700);
+        border-bottom-color: var(--color-primary-600);
+    }
+
+    html.dark .dash-tab {
+        color: var(--app-text-muted);
+    }
+
+    html.dark .dash-tab:hover {
+        color: var(--app-text);
+    }
+
+    html.dark .dash-tab-active,
+    html.dark .dash-tab-active:hover {
+        color: var(--color-primary-300);
+        border-bottom-color: var(--color-primary-400);
+    }
+}
+
+/* Week: horizontal scroll without bar or lateral bounce */
+.dash-week-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overscroll-behavior-x: contain;
+}
+
+.dash-week-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+/* Schedule button: on mobile it caps its width so the title is not squeezed */
+.dash-header-btn {
+    max-width: 55%;
+}
+
+@media (min-width: 640px) {
+    .dash-header-btn {
+        max-width: none;
+    }
+}
+
+/* Feedback while swapping schedules */
+#dashboard-content.htmx-request {
+    opacity: 0.55;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+}

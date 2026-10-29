@@ -20,17 +20,6 @@
 
 {{ define "custom_head" }}
   <script src="/static/js/calculator.js?3" defer></script>
-  <style>
-    /* Desactivar las flechas/spinners en inputs de tipo number */
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-    input[type="number"] {
-      -moz-appearance: textfield;
-    }
-  </style>
 {{ end }}
 
 {{ define "content" }}
@@ -61,7 +50,7 @@
       <!-- COLUMNA IZQUIERDA: ENTRADA DE DATOS -->
       <div class="lg:col-span-7 space-y-6">
         <section
-          class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm rounded-sm p-6">
+          class="card shadow-sm p-6">
           <!-- Toggle MODO DIRECTO / DESGLOSE -->
           <div
             class="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4 mb-6">
@@ -93,7 +82,7 @@
                 min="0"
                 max="100"
                 placeholder="Ej: 74.5"
-                class="block w-full border border-zinc-200 dark:border-zinc-800 rounded-sm px-4 py-2.5 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow" />
+                class="card block w-full px-4 py-2.5 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow" />
             </div>
           </div>
 
@@ -125,7 +114,7 @@
                     min="0"
                     max="100"
                     placeholder="Nota %"
-                    class="w-full border border-zinc-200 dark:border-zinc-800 rounded-sm px-3 py-1.5 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 outline-none focus:ring-2 focus:ring-primary-500" />
+                    class="card w-full px-3 py-1.5 text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
                 <div>
                   <label
@@ -138,7 +127,7 @@
                     min="0"
                     max="100"
                     placeholder="Nota %"
-                    class="w-full border border-zinc-200 dark:border-zinc-800 rounded-sm px-3 py-1.5 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 outline-none focus:ring-2 focus:ring-primary-500" />
+                    class="card w-full px-3 py-1.5 text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
               </div>
             </div>
@@ -201,7 +190,7 @@
                     min="0"
                     max="100"
                     placeholder="Nota promedio de laboratorios %"
-                    class="w-full border border-zinc-200 dark:border-zinc-800 rounded-sm px-3 py-1.5 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 outline-none focus:ring-2 focus:ring-primary-500" />
+                    class="card w-full px-3 py-1.5 text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
               </div>
 
@@ -248,7 +237,7 @@
                     min="0"
                     max="100"
                     placeholder="Nota promedio de tareas/trabajos %"
-                    class="w-full border border-zinc-200 dark:border-zinc-800 rounded-sm px-3 py-1.5 text-sm bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 outline-none focus:ring-2 focus:ring-primary-500" />
+                    class="card w-full px-3 py-1.5 text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
               </div>
             </div>
@@ -294,7 +283,7 @@
         <!-- Card: Estado de Habilitación y PP -->
         <section
           id="cardEstado"
-          class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm rounded-sm p-6 text-center transition-all">
+          class="card shadow-sm p-6 text-center transition-all">
           <span
             class="text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 block mb-1">
             Promedio Ponderado (PP)
@@ -322,7 +311,7 @@
 
         <!-- Card: Escala para Examen Final -->
         <section
-          class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm rounded-sm p-6">
+          class="card shadow-sm p-6">
           <h3
             class="font-bold text-zinc-900 dark:text-zinc-100 text-sm mb-4 flex items-center gap-2">
             <svg

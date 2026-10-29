@@ -48,8 +48,8 @@ GUIDE ARTICLE SCOPE
 
 .guide_article h4 {
   font-size: 1rem;
-  color: #334155;
-  border-left: 4px solid #cbd5e1; /* Línea gris sutil */
+  color: var(--app-text-soft);
+  border-left: 4px solid var(--app-line-strong);
   padding-left: 0.625rem; /* Espaciado interno */
 }
 
@@ -205,7 +205,7 @@ DARK MODE VARIATION (Updated)
 ============================== */
 
 .dark .guide_article {
-    color: #a1a1aa; /* zinc-400 */
+    color: var(--app-text-muted);
 }
 
 .dark .guide_article h1,
@@ -214,16 +214,16 @@ DARK MODE VARIATION (Updated)
 .dark .guide_article h4,
 .dark .guide_article h5,
 .dark .guide_article h6 {
-    color: #f4f4f5; /* zinc-100 */
+    color: var(--app-text);
 }
 
 .dark .guide_article h2 {
-    border-bottom-color: #27272a; /* zinc-800 */
+    border-bottom-color: var(--app-line);
 }
 
 .dark .guide_article h4 {
-    color: #a1a1aa; /* zinc-400 */
-    border-left-color: #3f3f46; /* zinc-700 */
+    color: var(--app-text-muted);
+    border-left-color: var(--app-line-strong);
 }
 
 .dark .guide_article a {
@@ -235,30 +235,30 @@ DARK MODE VARIATION (Updated)
 }
 
 .dark .guide_article thead {
-    background-color: #18181b; /* zinc-900 */
+    background-color: var(--app-surface);
 }
 
 .dark .guide_article th,
 .dark .guide_article td {
-    border-color: #27272a; /* zinc-800 */
+    border-color: var(--app-line);
 }
 
 .dark .guide_article blockquote {
-    color: #a1a1aa; /* zinc-400 */
-    background: #09090b; /* zinc-950 */
+    color: var(--app-text-muted);
+    background: var(--app-surface-muted);
 }
 
 .dark .guide_article code {
-    background: #27272a; /* zinc-800 */
-    color: #e4e4e7; /* zinc-200 */
+    background: var(--app-line);
+    color: var(--app-text);
 }
 
 .dark .guide_article pre {
-    background: #09090b; /* zinc-950 */
-    color: #e4e4e7; /* zinc-200 */
-    border: 1px solid #27272a; /* zinc-800 */
+    background: var(--app-surface-muted);
+    color: var(--app-text);
+    border: 1px solid var(--app-line);
 }
 
 .dark .guide_article hr {
-    border-top-color: #27272a; /* zinc-800 */
+    border-top-color: var(--app-line);
 }

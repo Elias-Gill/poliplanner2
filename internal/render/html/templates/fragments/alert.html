@@ -1,0 +1,11 @@
+{{ define "fragments/alert" }}
+  {{ if .Success }}
+    <div class="alert alert-success mb-6" role="status" aria-live="polite">
+      {{ .Success }}
+    </div>
+  {{ else if .Error }}
+    <div class="alert alert-error mb-6" role="alert" aria-live="assertive">
+      {{ .Error }}
+    </div>
+  {{ end }}
+{{ end }}

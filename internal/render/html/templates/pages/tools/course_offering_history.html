@@ -15,7 +15,7 @@
     class="max-w-7xl mx-auto py-2 min-h-full flex flex-col gap-4 px-2 sm:px-4">
     <!-- Header -->
     <div
-      class="bg-white dark:bg-zinc-900 p-4 rounded-sm shadow-sm border border-gray-200 dark:border-zinc-800">
+      class="card p-4 shadow-sm">
       <h1 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-zinc-100">
         Historial de Secciones
       </h1>
@@ -27,7 +27,7 @@
 
     <!-- Filtros de Carrera y Materia -->
     <div
-      class="grid grid-cols-1 md:grid-cols-12 gap-4 bg-white dark:bg-zinc-900 p-4 sm:p-5 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
+      class="card grid grid-cols-1 md:grid-cols-12 gap-4 p-4 sm:p-5 shadow-sm">
       <!-- Selector de Carrera -->
       <div class="md:col-span-5">
         <label
@@ -57,7 +57,7 @@
     <!-- Contenedor del Historial -->
     <div id="timeline-container">
       <div
-        class="p-8 text-center bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
+        class="card p-8 text-center shadow-sm">
         <p class="text-xs sm:text-sm text-gray-500 dark:text-zinc-400">
           Selecciona una carrera y luego una materia para ver su historial.
         </p>
@@ -123,7 +123,7 @@
       <div
         x-show="open"
         x-cloak
-        class="absolute z-50 left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-sm shadow-xl divide-y divide-gray-100 dark:divide-zinc-800/60">
+        class="card absolute z-50 left-0 right-0 mt-1 max-h-56 overflow-y-auto shadow-xl divide-y divide-gray-100 dark:divide-zinc-800/60">
         <template x-for="subject in filteredSubjects" :key="subject.id">
           <button
             type="button"
@@ -195,7 +195,7 @@
           {{ else }}
             false
           {{ end }} }"
-          class="bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+          class="card shadow-sm overflow-hidden">
           <!-- Encabezado del Periodo -->
           <button
             type="button"
@@ -236,7 +236,7 @@
       {{ end }}
     {{ else }}
       <div
-        class="p-8 text-center bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 shadow-sm">
+        class="card p-8 text-center shadow-sm">
         <p class="text-xs sm:text-sm text-gray-500 dark:text-zinc-400">
           No hay registros históricos de secciones disponibles para la materia
           seleccionada.

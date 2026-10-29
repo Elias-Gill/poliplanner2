@@ -205,7 +205,7 @@
         <div
           x-data="{ open: false }"
           x-show="matchesSubject('{{ .Name | js }}', {{ .Semester }}, {{ .Level }}, '{{ .Plan | js }}')"
-          class="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-sm shadow-2xs overflow-hidden transition-all hover:border-gray-300 dark:hover:border-gray-600">
+          class="card shadow-2xs overflow-hidden transition-all hover:border-gray-300 dark:hover:border-gray-600">
           <!-- Encabezado de la Materia -->
           <button
             type="button"
@@ -303,7 +303,7 @@
         </div>
       {{ else }}
         <div
-          class="bg-white dark:bg-zinc-900 p-8 rounded-sm border border-gray-200 dark:border-zinc-800 text-center">
+          class="card p-8 text-center">
           <p class="text-sm text-gray-600 dark:text-zinc-400 font-medium">
             No se encontraron materias para la carrera elegida.
           </p>

@@ -1,5 +1,6 @@
 {{ define "custom_head" }}
   <script src="/static/vendor/htmx/htmx.min.js" defer></script>
+  <script src="/static/js/schedule_builder.js?1"></script>
 {{ end }}
 
 {{ define "custom_tags" }}
@@ -156,7 +157,7 @@
         :class="mobileOpen ? 'translate-y-0' : 'translate-y-full lg:translate-y-0'"
         class="fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:col-span-5 xl:col-span-4 lg:sticky lg:top-6">
         <div
-          class="bg-white dark:bg-zinc-900 rounded-sm shadow-sm border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[85dvh] lg:max-h-[calc(100dvh-8rem)]">
+          class="card shadow-sm overflow-hidden flex flex-col max-h-[85dvh] lg:max-h-[calc(100dvh-8rem)]">
           <!-- Handle para arrastrar visualmente en Mobile -->
           <div
             class="w-12 h-1 bg-gray-300 dark:bg-gray-600 rounded-sm mx-auto my-2 lg:hidden"></div>
@@ -322,46 +323,4 @@
     </div>
   </div>
 
-  <script>
-    function scheduleBuilder() {
-      return {
-        scheduleTitle: "",
-        selectedSubjects: [],
-        mobileOpen: false,
-
-        init() {
-          this.$nextTick(() => {
-            if (this.$refs.titleInput) {
-              this.$refs.titleInput.focus();
-              this.$refs.titleInput.select();
-            }
-          });
-        },
-
-        addSubject(subject) {
-          if (!this.selectedSubjects.some((s) => s.id === subject.id)) {
-            this.selectedSubjects.push(subject);
-          }
-        },
-
-        removeSubject(id) {
-          this.selectedSubjects = this.selectedSubjects.filter(
-            (s) => s.id !== id,
-          );
-          if (this.selectedSubjects.length === 0) {
-            this.mobileOpen = false;
-          }
-        },
-
-        isSubjectAdded(id) {
-          return this.selectedSubjects.some((s) => s.id === id);
-        },
-
-        clearAll() {
-          this.selectedSubjects = [];
-          this.mobileOpen = false;
-        },
-      };
-    }
-  </script>
-{{ end }}
+  {{ end }}
