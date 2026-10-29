@@ -32,6 +32,24 @@
 .app-scroll {
     overscroll-behavior-y: contain;
     scrollbar-gutter: stable;
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
+@media (min-width: 768px) {
+    .app-scroll {
+        padding-bottom: max(2rem, env(safe-area-inset-bottom));
+    }
+}
+
+@media (min-width: 1024px) {
+    .app-scroll {
+        padding-bottom: max(5rem, env(safe-area-inset-bottom));
+    }
+}
+
+/* For fixed elements outside the main scroller */
+.safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
 }
 
 /* Background ornaments for the auth pages (pure CSS shapes) */

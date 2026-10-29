@@ -78,11 +78,6 @@
       }
     }
 
-    /* Safe area inferior (home indicator de iOS) */
-    .dash-safe-bottom {
-      padding-bottom: max(env(safe-area-inset-bottom), 0.75rem);
-    }
-
     /* Semana: scroll horizontal sin barra y sin rebote lateral */
     .dash-week-scroll {
       scrollbar-width: none;
@@ -115,7 +110,7 @@
 {{ define "content" }}
   <div
     x-data="{ sidebarOpen: false, selectedId: '{{ .SelectedID }}', activeView: 'horario', switchView(view) { this.activeView = view; const content = document.getElementById('dashboard-content'); if (content) content.scrollIntoView({ block: 'start' }); } }"
-    class="dash-safe-bottom max-w-7xl mx-auto py-2 min-h-[calc(100dvh-4rem)] flex flex-col gap-4 relative">
+    class="max-w-7xl mx-auto py-2 min-h-full flex flex-col gap-4 relative">
     <!-- Header principal elevado con paleta Zinc -->
     <div
       class="bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 p-4 space-y-3 shadow-2xs">
@@ -276,7 +271,7 @@
       </div>
 
       <!-- Lista de Horarios -->
-      <div class="dash-safe-bottom flex-1 overflow-y-auto p-4 space-y-2">
+      <div class="safe-bottom flex-1 overflow-y-auto p-4 space-y-2">
         {{ range .Schedules }}
           <div
             x-data="{ menuOpen: false }"
