@@ -26,7 +26,7 @@
 {{ end }}
 
 {{ define "custom_head" }}
-  <link rel="stylesheet" href="/static/css/interactive_graph.css?2" />
+  <link rel="stylesheet" href="/static/css/interactive_graph.css?5" />
 
   <script src="/static/vendor/d3/d3.min.js" defer></script>
   <script
@@ -48,7 +48,7 @@
       <!-- ===== HEADER ===== -->
       <header
         id="app-header"
-        class="flex-shrink-0 mb-3 rounded-sm bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 p-3.5 md:p-4 shadow-2xs transition-colors flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        class="card flex-shrink-0 mb-3 p-3.5 md:p-4 shadow-2xs transition-colors flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div id="header-left" class="min-w-0">
           <div id="header-text" class="min-w-0">
             <h1
@@ -56,16 +56,10 @@
               class="text-lg md:text-xl font-bold text-gray-900 dark:text-zinc-100 tracking-tight truncate">
               Cargando...
             </h1>
-            <div id="career-stats" class="flex flex-wrap gap-2 mt-1.5">
-              <span
-                class="stat-pill text-xs font-semibold px-2.5 py-0.5 rounded-xs bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 border border-gray-200 dark:border-zinc-700"
-                id="stat-semesters"></span>
-              <span
-                class="stat-pill text-xs font-semibold px-2.5 py-0.5 rounded-xs bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 border border-gray-200 dark:border-zinc-700"
-                id="stat-credits"></span>
-              <span
-                class="stat-pill text-xs font-semibold px-2.5 py-0.5 rounded-xs bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 border border-gray-200 dark:border-zinc-700"
-                id="stat-subjects"></span>
+            <div id="career-stats" class="flex flex-wrap gap-1.5 mt-1.5">
+              <span class="stat-pill" id="stat-semesters"></span>
+              <span class="stat-pill" id="stat-credits"></span>
+              <span class="stat-pill" id="stat-subjects"></span>
             </div>
           </div>
         </div>
