@@ -1,6 +1,15 @@
 {
-    "latest": "2.1.1",
+    "latest": "2.1.2",
     "entries": [
+        {
+            "version": "2.1.2",
+            "date": "2026-10-29",
+            "important": false,
+            "title": "Ajustes visuales",
+            "changes": [
+                "Ajustes visuales para hacer más placentero el sitio."
+            ]
+        },
         {
             "version": "2.1.1",
             "date": "2026-10-08",
