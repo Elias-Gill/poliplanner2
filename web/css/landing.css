@@ -24,18 +24,19 @@ html.dark .lp-page {
 /* ---------- Top bar ---------- */
 
 .lp-topbar {
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 40;
-    border-bottom: 1px solid var(--lp-border);
-    background: #ffffff;
-}
-
-html.dark .lp-topbar {
-    background: var(--color-zinc-950);
+    background: color-mix(in oklab, var(--color-primary-900) 70%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
 }
 
 .lp-topbar-inner {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -58,7 +59,7 @@ html.dark .lp-topbar {
 }
 
 .lp-brand-name {
-    color: var(--lp-text);
+    color: #ffffff;
     font-size: 1rem;
     font-weight: 700;
     letter-spacing: -0.01em;
@@ -145,7 +146,8 @@ html.dark .lp-btn--light:hover {
 
 /* Rhythm: each band breathes differently */
 .lp-band--hero .lp-band-pad {
-    padding: clamp(4.5rem, 9vw, 7.5rem) 0;
+    padding-top: calc(clamp(4.5rem, 9vw, 7.5rem) + 3.5rem);
+    padding-bottom: clamp(4.5rem, 9vw, 7.5rem);
 }
 
 .lp-band--tools .lp-band-pad {
