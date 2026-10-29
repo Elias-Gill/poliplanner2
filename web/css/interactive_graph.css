@@ -350,7 +350,7 @@ main:has(#graph-wrapper) {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -389,7 +389,7 @@ main:has(#graph-wrapper) {
 }
 
 .modal-header {
-  background: var(--color-primary-800);
+  background: #2f4c6d;
   padding: 22px 24px 20px;
   position: relative;
 }

@@ -12,22 +12,22 @@ const DIMENSIONS = {
 // ================= CONSTANTES DE COLORES =================
 
 function getColors() {
-  const isDark = document.documentElement.classList.contains("dark-mode");
+  const isDark = document.documentElement.classList.contains("dark");
   if (isDark) {
     return {
-      NODE_TEXT:             "#e6edf5",
-      NODE_BG_ODD:          "#142536",
-      NODE_BG_EVEN:         "#2f4c6d",
-      NODE_BORDER:          "#3f638a",
+      NODE_TEXT:             "#e4e4e7",
+      NODE_BG_ODD:          "#18181b",
+      NODE_BG_EVEN:         "#27272a",
+      NODE_BORDER:          "#3f3f46",
       NODE_HIGHLIGHT_BG:    "#3f638a",
-      NODE_HIGHLIGHT_BORDER:"#7fa3c4",
+      NODE_HIGHLIGHT_BORDER:"#a9c1da",
       NODE_CHILD_BG:        "#557fab",
-      NODE_CHILD_BORDER:    "#a9c1da",
+      NODE_CHILD_BORDER:    "#cddaea",
       NODE_PARENT_BG:       "#2f4c6d",
-      NODE_PARENT_BORDER:   "#557fab",
-      EDGE_NORMAL:          "#3f638a",
-      EDGE_OPACITY:         0.85,
-      TITLE_COLOR:          "#60a5fa",
+      NODE_PARENT_BORDER:   "#7fa3c4",
+      EDGE_NORMAL:          "#3f3f46",
+      EDGE_OPACITY:         0.9,
+      TITLE_COLOR:          "#a1a1aa",
     };
   }
   return {
@@ -80,6 +80,16 @@ function prepareGraphData(data) {
   nodePositions = created.nodePositions;
   edgeList = _createEdges(allSubjects);
 }
+
+// Re-render when the theme changes so the palette follows light/dark
+new MutationObserver(() => {
+  if (semestersCount > 0 && document.getElementById("graph-container")) {
+    renderGraph("graph-container");
+  }
+}).observe(document.documentElement, {
+  attributes: true,
+  attributeFilter: ["class"],
+});
 
 function renderGraph(elementId) {
   const element = document.getElementById(elementId);
