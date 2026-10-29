@@ -5,9 +5,12 @@
             "version": "2.1.2",
             "date": "2026-10-29",
             "important": false,
-            "title": "Ajustes visuales",
+            "title": "Ajustes visuales y corrección de errores",
             "changes": [
-                "Ajustes visuales para hacer más placentero el sitio."
+                "Rediseño de las pantallas: inicio de sesión, registro y recuperación de contraseña.",
+                "Se corrigió el scroll en celulares.",
+                "Mejoras visuales en la herramienta de mallas curriculares.",
+                "Corrección de errores visuales menores."
             ]
         },
         {
