@@ -23,6 +23,17 @@
     display: none !important;
 }
 
+/* App shell: single scroll container, sized to the real viewport */
+.app-shell {
+    height: 100vh;
+    height: 100dvh;
+}
+
+.app-scroll {
+    overscroll-behavior-y: contain;
+    scrollbar-gutter: stable;
+}
+
 /* Background ornaments for the auth pages (pure CSS shapes) */
 .auth-decor {
     position: absolute;

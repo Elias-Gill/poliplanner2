@@ -115,7 +115,7 @@
 {{ define "content" }}
   <div
     x-data="{ sidebarOpen: false, selectedId: '{{ .SelectedID }}', activeView: 'horario', switchView(view) { this.activeView = view; const content = document.getElementById('dashboard-content'); if (content) content.scrollIntoView({ block: 'start' }); } }"
-    class="dash-safe-bottom max-w-7xl mx-auto py-2 min-h-[calc(100vh-4rem)] flex flex-col gap-4 relative">
+    class="dash-safe-bottom max-w-7xl mx-auto py-2 min-h-[calc(100dvh-4rem)] flex flex-col gap-4 relative">
     <!-- Header principal elevado con paleta Zinc -->
     <div
       class="bg-white dark:bg-zinc-900 rounded-sm border border-gray-200 dark:border-zinc-800 p-4 space-y-3 shadow-2xs">

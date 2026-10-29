@@ -34,7 +34,7 @@
 
 
       <div
-        class="flex h-screen overflow-hidden bg-gray-50 dark:bg-black"
+        class="app-shell flex overflow-hidden bg-gray-50 dark:bg-black"
         x-data="{ sidebarOpen: false }">
         {{ template "fragments/sidebar" . }}
 
@@ -46,7 +46,7 @@
 
           <!-- Contenido Principal -->
           <main
-            class="flex-1 overflow-y-auto p-3 md:p-8 lg:p-20 lg:pt-14 bg-gray-50 dark:bg-black">
+            class="app-scroll flex-1 overflow-y-auto p-3 md:p-8 lg:p-20 lg:pt-14 bg-gray-50 dark:bg-black">
             {{ block "content" . }}{{ end }}
           </main>
         </div>

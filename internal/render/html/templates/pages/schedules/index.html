@@ -22,7 +22,7 @@
 {{ define "content" }}
   <div
     x-data="scheduleBuilder()"
-    class="min-h-[calc(100vh-4rem)] p-4 dark:bg-zinc-900/50 flex flex-col gap-6 pb-24 lg:pb-6 transition-colors">
+    class="min-h-[calc(100dvh-4rem)] p-4 dark:bg-zinc-900/50 flex flex-col gap-6 pb-24 lg:pb-6 transition-colors">
     <!-- Header de la página -->
     <div class="bg-white dark:bg-zinc-900 p-4 rounded-sm shadow-xs">
       <h1 class="text-xl font-bold text-gray-900 dark:text-zinc-100">
@@ -156,7 +156,7 @@
         :class="mobileOpen ? 'translate-y-0' : 'translate-y-full lg:translate-y-0'"
         class="fixed inset-x-0 bottom-0 z-50 transition-transform duration-300 ease-in-out lg:static lg:z-auto lg:col-span-5 xl:col-span-4 lg:sticky lg:top-6">
         <div
-          class="bg-white dark:bg-zinc-900 rounded-sm shadow-sm border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[85vh] lg:max-h-[calc(100vh-8rem)]">
+          class="bg-white dark:bg-zinc-900 rounded-sm shadow-sm border border-gray-200 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[85dvh] lg:max-h-[calc(100dvh-8rem)]">
           <!-- Handle para arrastrar visualmente en Mobile -->
           <div
             class="w-12 h-1 bg-gray-300 dark:bg-gray-600 rounded-sm mx-auto my-2 lg:hidden"></div>
