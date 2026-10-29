@@ -16,32 +16,38 @@ function getColors() {
   if (isDark) {
     return {
       NODE_TEXT:             "#e4e4e7",
-      NODE_BG_ODD:          "#18181b",
-      NODE_BG_EVEN:         "#27272a",
-      NODE_BORDER:          "#3f3f46",
+      NODE_BG_ODD:          "#1b2b3d",
+      NODE_BG_EVEN:         "#3a2f1e",
+      NODE_BORDER_ODD:      "#3f638a",
+      NODE_BORDER_EVEN:     "#b4894a",
       NODE_HIGHLIGHT_BG:    "#3f638a",
       NODE_HIGHLIGHT_BORDER:"#a9c1da",
-      NODE_CHILD_BG:        "#557fab",
-      NODE_CHILD_BORDER:    "#cddaea",
+      NODE_HIGHLIGHT_TEXT:  "#ffffff",
+      NODE_CHILD_BG:        "#4a3a22",
+      NODE_CHILD_BORDER:    "#c99a4e",
       NODE_PARENT_BG:       "#2f4c6d",
       NODE_PARENT_BORDER:   "#7fa3c4",
-      EDGE_NORMAL:          "#3f3f46",
-      EDGE_OPACITY:         0.9,
+      NODE_RELATED_TEXT:    "#e4e4e7",
+      EDGE_NORMAL:          "#52525b",
+      EDGE_OPACITY:         0.5,
       TITLE_COLOR:          "#a1a1aa",
     };
   }
   return {
     NODE_TEXT:             "#142536",
-    NODE_BG_ODD:          "#f0f4f8",
-    NODE_BG_EVEN:         "#cddaea",
-    NODE_BORDER:          "#a9c1da",
-    NODE_HIGHLIGHT_BG:    "#a9c1da",
-    NODE_HIGHLIGHT_BORDER:"#557fab",
-    NODE_CHILD_BG:        "#7fa3c4",
-    NODE_CHILD_BORDER:    "#3f638a",
-    NODE_PARENT_BG:       "#557fab",
-    NODE_PARENT_BORDER:   "#2f4c6d",
-    EDGE_NORMAL:          "#7fa3c4",
+    NODE_BG_ODD:          "#e6edf5",
+    NODE_BG_EVEN:         "#fdf3e1",
+    NODE_BORDER_ODD:      "#a9c1da",
+    NODE_BORDER_EVEN:     "#edc98a",
+    NODE_HIGHLIGHT_BG:    "#3f638a",
+    NODE_HIGHLIGHT_BORDER:"#a9c1da",
+    NODE_HIGHLIGHT_TEXT:  "#ffffff",
+    NODE_CHILD_BG:        "#f6dfb8",
+    NODE_CHILD_BORDER:    "#c99a4e",
+    NODE_PARENT_BG:       "#cddaea",
+    NODE_PARENT_BORDER:   "#557fab",
+    NODE_RELATED_TEXT:    "#142536",
+    EDGE_NORMAL:          "#94a3b8",
     EDGE_OPACITY:         0.85,
     TITLE_COLOR:          "#3f638a",
   };
@@ -212,6 +218,10 @@ function renderGraph(elementId) {
     return d.subject && d.subject.sem % 2 === 0 ? COLORS.NODE_BG_EVEN : COLORS.NODE_BG_ODD;
   }
 
+  function getNodeBorder(d) {
+    return d.subject && d.subject.sem % 2 === 0 ? COLORS.NODE_BORDER_EVEN : COLORS.NODE_BORDER_ODD;
+  }
+
   // rect
   nodeGroups.append("rect")
     .attr("x", (d) => d.x)
@@ -221,7 +231,7 @@ function renderGraph(elementId) {
     .attr("rx", 6)
     .attr("ry", 6)
     .attr("fill", getNodeBg)
-    .attr("stroke", COLORS.NODE_BORDER)
+    .attr("stroke", getNodeBorder)
     .attr("stroke-width", 1)
     .attr("cursor", "pointer")
     .attr("class", "node-rect");
@@ -280,7 +290,7 @@ function renderGraph(elementId) {
 
   // ── Ajuste inicial para que cubra todo el alto ──
   requestAnimationFrame(() => {
-    fitGraph(true);
+    fitGraph(false);
   });
 
   // ── Events ──
@@ -558,15 +568,24 @@ function _highlightRelations(id, nodeGroups, edgePaths, COLORS) {
       rect.setAttribute("fill", COLORS.NODE_HIGHLIGHT_BG);
       rect.setAttribute("stroke", COLORS.NODE_HIGHLIGHT_BORDER);
       rect.setAttribute("stroke-width", "2");
-      if (label) label.setAttribute("font-weight", "bold");
+      if (label) {
+        label.setAttribute("font-weight", "bold");
+        label.setAttribute("fill", COLORS.NODE_HIGHLIGHT_TEXT);
+      }
     } else if (parents.has(d.id)) {
       rect.setAttribute("fill", COLORS.NODE_PARENT_BG);
       rect.setAttribute("stroke", COLORS.NODE_PARENT_BORDER);
-      if (label) label.setAttribute("font-weight", "bold");
+      if (label) {
+        label.setAttribute("font-weight", "bold");
+        label.setAttribute("fill", COLORS.NODE_RELATED_TEXT);
+      }
     } else if (children.has(d.id)) {
       rect.setAttribute("fill", COLORS.NODE_CHILD_BG);
       rect.setAttribute("stroke", COLORS.NODE_CHILD_BORDER);
-      if (label) label.setAttribute("font-weight", "bold");
+      if (label) {
+        label.setAttribute("font-weight", "bold");
+        label.setAttribute("fill", COLORS.NODE_RELATED_TEXT);
+      }
     } else {
       rect.setAttribute("opacity", "0.12");
     }
@@ -587,11 +606,15 @@ function _resetStyles(nodeGroups, edgePaths, COLORS) {
 
     const sem = d.subject ? d.subject.sem : 1;
     const bg = sem % 2 === 0 ? COLORS.NODE_BG_EVEN : COLORS.NODE_BG_ODD;
+    const border = sem % 2 === 0 ? COLORS.NODE_BORDER_EVEN : COLORS.NODE_BORDER_ODD;
     rect.setAttribute("fill", bg);
-    rect.setAttribute("stroke", COLORS.NODE_BORDER);
+    rect.setAttribute("stroke", border);
     rect.setAttribute("stroke-width", "1");
     rect.setAttribute("opacity", "1");
-    if (label) label.setAttribute("font-weight", "normal");
+    if (label) {
+      label.setAttribute("font-weight", "normal");
+      label.setAttribute("fill", COLORS.NODE_TEXT);
+    }
   });
 
   edgePaths.attr("opacity", COLORS.EDGE_OPACITY);

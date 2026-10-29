@@ -394,6 +394,10 @@ main:has(#graph-wrapper) {
   position: relative;
 }
 
+.dark .modal-header {
+  background: #27272a;
+}
+
 .modal-badge-row {
   display: flex;
   align-items: center;
